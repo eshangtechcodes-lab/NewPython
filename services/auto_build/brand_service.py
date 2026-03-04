@@ -85,23 +85,27 @@ def get_brand_list(db: DatabaseHelper, search_model: SearchModel) -> tuple[int, 
     if search_model.SortStr:
         base_sql += f" ORDER BY {search_model.SortStr}"
 
-    # 分页查询（使用 ROWNUM 分页，达梦兼容 Oracle 分页语法）
-    page_index = max(search_model.PageIndex, 1)
-    page_size = max(search_model.PageSize, 1)
-    start_row = (page_index - 1) * page_size + 1
-    end_row = page_index * page_size
+    # 分页处理：PageIndex=0 或 PageSize=0 时不分页，返回全部（与原 C# API 一致）
+    page_index = search_model.PageIndex
+    page_size = search_model.PageSize
 
-    paged_sql = f"""
-        SELECT * FROM (
-            SELECT A.*, ROWNUM RN FROM ({base_sql}) A
-            WHERE ROWNUM <= {end_row}
-        ) WHERE RN >= {start_row}
-    """
-
-    rows = db.execute_query(paged_sql)
-    # 移除分页辅助列 RN
-    for row in rows:
-        row.pop("RN", None)
+    if page_index <= 0 or page_size <= 0:
+        # 不分页，返回全部数据
+        rows = db.execute_query(base_sql)
+    else:
+        # 分页查询（使用 ROWNUM 分页，达梦兼容 Oracle 分页语法）
+        start_row = (page_index - 1) * page_size + 1
+        end_row = page_index * page_size
+        paged_sql = f"""
+            SELECT * FROM (
+                SELECT A.*, ROWNUM RN FROM ({base_sql}) A
+                WHERE ROWNUM <= {end_row}
+            ) WHERE RN >= {start_row}
+        """
+        rows = db.execute_query(paged_sql)
+        # 移除分页辅助列 RN
+        for row in rows:
+            row.pop("RN", None)
 
     return int(total_count), rows
 

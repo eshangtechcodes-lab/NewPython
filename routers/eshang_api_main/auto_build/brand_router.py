@@ -2,8 +2,15 @@
 """
 品牌表 API 路由
 对应原 BRANDController.cs，保持相同的路由路径和响应格式
+
+原 API 行为（从截图确认）：
+- 路径: /EShangApiMain/BaseInfo/GetBrandList
+- 入参: searchModel（直接 JSON，非 AES 加密）
+- 空 JSON {} 表示查询全部
+- PageIndex=0, PageSize=0 时不分页，返回全部数据
 """
 import json
+from typing import Optional
 from fastapi import APIRouter, Depends
 from loguru import logger
 
@@ -18,17 +25,20 @@ from routers.deps import get_db
 router = APIRouter()
 
 
-@router.post("/BaseInfo/GetBRANDList")
-async def get_brand_list(post_data: CommonModel, db: DatabaseHelper = Depends(get_db)):
+@router.post("/BaseInfo/GetBrandList")
+async def get_brand_list(
+    search_model: Optional[SearchModel] = None,
+    db: DatabaseHelper = Depends(get_db)
+):
     """
     获取品牌表列表
-    对应原: [Route("BaseInfo/GetBRANDList")]
+    对应原: [Route("BaseInfo/GetBrandList")]
+    入参: searchModel（直接 JSON，空 {} 返回全部数据）
     """
     try:
-        # 解密并解析查询参数
-        decrypted = aes_decrypt(post_data.value)
-        search_data = json.loads(decrypted)
-        search_model = SearchModel(**search_data)
+        # 如果没有传参或传入空 {}，使用默认值
+        if search_model is None:
+            search_model = SearchModel()
 
         # 查询数据
         total_count, brand_list = brand_service.get_brand_list(db, search_model)
@@ -43,43 +53,39 @@ async def get_brand_list(post_data: CommonModel, db: DatabaseHelper = Depends(ge
 
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
-        logger.error(f"GetBRANDList 查询失败: {ex}")
+        logger.error(f"GetBrandList 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.post("/BaseInfo/GetBRANDDetail")
-async def get_brand_detail(post_data: CommonModel, db: DatabaseHelper = Depends(get_db)):
+@router.post("/BaseInfo/GetBrandDetail")
+async def get_brand_detail(post_data: CommonModel = None, db: DatabaseHelper = Depends(get_db)):
     """
     获取品牌表明细
-    对应原: [Route("BaseInfo/GetBRANDDetail")]
+    对应原: [Route("BaseInfo/GetBrandDetail")]
     """
     try:
-        # 解密并解析参数
-        decrypted = aes_decrypt(post_data.value)
-        params = json.loads(decrypted)
+        if post_data and post_data.value:
+            decrypted = aes_decrypt(post_data.value)
+            params = json.loads(decrypted)
+        else:
+            params = {}
         brand_id = int(params.get("BRANDId", 0))
-
-        # 查询明细
         brand = brand_service.get_brand_detail(db, brand_id)
-
         return Result.success(data=brand, msg="查询成功")
     except Exception as ex:
-        logger.error(f"GetBRANDDetail 查询失败: {ex}")
+        logger.error(f"GetBrandDetail 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.post("/BaseInfo/SynchroBRAND")
+@router.post("/BaseInfo/SynchroBrand")
 async def synchro_brand(post_data: CommonModel, db: DatabaseHelper = Depends(get_db)):
     """
     同步品牌表（新增/更新）
-    对应原: [Route("BaseInfo/SynchroBRAND")]
+    对应原: [Route("BaseInfo/SynchroBrand")]
     """
     try:
-        # 解密并解析品牌数据
         decrypted = aes_decrypt(post_data.value)
         brand_data = json.loads(decrypted)
-
-        # 执行同步
         success, result_data = brand_service.synchro_brand(db, brand_data)
 
         if success:
@@ -87,23 +93,20 @@ async def synchro_brand(post_data: CommonModel, db: DatabaseHelper = Depends(get
         else:
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
-        logger.error(f"SynchroBRAND 同步失败: {ex}")
+        logger.error(f"SynchroBrand 同步失败: {ex}")
         return Result.fail(msg=f"同步失败{ex}")
 
 
-@router.post("/BaseInfo/DeleteBRAND")
+@router.post("/BaseInfo/DeleteBrand")
 async def delete_brand(post_data: CommonModel, db: DatabaseHelper = Depends(get_db)):
     """
     删除品牌表（软删除）
-    对应原: [Route("BaseInfo/DeleteBRAND")]
+    对应原: [Route("BaseInfo/DeleteBrand")]
     """
     try:
-        # 解密并解析参数
         decrypted = aes_decrypt(post_data.value)
         params = json.loads(decrypted)
         brand_id = int(params.get("BRANDId", 0))
-
-        # 执行删除
         success = brand_service.delete_brand(db, brand_id)
 
         if success:
@@ -111,5 +114,5 @@ async def delete_brand(post_data: CommonModel, db: DatabaseHelper = Depends(get_
         else:
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
-        logger.error(f"DeleteBRAND 删除失败: {ex}")
+        logger.error(f"DeleteBrand 删除失败: {ex}")
         return Result.fail(msg=f"删除失败{ex}")

@@ -46,9 +46,9 @@ app.add_middleware(
 app.add_exception_handler(Exception, global_exception_handler)
 
 # === 注册路由 ===
-# EShangApiMain - AutoBuild 路由
+# EShangApiMain - AutoBuild 路由（前缀 /EShangApiMain 与原 C# API 路径一致）
 from routers.eshang_api_main.auto_build.brand_router import router as brand_router
-app.include_router(brand_router, tags=["品牌管理 (BRAND)"])
+app.include_router(brand_router, prefix="/EShangApiMain", tags=["品牌管理 (BRAND)"])
 
 # 后续在这里注册更多路由...
 

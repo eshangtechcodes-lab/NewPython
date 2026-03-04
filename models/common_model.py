@@ -30,8 +30,8 @@ class SearchModel(BaseModel):
     QueryType: Optional[int] = None       # 查询方式: 0=模糊, 1=精确
     SearchParameter: Optional[dict] = None  # 查询参数（泛型 T 对应的字段）
     keyWord: Optional[KeyWord] = None     # 组合查询条件
-    PageIndex: int = 1                    # 查询页码
-    PageSize: int = 10                    # 每页数量
+    PageIndex: int = 0                    # 查询页码（0=不分页）
+    PageSize: int = 0                     # 每页数量（0=不分页）
     SortStr: Optional[str] = None         # 排序条件
     ShowWholePower: Optional[bool] = None # 是否按省份显示
     Province_Code: Optional[str] = None   # 省份编码
