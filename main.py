@@ -50,7 +50,11 @@ app.add_exception_handler(Exception, global_exception_handler)
 from routers.eshang_api_main.auto_build.brand_router import router as brand_router
 app.include_router(brand_router, prefix="/EShangApiMain", tags=["品牌管理 (BRAND)"])
 
-# 后续在这里注册更多路由...
+# 后续在这里注册更多 EShangApiMain 路由...
+
+# CommercialApi 路由（前缀 /CommercialApi 与原 C# API 路径一致）
+from routers.commercial_api.base_info_router import router as commercial_baseinfo_router
+app.include_router(commercial_baseinfo_router, prefix="/CommercialApi", tags=["CommercialApi - 基础信息"])
 
 
 @app.get("/", tags=["系统"])
