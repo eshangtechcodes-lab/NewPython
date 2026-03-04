@@ -1,49 +1,95 @@
 # -*- coding: utf-8 -*-
-"""对比新旧 API 接口返回结果"""
+"""调用原 C# API 和新 Python API，结果保存到文件对比"""
 import json
 import requests
 
-API_BASE = "http://localhost:8080"
+OLD_API = "http://localhost:8900/EShangApiMain/BaseInfo/GetBrandList"
+NEW_API = "http://localhost:8080/EShangApiMain/BaseInfo/GetBrandList"
 
-print("=" * 60)
-print("  新 Python API 与原 C# API 对比验证")
-print("=" * 60)
+output = []
 
-# 测试1: 空 {} 调用（完全模拟原 API 截图的请求）
-print("\n测试: POST /EShangApiMain/BaseInfo/GetBrandList")
-print("入参: {} (空 JSON，与原 C# API 截图一致)")
-resp = requests.post(
-    f"{API_BASE}/EShangApiMain/BaseInfo/GetBrandList",
-    json={},
-    headers={"Content-Type": "application/json"}
-)
-data = resp.json()
+def log(msg):
+    print(msg)
+    output.append(msg)
 
-# 验证整体结构
-print(f"\n--- 响应结构对比 ---")
-print(f"  Result_Code: {data['Result_Code']}  (原API: 100) {'✅' if data['Result_Code'] == 100 else '❌'}")
-print(f"  Result_Desc: {data['Result_Desc']}  (原API: 查询成功) {'✅' if '查询成功' in data['Result_Desc'] else '❌'}")
+log("=" * 70)
+log("  原 C# API vs 新 Python API 真实对比")
+log("=" * 70)
 
-rd = data["Result_Data"]
-print(f"  PageIndex:   {rd['PageIndex']}  (原API: 0) {'✅' if rd['PageIndex'] == 0 else '❌'}")
-print(f"  PageSize:    {rd['PageSize']}  (原API: 0) {'✅' if rd['PageSize'] == 0 else '❌'}")
-print(f"  TotalCount:  {rd['TotalCount']}  (原API: 2005) {'✅' if rd['TotalCount'] == 2005 else '❌'}")
-print(f"  List 条数:   {len(rd['List'])}  (原API: 2005) {'✅' if len(rd['List']) == 2005 else '❌'}")
+# ===== 调用原 C# API =====
+log("\n[1] 调用原 C# API:")
+try:
+    old_resp = requests.post(OLD_API, json={}, headers={"Content-Type": "application/json"}, timeout=10)
+    old_data = old_resp.json()
+    old_rd = old_data.get("Result_Data", {})
+    old_list = old_rd.get("List", [])
+    log(f"  Result_Code: {old_data.get('Result_Code')}")
+    log(f"  Result_Desc: {old_data.get('Result_Desc')}")
+    log(f"  PageIndex:   {old_rd.get('PageIndex')}")
+    log(f"  PageSize:    {old_rd.get('PageSize')}")
+    log(f"  TotalCount:  {old_rd.get('TotalCount')}")
+    log(f"  List条数:    {len(old_list)}")
+    if old_list:
+        log(f"  字段列表:    {list(old_list[0].keys())}")
+        log(f"  第一条: {json.dumps(old_list[0], ensure_ascii=False)}")
+except Exception as ex:
+    old_data = None
+    old_list = []
+    log(f"  调用失败: {ex}")
 
-# 验证第一条数据的字段
-if rd["List"]:
-    first = rd["List"][0]
-    print(f"\n--- 第一条数据字段对比 ---")
-    print(f"  字段列表: {list(first.keys())}")
-    print(f"  BRAND_ID:       {first.get('BRAND_ID')} (类型: {type(first.get('BRAND_ID')).__name__})")
-    print(f"  BRAND_NAME:     {first.get('BRAND_NAME')}")
-    print(f"  BRAND_CATEGORY: {first.get('BRAND_CATEGORY')}")
-    print(f"  BRAND_INDUSTRY: {first.get('BRAND_INDUSTRY')}")
-    print(f"  BRAND_TYPE:     {first.get('BRAND_TYPE')}")
-    print(f"  BRAND_STATE:    {first.get('BRAND_STATE')}")
-    print(f"  OWNERUNIT_NAME: {first.get('OWNERUNIT_NAME')}")
+# ===== 调用新 Python API =====
+log("\n[2] 调用新 Python API:")
+try:
+    new_resp = requests.post(NEW_API, json={}, headers={"Content-Type": "application/json"}, timeout=10)
+    new_data = new_resp.json()
+    new_rd = new_data.get("Result_Data", {})
+    new_list = new_rd.get("List", [])
+    log(f"  Result_Code: {new_data.get('Result_Code')}")
+    log(f"  Result_Desc: {new_data.get('Result_Desc')}")
+    log(f"  PageIndex:   {new_rd.get('PageIndex')}")
+    log(f"  PageSize:    {new_rd.get('PageSize')}")
+    log(f"  TotalCount:  {new_rd.get('TotalCount')}")
+    log(f"  List条数:    {len(new_list)}")
+    if new_list:
+        log(f"  字段列表:    {list(new_list[0].keys())}")
+        log(f"  第一条: {json.dumps(new_list[0], ensure_ascii=False)}")
+except Exception as ex:
+    new_data = None
+    new_list = []
+    log(f"  调用失败: {ex}")
 
-    # 打印完整 JSON（前2条）
-    print(f"\n--- 前 2 条完整数据 ---")
-    for i, item in enumerate(rd["List"][:2]):
-        print(f"\n  [{i+1}] {json.dumps(item, ensure_ascii=False, indent=4)}")
+# ===== 对比 =====
+if old_data and new_data:
+    log(f"\n{'=' * 70}")
+    log("  差异分析")
+    log(f"{'=' * 70}")
+    old_rd = old_data.get("Result_Data", {})
+    new_rd = new_data.get("Result_Data", {})
+    for name, o, n in [
+        ("Result_Code", old_data.get("Result_Code"), new_data.get("Result_Code")),
+        ("Result_Desc", old_data.get("Result_Desc"), new_data.get("Result_Desc")),
+        ("PageIndex", old_rd.get("PageIndex"), new_rd.get("PageIndex")),
+        ("PageSize", old_rd.get("PageSize"), new_rd.get("PageSize")),
+        ("TotalCount", old_rd.get("TotalCount"), new_rd.get("TotalCount")),
+        ("List条数", len(old_list), len(new_list)),
+    ]:
+        match = "✅" if str(o) == str(n) else "❌"
+        log(f" {match} {name:15s} 原:{o}  新:{n}")
+
+    # 字段差异
+    if old_list and new_list:
+        old_keys = set(old_list[0].keys())
+        new_keys = set(new_list[0].keys())
+        missing = old_keys - new_keys
+        extra = new_keys - old_keys
+        if missing:
+            log(f" ❌ 新API缺少字段: {missing}")
+        if extra:
+            log(f" ⚠️ 新API多出字段: {extra}")
+        if not missing and not extra:
+            log(f" ✅ 字段列表完全一致")
+
+# 保存结果
+with open("scripts/compare_result.txt", "w", encoding="utf-8") as f:
+    f.write("\n".join(output))
+log("\n结果已保存到 scripts/compare_result.txt")
