@@ -46,9 +46,27 @@ app.add_middleware(
 app.add_exception_handler(Exception, global_exception_handler)
 
 # === 注册路由 ===
-# EShangApiMain - AutoBuild 路由（前缀 /EShangApiMain 与原 C# API 路径一致）
-from routers.eshang_api_main.auto_build.brand_router import router as brand_router
+# EShangApiMain - BaseInfo 路由（前缀 /EShangApiMain 与原 C# API 路径一致）
+from routers.eshang_api_main.base_info.ownerunit_router import router as ownerunit_router
+app.include_router(ownerunit_router, prefix="/EShangApiMain", tags=["业主单位管理 (OWNERUNIT)"])
+
+from routers.eshang_api_main.base_info.serverpart_router import router as serverpart_router
+app.include_router(serverpart_router, prefix="/EShangApiMain", tags=["服务区站点 (SERVERPART)"])
+
+from routers.eshang_api_main.base_info.serverpartshop_router import router as serverpartshop_router
+app.include_router(serverpartshop_router, prefix="/EShangApiMain", tags=["门店管理 (SERVERPARTSHOP)"])
+
+from routers.eshang_api_main.base_info.brand_router import router as brand_router
 app.include_router(brand_router, prefix="/EShangApiMain", tags=["品牌管理 (BRAND)"])
+
+from routers.eshang_api_main.base_info.rtserverpartshop_router import router as rtserverpartshop_router
+app.include_router(rtserverpartshop_router, prefix="/EShangApiMain", tags=["门店经营时间 (RTSERVERPARTSHOP)"])
+
+from routers.eshang_api_main.base_info.serverpartshop_log_router import router as serverpartshop_log_router
+app.include_router(serverpartshop_log_router, prefix="/EShangApiMain", tags=["门店变更日志 (SERVERPARTSHOP_LOG)"])
+
+from routers.eshang_api_main.base_info.cashworker_router import router as cashworker_router
+app.include_router(cashworker_router, prefix="/EShangApiMain", tags=["收银人员 (CASHWORKER)"])
 
 # 后续在这里注册更多路由...
 

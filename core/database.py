@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 """
 数据库连接管理
 支持 Oracle（oracledb Thick 模式）和 达梦（dmPython）双数据源

@@ -4,7 +4,7 @@ import dmPython
 
 # 先用 DMNEW 查所有 T_BRAND 表
 print("=== 用 DMNEW 查询 T_BRAND 表 ===")
-conn = dmPython.connect(user='DMNEW', password='Dmnew@2025Aa', server='127.0.0.1', port=5236)
+conn = dmPython.connect(user='DMNEW', password='Dmnew@2025Aa', server='192.168.1.99', port=5236)
 cur = conn.cursor()
 cur.execute("SELECT OWNER, TABLE_NAME FROM ALL_TABLES WHERE TABLE_NAME = 'T_BRAND'")
 rows = cur.fetchall()
@@ -31,7 +31,7 @@ conn.close()
 # 也试试 NEWPYTHON 用户
 print("\n=== 用 NEWPYTHON 查询 ===")
 try:
-    conn2 = dmPython.connect(user='NEWPYTHON', password='NewPython@2025', server='127.0.0.1', port=5236)
+    conn2 = dmPython.connect(user='NEWPYTHON', password='NewPython@2025', server='192.168.1.99', port=5236)
     cur2 = conn2.cursor()
     cur2.execute("SELECT COUNT(*) FROM T_BRAND")
     count = cur2.fetchone()[0]

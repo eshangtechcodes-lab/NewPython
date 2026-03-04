@@ -25,3 +25,8 @@ logs/
 # 操作系统
 Thumbs.db
 .DS_Store
+
+# 运行环境及自动生成文件 (大文件)
+oracle_client/
+models/auto_build/
+scripts/compare_result.txt

@@ -8,9 +8,15 @@ description: C# API 接口平移到 Python FastAPI 的标准工作流
 
 ## 前置条件
 
-- 原 C# API 服务已启动（`http://localhost:8900`）
+- 原 C# API 服务已启动（`http://192.168.1.99:8900`）
 - 新 Python API 服务已启动（`http://localhost:8080`）
-- 原项目代码路径：`D:\Project\000_通用版本\000_通用版本\030_EShangApi`
+- 原项目代码路径：`E:\workfile\JAVA\API\CSharp`
+- Helper 层代码路径：`E:\workfile\JAVA\API\CSharp\EShangApi.Common\GeneralMethod\`
+- Model 代码路径：`E:\workfile\JAVA\API\CSharp\EShangApi.Common\Model\`
+- Python 版本：3.8（注意类型注解兼容性，需 `from __future__ import annotations`）
+- 达梦用户 NEWPYTHON 无 CREATE SEQUENCE 权限（新增时使用 MAX(ID)+1 降级方案）
+- Oracle 可从本机直连（Thick 模式，Instant Client 路径：`E:\workfile\JAVA\NewAPI\oracle_client`）
+- 已知 Oracle schema：`COOP_MERCHANT`（业主相关）、`HIGHWAY_STORAGE`（服务区相关）
 
 ---
 
@@ -43,8 +49,10 @@ description: C# API 接口平移到 Python FastAPI 的标准工作流
 
 ```
 # 示例：查找 BRAND 的业务逻辑
-搜索路径：EShang.Common/ 或 EShangApiMain/Helper/
+搜索路径：EShangApi.Common/GeneralMethod/BaseInfo/
 搜索关键词：GetBrandList 或 T_BRAND
+# 注意：实际 SQL 在 Business 类的 FillDataTable(WhereSQL) 中
+# FillDataTable 等价于 SELECT * FROM T_XXX {WhereSQL}
 ```
 
 ### 1.3 定位原 Model
@@ -81,32 +89,38 @@ Invoke-RestMethod -Uri "http://localhost:8900/EShangApiMain/BaseInfo/GetXxxList"
 
 ---
 
-## 第三步：创建达梦对应表
+## 第三步：同步数据库表
 
-### 3.1 确认达梦表已存在
+> Oracle 已可从本机直连，迁移脚本直接在本机执行即可。
 
-检查 NEWPYTHON 用户下是否已有对应的表和数据：
+### 3.1 修改迁移脚本
+
+修改 `scripts/server_migrate.py` 中的 MIGRATE_TABLES 列表，添加要迁移的表：
 
 ```python
-# 在 scripts/check_dm_xxx.py 中验证
-import dmPython
-conn = dmPython.connect(user='NEWPYTHON', password='NewPython@2025', server='127.0.0.1', port=5236)
-cur = conn.cursor()
-cur.execute("SELECT COUNT(*) FROM T_XXX")
-print(f"数据量: {cur.fetchone()[0]}")
-# 打印字段列表和类型
-cur.execute("SELECT COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLUMNS WHERE TABLE_NAME='T_XXX' ORDER BY COLUMN_ID")
-for row in cur.fetchall():
-    print(f"  {row[0]:30s} {row[1]}")
+# 已知 Oracle schema 映射：
+# COOP_MERCHANT  → 业主相关表（T_OWNERUNIT 等）
+# HIGHWAY_STORAGE → 服务区相关表（T_SERVERPART、T_SERVERPARTSHOP 等）
+MIGRATE_TABLES = [
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_XXX", "sequence": "SEQ_XXX"},
+]
 ```
 
-### 3.2 字段类型校验
+### 3.2 在本机执行迁移
 
-对比达梦字段类型与原 Oracle 表，确保数值列为 INT/DECIMAL 而非 VARCHAR。若类型不对，修改达梦表结构：
-
-```sql
-ALTER TABLE T_XXX MODIFY BRAND_ID INTEGER;
+// turbo
+```powershell
+python scripts/server_migrate.py
 ```
+
+脚本会自动：
+1. 读 Oracle 表结构
+2. 在达梦建表
+3. **从 Oracle 同步表注释和字段注释到达梦**
+4. 迁移数据（每 500 条批量提交）
+5. 校验行数
+
+> **注意**：序列创建可能因权限不足失败，脚本已做降级处理（仅警告不中断）。
 
 ---
 
@@ -116,27 +130,40 @@ ALTER TABLE T_XXX MODIFY BRAND_ID INTEGER;
 
 ### 4.1 Model（若尚不存在）
 
-文件：`models/auto_build/xxx.py`
+文件按模块分目录：`models/{模块名}/xxx.py`
+- BaseInfo 模块 → `models/base_info/ownerunit.py`
 
+规范：
 - 使用 Pydantic BaseModel
+- 文件头加 `from __future__ import annotations`（Python 3.8 兼容）
 - 字段名与原 C# Model 完全一致
-- 字段类型与原 API 返回类型对齐
+- 所有字段使用 `Optional[类型] = None`
+- 中文注释标注字段含义
 
 ### 4.2 Service
 
-文件：`services/auto_build/xxx_service.py`
+文件：`services/{模块名}/xxx_service.py`
 
+- 文件头加 `from __future__ import annotations`（Python 3.8 兼容）
 - **SQL 必须参考原 Helper 中的查询**，不能自己猜测
 - 包含 JOIN、默认排序、默认分页逻辑
 - 保持与原 Helper 完全一致的业务行为
+- **新增逻辑**：序列不可用时降级为 `MAX(ID)+1`
+- **删除逻辑**：注意区分软删除和真删除
+  - 软删除：`UPDATE SET XXX_STATE = 0`（如 OWNERUNIT）
+  - 真删除：`DELETE FROM`（如 SERVERPART，原 C# `_SERVERPART.Delete()`）
+  - 必须阅读原 Helper 的 Delete 方法确认
 
 ### 4.3 Router
 
-文件：`routers/eshang_api_main/auto_build/xxx_router.py`
+文件：`routers/eshang_api_main/{模块名}/xxx_router.py`
 
 - 路由路径与原 Controller 完全一致（注意大小写）
+- HTTP 方法与原 Controller 一致（注意 Delete 可能同时支持 GET+POST，用 `@router.api_route(methods=["GET", "POST"])`）
+- GetDetail 通常是 GET 方法，参数通过 `Query()` 接收
 - 入参格式与原 Controller 一致
-- 在 `main.py` 中注册路由时加 `prefix="/EShangApiMain"`
+- 新建模块目录时，需创建 `__init__.py`
+- 在 `main.py` 中注册路由时加 `prefix="/EShangApiMain"` 和对应 `tags`
 
 ---
 
@@ -277,21 +304,68 @@ git push
 **解决方案**: 连接参数统一在 `config.py` 管理，首次连接时先 `test_connection()` 验证
 **检查时机**: 前置条件
 
+### ✅ P9: Oracle 不可从本机直连（已解决）
+
+**现象**: oracledb thin 模式报 `DPY-4011`，Thick 模式报 `ORA-12537: TNS:connection closed`
+**根因**: Oracle 服务端限制了来源 IP（sqlnet.ora 白名单或防火墙策略）
+**最终解决**: 用户在服务器端开放了访问限制，现在本机可直连 Oracle
+**连接方式**: Thick 模式，Instant Client 路径 `E:\workfile\JAVA\NewAPI\oracle_client`
+**当前状态**: ✅ 已解决，迁移脚本可直接在本机执行
+
+### 🟡 P10: Python 3.8 类型注解不兼容
+
+**现象**: `list[dict]`、`tuple[int, list]` 报 `TypeError: 'type' object is not subscriptable`
+**根因**: Python 3.8 不支持内置类型的泛型标注（3.9+ 才支持）
+**解决方案**: 在每个 .py 文件头添加 `from __future__ import annotations`
+**影响范围**: 所有使用 `list[xxx]`、`tuple[xxx]`、`dict[xxx]` 类型标注的文件
+**检查时机**: 第四步（创建新文件时）
+
+### 🟡 P11: 达梦 NEWPYTHON 用户无 CREATE SEQUENCE 权限
+
+**现象**: `CREATE SEQUENCE SEQ_XXX` 报 `CODE:-5519 没有创建序列权限`
+**根因**: NEWPYTHON 用户权限不足
+**解决方案**: Service 层新增记录时使用 `MAX(PRIMARY_KEY)+1` 降级方案
+**检查时机**: 第三步（建表）+ 第四步（Service 新增逻辑）
+
+### 🟢 P12: 文件共享权限
+
+**现象**: `write_to_file` 和 `Copy-Item` 写服务器共享目录报 Access Denied
+**根因**: 文件共享默认只读
+**解决方案**: 用户已开放写入权限，使用 `Copy-Item -Force` 命令复制文件
+**检查时机**: 第三步（复制脚本到服务器时）
+
+### 🟡 P13: 迁移后无表注释和字段注释
+
+**现象**: 迁移脚本建表后，达梦表无表注释和字段注释
+**根因**: 初始版本脚本只迁移表结构和数据，未迁移注释
+**解决方案**: 已在 `server_migrate.py` 建表后自动从 Oracle `ALL_TAB_COMMENTS` 和 `ALL_COL_COMMENTS` 同步注释
+**当前状态**: ✅ 已修复，后续新表自动同步注释
+
+### 🟢 P14: 删除方式差异（软删除 vs 真删除）
+
+**现象**: OWNERUNIT 使用软删除（`OWNERUNIT_STATE=0`），SERVERPART 使用真删除（`DELETE`）
+**根因**: 不同实体的业务逻辑不同
+**解决方案**: 必须阅读原 C# Helper 的 Delete 方法确认删除方式
+- 看到 `_XXX.Delete()` → 真删除
+- 看到 `_XXX.Update()` + 设 STATE=0 → 软删除
+**检查时机**: 第一步 1.2（读 Helper）+ 第四步 4.2（实现 Service）
+
 ---
 
 ## 迁移进度跟踪
 
-> 在 `docs/migration_progress.md` 中维护，记录每个接口的迁移状态。
-
-格式示例：
-
-```markdown
 | 接口路径 | 状态 | 日期 | 遇到的问题 | 备注 |
 |----------|------|------|-----------|------|
-| BaseInfo/GetBrandList | 🟡 部分完成 | 2026-03-04 | P1,P2,P3,P4,P5,P6 | 缺少7个关联字段待补 |
-| BaseInfo/GetBrandDetail | ⬜ 待开始 | | | |
-| BaseInfo/SynchroBrand | ⬜ 待开始 | | | |
-```
+| BaseInfo/GetBrandList | 🟡 PoC | 2026-03-04 | P1-P6 | PoC 验证，缺少关联字段 |
+| BaseInfo/GetBrandDetail | 🟡 PoC | 2026-03-04 | | |
+| BaseInfo/SynchroBrand | 🟡 PoC | 2026-03-04 | | |
+| BaseInfo/DeleteBrand | 🟡 PoC | 2026-03-04 | | |
+| **BaseInfo/GetOWNERUNITList** | **✅ 完成** | **2026-03-04** | **P9,P10,P11,P12** | **592条，18字段** |
+| **BaseInfo/GetOWNERUNITDetail** | **✅ 完成** | **2026-03-04** | | |
+| **BaseInfo/SynchroOWNERUNIT** | **✅ 完成** | **2026-03-04** | | |
+| **BaseInfo/DeleteOWNERUNIT** | **✅ 完成** | **2026-03-04** | | 软删除 |
+| **BaseInfo/GetSERVERPARTList** | **✅ 完成** | **2026-03-04** | **P13,P14** | **1168条，42字段** |
+| **BaseInfo/DeleteSERVERPART** | **✅ 完成** | **2026-03-04** | | 真删除 |
+| BaseInfo/GetServerpartShopList | ⬜ 待开始 | | | |
 
 状态说明：⬜待开始 → 🔵进行中 → 🟡部分完成 → ✅已完成
-

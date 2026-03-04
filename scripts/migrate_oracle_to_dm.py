@@ -11,13 +11,13 @@ from datetime import datetime
 ORACLE_CONFIG = {
     "user": "highway_exchange",
     "password": "qrwl",
-    "dsn": "127.0.0.1/orcl",
+    "dsn": "192.168.1.99/orcl",
 }
 
 DM_CONFIG = {
     "user": "DMNEW",
     "password": "Dmnew@2025Aa",
-    "server": "127.0.0.1",
+    "server": "192.168.1.99",
     "port": 5236,
 }
 
@@ -28,6 +28,7 @@ DM_NEW_PASSWORD = "NewPython@2025"
 # 要迁移的表
 MIGRATE_TABLES = [
     {"oracle_schema": "COOP_MERCHANT", "table": "T_BRAND", "sequence": "SEQ_BRAND"},
+    {"oracle_schema": "COOP_MERCHANT", "table": "T_OWNERUNIT", "sequence": "SEQ_OWNERUNIT"},
 ]
 
 # Oracle → 达梦类型映射

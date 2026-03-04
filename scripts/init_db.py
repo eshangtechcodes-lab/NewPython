@@ -2,7 +2,7 @@
 """达梦数据库建表和测试数据初始化"""
 import dmPython
 
-conn = dmPython.connect(user='DMNEW', password='Dmnew@2025Aa', server='127.0.0.1', port=5236)
+conn = dmPython.connect(user='DMNEW', password='Dmnew@2025Aa', server='192.168.1.99', port=5236)
 cur = conn.cursor()
 
 # 删除旧表和序列

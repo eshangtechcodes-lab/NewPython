@@ -1,166 +1,149 @@
-# API 接口迁移 — 双人协同计划
+# API 接口迁移 — 实施计划
 
-> 两人协同迁移 EShangApi（C# → Python），以 Controller 文件夹为准，AutoBuild 不迁移。
+> EShangApi C# → Python FastAPI 接口迁移，以 Controller 文件夹为准，AutoBuild 不迁移。
 
-## 迁移范围
+## 迁移范围（精确统计）
 
-**只迁移手动 Controller**，AutoBuild 是原项目代码生成器的产物，不需要平移。
+**只迁移手动 Controller**，数据来自 C# 原项目 `[Route()]` 注解实际扫描。
 
-### EShangApiMain — 53 个 Controller（排除 BaseController 基类）
+### 已完成
 
-| 模块 | Controller | 数量 |
-|------|------------|------|
-| **MainProject（核心框架）** | CommonController, DictionaryController, FrameWorkController, MainProjectController, PlatformController, InterfaceController, NoticeController, LogController, LoggingController, BusinessLogController, BusinessProcessController, CodeBuilderController | 12 |
-| **BaseInfo（基础信息）** | BaseInfoController, BasicConfigController, CommodityController | 3 |
-| **Contract（合同管理）** | ContractController, BusinessProjectController, ExpensesController, ContractSynController, CONTRACT_SYNController | 5 |
-| **Finance（财务管理）** | FinanceController, InvoiceController, BudgetProjectAHController | 3 |
-| **Merchants（商户管理）** | MerchantsController | 1 |
-| **Revenue（收入管理）** | RevenueController | 1 |
-| **Member（会员管理）** | MemberController | 1 |
-| **Equipment（设备管理）** | EquipmentController | 1 |
-| **BigData（大数据）** | BigDataController, CustomerController | 2 |
-| **Order（订单管理）** | OnlineOrderController | 1 |
-| **MobilePay（移动支付）** | MobilePayController | 1 |
-| **Audit（审计）** | AuditController | 1 |
-| **Analysis（分析）** | AnalysisController | 1 |
-| **BusinessMan（招商）** | BusinessManController, SupplierController | 2 |
-| **BID（招标）** | BIDController (×2) | 2 |
-| **Evaluation（考核）** | EvaluationController | 1 |
-| **Promotion（促销）** | PromotionController | 1 |
-| **SaleStore（门店）** | SaleStoreController | 1 |
-| **Seller（卖家）** | SellerController | 1 |
-| **DataVerification（数据核验）** | VerificationController, SalesController | 2 |
-| **SiteManage（场地管理）** | SiteManageController | 1 |
-| **APPManage（APP管理）** | APPManageController | 1 |
-| **Picture（图片管理）** | PictureController | 1 |
-| **Video（视频管理）** | ShopVideoController | 1 |
-| **SendRec（收发管理）** | SendRecController | 1 |
-| **ThirdInterface（第三方接口）** | ThirdInterfaceController | 1 |
-| **WeChatPay/Seller 等** | 其余 Controller | ~4 |
+| 模块 | Controller | 接口 | 数据量 | 状态 |
+|------|-----------|------|--------|------|
+| BaseInfo | BaseInfoController | OWNERUNIT 4 接口 | 592条/18字段 | ✅ |
+| BaseInfo | BaseInfoController | SERVERPART 2 接口 | 1168条/42字段 | ✅ |
+| BaseInfo | BaseInfoController | ServerpartShop 5 接口 | 7078条/54字段 | ✅ |
+| BaseInfo | BaseInfoController | Brand 6 接口 | 2005条/21字段 | ✅ |
+| BaseInfo | BaseInfoController | RTSERVERPARTSHOP 4 接口 | 3441条/23字段 | ✅ |
+| BaseInfo | BaseInfoController | SERVERPARTSHOP_LOG 1 接口 | 4933条/23字段 | ✅ |
+| BaseInfo | BaseInfoController | CASHWORKER 4 接口 | 9360条/22字段 | ✅ |
 
-### CommercialApi — 14 个 Controller
+### 待迁移（24 Controller / ~551 路由）
 
-| Controller | 说明 |
-|------------|------|
-| BaseInfoController | 基础信息 |
-| RevenueController | 收入管理 |
-| ContractController | 合同管理 |
-| BigDataController | 大数据分析 |
-| BudgetController | 预算管理 |
-| ExamineController | 考核管理 |
-| CustomerController | 客户管理 |
-| BusinessProcessController | 业务审批 |
-| CommonController | 公共方法 |
-| AnalysisController | 数据分析 |
-| AbnormalAuditController | 异常审计 |
-| SuggestionController | 建议管理 |
-| SupplyChainController | 供应链 |
-| UserBehaviorController | 用户行为 |
+| # | 模块 | Controller | 路由数 | 复杂度 | 优先级 | 阶段 |
+|---|------|-----------|--------|--------|--------|------|
+| 1 | **BaseInfo（基础信息）** | BaseInfoController | **99** | 🔴高 | P0 | 一 |
+| 2 | | BasicConfigController | **29** | 🟡中 | P0 | 一 |
+| 3 | | CommodityController | **17** | 🟡中 | P0 | 一 |
+| 4 | **Merchants（商户管理）** | MerchantsController | **16** | 🟡中 | P0 | 二 |
+| 5 | **Contract（合同管理）** | ContractController | **27** | 🟡中 | P1 | 三 |
+| 6 | | BusinessProjectController | **87** | 🔴高 | P1 | 三 |
+| 7 | | ExpensesController | **10** | 🟢低 | P1 | 三 |
+| 8 | | ContractSynController | **4** | 🟢低 | P1 | 三 |
+| 9 | | CONTRACT_SYNController | **4** | 🟢低 | P1 | 三 |
+| 10 | **Finance（财务管理）** | FinanceController | **48** | 🔴高 | P1 | 四 |
+| 11 | | InvoiceController | **24** | 🟡中 | P1 | 四 |
+| 12 | | BudgetProjectAHController | **16** | 🟡中 | P2 | 四 |
+| 13 | **Revenue（收入管理）** | RevenueController | **60** | 🔴高 | P2 | 五 |
+| 14 | **BigData（大数据）** | BigDataController | **36** | 🔴高 | P2 | 六 |
+| 15 | | CustomerController | **4** | 🟢低 | P2 | 六 |
+| 16 | **MobilePay（移动支付）** | MobilePayController | **18** | 🟡中 | P3 | 七 |
+| 17 | **Audit（审计）** | AuditController | **24** | 🟡中 | P3 | 七 |
+| 18 | **Analysis（分析）** | AnalysisController | **62** | 🔴高 | P3 | 七 |
+| 19 | **BusinessMan（招商）** | BusinessManController | **26** | 🟡中 | P3 | 七 |
+| 20 | | SupplierController | **13** | 🟡中 | P3 | 七 |
+| 21 | **DataVerification（数据核验）** | VerificationController | **23** | 🟡中 | P3 | 七 |
+| 22 | | SalesController | **13** | 🟡中 | P3 | 七 |
+| 23 | **Picture（图片管理）** | PictureController | **9** | 🟢低 | P4 | 八 |
+| 24 | **Video（视频管理）** | ShopVideoController | **16** | 🟡中 | P4 | 八 |
 
 ---
 
-## 分工原则
+## 实施阶段
 
-1. **按业务模块垂直切分**：一人负责一组完整的 Controller
-2. **共享基础层**：`core/`、`models/base.py` 由角色 A 统一维护
-3. **先串行后并行**：第一个 Controller（BaseInfo）两人一起做作为范例
-4. **每个 Controller 对比验证后才算完成**
+### 阶段一：BaseInfo 基础信息补全（P0，预计 3-5 天）
 
----
+完成 BaseInfo 全部 3 个 Controller 的迁移。BaseInfoController 的 99 个路由按实体分组，每组通常是 CRUD 四件套。
 
-## 角色分配
+| 批次 | 内容 | 状态 |
+|------|------|------|
+| B1 | OWNERUNIT (4 接口) | ✅ 已完成 |
+| B2 | SERVERPART (2 接口) | ✅ 已完成 |
+| B3 | ServerpartShop (5 接口) | ✅ 已完成 |
+| B4 | Brand (6 接口) | ✅ 已完成 |
+| B5.1 | RTSERVERPARTSHOP, SERVERPARTSHOP_LOG, CASHWORKER (9 接口) | ✅ 已完成 |
+| B5.2 | BaseInfoController 剩余其余接口 (~73 接口) | ⬜ |
+| B6 | BasicConfigController (29 接口) | ⬜ |
+| B7 | CommodityController (17 接口) | ⬜ |
 
-### 角色 A：核心框架 + 业务模块（上半部分）
+### 阶段二：Merchants 商户管理（P0，预计 1 天）
 
-| 模块 | Controller 数 | 优先级 | 估时 |
-|------|--------------|--------|------|
-| MainProject（核心框架） | 12 | P0 | 4天 |
-| Contract（合同管理） | 5 | P1 | 2天 |
-| Finance（财务管理） | 3 | P1 | 1天 |
-| Revenue（收入管理） | 1 | P2 | 0.5天 |
-| Audit（审计） | 1 | P2 | 0.5天 |
-| Evaluation（考核） | 1 | P3 | 0.5天 |
-| DataVerification（数据核验） | 2 | P3 | 0.5天 |
-| ThirdInterface（第三方接口） | 1 | P4 | 0.5天 |
-| **小计** | **~26** | | **~9天** |
+MerchantsController 16 个路由：CoopMerchants CRUD、类型、联系人、关联查询。
 
-同时维护：`core/`、`config.py`、`main.py`、`models/base.py`
+### 阶段三：Contract 合同管理（P1，预计 4-5 天）
 
-### 角色 B：基础信息 + 商户业务 + CommercialApi
+⚠️ BusinessProjectController 有 87 个路由，按子功能分批推进。
 
-| 模块 | Controller 数 | 优先级 | 估时 |
-|------|--------------|--------|------|
-| BaseInfo（基础信息） | 3 | P0 | 1天 |
-| Merchants（商户管理） | 1 | P0 | 1天 |
-| Member（会员管理） | 1 | P1 | 0.5天 |
-| BusinessMan（招商） | 2 | P1 | 1天 |
-| Equipment（设备管理） | 1 | P2 | 0.5天 |
-| BigData + Analysis | 3 | P2 | 1天 |
-| Order + MobilePay + 其余 | ~10 | P3 | 3天 |
-| **CommercialApi 全部** | **14** | P4 | **4天** |
-| **小计** | **~35** | | **~12天** |
+| Controller | 路由数 |
+|------------|--------|
+| ContractController | 27 |
+| BusinessProjectController | 87 |
+| ExpensesController | 10 |
+| ContractSynController | 4 |
+| CONTRACT_SYNController | 4 |
 
----
+### 阶段四：Finance 财务管理（P1-P2，预计 3-4 天）
 
-## 执行阶段
+| Controller | 路由数 |
+|------------|--------|
+| FinanceController | 48 |
+| InvoiceController | 24 |
+| BudgetProjectAHController | 16 |
 
-### 阶段一：范例对齐（1-2天）
+### 阶段五：Revenue 收入管理（P2，预计 2-3 天）
 
-两人一起完成 `BaseInfoController` 中的 `GetBrandList` 接口完整迁移：
-- 读原代码 → 调原 API → 实现 → 对比验证 → 全部 ✅
-- 将此过程记录为范例文档，后续接口照此执行
+RevenueController 60 个路由：7 组 CRUD + 报表/银行/同环比分析。
 
-### 阶段二：并行迁移 EShangApiMain（9-12天）
+### 阶段六：BigData 大数据（P2，预计 1-2 天）
 
-- A 从 MainProject 开始，B 从 BaseInfo + Merchants 开始
-- 每完成一个 Controller，更新 `docs/migration_progress.md`
-- 每天站会同步进度和问题
+BigDataController (36) + CustomerController (4)。
 
-### 阶段三：CommercialApi 迁移（4天）
+### 阶段七：中型模块批量迁移（P3，预计 5-7 天）
 
-- B 负责全部 CommercialApi
-- A 做接口互审
+⚠️ AnalysisController 有 62 个路由。
 
-### 阶段四：集成测试（2-3天）
+| Controller | 路由数 |
+|------------|--------|
+| MobilePayController | 18 |
+| AuditController | 24 |
+| AnalysisController | 62 |
+| BusinessManController | 26 |
+| SupplierController | 13 |
+| VerificationController | 23 |
+| SalesController | 13 |
 
-- 全量接口对比测试
-- 性能基准测试
+### 阶段八：轻量模块收尾（P4，预计 1 天）
 
----
-
-## Git 分支策略
-
-```
-main
-├── feature/mainproject    ← A 负责
-├── feature/contract       ← A 负责
-├── feature/finance        ← A 负责
-├── feature/baseinfo       ← B 负责
-├── feature/merchants      ← B 负责
-├── feature/commercial     ← B 负责
-└── ...
-```
+PictureController (9) + ShopVideoController (16)。
 
 ---
 
-## 文件分工约定
+## 工作量预估
 
-| 目录/文件 | A | B | 说明 |
-|-----------|---|---|------|
-| `core/` | ✏️ | 🔒 | 基础层由 A 维护 |
-| `config.py` / `main.py` | ✏️ | 🔒 | 配置和路由注册由 A 管理 |
-| `models/base.py` | ✏️ | 🔒 | 公共模型由 A 维护 |
-| `routers/eshang_api_main/` 各子目录 | 各自负责 | 各自负责 | 按模块分工 |
-| `routers/commercial_api/` | 🔒 | ✏️ | CommercialApi 由 B 维护 |
-| `docs/` / `scripts/` | ✏️ | ✏️ | 双方都可更新 |
+| 阶段 | 接口数 | 预计天数 | 累计 |
+|------|--------|---------|------|
+| 一（BaseInfo） | ~139 | 3-5 | 3-5 |
+| 二（Merchants） | 16 | 1 | 4-6 |
+| 三（Contract） | 132 | 4-5 | 8-11 |
+| 四（Finance） | 88 | 3-4 | 11-15 |
+| 五（Revenue） | 60 | 2-3 | 13-18 |
+| 六（BigData） | 40 | 1-2 | 14-20 |
+| 七（中型模块） | 179 | 5-7 | 19-27 |
+| 八（轻量收尾） | 25 | 1 | 20-28 |
+| **总计** | **~551** | **20-28天** | |
 
 ---
 
-## 每日同步
+## 执行流程
 
-1. 早上 10 分钟站会：昨天完成几个接口、遇到什么问题
-2. 遇到通用问题：立即记录到 `docs/migration_issues.md` + 更新工作流
-3. 下班前：推送代码 + 更新 `docs/migration_progress.md`
+每个接口严格遵循 `/api-migration` 工作流 6 步法：
+
+1. 读原 C# Controller → Helper → Model
+2. 调原 API 获取基准数据
+3. 同步数据库表（Oracle → 达梦）
+4. 实现 Python 接口（Model → Service → Router）
+5. 对比验证（compare_api.py）
+6. 问题标注（更新 migration_issues.md + 工作流）
 
 ---
 
