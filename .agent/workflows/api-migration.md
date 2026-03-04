@@ -4,13 +4,82 @@ description: C# API 接口平移到 Python FastAPI 的标准工作流
 
 # API 接口迁移工作流
 
-> 适用于 EShangApi C# → Python FastAPI 的逐接口迁移。每迁移一个接口，严格按以下 5 步执行。
+> 适用于 EShangApi C# → Python FastAPI 的逐接口迁移。每迁移一个接口，严格按以下步骤执行。
+>
+> ⚠️ **关键约束**：达梦数据库初始是空库，没有任何表结构和数据。必须先完成「第零步：数据库表同步」，确保达梦中有对应的表和数据后，才能开始接口代码迁移和对比验证。
 
 ## 前置条件
 
 - 原 C# API 服务已启动（`http://localhost:8900`）
 - 新 Python API 服务已启动（`http://localhost:8080`）
 - 原项目代码路径：`D:\Project\000_通用版本\000_通用版本\030_EShangApi`
+- 达梦数据库：`127.0.0.1:5236`，用户 `NEWPYTHON`，密码 `NewPython@2025`
+
+---
+
+## 第零步：数据库表同步（每个接口迁移前必做）
+
+> **达梦初始无表结构**，必须先把接口依赖的所有表（结构+数据）从 Oracle 同步到达梦，否则无法验证。
+
+### 0.1 梳理依赖表
+
+阅读原 Helper 代码中的 SQL，列出该接口涉及的**所有表**：
+
+- **主表**：SELECT 的主表
+- **JOIN 表**：LEFT JOIN / INNER JOIN 的表
+- **字典表**：用于翻译 ID 为名称的表
+- **子查询表**：嵌套查询中的表
+
+记录到 `docs/table_dependencies.md`：
+
+```markdown
+| Controller | 接口 | 主表 | JOIN 表 | 字典表 |
+|------------|------|------|---------|--------|
+| BaseInfoController | GetBrandList | T_BRAND | T_MERCHANTS, T_SERVERPART | T_BUSINESSTRADE |
+```
+
+### 0.2 检查达梦中是否已有这些表
+
+```python
+# scripts/check_dm_tables.py — 按需修改 tables 列表
+import dmPython
+conn = dmPython.connect(user='NEWPYTHON', password='NewPython@2025', server='127.0.0.1', port=5236)
+cur = conn.cursor()
+tables = ['T_BRAND', 'T_MERCHANTS', 'T_SERVERPART', 'T_BUSINESSTRADE']
+for t in tables:
+    try:
+        cur.execute(f"SELECT COUNT(*) FROM {t}")
+        print(f"  ✅ {t:30s} {cur.fetchone()[0]:>8} 条")
+    except:
+        print(f"  ❌ {t:30s} 不存在 → 需要同步")
+```
+
+### 0.3 同步缺失的表
+
+通过达梦 DTS 工具或手动方式从 Oracle 导入：
+
+1. 用 DTS 连接 Oracle（`127.0.0.1/orcl`，`highway_exchange/qrwl`）
+2. 选择需要的表，导出到达梦 NEWPYTHON 用户
+3. 导入后验证行数一致
+
+### 0.4 校验字段类型
+
+导入后必须检查字段类型是否正确（已知问题 P1：DTS 可能把 NUMBER 列导为 VARCHAR）：
+
+```sql
+-- 查看达梦表字段类型
+SELECT COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLUMNS WHERE TABLE_NAME='T_BRAND' ORDER BY COLUMN_ID;
+
+-- 若数值列被导为 VARCHAR，修正：
+ALTER TABLE T_BRAND MODIFY BRAND_ID INT;
+ALTER TABLE T_BRAND MODIFY BRAND_PID INT;
+ALTER TABLE T_BRAND MODIFY BRAND_CATEGORY INT;
+-- 修正前确认该列数据能转为整数
+```
+
+### 0.5 确认通过后才进入第一步
+
+所有依赖表 ✅ 存在 + 数据量一致 + 字段类型正确 → 才可以开始接口代码迁移。
 
 ---
 
