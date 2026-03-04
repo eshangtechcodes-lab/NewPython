@@ -19,9 +19,14 @@ class Settings:
     # === 达梦数据库配置 ===
     DM_HOST: str = os.getenv("DM_HOST", "127.0.0.1")
     DM_PORT: int = int(os.getenv("DM_PORT", "5236"))
-    DM_USER: str = os.getenv("DM_USER", "DMNEW")
-    DM_PASSWORD: str = os.getenv("DM_PASSWORD", "Dmnew@2025Aa")
+    DM_USER: str = os.getenv("DM_USER", "NEWPYTHON")
+    DM_PASSWORD: str = os.getenv("DM_PASSWORD", "NewPython@2025")
     DM_DATABASE: str = os.getenv("DM_DATABASE", "DMNEW")
+
+    # === Oracle 数据库配置（用于验证测试，与原 C# 项目共用） ===
+    ORA_USER: str = os.getenv("ORA_USER", "highway_exchange")
+    ORA_PASSWORD: str = os.getenv("ORA_PASSWORD", "qrwl")
+    ORA_DSN: str = os.getenv("ORA_DSN", "127.0.0.1/orcl")
 
     # === Redis 配置 ===
     REDIS_HOST: str = os.getenv("REDIS_HOST", "127.0.0.1")

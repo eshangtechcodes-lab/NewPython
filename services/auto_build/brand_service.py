@@ -10,7 +10,7 @@ from models.auto_build.brand import BRANDModel
 from models.common_model import SearchModel
 
 
-# 表名常量
+# 表名常量（达梦中使用当前用户 NEWPYTHON 下的表，无需 schema 前缀）
 TABLE_NAME = "T_BRAND"
 PRIMARY_KEY = "BRAND_ID"
 SEQUENCE_NAME = "SEQ_BRAND"
