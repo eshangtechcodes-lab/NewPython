@@ -337,8 +337,8 @@
     "method": "POST",
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
-    "old": "C=100,T=31",
-    "new": "C=100,T=32",
+    "old": "C=100,T=32",
+    "new": "C=100,T=33",
     "result": "DIFF"
   },
   {
@@ -355,27 +355,27 @@
     "method": "GET",
     "route": "/BigData/GetBayonetOwnerAHTreeList",
     "ctrl": "BigData",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=1",
+    "new": "C=100,T=0",
+    "result": "DIFF"
   },
   {
     "idx": 41,
     "method": "GET",
     "route": "/BigData/GetProvinceVehicleTreeList",
     "ctrl": "BigData",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=1",
+    "new": "C=100,T=0",
+    "result": "DIFF"
   },
   {
     "idx": 42,
     "method": "GET",
     "route": "/BigData/GetProvinceVehicleDetail",
     "ctrl": "BigData",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
   },
   {
     "idx": 43,
@@ -1030,71 +1030,71 @@
     "method": "GET",
     "route": "/Revenue/GetRevenueCompare",
     "ctrl": "Revenue",
-    "old": "(无缓存)",
+    "old": "C=100",
     "new": "C=101",
-    "result": "NEW_ONLY"
+    "result": "DIFF"
   },
   {
     "idx": 116,
     "method": "GET",
     "route": "/Revenue/GetHolidaySPRAnalysis",
     "ctrl": "Revenue",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=8",
+    "new": "C=101",
+    "result": "DIFF"
   },
   {
     "idx": 117,
     "method": "GET",
     "route": "/Revenue/GetHolidayDailyAnalysis",
     "ctrl": "Revenue",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=13",
+    "new": "C=101",
+    "result": "DIFF"
   },
   {
     "idx": 118,
     "method": "GET",
     "route": "/Revenue/GetMonthINCAnalysis",
     "ctrl": "Revenue",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=1",
+    "new": "C=101",
+    "result": "DIFF"
   },
   {
     "idx": 119,
     "method": "GET",
     "route": "/Revenue/GetMonthINCAnalysisSummary",
     "ctrl": "Revenue",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=4",
+    "new": "C=100,T=0",
+    "result": "DIFF"
   },
   {
     "idx": 120,
     "method": "GET",
     "route": "/Revenue/StorageMonthINCAnalysis",
     "ctrl": "Revenue",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
   },
   {
     "idx": 121,
     "method": "GET",
     "route": "/Revenue/GetShopSABFIList",
     "ctrl": "Revenue",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=1",
+    "new": "C=100,T=0",
+    "result": "DIFF"
   },
   {
     "idx": 122,
     "method": "GET",
     "route": "/Revenue/GetShopMonthSABFIList",
     "ctrl": "Revenue",
-    "old": "(无缓存)",
-    "new": "HTTP422",
-    "result": "NEW_ONLY"
+    "old": "C=100,T=1",
+    "new": "C=100,T=0",
+    "result": "DIFF"
   }
 ]
