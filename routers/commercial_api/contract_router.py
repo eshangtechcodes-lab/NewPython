@@ -143,6 +143,7 @@ async def get_merchant_account_split(
                 "SubRoyaltyPrice": round(sub_price, 2),
                 "SubRoyaltyTheory": round(sub_theory, 2),
                 "ReceivableAmount": round(sub_price - sub_theory, 2),
+                "ProjectDetailList": None,
             })
 
         # 排序

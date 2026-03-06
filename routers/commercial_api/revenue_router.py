@@ -1041,7 +1041,8 @@ async def get_serverpart_inc_analysis(
             except: return 0.0
 
         def make_inc(cur, ly):
-            inc = {"curYearData": cur, "lYearData": ly, "increaseData": None, "increaseRate": None}
+            inc = {"curYearData": cur, "lYearData": ly, "increaseData": None, "increaseRate": None,
+                   "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
             if cur and ly and cur != 0 and ly != 0:
                 inc["increaseData"] = round(cur - ly, 2)
                 inc["increaseRate"] = round((cur - ly) / ly * 100, 2)
@@ -1080,6 +1081,14 @@ async def get_serverpart_inc_analysis(
                 "AccountINC": acc_inc,
                 "BayonetINC": bay_inc,
                 "SectionFlowINC": sec_inc,
+                "AvgTicketINC": None,
+                "TicketINC": None,
+                "BayonetINC_ORI": None,
+                "ShopINCList": None,
+                "RankDiff": None,
+                "Cost_Amount": None,
+                "Ca_Cost": None,
+                "Profit_Amount": None,
             }
 
             # 排序相关过滤
@@ -1120,6 +1129,7 @@ async def get_serverpart_inc_analysis(
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
         resp["Remark"] = holiday_period
+        resp["OtherData"] = None
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartINCAnalysis 查询失败: {ex}")
