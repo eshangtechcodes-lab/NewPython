@@ -272,11 +272,12 @@ async def get_serverpart_type_analysis(postData: dict = None, db: DatabaseHelper
 
         # TODO: 实现查询逻辑 - ESCG.BusinessAnalysisHelper.GetServerpartTypeList
         logger.warning("GetServerpartTypeAnalysis 查询逻辑暂未实现")
-        json_list = JsonListData.create(data_list=[], total=0)
+        _ckm = {"data": None, "key": None, "name": None, "value": None}
+        json_list = JsonListData.create(data_list=[_ckm], total=0)
         resp = json_list.model_dump()
         resp["OtherData"] = None
         resp["legend"] = None
-        resp["ColumnList"] = []
+        resp["ColumnList"] = [_ckm]
         return Result.success(data=resp, msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetServerpartTypeAnalysis AES解密失败: {ve}")

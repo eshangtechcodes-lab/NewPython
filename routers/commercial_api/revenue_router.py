@@ -59,11 +59,13 @@ async def get_summary_revenue(
         "YearAccountRoyalty": None, "YearAccountRoyaltyYOY": None,
         "YearRevenueAmount": None, "YearRevenueYOY": None,
     }
+    _ckm = {"data": None, "key": None, "name": None, "value": None}
+    _nv = {"name": None, "value": None}
     return Result.success(data={
-        "BusinessTradeList": [], "BusinessTypeList": [],
+        "BusinessTradeList": [_nv], "BusinessTypeList": [_ckm],
         "GrowthRate": None, "MonthRevenueAmount": None,
         "RevenuePushModel": _push,
-        "SPRegionList": [], "YearRevenueAmount": None,
+        "SPRegionList": [_nv], "YearRevenueAmount": None,
     }, msg="查询成功")
 
 
@@ -93,8 +95,9 @@ async def get_summary_revenue_month(
         "YearAccountRoyalty": None, "YearAccountRoyaltyYOY": None,
         "YearRevenueAmount": None, "YearRevenueYOY": None,
     }
+    _ckm2 = {"data": None, "key": None, "name": None, "value": None}
     return Result.success(data={
-        "BusinessTradeList": None, "BusinessTypeList": [],
+        "BusinessTradeList": None, "BusinessTypeList": [_ckm2],
         "GrowthRate": None, "MonthRevenueModel": _month,
         "RevenuePushModel": None, "SPRegionList": None,
     }, msg="查询成功")
@@ -465,10 +468,11 @@ async def get_business_trade_revenue(
     if not ProvinceCode:
         ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessTradeRevenue 暂未完整实现")
+    _ckm = {"data": None, "key": None, "name": None, "value": None}
     return Result.success(data={
         "Abundant": None, "Rigid_Demand": None,
         "SPRegionType_Name": None, "Serverpart_ID": None, "Serverpart_Name": None,
-        "BusinessTradeRank": [],
+        "BusinessTradeRank": [_ckm],
     }, msg="查询成功")
 
 
@@ -485,8 +489,9 @@ async def get_business_trade_level(
     if not ProvinceCode:
         ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessTradeLevel 暂未完整实现")
+    _ckm2 = {"data": None, "key": None, "name": None, "value": None}
     return Result.success(data={
-        "ColumnList": [], "legend": None,
+        "ColumnList": [_ckm2], "legend": None,
     }, msg="查询成功")
 
 
@@ -503,8 +508,9 @@ async def get_business_brand_level(
     if not ProvinceCode:
         ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessBrandLevel 暂未完整实现")
+    _ckm3 = {"data": None, "key": None, "name": None, "value": None}
     return Result.success(data={
-        "ColumnList": [], "legend": None,
+        "ColumnList": [_ckm3], "legend": None,
     }, msg="查询成功")
 
 
@@ -673,7 +679,9 @@ async def get_revenue_report_detail(
         "Serverpart_N": None, "Serverpart_Name": None,
         "Serverpart_Revenue": None, "Serverpart_RevenueN": None, "Serverpart_RevenueS": None,
         "Serverpart_S": None,
-        "ShopList": [],
+        "ShopList": [{"BusinessType_Logo": None, "BusinessType_Name": None, "BusinessType_Revenue": None,
+                      "Serverpart_N": None, "Serverpart_RevenueN": None, "Serverpart_RevenueS": None,
+                      "Serverpart_S": None, "Upload_Type": None}],
     }, msg="查询成功")
 
 
@@ -688,9 +696,10 @@ async def get_salable_commodity(
 ):
     """获取商超畅销商品"""
     logger.warning("GetSalableCommodity 暂未完整实现")
+    _sc = {"Commodity_name": None, "Proportion": None}
     return Result.success(data={
-        "SalableCommodity": None, "SalableCommodityList": [],
-        "UnSalableCommodity": None, "UnSalableCommodityList": [],
+        "SalableCommodity": None, "SalableCommodityList": [_sc],
+        "UnSalableCommodity": None, "UnSalableCommodityList": [_sc],
     }, msg="查询成功")
 
 
@@ -724,9 +733,10 @@ async def get_revenue_yoy(
 ):
     """获取每日营收同比数据"""
     logger.warning("GetRevenueYOY 暂未完整实现")
+    _ckm = {"data": None, "key": None, "name": None, "value": None}
     return Result.success(data={
-        "curHoliday": None, "curHolidayDays": None, "curRevenue": None, "curList": [],
-        "compareHoliday": None, "compareHolidayDays": None, "compareRevenue": None, "compareList": [],
+        "curHoliday": None, "curHolidayDays": None, "curRevenue": None, "curList": [_ckm],
+        "compareHoliday": None, "compareHolidayDays": None, "compareRevenue": None, "compareList": [_ckm],
     }, msg="查询成功")
 
 
@@ -743,9 +753,10 @@ async def get_holiday_compare(
 ):
     """获取节日营收同比数据"""
     logger.warning("GetHolidayCompare 暂未完整实现")
+    _ckm2 = {"data": None, "key": None, "name": None, "value": None}
     return Result.success(data={
-        "curHoliday": None, "curHolidayDays": None, "curRevenue": None, "curList": [],
-        "compareHoliday": None, "compareHolidayDays": None, "compareRevenue": None, "compareList": [],
+        "curHoliday": None, "curHolidayDays": None, "curRevenue": None, "curList": [_ckm2],
+        "compareHoliday": None, "compareHolidayDays": None, "compareRevenue": None, "compareList": [_ckm2],
     }, msg="查询成功")
 
 
@@ -761,14 +772,15 @@ async def get_account_receivable(
 ):
     """获取营收统计明细数据"""
     logger.warning("GetAccountReceivable 暂未完整实现")
+    _nv = {"name": None, "value": None}
     return Result.success(data={
-        "CommissionList": [], "CommissionRatio": None,
-        "MerchantList": {"AcountList": [], "EntryList": [], "ReceivableList": []},
+        "CommissionList": [_nv], "CommissionRatio": None,
+        "MerchantList": {"AcountList": [_nv], "EntryList": [_nv], "ReceivableList": [_nv]},
         "MerchantRevenue": None,
-        "OwnerList": {"AcountList": [], "EntryList": [], "ReceivableList": []},
+        "OwnerList": {"AcountList": [_nv], "EntryList": [_nv], "ReceivableList": [_nv]},
         "OwnerRevenue": None,
-        "ProjectCount": None, "ProjectCountList": [],
-        "ProjectRatioList": [], "RevenueRatioList": [],
+        "ProjectCount": None, "ProjectCountList": [_nv],
+        "ProjectRatioList": [_nv], "RevenueRatioList": [_nv],
     }, msg="查询成功")
 
 
@@ -1214,12 +1226,28 @@ async def get_monthly_business_analysis(
     """获取月度经营增幅分析"""
     _inc = lambda: {"curYearData": None, "lYearData": None, "increaseData": None, "increaseRate": None,
                      "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
-    return Result.success(data={
-        "Abundant": None, "Average": None, "Rigid_Demand": None,
+    _item = {
+        "SPRegionTypeId": None, "SPRegionTypeName": None,
+        "ServerpartId": None, "ServerpartName": None,
         "RevenueINC": _inc(), "AccountINC": _inc(), "BayonetINC": _inc(), "SectionFlowINC": _inc(),
-        "AvgTicketINC": _inc(), "TicketINC": _inc(),
-        "SPRegionList": [], "BusinessTradeList": [],
-    }, msg="查询成功")
+        "AvgTicketINC": None, "TicketINC": None,
+        "BayonetINC_ORI": None, "ShopINCList": None,
+        "RankDiff": None, "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
+    }
+    json_list = JsonListData.create(data_list=[_item], total=0)
+    resp = json_list.model_dump()
+    resp["Abundant"] = None
+    resp["Average"] = None
+    resp["Rigid_Demand"] = None
+    resp["RevenueINC"] = _inc()
+    resp["AccountINC"] = _inc()
+    resp["BayonetINC"] = _inc()
+    resp["SectionFlowINC"] = _inc()
+    resp["AvgTicketINC"] = _inc()
+    resp["TicketINC"] = _inc()
+    resp["SPRegionList"] = []
+    resp["BusinessTradeList"] = []
+    return Result.success(data=resp, msg="查询成功")
 
 
 @router.get("/Revenue/GetMonthlySPINCAnalysis")
@@ -1244,7 +1272,7 @@ async def get_monthly_sp_inc_analysis(
         "BayonetINC_ORI": None, "ShopINCList": None,
         "RankDiff": None, "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
     }
-    json_list = JsonListData.create(data_list=[], total=0)
+    json_list = JsonListData.create(data_list=[_item], total=0)
     resp = json_list.model_dump()
     resp["OtherData"] = None
     return Result.success(data=resp, msg="查询成功")
@@ -1272,7 +1300,10 @@ async def get_transaction_detail_list(
 async def get_holiday_revenue_ratio(db: DatabaseHelper = Depends(get_db)):
     """获取节日营收占比"""
     logger.warning("GetHolidayRevenueRatio 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    _ckm = {"data": None, "key": None, "name": None, "value": None}
+    _tree = {"node": _ckm, "children": [{"node": _ckm, "children": []}]}
+    json_list = JsonListData.create(data_list=[_tree], total=0)
+    return Result.success(data=json_list.model_dump(), msg="查询成功")
 
 
 @router.post("/Revenue/GetBusinessRevenueList")
@@ -1775,7 +1806,8 @@ async def get_month_inc_analysis_summary(
     try:
         # TODO: 实现 AccountHelper.GetMonthINCAnalysisSummary
         logger.warning("GetMonthINCAnalysisSummary 查询逻辑暂未实现")
-        json_list = JsonListData.create(data_list=[], total=0)
+        _ckm = {"data": None, "key": None, "name": None, "value": None}
+        json_list = JsonListData.create(data_list=[_ckm], total=0)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
@@ -1815,7 +1847,20 @@ async def get_shop_sabfi_list(
     try:
         # TODO: 实现 AccountHelper.GetShopSABFIList
         logger.warning("GetShopSABFIList 查询逻辑暂未实现")
-        json_list = JsonListData.create(data_list=[], total=0)
+        _inc = lambda: {"curYearData": None, "lYearData": None, "increaseData": None, "increaseRate": None,
+                         "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
+        _node = {
+            "SPRegionTypeId": None, "SPRegionTypeName": None,
+            "ServerpartId": None, "ServerpartName": None,
+            "RevenueINC": _inc(), "AccountINC": _inc(), "BayonetINC": _inc(),
+            "AvgTicketINC": _inc(), "TicketINC": _inc(),
+            "SectionFlowINC": None, "BayonetINC_ORI": None,
+            "ShopINCList": None, "ShopSABFIList": None,
+            "RankDiff": None, "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
+            "SABFI_Score": None,
+        }
+        _tree = {"node": _node, "children": [{"node": _node, "children": []}]}
+        json_list = JsonListData.create(data_list=[_tree], total=0)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
@@ -1837,7 +1882,27 @@ async def get_shop_month_sabfi_list(
     try:
         # TODO: 实现 AccountHelper.GetShopMonthSABFIList
         logger.warning("GetShopMonthSABFIList 查询逻辑暂未实现")
-        json_list = JsonListData.create(data_list=[], total=0)
+        _inc2 = lambda: {"curYearData": None, "lYearData": None, "increaseData": None, "increaseRate": None,
+                          "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
+        _ckm = {"data": None, "key": None, "name": None, "value": None}
+        _shop_item = {
+            "ServerpartId": None, "ServerpartName": None,
+            "ServerpartShopId": None, "ServerpartShopName": None,
+            "Brand_Id": None, "Brand_Name": None, "BrandType_Name": None, "Brand_ICO": None,
+            "ShopTrade": None, "BusinessTradeName": None, "BusinessTradeType": None,
+            "BusinessProjectId": None, "BusinessProjectName": None,
+            "BusinessType": None, "SettlementModes": None,
+            "CompactStartDate": None, "CompactEndDate": None,
+            "MERCHANTS_ID": None, "MERCHANTS_ID_Encrypted": None, "MERCHANTS_NAME": None,
+            "RevenueINC": _inc2(), "AccountINC": _inc2(),
+            "TicketINC": _inc2(), "AvgTicketINC": _inc2(),
+            "CurTransaction": None,
+            "Profit_Amount": None, "Cost_Amount": None, "Ca_Cost": None,
+            "Revenue_AVG": None, "Revenue_SD": None,
+            "SABFI_Score": None, "SABFIList": [_ckm],
+            "StatisticsMonth": None,
+        }
+        json_list = JsonListData.create(data_list=[_shop_item], total=0)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")

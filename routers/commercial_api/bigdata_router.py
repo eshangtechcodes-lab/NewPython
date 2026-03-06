@@ -454,7 +454,15 @@ async def get_province_avg_bayonet_analysis(
     """获取全省平均车流量分析"""
     try:
         logger.warning("GetProvinceAvgBayonetAnalysis 暂未完整实现")
-        return Result.success(data={}, msg="查询成功")
+        _item = {
+            "EntryAddUp_Rate": None, "Entry_GrowthRate": None, "Entry_Rate": None,
+            "SectionFlow_AddUpCount": None, "SectionFlow_Count": None,
+            "Serverpart_ID": None, "Serverpart_Name": None, "Serverpart_Region": None,
+            "StayTimes_GrowthRate": None, "Stay_Times": None,
+            "Vehicle_AddUpCount": None, "Vehicle_Count": None, "Vehicle_GrowthRate": None,
+        }
+        json_list = JsonListData.create(data_list=[_item], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
@@ -951,7 +959,7 @@ async def get_cur_busy_rank(postData: dict = None, db: DatabaseHelper = Depends(
         logger.warning("GetCurBusyRank 查询逻辑暂未实现（需Redis）")
         json_list = JsonListData.create(data_list=[], total=0)
         resp = json_list.model_dump()
-        resp["OtherData"] = None
+        resp["OtherData"] = {"data": None, "key": None, "name": None, "value": None}
         return Result.success(data=resp, msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetCurBusyRank AES解密失败: {ve}")
