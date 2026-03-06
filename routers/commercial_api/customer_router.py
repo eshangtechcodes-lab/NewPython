@@ -302,7 +302,20 @@ async def get_customer_sale_ratio(
         if not ProvinceCode:
             ProvinceCode = request.headers.get("ProvinceCode", "")
         logger.warning("GetCustomerSaleRatio 暂未完整实现")
-        json_list = JsonListData.create(data_list=[], total=0)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        _csl = {
+            "SPRegionTypeId": None, "SPRegionTypeName": None,
+            "ServerpartId": None, "ServerpartName": None,
+            "BusinessTradeName": None, "BusinessTradeValue": None,
+            "StatisticsMonth": None, "TotalRatio": None,
+            "MaleRatio": None, "FemaleRatio": None,
+            "MaleRatio_70": None, "MaleRatio_80": None, "MaleRatio_90": None, "MaleRatio_00": None,
+            "FemaleRatio_70": None, "FemaleRatio_80": None, "FemaleRatio_90": None, "FemaleRatio_00": None,
+            "Ratio_70": None, "Ratio_80": None, "Ratio_90": None, "Ratio_00": None,
+            "CustomerSaleDetailList": None,
+        }
+        return Result.success(data={
+            "CustomerSaleList": [_csl],
+            "MaxAgeRatio": None, "MaxSexAgeRatio": None, "MaxSexRatio": None,
+        }, msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")

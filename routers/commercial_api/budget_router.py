@@ -132,7 +132,25 @@ async def get_budget_project_detail_list(
             WHERE {where_sql}"""
 
         rows = db.execute_query(sql, params)
-        json_list = JsonListData.create(data_list=rows, total=len(rows))
+        # 构建tree结构(C#返回的是node/children树)
+        tree_list = []
+        for r in rows:
+            node = {
+                "SERVERPART_NAME": r.get("SERVERPART_NAME"),
+                "SPREGIONTYPE_NAME": r.get("SPREGIONTYPE_NAME"),
+                "ACCOUNT_CODE": r.get("ACCOUNT_CODE") or r.get("ACCOUNT_PCODE"),
+                "BUDGETDETAIL_AH_ID": r.get("BUDGETDETAIL_AH_ID"),
+                "BUDGETPROJECT_AH_ID": r.get("BUDGETPROJECT_AH_ID"),
+                "BUDGETDETAIL_AMOUNT": r.get("BUDGETDETAIL_AMOUNT"),
+                "REVENUE_AMOUNT": r.get("REVENUE_AMOUNT"),
+                "STATISTICS_MONTH": r.get("STATISTICS_MONTH"),
+                "Budget_Degree": None,
+                "Growth_Rate": None,
+                "ShowGrowth_Rate": None,
+                "ShowRevenue_Amount": None,
+            }
+            tree_list.append({"node": node, "children": []})
+        json_list = JsonListData.create(data_list=tree_list, total=len(tree_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
@@ -150,7 +168,30 @@ async def get_budget_main_show(
     try:
         # TODO: 实现查询逻辑 - ESCG.BudgetShowAhHelper.GetBudgetMainShow
         logger.warning("GetBudgetMainShow 查询逻辑暂未实现")
-        return Result.success(data={}, msg="查询成功")
+        _cost_item = {"Name": None, "ThisYearBudget": None, "ThisYearTotal": None, "CompleteRate": None, "PartRate": None}
+        _income_item = {"Name": None, "ThisYearBudget": None, "ThisYearTotal": None, "CompleteRate": None,
+                         "ThisMonthIncome": None, "ThisMonthIncomeRate": None, "Details": None}
+        return Result.success(data={
+            "Cost": {
+                "ThisYearBudget": None, "ThisYearTotal": None, "CompleteRate": None,
+                "InOutRate": None, "Items": [_cost_item],
+            },
+            "Income": {
+                "ThisYearBudget": None, "ThisYearTotal": None, "CompleteRate": None,
+                "CostRate": None, "IncomeChangeRate": None, "ThisYearCost": None,
+                "Items": [_income_item],
+            },
+            "monthAmount": {
+                "ThisMonthIn": None, "ThisMonthOut": None,
+                "CostInRate": None, "InOutRate": None,
+                "IncomeChangeRate": None, "PayoutChangeRate": None,
+            },
+            "yearProfit": {
+                "ThisYearTotal": None, "ThisYearTotalC": None,
+                "ThisYearBudget": None, "ThisYearBudgetC": None,
+                "CompleteRate": None, "CompleteRateC": None, "TRate": None,
+            },
+        }, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBudgetMainShow 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")

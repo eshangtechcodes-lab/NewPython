@@ -214,7 +214,15 @@ async def get_brand_analysis(
         # 原 C# 返回结构: BrandAnalysisModel { BrandTag, ShopBrandList }
         # 暂返回空结构
         logger.warning(f"GetBrandAnalysis 复杂查询暂未完整实现")
-        data = {"BrandTag": "", "ShopBrandList": []}
+        _shop_brand = {
+            "Brand_Id": None, "Brand_Name": None, "BrandType_Name": None, "Brand_ICO": None,
+            "ServerpartShop_Id": None, "Bussiness_Time": None,
+            "CurRevenue": None, "Revenue_Amount": None,
+            "BrandTrade": None, "BrandTradeName": None, "BrandTradeType": None,
+            "BrandProject": None, "BrandProjectName": None,
+            "ShopEndaccountList": None,
+        }
+        data = {"BrandTag": "", "ShopBrandList": [_shop_brand]}
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBrandAnalysis 查询失败: {ex}")
@@ -304,9 +312,37 @@ async def get_serverpart_list(
             start = (PageIndex - 1) * PageSize
             rows = rows[start:start + PageSize]
 
+        # 每行补全C#模型中的额外字段
+        for r in rows:
+            r.setdefault("ISCUR_SERVERPART", None)
+            r.setdefault("ImageLits", None)
+            r.setdefault("LoadBearing_Id", None)
+            r.setdefault("LoadBearing_State", None)
+            r.setdefault("SERVERPART_ADDRESS", None)
+            r.setdefault("SERVERPART_DISTANCE", None)
+            r.setdefault("STARTDATE", None)
+            r.setdefault("RegionInfo", None)
+            r.setdefault("tmwWeatherModel", None)
+            r.setdefault("weatherModel", None)
+            if "ServerpartInfo" not in r:
+                r["ServerpartInfo"] = {
+                    "SERVERPART_ID": r.get("SERVERPART_ID"),
+                    "RTSERVERPART_ID": None, "SERVERPART_ADDRESS": None,
+                    "SERVERPART_X": r.get("SERVERPART_X"), "SERVERPART_Y": r.get("SERVERPART_Y"),
+                    "SERVERPART_TEL": r.get("SERVERPART_TEL"),
+                    "SERVERPART_AREA": None, "SERVERPART_INFO": None, "SERVERPART_TARGET": None,
+                    "STARTDATE": None, "CENTERSTAKE_NUM": None, "EXPRESSWAY_NAME": None,
+                    "FLOORAREA": None, "BUSINESSAREA": None, "SHAREAREA": None,
+                    "BUSINESS_REGION": None, "MANAGERCOMPANY": None, "OWNEDCOMPANY": None,
+                    "SELLERCOUNT": None, "TAXPAYER_IDENTIFYCODE": None,
+                    "SEWAGEDISPOSAL_TYPE": None, "WATERINTAKE_TYPE": None,
+                }
+
         json_list = JsonListData.create(data_list=rows, total=len(rows),
                                         page_index=PageIndex or 1, page_size=PageSize or len(rows))
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        resp = json_list.model_dump()
+        resp["OtherData"] = None
+        return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartList 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -375,6 +411,34 @@ async def get_serverpart_info(
             result["HASCHARGE"] = any(float(r.get("LIVESTOCKPACKING", 0) or 0) > 0 for r in info_rows)
             result["HASGUESTROOM"] = any(float(r.get("POINTCONTROLCOUNT", 0) or 0) > 0 for r in info_rows)
             result["RegionInfo"] = info_rows
+
+        # 补全C#模型字段
+        result.setdefault("ISCUR_SERVERPART", None)
+        result.setdefault("ImageLits", None)
+        result.setdefault("LoadBearing_Id", None)
+        result.setdefault("LoadBearing_State", None)
+        result.setdefault("OPERATE_DATE", None)
+        result.setdefault("SERVERPART_DISTANCE", None)
+        result.setdefault("STARTDATE", None)
+        result.setdefault("tmwWeatherModel", None)
+        result.setdefault("weatherModel", None)
+
+        # RegionInfo子项补全字段
+        if "RegionInfo" in result and isinstance(result["RegionInfo"], list):
+            _ckm = {"data": None, "key": None, "name": None, "value": None}
+            for ri in result["RegionInfo"]:
+                ri.setdefault("SERVERPART_REGIONNAME", None)
+                ri.setdefault("SPRegionTypeId", None)
+                ri.setdefault("SPRegionTypeIndex", None)
+                ri.setdefault("ServerPartIndex", None)
+                ri.setdefault("TreeNodeName", None)
+                ri.setdefault("TreeNodePName", None)
+                ri.setdefault("ImgList", [_ckm])
+        else:
+            _ckm = {"data": None, "key": None, "name": None, "value": None}
+            result["RegionInfo"] = [{"SERVERPART_REGIONNAME": None, "SPRegionTypeId": None,
+                                      "SPRegionTypeIndex": None, "ServerPartIndex": None,
+                                      "TreeNodeName": None, "TreeNodePName": None, "ImgList": [_ckm]}]
 
         return Result.success(data=result, msg="查询成功")
     except Exception as ex:

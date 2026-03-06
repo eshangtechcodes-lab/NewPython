@@ -236,7 +236,39 @@ async def translate_sentence(
     """解析语义内容中的关键字信息"""
     try:
         logger.warning("TranslateSentence 暂未完整实现")
-        return Result.success(data={}, msg="查询成功")
+        _sp_info = {
+            "SERVERPART_ID": None, "RTSERVERPART_ID": None, "SERVERPART_ADDRESS": None,
+            "EXPRESSWAY_NAME": None, "SELLERCOUNT": None,
+            "SERVERPART_X": None, "SERVERPART_Y": None, "SERVERPART_TEL": None,
+            "STARTDATE": None, "SERVERPART_AREA": None, "FLOORAREA": None,
+            "BUSINESSAREA": None, "SHAREAREA": None,
+            "OWNEDCOMPANY": None, "MANAGERCOMPANY": None, "CENTERSTAKE_NUM": None,
+            "TAXPAYER_IDENTIFYCODE": None, "WATERINTAKE_TYPE": None,
+            "SEWAGEDISPOSAL_TYPE": None, "BUSINESS_REGION": None,
+            "SERVERPART_INFO": None, "SERVERPART_TARGET": None,
+        }
+        _sp = {
+            "SERVERPART_ID": None, "SERVERPART_NAME": None, "SERVERPART_INDEX": None,
+            "PROVINCE_CODE": None, "SERVERPART_CODE": None, "SERVERPART_TYPE": None,
+            "SPREGIONTYPE_ID": None, "SPREGIONTYPE_NAME": None, "SPREGIONTYPE_INDEX": None,
+            "STATISTICS_TYPE": None, "OWNERUNIT_ID": None, "OWNERUNIT_NAME": None,
+            "SERVERPART_ADDRESS": None, "SERVERPART_X": None, "SERVERPART_Y": None,
+            "STARTDATE": None, "SERVERPART_TEL": None, "OPERATE_DATE": None,
+            "HASMOTHER": None, "HASPILOTLOUNGE": None, "HASCHARGE": None, "HASGUESTROOM": None,
+            "SERVERPART_DISTANCE": None, "ISCUR_SERVERPART": None,
+            "ServerpartInfo": _sp_info,
+            "BrandId": None, "BrandName": None, "BusinessTradeId": None, "BusinessTradeName": None,
+        }
+        return Result.success(data={
+            "SentenceType": None, "AnalysisRuleId": None, "FormatRuleId": None,
+            "TriggerWords": None, "FormatTriggerWords": None,
+            "MultiServerpart": None, "StartDate": None, "EndDate": None,
+            "ChatContent": None, "ChatSupply": None, "ShowMapPoint": None,
+            "ServerpartInfoList": [_sp],
+            "RevenueList": None, "ShopRevenueList": None,
+            "ShopBrandList": None, "BayonetFlowList": None,
+            "HolidayType": None, "Expressway": None,
+        }, msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 

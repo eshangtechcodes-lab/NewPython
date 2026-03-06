@@ -78,7 +78,7 @@ def _build_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, prov
         "OwnerCity": city_sorted[0][0] if city_sorted else None,
         "OwnerProvince": prov_sorted[0][0] if prov_sorted else None,
         "Vehicle_Count": int(total_vc),
-        "OwnerCityList": city_list,
+        "OwnerCityList": city_list if city_list else [{"name": None, "value": None}],
         "OwnerProvinceList": prov_list,
     }
 
@@ -562,7 +562,21 @@ async def get_month_analysis(
     """获取月度车流分析数据"""
     try:
         logger.warning("GetMonthAnalysis 暂未完整实现")
-        return Result.success(data={}, msg="查询成功")
+        _nv = {"name": None, "value": None}
+        _item = {
+            "SPRegionType_Id": None, "SPRegionType_Name": None,
+            "Serverpart_ID": None, "Serverpart_Name": None,
+            "Statistics_Year": None, "Statistics_Month": None,
+            "Vehicle_Count": None, "SectionFlow_Count": None,
+            "MinVehicle_Count": None, "Entry_Rate": None,
+            "AvgVehicleAmount": None, "Stay_Times": None,
+            "RevenueAmount": None, "ShopRevenueAmount": None,
+            "RegionList": [_nv],
+        }
+        json_list = JsonListData.create(data_list=[_item], total=0)
+        resp = json_list.model_dump()
+        resp["OtherData"] = None
+        return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
@@ -728,8 +742,19 @@ async def get_bayonet_growth_analysis(
     """获取当日服务区车流量分析"""
     try:
         logger.warning("GetBayonetGrowthAnalysis 暂未完整实现")
-        json_list = JsonListData.create(data_list=[], total=0)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        _entry = {
+            "SPRegionType_Id": None, "SPRegionType_Index": None, "SPRegionType_Name": None,
+            "Serverpart_ID": None, "Serverpart_Index": None, "Serverpart_Name": None,
+            "Serverpart_Region": None,
+            "Vehicle_Count": None, "SectionFlow_Count": None,
+            "Entry_Rate": None, "Entry_GrowthRate": None,
+            "MinVehicle_Count": None, "MinVehicleEntry_Rate": None, "MinVehicleEntry_GrowthRate": None,
+            "MediumVehicle_Count": None, "MediumVehicleEntry_Rate": None, "MediumVehicleEntry_GrowthRate": None,
+            "LargeVehicle_Count": None, "LargeVehicleEntry_Rate": None, "LargeVehicleEntry_GrowthRate": None,
+        }
+        return Result.success(data={
+            "EntryList": [_entry], "GrowthList": None, "sumEntryCount": None,
+        }, msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
@@ -748,8 +773,13 @@ async def get_bayonet_compare(
     """获取服务区车流量同比分析"""
     try:
         logger.warning("GetBayonetCompare 暂未完整实现")
-        json_list = JsonListData.create(data_list=[], total=0)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        _ckm = {"data": None, "key": None, "name": None, "value": None}
+        return Result.success(data={
+            "curHoliday": None, "curHolidayDays": None,
+            "curList": [_ckm],
+            "compareHoliday": None, "compareHolidayDays": None,
+            "compareList": [_ckm],
+        }, msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
@@ -766,8 +796,13 @@ async def get_holiday_compare(
     """获取节日服务区平均入区流量对比数据"""
     try:
         logger.warning("GetHolidayCompare 暂未完整实现")
-        json_list = JsonListData.create(data_list=[], total=0)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        _ckm2 = {"data": None, "key": None, "name": None, "value": None}
+        return Result.success(data={
+            "curHoliday": None, "curHolidayDays": None,
+            "curList": [_ckm2],
+            "compareHoliday": None, "compareHolidayDays": None,
+            "compareList": [_ckm2],
+        }, msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
@@ -928,7 +963,23 @@ async def get_date_analysis(
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
-        resp["OtherData"] = []
+        _oth = {
+            "STATISTICS_DATE": None,
+            "ThisYearTotalSECTIONFLOW_NUM": None, "ThisYearTotalSERVERPART_FLOW": None,
+            "LastYearTotalSECTIONFLOW_NUM": None, "LastYearTotalSERVERPART_FLOW": None,
+            "ThisYearSouthEastSECTIONFLOW_NUM": None, "ThisYearSouthEastSERVERPART_FLOW": None,
+            "ThisYearNorthWestSECTIONFLOW_NUM": None, "ThisYearNorthWestSERVERPART_FLOW": None,
+            "LastYearSouthEastSECTIONFLOW_NUM": None, "LastYearSouthEastSERVERPART_FLOW": None,
+            "LastYearNorthWestSECTIONFLOW_NUM": None, "LastYearNorthWestSERVERPART_FLOW": None,
+            "ThisYearTotalANALOG": None, "ThisYearSouthEastANALOG": None, "ThisYearNorthWestANALOG": None,
+            "LastYearTotalANALOG": None, "LastYearSouthEastANALOG": None, "LastYearNorthWestANALOG": None,
+            "CurRevenueAmount": None, "CurRevenueAmount_A": None, "CurRevenueAmount_B": None,
+            "LyRevenueAmount": None, "LyRevenueAmount_A": None, "LyRevenueAmount_B": None,
+            "TotalDiffSECTIONFLOW_NUM": None, "TotalDiffSERVERPART_FLOW": None,
+            "SouthEastDiffSECTIONFLOW_NUM": None, "SouthEastDiffSERVERPART_FLOW": None,
+            "NorthWestDiffSECTIONFLOW_NUM": None, "NorthWestDiffSERVERPART_FLOW": None,
+        }
+        resp["OtherData"] = [_oth]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetDateAnalysis 查询失败: {ex}")
@@ -1214,8 +1265,8 @@ async def get_bayonet_owner_ah_tree_list(
                 "ServerPartName": sp_info.get("SERVERPART_NAME"),
                 "ProvinceName": None,
                 "CityName": None,
-                "SectionFlow": None,
-                "EntryRate": None,
+                "SectionFlow": {"total": None, "RegionA": None, "RegionB": None},
+                "EntryRate": {"total": None, "RegionA": None, "RegionB": None},
                 **counts,
             }
             if sf_total > 0:
@@ -1255,8 +1306,8 @@ async def get_bayonet_owner_ah_tree_list(
                 "ServerPartName": None,
                 "ProvinceName": None,
                 "CityName": None,
-                "SectionFlow": None,
-                "EntryRate": None,
+                "SectionFlow": {"total": None, "RegionA": None, "RegionB": None},
+                "EntryRate": {"total": None, "RegionA": None, "RegionB": None},
                 "EastLightDutyCount": east_light,
                 "EastMidSizeCount": east_mid,
                 "EastLargeCount": east_large,
