@@ -1120,6 +1120,10 @@ async def get_bayonet_owner_ah_tree_list(
                 elif "大" in vt:
                     if is_east: counts["EastLargeCount"] += vc
                     if is_west: counts["WestLargeCount"] += vc
+            # 添加计算字段(东+西合计)
+            counts["LightDutyTotalCount"] = counts["EastLightDutyCount"] + counts["WestLightDutyCount"]
+            counts["MidSizeTotalCount"] = counts["EastMidSizeCount"] + counts["WestMidSizeCount"]
+            counts["LargeTotalCount"] = counts["EastLargeCount"] + counts["WestLargeCount"]
             return counts
 
         # 4. 按服务区分组
@@ -1146,17 +1150,21 @@ async def get_bayonet_owner_ah_tree_list(
             sf_west = sum(int(r.get("SECTIONFLOW_NUM") or 0) for r in sf_rows if str(r.get("SERVERPART_REGION","")) in west_chars)
 
             node = {
+                "Index": 1,
                 "ServerPartLevel": 0,
-                "ServerPartId": sp_info.get("SERVERPART_ID"),
-                "ServerPartName": sp_info.get("SERVERPART_NAME"),
+                "SPRegionTypeIndex": sp_info.get("SPREGIONTYPE_INDEX"),
                 "SPRegionTypeId": sp_info.get("SPREGIONTYPE_ID"),
                 "SPRegionTypeNAME": sp_info.get("SPREGIONTYPE_NAME"),
-                "SPRegionTypeIndex": sp_info.get("SPREGIONTYPE_INDEX"),
-                **counts,
-                "SectionFlow": {"total": sf_total, "RegionA": sf_east, "RegionB": sf_west} if sf_total > 0 else None,
+                "ServerPartId": sp_info.get("SERVERPART_ID"),
+                "ServerPartName": sp_info.get("SERVERPART_NAME"),
+                "ProvinceName": None,
+                "CityName": None,
+                "SectionFlow": None,
                 "EntryRate": None,
+                **counts,
             }
             if sf_total > 0:
+                node["SectionFlow"] = {"total": sf_total, "RegionA": sf_east, "RegionB": sf_west}
                 entry_total = round(counts["TotalCount"] / sf_total * 100, 2) if sf_total > 0 else 0
                 east_vc = sum(int(r.get("VEHICLE_COUNT") or 0) for r in rows if str(r.get("SERVERPART_REGION","")) in east_chars)
                 west_vc = sum(int(r.get("VEHICLE_COUNT") or 0) for r in rows if str(r.get("SERVERPART_REGION","")) in west_chars)
@@ -1176,17 +1184,33 @@ async def get_bayonet_owner_ah_tree_list(
         center_list = []
         for (rt_id, rt_name), children in region_groups.items():
             children.sort(key=lambda x: x["node"]["TotalCount"] or 0, reverse=True)
+            east_light = sum(c["node"]["EastLightDutyCount"] for c in children)
+            east_mid = sum(c["node"]["EastMidSizeCount"] for c in children)
+            east_large = sum(c["node"]["EastLargeCount"] for c in children)
+            west_light = sum(c["node"]["WestLightDutyCount"] for c in children)
+            west_mid = sum(c["node"]["WestMidSizeCount"] for c in children)
+            west_large = sum(c["node"]["WestLargeCount"] for c in children)
             center_node = {
+                "Index": 1,
                 "ServerPartLevel": -1,
+                "SPRegionTypeIndex": children[0]["node"].get("SPRegionTypeIndex") if children else None,
                 "SPRegionTypeId": rt_id,
                 "SPRegionTypeNAME": rt_name,
-                "SPRegionTypeIndex": children[0]["node"].get("SPRegionTypeIndex") if children else None,
-                "EastLightDutyCount": sum(c["node"]["EastLightDutyCount"] for c in children),
-                "EastMidSizeCount": sum(c["node"]["EastMidSizeCount"] for c in children),
-                "EastLargeCount": sum(c["node"]["EastLargeCount"] for c in children),
-                "WestLightDutyCount": sum(c["node"]["WestLightDutyCount"] for c in children),
-                "WestMidSizeCount": sum(c["node"]["WestMidSizeCount"] for c in children),
-                "WestLargeCount": sum(c["node"]["WestLargeCount"] for c in children),
+                "ServerPartId": None,
+                "ServerPartName": None,
+                "ProvinceName": None,
+                "CityName": None,
+                "SectionFlow": None,
+                "EntryRate": None,
+                "EastLightDutyCount": east_light,
+                "EastMidSizeCount": east_mid,
+                "EastLargeCount": east_large,
+                "WestLightDutyCount": west_light,
+                "WestMidSizeCount": west_mid,
+                "WestLargeCount": west_large,
+                "LightDutyTotalCount": east_light + west_light,
+                "MidSizeTotalCount": east_mid + west_mid,
+                "LargeTotalCount": east_large + west_large,
                 "TotalCount": sum(c["node"]["TotalCount"] for c in children),
             }
             center_list.append({"node": center_node, "children": children})
