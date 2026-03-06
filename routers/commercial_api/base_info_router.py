@@ -406,13 +406,156 @@ async def get_server_info_tree(
                     ProvinceCode = int(header_pc)
                 except ValueError:
                     pass
+        ServerpartCodes = request.headers.get("ServerpartCodes", "")
         if not ServerpartIds:
-            ServerpartIds = request.headers.get("ServerpartCodes", "")
+            ServerpartIds = ""
         if ProvinceCode is None:
             return Result.fail(code=200, msg="查询失败，请传入正确的省份编码！")
 
-        logger.warning(f"GetServerInfoTree 复杂查询暂未完整实现")
-        json_list = JsonListData.create(data_list=[], total=0, page_index=1, page_size=0)
+        # 1. 根据 ServerpartCodes 解析出 ServerpartIds
+        if ServerpartCodes:
+            codes_in = ",".join([f"'{c.strip()}'" for c in ServerpartCodes.split(",") if c.strip()])
+            id_rows = db.execute_query(
+                f'SELECT LISTAGG(CAST("SERVERPART_ID" AS VARCHAR),\',\') WITHIN GROUP(ORDER BY "SERVERPART_ID") AS IDS FROM "T_SERVERPART" WHERE "SERVERPART_CODE" IN ({codes_in})')
+            if id_rows and id_rows[0].get("IDS"):
+                code_ids = id_rows[0]["IDS"]
+                if ServerpartIds:
+                    # 取交集
+                    set1 = set(code_ids.split(","))
+                    set2 = set(ServerpartIds.split(","))
+                    ServerpartIds = ",".join(set1 & set2)
+                else:
+                    ServerpartIds = code_ids
+        else:
+            # 没有 ServerpartCodes 权限直接返回空
+            json_list = JsonListData.create(data_list=[], total=0, page_index=1, page_size=0)
+            return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+        # 2. 构建服务区查询条件
+        where_parts = ["1=1"]
+        if SPRegionTypeId:
+            where_parts.append(f'"SPREGIONTYPE_ID" IN ({SPRegionTypeId})')
+        if ServerpartIds:
+            where_parts.append(f'"SERVERPART_ID" IN ({ServerpartIds})')
+        where_sql = " AND ".join(where_parts)
+
+        # 3. 查询服务区基本信息
+        sp_rows = db.execute_query(f'SELECT * FROM "T_SERVERPART" WHERE {where_sql}')
+        if not sp_rows:
+            json_list = JsonListData.create(data_list=[], total=0, page_index=1, page_size=0)
+            return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+        # 构建服务区ID → 信息的映射
+        sp_map = {}
+        for r in sp_rows:
+            sp_map[r.get("SERVERPART_ID")] = r
+        sp_id_list = ",".join([str(sid) for sid in sp_map.keys()])
+
+        # 4. 查询服务区详情信息（T_SERVERPARTINFO）
+        info_rows = db.execute_query(
+            f'SELECT * FROM "T_SERVERPARTINFO" WHERE "SERVERPART_ID" IN ({sp_id_list}) AND "SERVERPART_REGION" IS NOT NULL')
+
+        # 数值字段列表
+        int_fields = ["TOILETCOUNT", "SMALLPARKING", "PACKING", "TRUCKPACKING", "LONGPACKING",
+                       "DANPACKING", "LIVESTOCKPACKING", "DININGROOMCOUNT", "POINTCONTROLCOUNT",
+                       "DININGBXCOUNT", "MICROWAVEOVEN", "WASHERCOUNT", "SLEEPINGPODS",
+                       "REFUELINGGUN92", "REFUELINGGUN95", "REFUELINGGUN0",
+                       "STATEGRIDCHARGE", "LIAUTOCHARGE", "GACENERGYCHARGE", "OTHERCHARGE"]
+        short_fields = ["HASMOTHER", "HASPILOTLOUNGE", "HASPANTRY", "HASWIFI",
+                        "HASTHIRDTOILETS", "HASCHILD", "HASSHOWERROOM", "HASWATERROOM",
+                        "VEHICLEWATERFILLING", "HASBACKGROUNDRADIO", "HASMESSAGESEARCH"]
+        decimal_fields = ["GREENSPACEAREA", "FLOORAREA", "PARKINGAREA", "BUILDINGAREA"]
+
+        def safe_int(v):
+            if v is None: return None
+            try: return int(v)
+            except: return None
+
+        def safe_float(v):
+            if v is None: return None
+            try: return float(v)
+            except: return None
+
+        # 5. 构建区域详情列表（第三层节点）
+        info_nodes = []
+        for r in (info_rows or []):
+            sp_id = r.get("SERVERPART_ID")
+            sp = sp_map.get(sp_id, {})
+            node = {
+                "SERVERPART_ID": sp_id,
+                "TreeNodeName": r.get("SERVERPART_REGION", ""),
+                "TreeNodePName": sp.get("SERVERPART_NAME", ""),
+                "BUSINESSTYPE": str(r.get("BUSINESSTYPE", "") or ""),
+            }
+            for f in int_fields:
+                node[f] = safe_int(r.get(f))
+            for f in short_fields:
+                node[f] = safe_int(r.get(f))
+            for f in decimal_fields:
+                node[f] = safe_float(r.get(f))
+            info_nodes.append({"node": node, "children": []})
+
+        # 6. 按服务区分组汇总（第二层节点）
+        from collections import defaultdict
+        sp_groups = defaultdict(list)
+        for item in info_nodes:
+            sp_groups[item["node"]["SERVERPART_ID"]].append(item)
+
+        def sum_field(items, field):
+            vals = [it["node"].get(field) for it in items if it["node"].get(field) is not None]
+            return sum(vals) if vals else None
+
+        sp_nesting = []
+        for sp_id, children in sp_groups.items():
+            sp = sp_map.get(sp_id, {})
+            node = {
+                "SERVERPART_ID": sp_id,
+                "TreeNodeName": sp.get("SERVERPART_NAME", ""),
+                "TreeNodePName": sp.get("SPREGIONTYPE_NAME", ""),
+                "SPRegionTypeId": sp.get("SPREGIONTYPE_ID"),
+                "ServerPartIndex": safe_int(sp.get("SERVERPART_INDEX")),
+            }
+            for f in int_fields + short_fields:
+                node[f] = sum_field(children, f)
+            for f in decimal_fields:
+                node[f] = sum_field(children, f)
+            sorted_children = sorted(children, key=lambda x: str(x["node"].get("TreeNodeName", "")))
+            sp_nesting.append({"node": node, "children": sorted_children})
+
+        # 7. 按片区分组汇总（第一层节点）
+        region_groups = defaultdict(list)
+        no_region = []
+        for item in sp_nesting:
+            rid = item["node"].get("SPRegionTypeId")
+            if rid is not None:
+                region_groups[rid].append(item)
+            else:
+                no_region.append(item)
+
+        result_list = []
+        for rid, sp_items in region_groups.items():
+            sp = None
+            for r in sp_rows:
+                if r.get("SPREGIONTYPE_ID") == rid:
+                    sp = r
+                    break
+            node = {
+                "TreeNodeName": sp.get("SPREGIONTYPE_NAME", "") if sp else "",
+                "TreeNodePName": "",
+                "SPRegionTypeId": rid,
+                "SPRegionTypeIndex": safe_int(sp.get("SPREGIONTYPE_INDEX")) if sp else None,
+            }
+            for f in int_fields + short_fields:
+                node[f] = sum_field(sp_items, f)
+            for f in decimal_fields:
+                node[f] = sum_field(sp_items, f)
+            sorted_sp = sorted(sp_items, key=lambda x: x["node"].get("ServerPartIndex") or 0)
+            result_list.append({"node": node, "children": sorted_sp})
+
+        result_list.sort(key=lambda x: x["node"].get("SPRegionTypeIndex") or 0)
+        result_list.extend(no_region)
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_index=1, page_size=0)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerInfoTree 查询失败: {ex}")
