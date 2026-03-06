@@ -356,8 +356,8 @@
     "route": "/BigData/GetBayonetOwnerAHTreeList",
     "ctrl": "BigData",
     "old": "C=100,T=1",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=1",
+    "result": "PASS"
   },
   {
     "idx": 41,
@@ -365,8 +365,8 @@
     "route": "/BigData/GetProvinceVehicleTreeList",
     "ctrl": "BigData",
     "old": "C=100,T=1",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=1",
+    "result": "PASS"
   },
   {
     "idx": 42,
@@ -950,8 +950,8 @@
     "route": "/Revenue/GetServerpartINCAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=1",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=1",
+    "result": "PASS"
   },
   {
     "idx": 107,
