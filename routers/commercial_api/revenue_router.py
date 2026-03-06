@@ -44,7 +44,27 @@ async def get_summary_revenue(
 ):
     """获取营收推送汇总数据"""
     logger.warning("GetSummaryRevenue 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    _push = {
+        "AccountRoyaltyQOQ": None, "BudgetRevenue": None,
+        "BusinessBrand_Name": None, "BusinessTrade_Name": None,
+        "BusinessType": None, "Business_TypeName": None,
+        "CashPay": None, "CurAccountRoyalty": None,
+        "Different_Price_Less": None, "Different_Price_More": None,
+        "MobilePayment": None, "RevenueQOQ": None, "RevenueYOY": None,
+        "Revenue_Include": None, "Revenue_Upload": None,
+        "SPRegionType_Name": None, "Serverpart_ID": None, "Serverpart_Name": None,
+        "ShopName": None, "ShopRegionName": None, "Statistics_Date": None,
+        "TicketCount": None, "TotalCount": None, "TotalOffAmount": None,
+        "TotalShopCount": None, "UnUpLoadShopList": None,
+        "YearAccountRoyalty": None, "YearAccountRoyaltyYOY": None,
+        "YearRevenueAmount": None, "YearRevenueYOY": None,
+    }
+    return Result.success(data={
+        "BusinessTradeList": [], "BusinessTypeList": [],
+        "GrowthRate": None, "MonthRevenueAmount": None,
+        "RevenuePushModel": _push,
+        "SPRegionList": [], "YearRevenueAmount": None,
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetSummaryRevenueMonth")
@@ -57,7 +77,27 @@ async def get_summary_revenue_month(
 ):
     """获取月度营收推送汇总数据"""
     logger.warning("GetSummaryRevenueMonth 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    _month = {
+        "AccountRoyaltyQOQ": None, "BudgetRevenue": None,
+        "BusinessBrand_Name": None, "BusinessTrade_Name": None,
+        "BusinessType": None, "Business_TypeName": None,
+        "CashPay": None,
+        "CurAccountRoyalty": {"Royalty_Price": None, "Royalty_Theory": None, "SubRoyalty_Price": None, "SubRoyalty_Theory": None},
+        "Different_Price_Less": None, "Different_Price_More": None,
+        "MobilePayment": None, "RevenueQOQ": None, "RevenueYOY": None,
+        "Revenue_Include": None, "Revenue_Upload": None,
+        "SPRegionType_Name": None, "Serverpart_ID": None, "Serverpart_Name": None,
+        "ShopName": None, "ShopRegionName": None, "Statistics_Date": None,
+        "TicketCount": None, "TotalCount": None, "TotalOffAmount": None,
+        "TotalShopCount": None, "UnUpLoadShopList": None,
+        "YearAccountRoyalty": None, "YearAccountRoyaltyYOY": None,
+        "YearRevenueAmount": None, "YearRevenueYOY": None,
+    }
+    return Result.success(data={
+        "BusinessTradeList": None, "BusinessTypeList": [],
+        "GrowthRate": None, "MonthRevenueModel": _month,
+        "RevenuePushModel": None, "SPRegionList": None,
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetWechatPushSalesList")
@@ -162,8 +202,13 @@ async def get_serverpart_brand(
 ):
     """获取服务区品牌营收"""
     logger.warning("GetServerpartBrand 暂未完整实现")
-    json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    return Result.success(data={
+        "Revenue_Amount": None,
+        "Serverpart_Id": Serverpart_Id,
+        "Serverpart_Name": None,
+        "listBusinessModel": [],
+        "listCurBusinessModel": [],
+    }, msg="查询成功")
 
 
 # ===== 结账数据 =====
@@ -176,8 +221,14 @@ async def get_serverpart_end_account_list(
 ):
     """查询服务区结账数据列表"""
     logger.warning("GetServerpartEndAccountList 暂未完整实现")
-    json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    return Result.success(data={
+        "Revenue_Amount": None,
+        "Serverpart_Id": Serverpart_ID,
+        "Serverpart_Name": None,
+        "ShopEndaccountList": [],
+        "TotalShopCount": 0,
+        "UploadShopCount": 0,
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetShopEndAccountList")
@@ -190,8 +241,22 @@ async def get_shop_end_account_list(
 ):
     """查询门店结账数据列表"""
     logger.warning("GetShopEndAccountList 暂未完整实现")
-    json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    return Result.success(data={
+        "BrandType_Name": None,
+        "Brand_ICO": None,
+        "Brand_Id": None,
+        "Brand_Name": None,
+        "Business_Trade": None,
+        "Business_TradeICO": None,
+        "Business_TradeId": None,
+        "Bussiness_Name": None,
+        "Bussiness_State": None,
+        "Bussiness_Time": None,
+        "CurRevenue": None,
+        "Revenue_Amount": None,
+        "ServerpartShop_Id": None,
+        "ShopEndaccountList": [],
+    }, msg="查询成功")
 
 
 # ===== 预算费用 =====
@@ -298,7 +363,14 @@ async def get_mobile_share(
 ):
     """获取移动支付分账数据"""
     logger.warning("GetMobileShare 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "Account_Price": None, "MonthRoyalty_Price": None,
+        "RoyaltyGrowth_Price": None, "Royalty_Price": None,
+        "Serverpart_ID": None, "Serverpart_Name": None,
+        "ShareShopGrowth_Count": None, "ShareShop_Count": None,
+        "Statistics_Date": None, "SubRoyalty_Price": None,
+        "Ticket_Fee": None, "Ticket_Price": None,
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetMallDeliver")
@@ -312,7 +384,12 @@ async def get_mall_deliver(
 ):
     """获取商城配送数据"""
     logger.warning("GetMallDeliver 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "DeliverBillGrowth_Count": None, "DeliverBill_Count": None,
+        "DeliverGrowth_Price": None, "Deliver_Price": None,
+        "Deliver_Rate": None, "MonthDeliver_Price": None,
+        "Statistics_Date": None,
+    }, msg="查询成功")
 
 
 # ===== 客单交易分析 =====
@@ -327,7 +404,17 @@ async def get_transaction_analysis(
 ):
     """获取服务区客单交易分析"""
     logger.warning("GetTransactionAnalysis 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "AvgRevenueAmount": None, "AvgTicketPrice": None, "AvgVehicleAmount": None,
+        "ConvertRate": None, "ConvertProvinceRate": None,
+        "MonthAvgTicketPrice": None, "MonthVehicleAmount": None, "MonthVehicleCount": None,
+        "ProvinceAvgTicketPrice": None, "ProvinceRevenueAmount": None,
+        "RevenueAmount": None, "SPRegionType_Name": None,
+        "Serverpart_ID": None, "Serverpart_Name": None,
+        "Statistics_Date": None, "TicketAvgCount": None, "TicketCount": None,
+        "TicketProvinceCount": None, "TotalAvgCount": None, "TotalCount": None,
+        "TotalProvinceCount": None, "VehicleCount": None, "transactionLevel": None,
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetTransactionTimeAnalysis")
@@ -355,7 +442,10 @@ async def get_transaction_convert(
 ):
     """获取消费转化对比分析"""
     logger.warning("GetTransactionConvert 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "BayonetList": {"data": None, "name": None, "value": None, "CommonScatterList": None},
+        "TransactionList": {"data": None, "name": None, "value": None, "CommonScatterList": None},
+    }, msg="查询成功")
 
 
 # ===== 业态分析 =====
@@ -375,7 +465,11 @@ async def get_business_trade_revenue(
     if not ProvinceCode:
         ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessTradeRevenue 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "Abundant": None, "Rigid_Demand": None,
+        "SPRegionType_Name": None, "Serverpart_ID": None, "Serverpart_Name": None,
+        "BusinessTradeRank": [],
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetBusinessTradeLevel")
@@ -391,7 +485,9 @@ async def get_business_trade_level(
     if not ProvinceCode:
         ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessTradeLevel 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "ColumnList": [], "legend": None,
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetBusinessBrandLevel")
@@ -407,7 +503,9 @@ async def get_business_brand_level(
     if not ProvinceCode:
         ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessBrandLevel 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "ColumnList": [], "legend": None,
+    }, msg="查询成功")
 
 
 # ===== 营收趋势 =====
@@ -426,7 +524,8 @@ async def get_revenue_trend_get(
     if not ProvinceCode:
         ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetRevenueTrend GET 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    json_list = JsonListData.create(data_list=[], total=0)
+    return Result.success(data=json_list.model_dump(), msg="查询成功")
 
 
 # ===== 经营报表 =====
@@ -541,8 +640,14 @@ async def get_revenue_report(
             "TotalOffAmount": total_off,
             "Different_Price_Less": 0,
             "Different_Price_More": 0,
+            "MobilePayment": None,
             "Province_InsideAmount": total_revenue,
+            "Province_ExternalAmount": None,
+            "Revenue_AmountN": None,
+            "Revenue_AmountS": None,
+            "SearchResult": None,
             "revenueRegionModels": region_list,
+            "revenueInsideRegionModels": None,
         }
 
         return Result.success(data=result, msg="查询成功")
@@ -564,7 +669,12 @@ async def get_revenue_report_detail(
 ):
     """获取服务区经营报表详情"""
     logger.warning("GetRevenueReportDetil 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "Serverpart_N": None, "Serverpart_Name": None,
+        "Serverpart_Revenue": None, "Serverpart_RevenueN": None, "Serverpart_RevenueS": None,
+        "Serverpart_S": None,
+        "ShopList": [],
+    }, msg="查询成功")
 
 
 # ===== 畅销商品 =====
@@ -578,7 +688,10 @@ async def get_salable_commodity(
 ):
     """获取商超畅销商品"""
     logger.warning("GetSalableCommodity 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "SalableCommodity": None, "SalableCommodityList": [],
+        "UnSalableCommodity": None, "UnSalableCommodityList": [],
+    }, msg="查询成功")
 
 
 # ===== 排行/同比 =====
@@ -593,7 +706,9 @@ async def get_sp_revenue_rank(
     """获取近日服务区营收排行"""
     logger.warning("GetSPRevenueRank 暂未完整实现")
     json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    resp = json_list.model_dump()
+    resp["OtherData"] = None
+    return Result.success(data=resp, msg="查询成功")
 
 
 @router.get("/Revenue/GetRevenueYOY")
@@ -609,7 +724,10 @@ async def get_revenue_yoy(
 ):
     """获取每日营收同比数据"""
     logger.warning("GetRevenueYOY 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "curHoliday": None, "curHolidayDays": None, "curRevenue": None, "curList": [],
+        "compareHoliday": None, "compareHolidayDays": None, "compareRevenue": None, "compareList": [],
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetHolidayCompare")
@@ -625,7 +743,10 @@ async def get_holiday_compare(
 ):
     """获取节日营收同比数据"""
     logger.warning("GetHolidayCompare 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "curHoliday": None, "curHolidayDays": None, "curRevenue": None, "curList": [],
+        "compareHoliday": None, "compareHolidayDays": None, "compareRevenue": None, "compareList": [],
+    }, msg="查询成功")
 
 
 # ===== 实时交易 =====
@@ -640,7 +761,15 @@ async def get_account_receivable(
 ):
     """获取营收统计明细数据"""
     logger.warning("GetAccountReceivable 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "CommissionList": [], "CommissionRatio": None,
+        "MerchantList": {"AcountList": [], "EntryList": [], "ReceivableList": []},
+        "MerchantRevenue": None,
+        "OwnerList": {"AcountList": [], "EntryList": [], "ReceivableList": []},
+        "OwnerRevenue": None,
+        "ProjectCount": None, "ProjectCountList": [],
+        "ProjectRatioList": [], "RevenueRatioList": [],
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetCurRevenue")
@@ -652,7 +781,11 @@ async def get_cur_revenue(
 ):
     """获取实时营收交易数据"""
     logger.warning("GetCurRevenue 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.success(data={
+        "AddRevenueAmount": None, "AddTicketCount": None, "AddTotalCount": None,
+        "AnnualRevenue": None, "CurAvgSellAmount": None, "CurAvgTicketAmount": None,
+        "CurRevenueAmount": None, "CurTicketCount": None, "CurTotalCount": None,
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetShopCurRevenue")

@@ -338,7 +338,7 @@
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
     "old": "C=100,T=32",
-    "new": "C=100,T=33",
+    "new": "C=100,T=34",
     "result": "DIFF"
   },
   {
