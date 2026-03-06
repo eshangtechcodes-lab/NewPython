@@ -256,6 +256,8 @@ async def translate_sentence(
             "STARTDATE": None, "SERVERPART_TEL": None, "OPERATE_DATE": None,
             "HASMOTHER": None, "HASPILOTLOUNGE": None, "HASCHARGE": None, "HASGUESTROOM": None,
             "SERVERPART_DISTANCE": None, "ISCUR_SERVERPART": None,
+            "ImageLits": None, "LoadBearing_Id": None, "LoadBearing_State": None,
+            "RegionInfo": None, "tmwWeatherModel": None, "weatherModel": None,
             "ServerpartInfo": _sp_info,
             "BrandId": None, "BrandName": None, "BusinessTradeId": None, "BusinessTradeName": None,
         }
@@ -263,11 +265,19 @@ async def translate_sentence(
             "SentenceType": None, "AnalysisRuleId": None, "FormatRuleId": None,
             "TriggerWords": None, "FormatTriggerWords": None,
             "MultiServerpart": None, "StartDate": None, "EndDate": None,
+            "StartDateYOY": None, "EndDateYOY": None, "StartDateQOQ": None, "EndDateQOQ": None,
             "ChatContent": None, "ChatSupply": None, "ShowMapPoint": None,
             "ServerpartInfoList": [_sp],
             "RevenueList": None, "ShopRevenueList": None,
             "ShopBrandList": None, "BayonetFlowList": None,
-            "HolidayType": None, "Expressway": None,
+            "HolidayType": None, "HolidayName": None, "Expressway": None,
+            "RevenueAnalysis": None, "SearchResultList": None,
+            "ServerpartId": None, "ServerpartName": None,
+            "SPRegionId": None, "SPRegionName": None,
+            "ShopName": None, "MerchantId": None, "MerchantName": None,
+            "BrandId": None, "BrandName": None,
+            "BusinessTradeId": None, "BusinessTradeName": None,
+            "BusinessTypeName": None, "BusinessTypeValue": None,
         }, msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")

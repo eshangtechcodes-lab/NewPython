@@ -216,10 +216,11 @@ async def get_brand_analysis(
         logger.warning(f"GetBrandAnalysis 复杂查询暂未完整实现")
         _shop_brand = {
             "Brand_Id": None, "Brand_Name": None, "BrandType_Name": None, "Brand_ICO": None,
-            "ServerpartShop_Id": None, "Bussiness_Time": None,
+            "ServerpartShop_Id": None, "Bussiness_Time": None, "Bussiness_Name": None, "Bussiness_State": None,
             "CurRevenue": None, "Revenue_Amount": None,
             "BrandTrade": None, "BrandTradeName": None, "BrandTradeType": None,
             "BrandProject": None, "BrandProjectName": None,
+            "Business_Trade": None, "Business_TradeICO": None, "Business_TradeId": None,
             "ShopEndaccountList": None,
         }
         data = {"BrandTag": "", "ShopBrandList": [_shop_brand]}

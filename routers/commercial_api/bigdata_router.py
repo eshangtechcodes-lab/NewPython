@@ -101,10 +101,13 @@ def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_
                 cn = r.get("CITY_NAME") or ""
                 p_cities[cn] = p_cities.get(cn, 0) + float(r.get("VEHICLE_COUNT") or 0)
         city_sorted = sorted(p_cities.items(), key=lambda x: x[1], reverse=True)[:city_top]
+        _cities = [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted]
+        if not _cities:
+            _cities = [{"name": None, "value": None}]
         prov_list.append({
             "name": pn,
             "value": str(int(pv)),
-            "OwnerCityList": [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted],
+            "OwnerCityList": _cities,
         })
 
     total_vc = sum(float(r.get("VEHICLE_COUNT") or 0) for r in prov_rows)
