@@ -230,8 +230,8 @@
     "route": "/Revenue/GetProvinceAvgBayonetAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=3",
-    "new": "C=100",
-    "result": "PASS"
+    "new": "C=100,T=0",
+    "result": "DIFF"
   },
   {
     "idx": 27,
@@ -248,8 +248,8 @@
     "route": "/BigData/GetMonthAnalysis",
     "ctrl": "BigData",
     "old": "C=100,T=2",
-    "new": "C=100",
-    "result": "PASS"
+    "new": "C=100,T=0",
+    "result": "DIFF"
   },
   {
     "idx": 29,
@@ -284,7 +284,7 @@
     "route": "/BigData/GetBayonetGrowthAnalysis",
     "ctrl": "BigData",
     "old": "C=100",
-    "new": "C=100,T=0",
+    "new": "C=100",
     "result": "PASS"
   },
   {
@@ -293,7 +293,7 @@
     "route": "/BigData/GetBayonetCompare",
     "ctrl": "BigData",
     "old": "C=100",
-    "new": "C=100,T=0",
+    "new": "C=100",
     "result": "PASS"
   },
   {
@@ -302,7 +302,7 @@
     "route": "/BigData/GetHolidayCompare",
     "ctrl": "BigData",
     "old": "C=100",
-    "new": "C=100,T=0",
+    "new": "C=100",
     "result": "PASS"
   },
   {
@@ -337,9 +337,9 @@
     "method": "POST",
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
-    "old": "C=100,T=32",
-    "new": "C=100,T=34",
-    "result": "DIFF"
+    "old": "C=100,T=35",
+    "new": "C=100,T=35",
+    "result": "PASS"
   },
   {
     "idx": 39,
@@ -509,7 +509,7 @@
     "route": "/Customer/GetCustomerSaleRatio",
     "ctrl": "Customer",
     "old": "C=100",
-    "new": "C=100,T=0",
+    "new": "C=100",
     "result": "PASS"
   },
   {
@@ -968,8 +968,8 @@
     "route": "/Revenue/GetMonthlyBusinessAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=6",
-    "new": "C=100",
-    "result": "PASS"
+    "new": "C=100,T=0",
+    "result": "DIFF"
   },
   {
     "idx": 109,
@@ -995,8 +995,8 @@
     "route": "/Revenue/GetHolidayRevenueRatio",
     "ctrl": "Revenue",
     "old": "C=100,T=2",
-    "new": "C=100",
-    "result": "PASS"
+    "new": "C=100,T=0",
+    "result": "DIFF"
   },
   {
     "idx": 112,

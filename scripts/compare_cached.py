@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Step 2: 基于缓存的快速对比
-读取旧 API 基线缓存 + 实时调用新 API → 秒级完成全量对比
+Step 2: 新旧API实时对比
+实时调用旧API + 实时调用新API → 全量对比
 
 用法: python scripts/compare_cached.py
 """
@@ -12,7 +12,9 @@ import os
 import re
 import sys
 
+OLD = "http://127.0.0.1:8900/CommercialApi"
 NEW = "http://127.0.0.1:8080/CommercialApi"
+HEADERS = {"ProvinceCode": "340000"}
 TIMEOUT = 15
 BASELINE_FILE = "scripts/test_results/baseline_cache.json"
 
@@ -34,14 +36,14 @@ def extract_routes():
     return routes
 
 
-def call_new(method, route, params):
-    """调用新API"""
-    url = NEW + route
+def call_api(base_url, method, route, params):
+    """调用API"""
+    url = base_url + route
     try:
         if method == "GET":
-            r = requests.get(url, params=params, timeout=TIMEOUT)
+            r = requests.get(url, params=params, headers=HEADERS, timeout=TIMEOUT)
         else:
-            r = requests.post(url, json=params, timeout=TIMEOUT)
+            r = requests.post(url, json=params, headers=HEADERS, timeout=TIMEOUT)
         if r.status_code != 200:
             return r.status_code, {}
         try:
@@ -109,24 +111,23 @@ def deep_compare(old_data, new_data):
 
 
 def main():
-    # 加载基线缓存
+    # 加载参数配置（从基线文件获取测试参数）
     if not os.path.exists(BASELINE_FILE):
-        print(f"❌ 基线缓存文件不存在: {BASELINE_FILE}")
+        print(f"❌ 基线参数文件不存在: {BASELINE_FILE}")
         print(f"   请先运行: python scripts/baseline_collect.py")
         return
     
     with open(BASELINE_FILE, "r", encoding="utf-8") as f:
         cache = json.load(f)
     
-    meta = cache["meta"]
     baseline = cache["results"]
     
     routes = extract_routes()
     total = len(routes)
     
     print(f"\n{'='*120}")
-    print(f"  快速对比（旧API使用缓存，新API实时调用）")
-    print(f"  缓存采集时间: {meta['collect_time']}  |  缓存接口数: {meta['total_routes']}")
+    print(f"  实时对比（新旧API均实时调用）")
+    print(f"  旧 API: {OLD}")
     print(f"  新 API: {NEW}  |  当前路由数: {total}")
     print(f"{'='*120}\n")
     
@@ -141,25 +142,24 @@ def main():
         parts = route.split("/")
         ctrl = parts[1] if len(parts) > 1 else "?"
         
-        # 从缓存读取旧API结果
         old_entry = baseline.get(key)
         if old_entry is None:
-            # 缓存中没有的路由（可能是新增的）
-            sys.stdout.write(f"[{i:3d}/{total}] {method:4s} {route:55s} {'(无缓存)':18s} ")
-            params_new = {"ProvinceCode": "340000"}  # 默认参数
-            ns_code, nd = call_new(method, route, params_new)
+            # 基线中没有参数的路由（可能是新增的）
+            sys.stdout.write(f"[{i:3d}/{total}] {method:4s} {route:55s} {'(无参数)':18s} ")
+            params_default = {"ProvinceCode": "340000"}
+            ns_code, nd = call_api(NEW, method, route, params_default)
             ni = info_str(ns_code, nd)
             result = "NEW_ONLY"
             print(f"{ni:18s} [🆕]NEW_ONLY")
         else:
-            os_code = old_entry["http_status"]
-            od = old_entry["response"] or {}
             params = old_entry["params"]
             
+            # 实时调用旧API
+            os_code, od = call_api(OLD, method, route, params)
             oi = info_str(os_code, od)
             
             # 实时调用新API
-            ns_code, nd = call_new(method, route, params)
+            ns_code, nd = call_api(NEW, method, route, params)
             ni = info_str(ns_code, nd)
             
             # 判定结果
@@ -207,7 +207,7 @@ def main():
     # 汇总
     print(f"\n{'='*120}")
     total_tested = sum(stats.values())
-    print(f"  对比完成！耗时: {elapsed}s（旧API读缓存，新API实时调用）")
+    print(f"  对比完成！耗时: {elapsed}s（新旧API均为实时调用）")
     print(f"  ✅ PASS={stats.get('PASS',0)}/{total_tested}  ❌ DIFF={stats.get('DIFF',0)}  "
           f"⏭️ SKIP={stats.get('SKIP',0)}  🆕 NEW_ONLY={stats.get('NEW_ONLY',0)}  "
           f"⚠️ WARN={stats.get('WARN',0)}")
