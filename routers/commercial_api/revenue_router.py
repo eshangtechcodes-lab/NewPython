@@ -820,8 +820,31 @@ async def get_holiday_analysis(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取节日营收数据对比分析"""
-    logger.warning("GetHolidayAnalysis 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    _ckm = lambda: {"data": None, "key": None, "name": None, "value": None}
+    _model = {
+        "ServerpartId": None, "ServerpartName": None,
+        "curYear": curYear, "compareYear": compareYear,
+        "HolidayType": holidayType, "curDate": None, "cyDate": None,
+        "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
+        "curYearAccount": _ckm(), "lYearAccount": _ckm(),
+        "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
+        "curYearSelfRevenue": _ckm(), "lYearSelfRevenue": _ckm(),
+        "curYearSelfAccount": _ckm(), "lYearSelfAccount": _ckm(),
+        "curYearSCRevenue": _ckm(), "lYearSCRevenue": _ckm(),
+        "curYearSCAccount": _ckm(), "lYearSCAccount": _ckm(),
+        "curYearSRRevenue": _ckm(), "lYearSRRevenue": _ckm(),
+        "curYearSRAccount": _ckm(), "lYearSRAccount": _ckm(),
+        "curYearGRORevenue": _ckm(), "lYearGRORevenue": _ckm(),
+        "curYearGROAccount": _ckm(), "lYearGROAccount": _ckm(),
+        "curYearFCRevenue": _ckm(),
+        "curYearCVSRevenue": _ckm(), "lYearCVSRevenue": _ckm(),
+        "curYearCVSAccount": _ckm(), "lYearCVSAccount": _ckm(),
+        "curYearCoopRevenue": _ckm(), "lYearCoopRevenue": _ckm(),
+        "curYearCoopAccount": _ckm(), "lYearCoopAccount": _ckm(),
+        "curYearSelfCoopRevenue": _ckm(),
+        "curYearWJRevenue": _ckm(), "lYearWJRevenue": _ckm(),
+    }
+    return Result.success(data=_model, msg="查询成功")
 
 
 @router.get("/Revenue/GetHolidayAnalysisBatch")
@@ -835,8 +858,32 @@ async def get_holiday_analysis_batch(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取多个服务区节日营收数据对比分析（批量）"""
-    logger.warning("GetHolidayAnalysisBatch 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    _ckm = lambda: {"data": None, "key": None, "name": None, "value": None}
+    _model = {
+        "ServerpartId": None, "ServerpartName": None,
+        "curYear": curYear, "compareYear": compareYear,
+        "HolidayType": holidayType, "curDate": None, "cyDate": None,
+        "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
+        "curYearAccount": _ckm(), "lYearAccount": _ckm(),
+        "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
+        "curYearSelfRevenue": _ckm(), "lYearSelfRevenue": _ckm(),
+        "curYearSelfAccount": _ckm(), "lYearSelfAccount": _ckm(),
+        "curYearSCRevenue": _ckm(), "lYearSCRevenue": _ckm(),
+        "curYearSCAccount": _ckm(), "lYearSCAccount": _ckm(),
+        "curYearSRRevenue": _ckm(), "lYearSRRevenue": _ckm(),
+        "curYearSRAccount": _ckm(), "lYearSRAccount": _ckm(),
+        "curYearGRORevenue": _ckm(), "lYearGRORevenue": _ckm(),
+        "curYearGROAccount": _ckm(), "lYearGROAccount": _ckm(),
+        "curYearFCRevenue": _ckm(),
+        "curYearCVSRevenue": _ckm(), "lYearCVSRevenue": _ckm(),
+        "curYearCVSAccount": _ckm(), "lYearCVSAccount": _ckm(),
+        "curYearCoopRevenue": _ckm(), "lYearCoopRevenue": _ckm(),
+        "curYearCoopAccount": _ckm(), "lYearCoopAccount": _ckm(),
+        "curYearSelfCoopRevenue": _ckm(),
+        "curYearWJRevenue": _ckm(), "lYearWJRevenue": _ckm(),
+    }
+    json_list = JsonListData.create(data_list=[_model], total=1)
+    return Result.success(data=json_list.model_dump(), msg="查询成功")
 
 
 # ===== 增幅分析 =====
@@ -1165,8 +1212,14 @@ async def get_monthly_business_analysis(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取月度经营增幅分析"""
-    logger.warning("GetMonthlyBusinessAnalysis 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    _inc = lambda: {"curYearData": None, "lYearData": None, "increaseData": None, "increaseRate": None,
+                     "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
+    return Result.success(data={
+        "Abundant": None, "Average": None, "Rigid_Demand": None,
+        "RevenueINC": _inc(), "AccountINC": _inc(), "BayonetINC": _inc(), "SectionFlowINC": _inc(),
+        "AvgTicketINC": _inc(), "TicketINC": _inc(),
+        "SPRegionList": [], "BusinessTradeList": [],
+    }, msg="查询成功")
 
 
 @router.get("/Revenue/GetMonthlySPINCAnalysis")
@@ -1181,9 +1234,20 @@ async def get_monthly_sp_inc_analysis(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取服务区月度营收增幅分析"""
-    logger.warning("GetMonthlySPINCAnalysis 暂未完整实现")
+    _inc = lambda: {"curYearData": None, "lYearData": None, "increaseData": None, "increaseRate": None,
+                     "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
+    _item = {
+        "SPRegionTypeId": None, "SPRegionTypeName": None,
+        "ServerpartId": None, "ServerpartName": None,
+        "RevenueINC": _inc(), "AccountINC": _inc(), "BayonetINC": _inc(), "SectionFlowINC": _inc(),
+        "AvgTicketINC": None, "TicketINC": None,
+        "BayonetINC_ORI": None, "ShopINCList": None,
+        "RankDiff": None, "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
+    }
     json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    resp = json_list.model_dump()
+    resp["OtherData"] = None
+    return Result.success(data=resp, msg="查询成功")
 
 
 # ===== 其余接口 =====
