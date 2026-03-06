@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.get("/BusinessProcess/GetBusinessProcessList")
 async def get_business_process_list(
-    MembershipId: int = Query(..., description="会员内码"),
+    MembershipId: Optional[int] = Query(None, description="会员内码"),
     OperationType: Optional[str] = Query(None, description="业务类型"),
     BusinessProcessState: Optional[str] = Query("", description="流程状态"),
     StartDate: Optional[str] = Query("", description="查询开始时间"),

@@ -18,8 +18,8 @@ router = APIRouter()
 # ===== 每日营收推送 =====
 @router.get("/Revenue/GetRevenuePushList")
 async def get_revenue_push_list(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     SPRegionType_ID: Optional[str] = Query("", description="区域内码"),
     Revenue_Include: int = Query(1, description="是否纳入营收(0否1是)"),
@@ -33,9 +33,9 @@ async def get_revenue_push_list(
 
 @router.get("/Revenue/GetSummaryRevenue")
 async def get_summary_revenue(
-    pushProvinceCode: str = Query(..., description="推送省份"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
     Statistics_StartDate: Optional[str] = Query("", description="统计开始日期"),
-    Statistics_Date: str = Query(..., description="统计结束日期"),
+    Statistics_Date: Optional[str] = Query("", description="统计结束日期"),
     SPRegionType_ID: Optional[str] = Query("", description="区域内码"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     ShowCompareRate: bool = Query(False, description="是否计算增长率"),
@@ -49,8 +49,8 @@ async def get_summary_revenue(
 
 @router.get("/Revenue/GetSummaryRevenueMonth")
 async def get_summary_revenue_month(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    StatisticsMonth: str = Query(..., description="统计月份"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    StatisticsMonth: Optional[str] = Query(None, description="统计月份"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
     SolidType: int = Query(0, description="是否执行固化操作"),
     db: DatabaseHelper = Depends(get_db)
@@ -62,8 +62,8 @@ async def get_summary_revenue_month(
 
 @router.get("/Revenue/GetWechatPushSalesList")
 async def get_wechat_push_sales_list(
-    pushProvinceCode: str = Query(..., description="推送省份编码"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份编码"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     RankNum: int = Query(100, description="显示单品行数"),
     db: DatabaseHelper = Depends(get_db)
 ):
@@ -75,8 +75,8 @@ async def get_wechat_push_sales_list(
 
 @router.get("/Revenue/GetUnUpLoadShops")
 async def get_un_upload_shops(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     SPRegionType_ID: Optional[str] = Query("", description="区域内码"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     Revenue_Include: int = Query(1, description="是否纳入营收"),
@@ -90,9 +90,9 @@ async def get_un_upload_shops(
 
 @router.get("/Revenue/GetServerpartBrand")
 async def get_serverpart_brand(
-    Serverpart_Id: int = Query(..., description="服务区内码"),
-    statictics_Time: str = Query(..., description="统计时间"),
-    pushProvinceCode: str = Query(..., description="省份编号"),
+    Serverpart_Id: Optional[int] = Query(None, description="服务区内码"),
+    statictics_Time: Optional[str] = Query(None, description="统计时间"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编号"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取服务区品牌营收"""
@@ -104,9 +104,9 @@ async def get_serverpart_brand(
 # ===== 结账数据 =====
 @router.get("/Revenue/GetServerpartEndAccountList")
 async def get_serverpart_end_account_list(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    Serverpart_ID: int = Query(..., description="服务区内码"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """查询服务区结账数据列表"""
@@ -117,10 +117,10 @@ async def get_serverpart_end_account_list(
 
 @router.get("/Revenue/GetShopEndAccountList")
 async def get_shop_end_account_list(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    Serverpart_ID: int = Query(..., description="服务区内码"),
-    ServerpartShop_Ids: str = Query(..., description="门店内码集合"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
+    ServerpartShop_Ids: Optional[str] = Query(None, description="门店内码集合"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """查询门店结账数据列表"""
@@ -133,15 +133,53 @@ async def get_shop_end_account_list(
 @router.post("/Revenue/GetBudgetExpenseList")
 async def get_budget_expense_list_post(searchModel: dict = None, db: DatabaseHelper = Depends(get_db)):
     """获取预算费用表列表（POST）"""
-    logger.warning("GetBudgetExpenseList POST 暂未完整实现")
-    json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    try:
+        searchModel = searchModel or {}
+        page_index = searchModel.get("PageIndex", 1) or 1
+        page_size = searchModel.get("PageSize", 20) or 20
+        search_param = searchModel.get("SearchParameter") or {}
+
+        conditions = []
+        params = []
+
+        # 通用字段过滤
+        for field in ["STATISTICS_MONTH", "PROVINCE_CODE", "SERVERPART_ID"]:
+            val = search_param.get(field)
+            if val is not None and str(val).strip():
+                conditions.append(f'"{field}" = ?')
+                params.append(val)
+
+        where_sql = (" WHERE " + " AND ".join(conditions)) if conditions else ""
+
+        # 查询总数
+        count_sql = f'SELECT COUNT(*) AS CNT FROM "T_BUDGETEXPENSE"{where_sql}'
+        count_rows = db.execute_query(count_sql, params if params else None)
+        total = count_rows[0]["CNT"] if count_rows else 0
+
+        # 分页查询
+        offset = (page_index - 1) * page_size
+        data_sql = f'SELECT * FROM "T_BUDGETEXPENSE"{where_sql} ORDER BY "BUDGETEXPENSE_ID" DESC LIMIT ? OFFSET ?'
+        page_params = (params if params else []) + [page_size, offset]
+        page_rows = db.execute_query(data_sql, page_params)
+
+        # 格式化日期
+        for r in page_rows:
+            if r.get("OPERATE_DATE"):
+                r["OPERATE_DATE"] = str(r["OPERATE_DATE"])
+
+        json_list = JsonListData.create(data_list=page_rows, total=total,
+                                        page_index=page_index, page_size=page_size)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetBudgetExpenseList POST 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
+
 
 
 @router.get("/Revenue/GetBudgetExpenseList")
 async def get_budget_expense_list_get(
-    Province_Code: str = Query(..., description="推送省份"),
-    Statistics_Month: str = Query(..., description="统计日期"),
+    Province_Code: Optional[str] = Query(None, description="推送省份"),
+    Statistics_Month: Optional[str] = Query(None, description="统计日期"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
@@ -154,8 +192,8 @@ async def get_budget_expense_list_get(
 # ===== 计划营收 =====
 @router.get("/Revenue/GetRevenueBudget")
 async def get_revenue_budget(
-    Statistics_Date: str = Query(..., description="统计日期"),
-    Province_Code: str = Query(..., description="推送省份"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
+    Province_Code: Optional[str] = Query(None, description="推送省份"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     SPRegionType_ID: Optional[str] = Query("", description="区域内码"),
     Revenue_Include: int = Query(1, description="是否纳入营收"),
@@ -163,21 +201,29 @@ async def get_revenue_budget(
 ):
     """获取计划营收数据"""
     logger.warning("GetRevenueBudget 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.fail(code=101, msg="查询失败，未录入预算数据！")
 
 
-@router.post("/Revenue/GetProvinceRevenueBudget")
-async def get_province_revenue_budget(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """获取全省计划营收分析（需AES解密）"""
+@router.get("/Revenue/GetProvinceRevenueBudget")
+async def get_province_revenue_budget(
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsType: int = Query(1, description="统计类型"),
+    SPRegionTypeID: Optional[int] = Query(None, description="片区内码"),
+    ServerpartID: Optional[int] = Query(None, description="服务区内码"),
+    ShowWholeYear: bool = Query(False, description="是否显示全年计划营收"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取全省计划营收分析"""
     logger.warning("GetProvinceRevenueBudget 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.fail(code=101, msg="查询失败，无数据返回！")
 
 
 # ===== 支付/配送 =====
 @router.get("/Revenue/GetMobileShare")
 async def get_mobile_share(
-    Province_Code: str = Query(..., description="推送省份"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    Province_Code: Optional[str] = Query(None, description="推送省份"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     StatisticsStartDate: Optional[str] = Query("", description="开始日期"),
     StatisticsEndDate: Optional[str] = Query("", description="结束日期"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
@@ -192,8 +238,8 @@ async def get_mobile_share(
 
 @router.get("/Revenue/GetMallDeliver")
 async def get_mall_deliver(
-    Province_Code: str = Query(..., description="推送省份"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    Province_Code: Optional[str] = Query(None, description="推送省份"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     StatisticsStartDate: Optional[str] = Query("", description="开始日期"),
     StatisticsEndDate: Optional[str] = Query("", description="结束日期"),
     ShowCompareRate: bool = Query(False, description="是否计算增长率"),
@@ -207,8 +253,8 @@ async def get_mall_deliver(
 # ===== 客单交易分析 =====
 @router.get("/Revenue/GetTransactionAnalysis")
 async def get_transaction_analysis(
-    Province_Code: str = Query(..., description="省份编码"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    Province_Code: Optional[str] = Query(None, description="省份编码"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     ShowConsumptionLevel: bool = Query(False, description="是否显示消费水平占比"),
     ShowConvertRate: bool = Query(False, description="是否显示消费转化率"),
@@ -221,8 +267,8 @@ async def get_transaction_analysis(
 
 @router.get("/Revenue/GetTransactionTimeAnalysis")
 async def get_transaction_time_analysis(
-    Province_Code: str = Query(..., description="省份编码"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    Province_Code: Optional[str] = Query(None, description="省份编码"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
     TimeSpan: int = Query(4, description="时间间隔，默认4h"),
@@ -230,13 +276,13 @@ async def get_transaction_time_analysis(
 ):
     """获取服务区时段消费分析"""
     logger.warning("GetTransactionTimeAnalysis 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    return Result.fail(code=101, msg="查询失败，无数据返回！")
 
 
 @router.get("/Revenue/GetTransactionConvert")
 async def get_transaction_convert(
-    Province_Code: str = Query(..., description="省份编码"),
-    Statistics_Date: str = Query(..., description="统计日期"),
+    Province_Code: Optional[str] = Query(None, description="省份编码"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
     TimeSpan: int = Query(4, description="时间间隔，默认4h"),
@@ -248,17 +294,25 @@ async def get_transaction_convert(
 
 
 # ===== 业态分析 =====
-@router.post("/Revenue/GetBusinessTradeRevenue")
-async def get_business_trade_revenue(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """获取业态营收占比（需AES解密）"""
+@router.get("/Revenue/GetBusinessTradeRevenue")
+async def get_business_trade_revenue(
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+    BusinessTradeIds: Optional[str] = Query("", description="经营业态内码"),
+    DataType: int = Query(1, description="数据类型"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取业态营收占比"""
     logger.warning("GetBusinessTradeRevenue 暂未完整实现")
     return Result.success(data={}, msg="查询成功")
 
 
 @router.get("/Revenue/GetBusinessTradeLevel")
 async def get_business_trade_level(
-    ProvinceCode: str = Query(..., description="省份编码"),
-    StatisticsDate: str = Query(..., description="统计日期"),
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
     ServerpartId: Optional[int] = Query(None, description="服务区内码"),
     ShowWholeTrade: bool = Query(True, description="是否显示全部业态"),
     db: DatabaseHelper = Depends(get_db)
@@ -270,8 +324,8 @@ async def get_business_trade_level(
 
 @router.get("/Revenue/GetBusinessBrandLevel")
 async def get_business_brand_level(
-    ProvinceCode: str = Query(..., description="省份编码"),
-    StatisticsDate: str = Query(..., description="统计日期"),
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
     ServerpartId: Optional[int] = Query(None, description="服务区内码"),
     ShowWholeTrade: bool = Query(True, description="是否显示全部业态"),
     db: DatabaseHelper = Depends(get_db)
@@ -282,16 +336,13 @@ async def get_business_brand_level(
 
 
 # ===== 营收趋势 =====
-@router.post("/Revenue/GetRevenueTrend")
-async def get_revenue_trend_post(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """获取营收同比数据（POST，需AES解密）"""
-    logger.warning("GetRevenueTrend POST 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+# 注意：C# 中有两个 GetRevenueTrend，一个路由到 GetRevenueCompare(GET)，一个路由到 GetRevenueTrend(GET)
+# 这里只保留 GetRevenueTrend 的 GET 版本（下方已有 GET 定义）
 
 
 @router.get("/Revenue/GetRevenueTrend")
 async def get_revenue_trend_get(
-    ProvinceCode: str = Query(..., description="省份编码"),
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
     StatisticsType: int = Query(1, description="统计类型"),
     db: DatabaseHelper = Depends(get_db)
 ):
@@ -303,9 +354,9 @@ async def get_revenue_trend_get(
 # ===== 经营报表 =====
 @router.get("/Revenue/GetRevenueReport")
 async def get_revenue_report(
-    provinceCode: str = Query(..., description="省份编码"),
-    startTime: str = Query(..., description="开始时间"),
-    endTime: str = Query(..., description="结束时间"),
+    provinceCode: Optional[str] = Query(None, description="省份编码"),
+    startTime: Optional[str] = Query(None, description="开始时间"),
+    endTime: Optional[str] = Query(None, description="结束时间"),
     SearchKeyType: Optional[str] = Query("", description="查询类型"),
     SearchKeyValue: Optional[str] = Query("", description="模糊查询内容"),
     db: DatabaseHelper = Depends(get_db)
@@ -318,11 +369,11 @@ async def get_revenue_report(
 
 @router.get("/Revenue/GetRevenueReportDetil")
 async def get_revenue_report_detail(
-    provinceCode: str = Query(..., description="省份编码"),
-    serverpartId: int = Query(..., description="服务区内码"),
+    provinceCode: Optional[str] = Query(None, description="省份编码"),
+    serverpartId: Optional[int] = Query(None, description="服务区内码"),
     serverpartShopId: Optional[int] = Query(None, description="门店内码"),
-    startTime: str = Query(..., description="开始时间"),
-    endTime: str = Query(..., description="结束时间"),
+    startTime: Optional[str] = Query(None, description="开始时间"),
+    endTime: Optional[str] = Query(None, description="结束时间"),
     SearchKeyType: Optional[str] = Query("", description="查询类型"),
     SearchKeyValue: Optional[str] = Query("", description="模糊查询内容"),
     db: DatabaseHelper = Depends(get_db)
@@ -333,9 +384,15 @@ async def get_revenue_report_detail(
 
 
 # ===== 畅销商品 =====
-@router.post("/Revenue/GetSalableCommodity")
-async def get_salable_commodity(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """获取商超畅销商品（需AES解密）"""
+@router.get("/Revenue/GetSalableCommodity")
+async def get_salable_commodity(
+    statisticsDate: Optional[str] = Query(None, description="统计日期"),
+    provinceCode: Optional[str] = Query(None, description="业主单位标识"),
+    Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
+    SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取商超畅销商品"""
     logger.warning("GetSalableCommodity 暂未完整实现")
     return Result.success(data={}, msg="查询成功")
 
@@ -343,9 +400,9 @@ async def get_salable_commodity(postData: dict = None, db: DatabaseHelper = Depe
 # ===== 排行/同比 =====
 @router.get("/Revenue/GetSPRevenueRank")
 async def get_sp_revenue_rank(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    Statistics_StartDate: str = Query(..., description="统计开始日期"),
-    Statistics_Date: str = Query(..., description="统计结束日期"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    Statistics_StartDate: Optional[str] = Query(None, description="统计开始日期"),
+    Statistics_Date: Optional[str] = Query(None, description="统计结束日期"),
     Revenue_Include: int = Query(1, description="是否纳入营收"),
     db: DatabaseHelper = Depends(get_db)
 ):
@@ -357,9 +414,9 @@ async def get_sp_revenue_rank(
 
 @router.get("/Revenue/GetRevenueYOY")
 async def get_revenue_yoy(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    StatisticsStartDate: str = Query(..., description="统计开始日期"),
-    StatisticsEndDate: str = Query(..., description="统计结束日期"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    StatisticsStartDate: Optional[str] = Query(None, description="统计开始日期"),
+    StatisticsEndDate: Optional[str] = Query(None, description="统计结束日期"),
     CompareStartDate: Optional[str] = Query("", description="同比开始日期"),
     CompareEndDate: Optional[str] = Query("", description="同比结束日期"),
     ServerpartId: Optional[str] = Query("", description="服务区内码"),
@@ -373,9 +430,9 @@ async def get_revenue_yoy(
 
 @router.get("/Revenue/GetHolidayCompare")
 async def get_holiday_compare(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    curYear: str = Query(..., description="本年年份"),
-    compareYear: str = Query(..., description="历年年份"),
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    curYear: Optional[str] = Query(None, description="本年年份"),
+    compareYear: Optional[str] = Query(None, description="历年年份"),
     holidayType: int = Query(0, description="节日类型"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
     ServerpartId: Optional[str] = Query("", description="服务区内码"),
@@ -391,8 +448,8 @@ async def get_holiday_compare(
 @router.get("/Revenue/GetAccountReceivable")
 async def get_account_receivable(
     calcType: int = Query(1, description="计算方式：1当月 2累计"),
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    StatisticsMonth: str = Query(..., description="统计结束月份"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsMonth: Optional[str] = Query(None, description="统计结束月份"),
     StatisticsStartMonth: Optional[str] = Query("", description="统计开始月份"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
     db: DatabaseHelper = Depends(get_db)
@@ -404,8 +461,8 @@ async def get_account_receivable(
 
 @router.get("/Revenue/GetCurRevenue")
 async def get_cur_revenue(
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    StatisticsDate: str = Query(..., description="统计日期"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
     serverPartId: Optional[str] = Query("", description="服务区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
@@ -416,15 +473,15 @@ async def get_cur_revenue(
 
 @router.get("/Revenue/GetShopCurRevenue")
 async def get_shop_cur_revenue(
-    serverPartId: str = Query(..., description="服务区内码"),
-    statisticsDate: str = Query(..., description="统计日期"),
+    serverPartId: Optional[str] = Query(None, description="服务区内码"),
+    statisticsDate: Optional[str] = Query(None, description="统计日期"),
     groupByShop: bool = Query(False, description="是否合并双侧同业态门店"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取实时门店营收交易数据"""
     logger.warning("GetShopCurRevenue 暂未完整实现")
     json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    return Result.fail(code=101, msg="查询失败，无数据返回！")
 
 
 @router.get("/Revenue/GetLastSyncDateTime")
@@ -437,9 +494,9 @@ async def get_last_sync_date_time(db: DatabaseHelper = Depends(get_db)):
 # ===== 节日分析 =====
 @router.get("/Revenue/GetHolidayAnalysis")
 async def get_holiday_analysis(
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    curYear: str = Query(..., description="本年年份"),
-    compareYear: str = Query(..., description="历年年份"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    curYear: Optional[str] = Query(None, description="本年年份"),
+    compareYear: Optional[str] = Query(None, description="历年年份"),
     holidayType: int = Query(0, description="节日类型"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
     ServerpartId: Optional[str] = Query("", description="服务区内码"),
@@ -452,9 +509,9 @@ async def get_holiday_analysis(
 
 @router.get("/Revenue/GetHolidayAnalysisBatch")
 async def get_holiday_analysis_batch(
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    curYear: str = Query(..., description="本年年份"),
-    compareYear: str = Query(..., description="历年年份"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    curYear: Optional[str] = Query(None, description="本年年份"),
+    compareYear: Optional[str] = Query(None, description="历年年份"),
     holidayType: int = Query(0, description="节日类型"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
     ServerpartIds: Optional[str] = Query("", description="服务区内码集合"),
@@ -469,8 +526,8 @@ async def get_holiday_analysis_batch(
 @router.get("/Revenue/GetServerpartINCAnalysis")
 async def get_serverpart_inc_analysis(
     calcType: int = Query(1, description="计算方式：1当日 2累计"),
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    curYear: str = Query(..., description="本年年份"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    curYear: Optional[str] = Query(None, description="本年年份"),
     compareYear: Optional[str] = Query("", description="历年年份"),
     StatisticsStartDate: Optional[str] = Query("", description="开始日期"),
     StatisticsEndDate: Optional[str] = Query("", description="结束日期"),
@@ -489,10 +546,10 @@ async def get_serverpart_inc_analysis(
 @router.get("/Revenue/GetShopINCAnalysis")
 async def get_shop_inc_analysis(
     calcType: int = Query(1, description="计算方式：1当日 2累计"),
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    curYear: str = Query(..., description="本年年份"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    curYear: Optional[str] = Query(None, description="本年年份"),
     compareYear: Optional[str] = Query("", description="历年年份"),
-    ServerpartId: str = Query(..., description="服务区内码"),
+    serverpartId: Optional[str] = Query(None, description="服务区内码"),
     StatisticsStartDate: Optional[str] = Query("", description="开始日期"),
     StatisticsEndDate: Optional[str] = Query("", description="结束日期"),
     SortStr: Optional[str] = Query("", description="排序字段"),
@@ -500,18 +557,17 @@ async def get_shop_inc_analysis(
 ):
     """获取门店营收增幅分析"""
     logger.warning("GetShopINCAnalysis 暂未完整实现")
-    json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    return Result.fail(code=101, msg="查询失败，无数据返回！")
 
 
 # ===== 月度经营 =====
 @router.get("/Revenue/GetMonthlyBusinessAnalysis")
 async def get_monthly_business_analysis(
     calcType: int = Query(1, description="计算方式：1当月 2累计"),
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    curYear: str = Query(..., description="本年年份"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    curYear: Optional[str] = Query(None, description="本年年份"),
     compareYear: Optional[str] = Query("", description="历年年份"),
-    StatisticsMonth: str = Query(..., description="统计月份"),
+    StatisticsMonth: Optional[str] = Query(None, description="统计月份"),
     businessRegion: int = Query(1, description="经营区域：1服务区 2城市店"),
     db: DatabaseHelper = Depends(get_db)
 ):
@@ -523,9 +579,9 @@ async def get_monthly_business_analysis(
 @router.get("/Revenue/GetMonthlySPINCAnalysis")
 async def get_monthly_sp_inc_analysis(
     calcType: int = Query(1, description="计算方式：1当日 2累计"),
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    curYear: str = Query(..., description="本年年份"),
-    StatisticsMonth: str = Query(..., description="统计月份"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    curYear: Optional[str] = Query(None, description="本年年份"),
+    StatisticsMonth: Optional[str] = Query(None, description="统计月份"),
     ServerpartId: Optional[str] = Query("", description="服务区内码"),
     SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
     SortStr: Optional[str] = Query("", description="排序字段"),
@@ -540,13 +596,13 @@ async def get_monthly_sp_inc_analysis(
 # ===== 其余接口 =====
 @router.get("/Revenue/GetTransactionDetailList")
 async def get_transaction_detail_list(
-    ProvinceCode: str = Query(..., description="省份编码"),
-    ServerpartId: int = Query(..., description="服务区内码"),
-    ServerpartShopId: Optional[int] = Query(None, description="门店内码"),
-    StartTime: str = Query(..., description="开始时间"),
-    EndTime: str = Query(..., description="结束时间"),
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    ServerpartShopId: Optional[str] = Query("", description="门店内码"),
+    StartTime: Optional[str] = Query("", description="开始时间"),
+    EndTime: Optional[str] = Query("", description="结束时间"),
     PageIndex: int = Query(1, description="显示页码"),
-    PageSize: int = Query(20, description="每页数量"),
+    PageSize: int = Query(100, description="每页数量"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取实时交易明细"""
@@ -564,23 +620,59 @@ async def get_holiday_revenue_ratio(db: DatabaseHelper = Depends(get_db)):
 
 @router.post("/Revenue/GetBusinessRevenueList")
 async def get_business_revenue_list(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """获取云南24年经营数据分析（需AES解密）"""
-    logger.warning("GetBusinessRevenueList 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    """获取云南24年经营数据分析（AES加密）"""
+    try:
+        from core.aes_util import decrypt_post_data
+        params = decrypt_post_data(postData)
+        province_code = params.get("ProvinceCode", "")
+        serverpart_id = params.get("ServerpartId", "")
+        data_type = params.get("DataType", "")
+        start_month = params.get("StartMonth", "")
+        end_month = params.get("EndMonth", "")
+        group_by_region = params.get("GroupByRegion", False)
+        group_by_trade = params.get("GroupByTrade", False)
+        logger.info(f"GetBusinessRevenueList 解密参数: ProvinceCode={province_code}, DataType={data_type}")
+
+        # TODO: 实现查询逻辑
+        logger.warning("GetBusinessRevenueList 查询逻辑暂未实现")
+        json_list = JsonListData.create(data_list=[], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except ValueError as ve:
+        logger.error(f"GetBusinessRevenueList AES解密失败: {ve}")
+        return Result.fail(msg=f"解密失败{ve}")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 @router.post("/Revenue/GetMonthlyBusinessRevenue")
 async def get_monthly_business_revenue(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """获取云南月度经营数据分析（需AES解密）"""
-    logger.warning("GetMonthlyBusinessRevenue 暂未完整实现")
-    return Result.success(data={}, msg="查询成功")
+    """获取云南月度经营数据分析（AES加密）"""
+    try:
+        from core.aes_util import decrypt_post_data
+        params = decrypt_post_data(postData)
+        province_code = params.get("ProvinceCode", "")
+        serverpart_id = params.get("ServerpartId", "")
+        data_type = params.get("DataType", "")
+        start_month = params.get("StartMonth", "")
+        end_month = params.get("EndMonth", "")
+        logger.info(f"GetMonthlyBusinessRevenue 解密参数: ProvinceCode={province_code}, DataType={data_type}")
+
+        # TODO: 实现查询逻辑
+        logger.warning("GetMonthlyBusinessRevenue 查询逻辑暂未实现")
+        json_list = JsonListData.create(data_list=[], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except ValueError as ve:
+        logger.error(f"GetMonthlyBusinessRevenue AES解密失败: {ve}")
+        return Result.fail(msg=f"解密失败{ve}")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 @router.get("/Revenue/GetCompanyRevenueReport")
 async def get_company_revenue_report(
-    ProvinceCode: str = Query(..., description="省份编码"),
-    StartTime: str = Query(..., description="开始日期"),
-    EndTime: str = Query(..., description="结束日期"),
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StartTime: Optional[str] = Query(None, description="开始日期"),
+    EndTime: Optional[str] = Query(None, description="结束日期"),
     ServerpartId: Optional[str] = Query("", description="服务区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):

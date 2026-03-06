@@ -83,11 +83,11 @@ app.include_router(commercial_examine_router, prefix="/CommercialApi", tags=["Co
 from routers.commercial_api.business_process_router import router as commercial_bp_router
 app.include_router(commercial_bp_router, prefix="/CommercialApi", tags=["CommercialApi - 业务审批"])
 
-from routers.commercial_api.suggestion_router import router as commercial_suggestion_router
-app.include_router(commercial_suggestion_router, prefix="/CommercialApi", tags=["CommercialApi - 投诉建议"])
 
-from routers.commercial_api.supply_chain_router import router as commercial_sc_router
-app.include_router(commercial_sc_router, prefix="/CommercialApi", tags=["CommercialApi - 供应链分析"])
+
+
+
+
 
 
 @app.get("/", tags=["系统"])

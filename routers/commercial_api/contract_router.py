@@ -18,8 +18,8 @@ router = APIRouter()
 # ===== 1. GetContractAnalysis =====
 @router.get("/Contract/GetContractAnalysis")
 async def get_contract_analysis(
-    statisticsDate: str = Query(..., description="统计日期，格式：yyyy-MM-dd"),
-    provinceCode: str = Query(..., description="省份编码"),
+    statisticsDate: Optional[str] = Query(None, description="统计日期，格式：yyyy-MM-dd"),
+    provinceCode: Optional[str] = Query(None, description="省份编码"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
     db: DatabaseHelper = Depends(get_db)
@@ -56,7 +56,7 @@ async def get_contract_analysis(
 # ===== 2. GetMerchantAccountSplit =====
 @router.get("/Contract/GetMerchantAccountSplit")
 async def get_merchant_account_split(
-    StatisticsMonth: str = Query(..., description="统计结束月份，格式：yyyy-MM"),
+    StatisticsMonth: Optional[str] = Query(None, description="统计结束月份，格式：yyyy-MM"),
     StatisticsStartMonth: Optional[str] = Query("", description="统计开始月份"),
     calcType: int = Query(1, description="计算方式：1=当月，2=累计"),
     CompactTypes: str = Query("340001", description="合同类型"),
@@ -74,9 +74,98 @@ async def get_merchant_account_split(
     返回: MerchantAccountSummaryModel
     """
     try:
-        # TODO: 实现 AccountHelper.GetMerchantAccountSplit 逻辑
-        logger.warning(f"GetMerchantAccountSplit 暂未完整实现（需同步 CONTRACT_STORAGE 表）")
-        return Result.fail(code=101, msg="查询失败，无数据返回！")
+        # 构建查询条件
+        where_parts = ['"MERCHANTSPLIT_STATE" = 1']
+        params = []
+
+        if CompactTypes:
+            where_parts.append(f'"COMPACT_TYPE" IN ({CompactTypes})')
+        if BusinessTypes:
+            where_parts.append(f'"BUSINESS_TYPE" IN ({BusinessTypes})')
+        if SettlementMods:
+            where_parts.append(f'"SETTLEMENT_MODES" IN ({SettlementMods})')
+        if MerchantIds:
+            where_parts.append(f'"MERCHANTS_ID" IN ({MerchantIds})')
+
+        # 处理统计月份（去掉横杠）
+        month_str = StatisticsMonth.replace("-", "") if StatisticsMonth else ""
+        start_month_str = StatisticsStartMonth.replace("-", "") if StatisticsStartMonth else ""
+
+        if calcType == 1:
+            where_parts.append(f'"STATISTICS_MONTH" = ?')
+            params.append(int(month_str))
+        else:
+            where_parts.append(f'"STATISTICS_MONTH" >= ? AND "STATISTICS_MONTH" <= ?')
+            params.append(int(start_month_str))
+            params.append(int(month_str))
+
+        where_sql = " AND ".join(where_parts)
+
+        # 按商户分组查询
+        sql = f"""SELECT "MERCHANTS_ID", COUNT("BUSINESSPROJECT_ID") AS "PROJECT_COUNT",
+            SUM("REVENUEDAILY_AMOUNT") AS "REVENUE_AMOUNT",
+            SUM("ROYALTYDAILY_PRICE") AS "ROYALTY_PRICE",
+            SUM("SUBROYALTYDAILY_PRICE") AS "SUBROYALTY_PRICE",
+            SUM("TICKETDAILY_FEE") AS "TICKET_FEE",
+            SUM("ROYALTYDAILY_THEORY") AS "ROYALTY_THEORY",
+            SUM("SUBROYALTYDAILY_THEORY") AS "SUBROYALTY_THEORY"
+        FROM "T_MERCHANTSPLIT"
+        WHERE {where_sql}
+        GROUP BY "MERCHANTS_ID" """
+        rows = db.execute_query(sql, params)
+
+        if not rows:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+        # 汇总统计
+        total_project = sum(r.get("PROJECT_COUNT", 0) or 0 for r in rows)
+        total_sub_royalty_price = sum(float(r.get("SUBROYALTY_PRICE", 0) or 0) for r in rows)
+        total_sub_royalty_theory = sum(float(r.get("SUBROYALTY_THEORY", 0) or 0) for r in rows)
+
+        # 获取商户名称
+        merchant_names = {}
+        try:
+            merchant_rows = db.execute_query('SELECT "COOPMERCHANTS_ID", "COOPMERCHANTS_NAME" FROM "T_COOPMERCHANTS"')
+            merchant_names = {r["COOPMERCHANTS_ID"]: r["COOPMERCHANTS_NAME"] for r in merchant_rows}
+        except:
+            pass
+
+        # 构建商户列表
+        merchant_list = []
+        for r in rows:
+            mid = r.get("MERCHANTS_ID")
+            sub_price = float(r.get("SUBROYALTY_PRICE", 0) or 0)
+            sub_theory = float(r.get("SUBROYALTY_THEORY", 0) or 0)
+            merchant_list.append({
+                "MerchantId": int(mid) if mid else 0,
+                "MerchantName": merchant_names.get(mid, "") if mid else "",
+                "ProjectCount": int(r.get("PROJECT_COUNT", 0) or 0),
+                "SubRoyaltyPrice": round(sub_price, 2),
+                "SubRoyaltyTheory": round(sub_theory, 2),
+                "ReceivableAmount": round(sub_price - sub_theory, 2),
+            })
+
+        # 排序
+        if SortStr:
+            sort_field = SortStr.split(' ')[0] if SortStr else ""
+            desc = SortStr.lower().endswith(" desc")
+            field_map = {"SubRoyaltyPrice": "SubRoyaltyPrice", "SubRoyaltyTheory": "SubRoyaltyTheory",
+                         "ReceivableAmount": "ReceivableAmount"}
+            if sort_field in field_map:
+                merchant_list.sort(key=lambda x: x[field_map[sort_field]], reverse=desc)
+            else:
+                merchant_list.sort(key=lambda x: x.get("ProjectCount", 0), reverse=True)
+        else:
+            merchant_list.sort(key=lambda x: x.get("ProjectCount", 0), reverse=True)
+
+        data = {
+            "ProjectCount": total_project,
+            "SubRoyaltyPrice": round(total_sub_royalty_price, 2),
+            "SubRoyaltyTheory": round(total_sub_royalty_theory, 2),
+            "ReceivableAmount": round(total_sub_royalty_price - total_sub_royalty_theory, 2),
+            "MerchantAccountList": merchant_list,
+        }
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMerchantAccountSplit 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -85,8 +174,8 @@ async def get_merchant_account_split(
 # ===== 3. GetMerchantAccountDetail =====
 @router.get("/Contract/GetMerchantAccountDetail")
 async def get_merchant_account_detail(
-    MerchantId: int = Query(..., description="经营商户内码"),
-    StatisticsMonth: str = Query(..., description="统计结束月份，格式：yyyy-MM"),
+    MerchantId: Optional[int] = Query(None, description="经营商户内码"),
+    StatisticsMonth: Optional[str] = Query(None, description="统计结束月份，格式：yyyy-MM"),
     StatisticsStartMonth: Optional[str] = Query("", description="统计开始月份"),
     calcType: int = Query(1, description="计算方式：1=当月，2=累计"),
     CompactTypes: str = Query("340001", description="合同类型"),

@@ -18,7 +18,7 @@ router = APIRouter()
 # ===== 1. GetSPRegionList =====
 @router.get("/BaseInfo/GetSPRegionList")
 async def get_sp_region_list(
-    Province_Code: str = Query(..., description="省份编码"),
+    Province_Code: Optional[str] = Query(None, description="省份编码"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """
@@ -47,7 +47,7 @@ async def get_sp_region_list(
 # ===== 2. GetBusinessTradeList (GET) =====
 @router.get("/BaseInfo/GetBusinessTradeList")
 async def get_business_trade_list_get(
-    pushProvinceCode: str = Query(..., description="省份编码"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
     BusinessTradeId: Optional[int] = Query(None, description="经营品牌内码"),
     BusinessTradeName: Optional[str] = Query("", description="经营品牌名称"),
     BusinessTradePId: Optional[int] = Query(None, description="经营品牌父级内码"),
@@ -192,158 +192,12 @@ async def get_business_trade_list_post(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-# ===== 4. GetShopCountList (POST) =====
-@router.post("/BaseInfo/GetShopCountList")
-async def get_shop_count_list_post(
-    searchModel: dict = None,
-    db: DatabaseHelper = Depends(get_db)
-):
-    """
-    获取服务区门店商家数量列表（查询条件对象）
-    原路由: [Route("BaseInfo/GetShopCountList")] POST
-    原表: HIGHWAY_STORAGE.T_SHOPCOUNT
-    """
-    try:
-        if searchModel is None:
-            searchModel = {}
-
-        page_index = searchModel.get("PageIndex", 1) or 1
-        page_size = searchModel.get("PageSize", 10) or 10
-        sort_str = searchModel.get("SortStr", "")
-
-        sql = "SELECT * FROM T_SHOPCOUNT"
-        rows = db.execute_query(sql)
-        total_count = len(rows)
-
-        # 排序（内存排序）
-        if sort_str:
-            try:
-                field = sort_str.strip().split()[0]
-                desc = "desc" in sort_str.lower()
-                rows.sort(key=lambda x: x.get(field.upper(), 0) or 0, reverse=desc)
-            except:
-                pass
-
-        # 分页
-        if page_index > 0 and page_size > 0:
-            start = (page_index - 1) * page_size
-            rows = rows[start:start + page_size]
-
-        # 字段映射
-        shop_list = []
-        for r in rows:
-            shop_list.append({
-                "SHOPCOUNT_ID": r.get("SHOPCOUNT_ID"),
-                "SERVERPART_ID": r.get("SERVERPART_ID"),
-                "SPREGIONTYPE_NAME": r.get("SPREGIONTYPE_NAME"),
-                "SHOP_TOTALCOUNT": r.get("SHOP_TOTALCOUNT"),
-                "SHOP_BUSINESSCOUNT": r.get("SHOP_BUSINESSCOUNT"),
-                "SHOP_REVENUECOUNT": r.get("SHOP_REVENUECOUNT"),
-                "OPERATE_DATE": r.get("OPERATE_DATE"),
-            })
-
-        json_list = JsonListData.create(data_list=shop_list, total=total_count,
-                                        page_index=page_index, page_size=page_size)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetShopCountList(POST) 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
-# ===== 5. GetShopCountList (GET) =====
-@router.get("/BaseInfo/GetShopCountList")
-async def get_shop_count_list_get(
-    pushProvinceCode: str = Query(..., description="推送省份"),
-    Statistics_Date: str = Query(..., description="统计日期"),
-    Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
-    SPRegionType_ID: Optional[int] = Query(None, description="区域内码"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """
-    获取服务区门店商家数量列表（根据省份、服务区、区域、统计日期查询）
-    原路由: [Route("BaseInfo/GetShopCountList")] GET
-    原表: HIGHWAY_STORAGE.T_SHOPCOUNT
-    注意：原 C# 中 GET 版本有转发逻辑（IsFromNewServer），这里简化为直接查询
-    """
-    try:
-        where_sql = " WHERE 1=1"
-        params = []
-
-        if Serverpart_ID is not None:
-            where_sql += " AND SERVERPART_ID = ?"
-            params.append(Serverpart_ID)
-
-        sql = f"SELECT * FROM T_SHOPCOUNT{where_sql} ORDER BY SHOPCOUNT_ID"
-        rows = db.execute_query(sql, params if params else None)
-        total_count = len(rows)
-
-        shop_list = []
-        for r in rows:
-            shop_list.append({
-                "SHOPCOUNT_ID": r.get("SHOPCOUNT_ID"),
-                "SERVERPART_ID": r.get("SERVERPART_ID"),
-                "SPREGIONTYPE_NAME": r.get("SPREGIONTYPE_NAME"),
-                "SHOP_TOTALCOUNT": r.get("SHOP_TOTALCOUNT"),
-                "SHOP_BUSINESSCOUNT": r.get("SHOP_BUSINESSCOUNT"),
-                "SHOP_REVENUECOUNT": r.get("SHOP_REVENUECOUNT"),
-                "OPERATE_DATE": r.get("OPERATE_DATE"),
-            })
-
-        json_list = JsonListData.create(data_list=shop_list, total=total_count,
-                                        page_index=1, page_size=total_count)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetShopCountList(GET) 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
-# ===== 6. RecordShopCount =====
-@router.api_route("/BaseInfo/RecordShopCount", methods=["GET", "POST"])
-async def record_shop_count(
-    Serverpart_ID: int = Query(..., description="服务区内码"),
-    Statistics_Date: str = Query(..., description="统计日期"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """
-    记录服务区门店商家数量
-    原路由: [Route("BaseInfo/RecordShopCount")] GET/POST
-    注意：这是写操作，需要对应的存储过程或业务逻辑，暂做占位实现
-    """
-    try:
-        # TODO: 实现具体的记录逻辑（原 C# 调用 SHOPCOUNTHelper.RecordShopCount）
-        logger.warning(f"RecordShopCount 暂未实现: Serverpart_ID={Serverpart_ID}, Date={Statistics_Date}")
-        return Result.success(msg="记录成功")
-    except Exception as ex:
-        logger.error(f"RecordShopCount 记录失败: {ex}")
-        return Result.fail(msg=f"记录失败{ex}")
-
-
-# ===== 7. RecordProvinceShopCount =====
-@router.api_route("/BaseInfo/RecordProvinceShopCount", methods=["GET", "POST"])
-async def record_province_shop_count(
-    ProvinceID: int = Query(..., description="推送省份"),
-    Statistics_Date: str = Query(..., description="统计日期"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """
-    记录全省服务区门店商家数量
-    原路由: [Route("BaseInfo/RecordProvinceShopCount")] GET/POST
-    注意：这是写操作，暂做占位实现
-    """
-    try:
-        # TODO: 实现具体的记录逻辑（原 C# 调用 SHOPCOUNTHelper.RecordProvinceShopCount）
-        logger.warning(f"RecordProvinceShopCount 暂未实现: ProvinceID={ProvinceID}, Date={Statistics_Date}")
-        return Result.success(msg="记录成功")
-    except Exception as ex:
-        logger.error(f"RecordProvinceShopCount 记录失败: {ex}")
-        return Result.fail(msg=f"记录失败{ex}")
-
 
 # ===== 8. GetBrandAnalysis =====
 @router.get("/BaseInfo/GetBrandAnalysis")
 async def get_brand_analysis(
-    ProvinceCode: str = Query(..., description="省份编码"),
-    Serverpart_ID: str = Query(..., description="服务区内码"),
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    Serverpart_ID: Optional[str] = Query(None, description="服务区内码"),
     Statistics_Date: Optional[str] = Query("", description="统计日期"),
     BusinessTradeIds: Optional[str] = Query("", description="经营业态内码，多个用,隔开"),
     BrandType: Optional[str] = Query("", description="品牌类型，多个用,隔开"),
@@ -360,7 +214,8 @@ async def get_brand_analysis(
         # 原 C# 返回结构: BrandAnalysisModel { BrandTag, ShopBrandList }
         # 暂返回空结构
         logger.warning(f"GetBrandAnalysis 复杂查询暂未完整实现")
-        return Result.fail(code=101, msg="查询失败，无数据返回！")
+        data = {"BrandTag": "", "ShopBrandList": []}
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBrandAnalysis 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -369,7 +224,7 @@ async def get_brand_analysis(
 # ===== 9. GetServerpartList =====
 @router.get("/BaseInfo/GetServerpartList")
 async def get_serverpart_list(
-    Province_Code: str = Query(..., description="省份编码"),
+    Province_Code: Optional[str] = Query(None, description="省份编码"),
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
     Serverpart_Name: Optional[str] = Query("", description="服务区名称"),
     longitude: Optional[str] = Query("", description="经度"),
@@ -401,8 +256,56 @@ async def get_serverpart_list(
     TODO: 实现完整 ServerpartHelper.GetServerpartList 逻辑
     """
     try:
-        logger.warning(f"GetServerpartList 复杂查询暂未完整实现")
-        json_list = JsonListData.create(data_list=[], total=0, page_index=1, page_size=0)
+        # 动态构建 WHERE 条件（参照 C# ServerpartHelper.GetServerpartList）
+        # 注：达梦中无 STATISTIC_TYPE 字段，只有 STATISTICS_TYPE
+        conditions = ["A.STATISTICS_TYPE = 1000",
+                       "A.SERVERPART_CODE NOT IN ('340001','530590')"]
+        params = {}
+
+        # 注: Serverpart_ID 是"当前服务区"（用于标记距离排序），不是 WHERE 过滤条件
+        # C# 中用 ServerpartId（另一个参数）做 WHERE 过滤
+        if SPRegionType_ID:
+            conditions.append(f"A.SPREGIONTYPE_ID IN ({SPRegionType_ID})")
+        elif Province_Code:
+            # C# 通过 DictionaryHelper.GetFieldEnum("DIVISION_CODE", ProvinceCode) 将编码转内码
+            pcode_rows = db.execute_query(
+                "SELECT FIELDENUM_ID FROM T_FIELDENUM WHERE FIELDENUM_VALUE = :pc AND ROWNUM = 1",
+                {"pc": Province_Code})
+            if pcode_rows:
+                conditions.append("A.PROVINCE_CODE = :pcode")
+                params["pcode"] = pcode_rows[0]["FIELDENUM_ID"]
+        if ServerpartType:
+            conditions.append(f"A.SERVERPART_TYPE IN ({ServerpartType})")
+        if Serverpart_Name:
+            conditions.append("A.SERVERPART_NAME LIKE :sp_name")
+            params["sp_name"] = f"%{Serverpart_Name}%"
+
+        where_sql = " AND ".join(conditions)
+        sql = f"""SELECT 
+                A.SERVERPART_ID, A.SERVERPART_NAME, A.SERVERPART_INDEX, A.SERVERPART_CODE,
+                A.PROVINCE_CODE, A.SERVERPART_TYPE, A.SPREGIONTYPE_ID, A.SPREGIONTYPE_NAME,
+                A.SPREGIONTYPE_INDEX, A.STATISTICS_TYPE, A.OWNERUNIT_ID, A.OWNERUNIT_NAME,
+                A.OPERATE_DATE, A.SERVERPART_X, A.SERVERPART_Y, A.SERVERPART_TEL,
+                SUM(NVL(C.HASMOTHER,0)) AS HASMOTHER, SUM(NVL(C.HASPILOTLOUNGE,0)) AS HASPILOTLOUNGE,
+                SUM(NVL(C.LIVESTOCKPACKING,0)) AS HASCHARGE, SUM(NVL(C.POINTCONTROLCOUNT,0)) AS HASGUESTROOM
+            FROM T_SERVERPART A
+            LEFT JOIN T_SERVERPARTINFO C ON A.SERVERPART_ID = C.SERVERPART_ID
+            WHERE {where_sql}
+            GROUP BY A.SERVERPART_ID, A.SERVERPART_NAME, A.SERVERPART_INDEX, A.SERVERPART_CODE,
+                A.PROVINCE_CODE, A.SERVERPART_TYPE, A.SPREGIONTYPE_ID, A.SPREGIONTYPE_NAME,
+                A.SPREGIONTYPE_INDEX, A.STATISTICS_TYPE, A.OWNERUNIT_ID, A.OWNERUNIT_NAME,
+                A.OPERATE_DATE, A.SERVERPART_X, A.SERVERPART_Y, A.SERVERPART_TEL
+            ORDER BY A.SERVERPART_INDEX"""
+
+        rows = db.execute_query(sql, params)
+
+        # 分页（C# 中 TotalCount = 分页后列表长度）
+        if PageIndex and PageSize:
+            start = (PageIndex - 1) * PageSize
+            rows = rows[start:start + PageSize]
+
+        json_list = JsonListData.create(data_list=rows, total=len(rows),
+                                        page_index=PageIndex or 1, page_size=PageSize or len(rows))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartList 查询失败: {ex}")
@@ -412,7 +315,7 @@ async def get_serverpart_list(
 # ===== 10. GetServerpartInfo =====
 @router.get("/BaseInfo/GetServerpartInfo")
 async def get_serverpart_info(
-    ServerpartId: int = Query(..., description="服务区内码"),
+    ServerpartId: Optional[int] = Query(None, description="服务区内码"),
     longitude: Optional[str] = Query("", description="经度"),
     latitude: Optional[str] = Query("", description="纬度"),
     excludeProperty: bool = Query(True, description="是否排除资产图片"),
@@ -425,8 +328,55 @@ async def get_serverpart_info(
     TODO: 实现完整 ServerpartHelper.GetServerpartInfo 逻辑
     """
     try:
-        logger.warning(f"GetServerpartInfo 复杂查询暂未完整实现")
-        return Result.fail(code=101, msg="查询失败，无数据返回！")
+        if not ServerpartId:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+        # 查询服务区基础信息
+        sql = "SELECT * FROM T_SERVERPART WHERE SERVERPART_ID = :id"
+        rows = db.execute_query(sql, {"id": ServerpartId})
+        if not rows:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+        sp = rows[0]
+
+        result = {
+            "SERVERPART_ID": sp.get("SERVERPART_ID"),
+            "SERVERPART_NAME": sp.get("SERVERPART_NAME", ""),
+            "SERVERPART_TEL": sp.get("SERVERPART_TEL", ""),
+            "SERVERPART_ADDRESS": sp.get("SERVERPART_ADDRESS", ""),
+            "SERVERPART_INDEX": sp.get("SERVERPART_INDEX"),
+            "PROVINCE_CODE": sp.get("PROVINCE_CODE"),
+            "SERVERPART_CODE": sp.get("SERVERPART_CODE", ""),
+            "SERVERPART_TYPE": sp.get("SERVERPART_TYPE"),
+            "SPREGIONTYPE_ID": sp.get("SPREGIONTYPE_ID"),
+            "SPREGIONTYPE_NAME": sp.get("SPREGIONTYPE_NAME", ""),
+            "SPREGIONTYPE_INDEX": sp.get("SPREGIONTYPE_INDEX"),
+            "STATISTICS_TYPE": str(sp.get("STATISTICS_TYPE", "")),
+            "OWNERUNIT_ID": sp.get("OWNERUNIT_ID"),
+            "OWNERUNIT_NAME": sp.get("OWNERUNIT_NAME", ""),
+            "SERVERPART_X": sp.get("SERVERPART_X"),
+            "SERVERPART_Y": sp.get("SERVERPART_Y"),
+        }
+
+        # 查询服务区扩展信息 T_RTSERVERPART
+        rt_rows = db.execute_query("SELECT * FROM T_RTSERVERPART WHERE SERVERPART_ID = :id", {"id": ServerpartId})
+        if rt_rows:
+            rt = rt_rows[0]
+            result["ServerpartInfo"] = rt
+            # 补充经纬度
+            if not result["SERVERPART_X"] and rt.get("SERVERPART_X"):
+                result["SERVERPART_X"] = rt["SERVERPART_X"]
+            if not result["SERVERPART_Y"] and rt.get("SERVERPART_Y"):
+                result["SERVERPART_Y"] = rt["SERVERPART_Y"]
+
+        # 查询服务区设施信息 T_SERVERPARTINFO
+        info_rows = db.execute_query("SELECT * FROM T_SERVERPARTINFO WHERE SERVERPART_ID = :id", {"id": ServerpartId})
+        if info_rows:
+            result["HASMOTHER"] = any(float(r.get("HASMOTHER", 0) or 0) > 0 for r in info_rows)
+            result["HASPILOTLOUNGE"] = any(float(r.get("HASPILOTLOUNGE", 0) or 0) > 0 for r in info_rows)
+            result["HASCHARGE"] = any(float(r.get("LIVESTOCKPACKING", 0) or 0) > 0 for r in info_rows)
+            result["HASGUESTROOM"] = any(float(r.get("POINTCONTROLCOUNT", 0) or 0) > 0 for r in info_rows)
+            result["RegionInfo"] = info_rows
+
+        return Result.success(data=result, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartInfo 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -466,13 +416,125 @@ async def get_serverpart_service_summary(
 ):
     """
     获取服务区基础设施汇总数据
-    原路由: [Route("BaseInfo/GetServerpartServiceSummary")] POST
-    注意：原接口需要 AES 解密 postData.value
-    TODO: 实现 AES 解密 + ServerpartHelper.GetServerpartServiceSummary 逻辑
+    入参(AES加密)：ProvinceCode省份编码
     """
     try:
-        logger.warning(f"GetServerpartServiceSummary 暂未完整实现（需 AES 解密）")
-        return Result.fail(code=101, msg="查询失败，无数据返回！")
+        from core.aes_util import decrypt_post_data
+        params = decrypt_post_data(postData)
+        province_code = params.get("ProvinceCode", "")
+        sp_region_type_id = params.get("SPRegionType_ID", "")
+        serverpart_id = params.get("ServerpartId", "")
+        logger.info(f"GetServerpartServiceSummary 解密参数: ProvinceCode={province_code}, SPRegionType_ID={sp_region_type_id}, ServerpartId={serverpart_id}")
+
+        # 参照 C#: ServerpartHelper.GetServerpartServiceSummary
+        # 先通过 PROVINCE_CODE 获取 FIELDENUM 的 KEY_ID
+        province_key = province_code
+        try:
+            key_rows = db.execute_query(f"""
+                SELECT E."FIELDENUM_ID" FROM "T_FIELDENUM" E
+                JOIN "T_FIELDEXPLAIN" F ON E."FIELDEXPLAIN_ID" = F."FIELDEXPLAIN_ID"
+                WHERE F."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND E."FIELDENUM_VALUE" = '{province_code}'
+            """)
+            if key_rows:
+                province_key = str(key_rows[0].get("FIELDENUM_ID", province_code))
+        except:
+            pass
+
+        # 构建 WHERE
+        where_sql = f' AND A."PROVINCE_CODE" = {province_key}'
+        if sp_region_type_id:
+            where_sql += f' AND A."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+        if serverpart_id:
+            where_sql += f' AND A."SERVERPART_ID" IN ({serverpart_id})'
+
+        # 排除片区（安徽驿达=89）
+        exclude_region = "89"
+        
+        sql = f"""SELECT 
+                A."SERVERPART_ID", A."SERVERPART_NAME",
+                COALESCE(SUM(C."FLOORAREA"), 0) AS "FLOORAREA",
+                COALESCE(SUM(C."PARKINGAREA"), 0) AS "PARKINGAREA",
+                COALESCE(SUM(C."BUILDINGAREA"), 0) AS "BUILDINGAREA",
+                COALESCE(SUM(C."HASGASSTATION"), 0) AS "HASGASSTATION",
+                COALESCE(SUM(C."LIVESTOCKPACKING"), 0) AS "HASCHARGESTATION",
+                COALESCE(SUM(C."SMALLPARKING"), 0) AS "SMALLPARKING",
+                COALESCE(SUM(C."PACKING"), 0) AS "PACKING",
+                COALESCE(SUM(C."TRUCKPACKING"), 0) AS "TRUCKPACKING",
+                COALESCE(SUM(C."LONGPACKING"), 0) AS "LONGPACKING",
+                COALESCE(SUM(C."DANPACKING"), 0) AS "DANPACKING",
+                COALESCE(SUM(C."HASCHILD"), 0) AS "HASAUTOREPAIR",
+                COALESCE(SUM(C."HASRESTROOM"), 0) AS "HASRESTROOM",
+                COALESCE(SUM(C."HASPILOTLOUNGE"), 0) AS "HASPILOTLOUNGE",
+                COALESCE(SUM(C."HASMOTHER"), 0) AS "HASMOTHER",
+                COALESCE(SUM(C."HASBACKGROUNDRADIO"), 0) AS "HASSTORE",
+                COALESCE(SUM(C."DININGROOMCOUNT"), 0) AS "DININGROOMCOUNT",
+                COALESCE(SUM(C."HASMESSAGESEARCH"), 0) AS "HASLODGING",
+                COALESCE(SUM(C."VEHICLEWATERFILLING"), 0) AS "VEHICLEWATERFILLING",
+                COALESCE(SUM(C."UREA_COUNT"), 0) AS "UREA_COUNT"
+            FROM "T_SERVERPART" A
+            LEFT JOIN "T_SERVERPARTINFO" C ON A."SERVERPART_ID" = C."SERVERPART_ID"
+            WHERE A."STATISTICS_TYPE" = 1000
+                AND A."SPREGIONTYPE_ID" NOT IN ({exclude_region}){where_sql}
+            GROUP BY A."SERVERPART_ID", A."SERVERPART_NAME" """
+        
+        rows = db.execute_query(sql)
+        
+        if not rows:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+        
+        # 汇总统计（参照 C# 逻辑）
+        import decimal
+        total_count = len(rows)
+        floor_area = round(sum(float(r.get("FLOORAREA", 0) or 0) for r in rows) / 666.67, 2)
+        parking_area = round(sum(float(r.get("PARKINGAREA", 0) or 0) for r in rows) / 666.67, 2)
+        building_area = round(sum(float(r.get("BUILDINGAREA", 0) or 0) for r in rows) / 666.67, 2)
+        
+        gas_count = sum(1 for r in rows if float(r.get("HASGASSTATION", 0) or 0) > 0)
+        charge_count = sum(1 for r in rows if float(r.get("HASCHARGESTATION", 0) or 0) > 0)
+        parking_lot = sum(1 for r in rows if any(float(r.get(k, 0) or 0) > 0 for k in ["SMALLPARKING", "PACKING", "TRUCKPACKING", "LONGPACKING", "DANPACKING"]))
+        repair_count = sum(1 for r in rows if float(r.get("HASAUTOREPAIR", 0) or 0) > 0)
+        toilet_count = sum(1 for r in rows if float(r.get("HASRESTROOM", 0) or 0) > 0)
+        driver_count = sum(1 for r in rows if float(r.get("HASPILOTLOUNGE", 0) or 0) > 0)
+        nursing_count = sum(1 for r in rows if float(r.get("HASMOTHER", 0) or 0) > 0)
+        store_count = sum(1 for r in rows if float(r.get("HASSTORE", 0) or 0) > 0)
+        catering_count = sum(1 for r in rows if float(r.get("DININGROOMCOUNT", 0) or 0) > 0)
+        lodging_count = sum(1 for r in rows if float(r.get("HASLODGING", 0) or 0) > 0)
+        water_count = sum(1 for r in rows if float(r.get("VEHICLEWATERFILLING", 0) or 0) > 0)
+        urea_count = sum(1 for r in rows if float(r.get("UREA_COUNT", 0) or 0) > 0)
+        
+        # 停车区数量
+        parking_service = sum(1 for r in rows if "停车区" in str(r.get("SERVERPART_NAME", "")))
+        sp_count = total_count - parking_service
+        
+        result_data = {
+            "ServerpartTotalCount": total_count,
+            "ServerpartCount": sp_count,
+            "ParkingServiceCount": parking_service,
+            "WaterStationCount": 0,
+            "ViewingDeckCount": 0,
+            "RestAreaCount": 0,
+            "ClosedCountCount": 0,
+            "FLoorArea": floor_area,
+            "ParkingArea": parking_area,
+            "BuildingArea": building_area,
+            "GasStationCount": gas_count,
+            "ChargeStationCount": charge_count,
+            "ParkingLotCount": parking_lot,
+            "AutoRepairCount": repair_count,
+            "ToiletCount": toilet_count,
+            "DriverRoomCount": driver_count,
+            "NursingRoomCount": nursing_count,
+            "StoreCount": store_count,
+            "CateringCount": catering_count,
+            "LodgingCount": lodging_count,
+            "WaterCount": water_count,
+            "UreaCount": urea_count,
+        }
+        
+        return Result.success(data=result_data, msg="查询成功")
+    except ValueError as ve:
+        logger.error(f"GetServerpartServiceSummary AES解密失败: {ve}")
+        return Result.fail(msg=f"解密失败{ve}")
     except Exception as ex:
         logger.error(f"GetServerpartServiceSummary 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -486,14 +548,58 @@ async def get_brand_structure_analysis(
 ):
     """
     获取经营品牌结构分析
-    原路由: [Route("BaseInfo/GetBrandStructureAnalysis")] POST
-    注意：原接口需要 AES 解密 postData.value
-    TODO: 实现 AES 解密 + BrandAnalysisHelper.GetBrandStructureAnalysis 逻辑
+    入参(AES加密)：ProvinceCode省份编码
     """
     try:
-        logger.warning(f"GetBrandStructureAnalysis 暂未完整实现（需 AES 解密）")
-        json_list = JsonListData.create(data_list=[], total=0, page_index=1, page_size=0)
+        from core.aes_util import decrypt_post_data
+        params = decrypt_post_data(postData)
+        province_code = params.get("ProvinceCode", "")
+        business_trade = params.get("BusinessTrade", "")
+        logger.info(f"GetBrandStructureAnalysis 解密参数: ProvinceCode={province_code}, BusinessTrade={business_trade}")
+
+        # 参照 C#: BrandAnalysisHelper.GetBrandStructureAnalysis
+        # SQL: SELECT BRAND_TYPE, COUNT(1) FROM T_BRAND
+        #      WHERE BRAND_CATEGORY=1000 AND BRAND_STATE=1 AND PROVINCE_CODE=xxx
+        #      GROUP BY BRAND_TYPE
+        where_sql = f" AND \"PROVINCE_CODE\" = '{province_code}'"
+        if business_trade:
+            where_sql += f" AND \"BRAND_INDUSTRY\" IN ({business_trade})"
+        
+        sql = f"""SELECT "BRAND_TYPE", COUNT(1) AS CNT
+            FROM "T_BRAND"
+            WHERE "BRAND_CATEGORY" = 1000 AND "BRAND_STATE" = 1{where_sql}
+            GROUP BY "BRAND_TYPE"
+            ORDER BY "BRAND_TYPE" """
+        rows = db.execute_query(sql)
+        
+        # 翻译 BRAND_TYPE 的字段枚举名称（从 T_FIELDENUM 表）
+        brand_type_names = {}
+        try:
+            enum_rows = db.execute_query("""
+                SELECT E."FIELDENUM_VALUE", E."FIELDENUM_NAME" 
+                FROM "T_FIELDENUM" E
+                JOIN "T_FIELDEXPLAIN" F ON E."FIELDEXPLAIN_ID" = F."FIELDEXPLAIN_ID"
+                WHERE F."FIELDEXPLAIN_FIELD" = 'BRAND_TYPE'
+            """)
+            brand_type_names = {str(r["FIELDENUM_VALUE"]): r["FIELDENUM_NAME"] for r in enum_rows}
+        except:
+            pass
+        
+        result_list = []
+        for row in rows:
+            bt = str(row.get("BRAND_TYPE", ""))
+            result_list.append({
+                "name": brand_type_names.get(bt, bt),
+                "value": str(row.get("CNT", 0)),
+                "data": None,
+                "key": bt
+            })
+        
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_index=1, page_size=len(result_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except ValueError as ve:
+        logger.error(f"GetBrandStructureAnalysis AES解密失败: {ve}")
+        return Result.fail(msg=f"解密失败{ve}")
     except Exception as ex:
         logger.error(f"GetBrandStructureAnalysis 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")

@@ -2,7 +2,7 @@
 """
 CommercialApi - Budget 路由
 对应原 CommercialApi/Controllers/BudgetController.cs
-财务预算相关接口（7个接口）
+财务预算相关接口（6个接口）
 """
 from fastapi import APIRouter, Depends, Query
 from typing import Optional
@@ -15,75 +15,142 @@ from routers.deps import get_db
 router = APIRouter()
 
 
+# ===== 1. GetBUDGETPROJECT_AHList =====
 @router.post("/Budget/GetBUDGETPROJECT_AHList")
 async def get_budget_project_ah_list(searchModel: dict = None, db: DatabaseHelper = Depends(get_db)):
     """获取安徽财务预算表列表"""
     try:
-        logger.warning("GetBUDGETPROJECT_AHList 暂未完整实现")
-        json_list = JsonListData.create(data_list=[], total=0)
+        searchModel = searchModel or {}
+        page_index = searchModel.get("PageIndex", 1) or 1
+        page_size = searchModel.get("PageSize", 20) or 20
+        sort_str = searchModel.get("SortStr", "BUDGETPROJECT_AH_ID DESC") or "BUDGETPROJECT_AH_ID DESC"
+        search_param = searchModel.get("SearchParameter") or {}
+
+        conditions = []
+        params = []
+
+        # 通用字段过滤（基于 SearchParameter 中的非空值）
+        for field in ["BUDGETPROJECT_YEAR", "BUDGETPROJECT_TYPE", "BUDGETPROJECT_STATE",
+                       "SERVERPART_ID", "SPREGIONTYPE_ID"]:
+            val = search_param.get(field)
+            if val is not None and str(val).strip():
+                conditions.append(f'"{field}" = ?')
+                params.append(val)
+
+        where_sql = (" WHERE " + " AND ".join(conditions)) if conditions else ""
+
+        # 查询总数
+        count_sql = f'SELECT COUNT(*) AS CNT FROM "T_BUDGETPROJECT_AH"{where_sql}'
+        count_rows = db.execute_query(count_sql, params)
+        total = count_rows[0]["CNT"] if count_rows else 0
+
+        # 分页查询
+        offset = (page_index - 1) * page_size
+        data_sql = f'SELECT * FROM "T_BUDGETPROJECT_AH"{where_sql} ORDER BY {sort_str} LIMIT ? OFFSET ?'
+        page_params = (params if params else []) + [page_size, offset]
+        page_rows = db.execute_query(data_sql, page_params)
+
+        # 格式化日期
+        for r in page_rows:
+            if r.get("BUDGETPROJECT_ENDDATE"):
+                r["BUDGETPROJECT_ENDDATE"] = str(r["BUDGETPROJECT_ENDDATE"])
+            if r.get("OPERATE_DATE"):
+                r["OPERATE_DATE"] = str(r["OPERATE_DATE"])
+
+        json_list = JsonListData.create(data_list=page_rows, total=total,
+                                        page_index=page_index, page_size=page_size)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
+        logger.error(f"GetBUDGETPROJECT_AHList 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
 
 
+# ===== 2. GetBUDGETPROJECT_AHDetail =====
 @router.get("/Budget/GetBUDGETPROJECT_AHDetail")
 async def get_budget_project_ah_detail(
-    BUDGETPROJECT_AHId: int = Query(..., description="安徽财务预算表内码"),
+    BUDGETPROJECT_AHId: Optional[int] = Query(None, description="安徽财务预算表内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取安徽财务预算表明细"""
     try:
-        logger.warning("GetBUDGETPROJECT_AHDetail 暂未完整实现")
-        return Result.fail(code=101, msg="查询失败，无数据返回！")
+        sql = 'SELECT * FROM "T_BUDGETPROJECT_AH" WHERE "BUDGETPROJECT_AH_ID" = ?'
+        rows = db.execute_query(sql, [BUDGETPROJECT_AHId])
+        if not rows:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+        data = rows[0]
+        if data.get("BUDGETPROJECT_ENDDATE"):
+            data["BUDGETPROJECT_ENDDATE"] = str(data["BUDGETPROJECT_ENDDATE"])
+        if data.get("OPERATE_DATE"):
+            data["OPERATE_DATE"] = str(data["OPERATE_DATE"])
+
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
+        logger.error(f"GetBUDGETPROJECT_AHDetail 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.post("/Budget/SynchroBUDGETPROJECT_AH")
-async def synchro_budget_project_ah(budgetproject_ahModel: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """同步安徽财务预算表"""
-    try:
-        logger.warning("SynchroBUDGETPROJECT_AH 暂未完整实现")
-        return Result.success(msg="同步成功")
-    except Exception as ex:
-        return Result.fail(msg=f"同步失败{ex}")
 
-
-@router.get("/Budget/DeleteBUDGETPROJECT_AH")
-async def delete_budget_project_ah(
-    BUDGETPROJECT_AHId: int = Query(..., description="安徽财务预算表内码"),
+# ===== 5. GetBudgetProjectDetailList =====
+@router.get("/Budget/GetBudgetProjectDetailList")
+async def get_budget_project_detail_list(
+    BUDGETPROJECT_AH_ID: Optional[int] = Query(None, description="预算项目ID"),
+    BUDGETPROJECT_YEAR: Optional[int] = Query(None, description="项目年份"),
+    STATISTICS_MONTH: Optional[int] = Query(None, description="统计月份"),
+    SERVERPART_ID: Optional[str] = Query("", description="服务区内码"),
+    ACCOUNT_CODE: Optional[str] = Query("", description="一级科目代码"),
+    STATISTICS_DATE: Optional[str] = Query("", description="结算日期"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """删除安徽财务预算表"""
+    """获取月度安徽财务预算明细表数据"""
     try:
-        logger.warning("DeleteBUDGETPROJECT_AH 暂未完整实现")
-        return Result.success(msg="删除成功")
-    except Exception as ex:
-        return Result.fail(msg=f"删除失败{ex}")
+        # 动态 WHERE（参照 C# BUDGETDETAIL_AHHelper.GetBudgetProjectDetailList）
+        conditions = ["A.BUDGETPROJECT_AH_ID = B.BUDGETPROJECT_AH_ID"]
+        params = {}
+        if BUDGETPROJECT_AH_ID:
+            conditions.append("A.BUDGETPROJECT_AH_ID = :bpid")
+            params["bpid"] = BUDGETPROJECT_AH_ID
+        if BUDGETPROJECT_YEAR:
+            conditions.append("A.BUDGETPROJECT_YEAR = :bpyear")
+            params["bpyear"] = BUDGETPROJECT_YEAR
+        if STATISTICS_MONTH:
+            conditions.append("B.STATISTICS_MONTH = :smonth")
+            params["smonth"] = STATISTICS_MONTH
+        elif STATISTICS_DATE:
+            # 从日期提取月份 yyyyMM
+            smonth = STATISTICS_DATE.replace("-", "")[:6]
+            conditions.append("B.STATISTICS_MONTH = :smonth")
+            params["smonth"] = smonth
+        if SERVERPART_ID:
+            conditions.append(f"A.SERVERPART_ID IN ({SERVERPART_ID})")
 
+        where_sql = " AND ".join(conditions)
+        sql = f"""SELECT 
+                A.SERVERPART_NAME, A.SPREGIONTYPE_NAME, B.ACCOUNT_PCODE, B.ACCOUNT_CODE,
+                B.BUDGETDETAIL_AMOUNT, B.REVENUE_AMOUNT
+            FROM T_BUDGETPROJECT_AH A, T_BUDGETDETAIL_AH B
+            WHERE {where_sql}"""
 
-@router.post("/Budget/GetBudgetProjectDetailList")
-async def get_budget_project_detail_list(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """
-    获取月度安徽财务预算明细表数据
-    入参(AES加密)：ProvinceCode, StatisticsMonth(yyyyMM), ServerpartId, SPRegionType_ID, SubjectCode
-    """
-    try:
-        logger.warning("GetBudgetProjectDetailList 暂未完整实现（需AES解密）")
-        json_list = JsonListData.create(data_list=[], total=0)
+        rows = db.execute_query(sql, params)
+        json_list = JsonListData.create(data_list=rows, total=len(rows))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
 
+# ===== 6. GetBudgetMainShow =====
 @router.get("/Budget/GetBudgetMainShow")
 async def get_budget_main_show(
-    BUDGETPROJECT_AHId: int = Query(..., description="安徽财务预算表内码"),
+    serverpartId: Optional[str] = Query(None, description="服务区内码"),
+    year: Optional[int] = Query(None, description="年份"),
+    month: Optional[int] = Query(None, description="月份"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取安徽财务预算表明细（主页展示）"""
     try:
-        logger.warning("GetBudgetMainShow 暂未完整实现")
-        return Result.fail(code=101, msg="查询失败，无数据返回！")
+        # TODO: 实现查询逻辑 - ESCG.BudgetShowAhHelper.GetBudgetMainShow
+        logger.warning("GetBudgetMainShow 查询逻辑暂未实现")
+        return Result.success(data={}, msg="查询成功")
     except Exception as ex:
+        logger.error(f"GetBudgetMainShow 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
