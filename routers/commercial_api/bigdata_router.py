@@ -111,7 +111,7 @@ def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_
     }
 
 
-@router.get("/BigData/GetBayonetEntryList")
+@router.get("/Revenue/GetBayonetEntryList")
 async def get_bayonet_entry_list(
     StatisticsDate: Optional[str] = Query(None, description="统计日期，格式yyyy-MM-dd"),
     Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
@@ -128,7 +128,7 @@ async def get_bayonet_entry_list(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/BigData/GetBayonetSTAList")
+@router.get("/Revenue/GetBayonetSTAList")
 async def get_bayonet_sta_list(
     StatisticsDate: Optional[str] = Query(None, description="统计日期，格式yyyy-MM-dd"),
     Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
@@ -222,7 +222,7 @@ async def get_bayonet_sta_list(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/BigData/GetBayonetOAList")
+@router.get("/Revenue/GetBayonetOAList")
 async def get_bayonet_oa_list(
     StatisticsMonth: Optional[str] = Query(None, description="统计月份，格式yyyyMM"),
     Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
@@ -300,7 +300,7 @@ async def get_bayonet_oa_list(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/BigData/GetBayonetProvinceOAList")
+@router.get("/Revenue/GetBayonetProvinceOAList")
 async def get_bayonet_province_oa_list(
     StatisticsMonth: Optional[str] = Query(None, description="统计月份，格式yyyyMM"),
     Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
@@ -378,7 +378,7 @@ async def get_bayonet_province_oa_list(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/BigData/GetSPBayonetList")
+@router.get("/Revenue/GetSPBayonetList")
 async def get_sp_bayonet_list(
     Statistics_Date: Optional[str] = Query(None, description="统计日期，格式yyyy-MM-dd"),
     Province_Code: Optional[str] = Query(None, description="省份编码"),
@@ -397,7 +397,7 @@ async def get_sp_bayonet_list(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/BigData/GetBayonetRankList")
+@router.get("/Revenue/GetBayonetRankList")
 async def get_bayonet_rank_list(
     Statistics_Date: Optional[str] = Query(None, description="统计日期，格式yyyy-MM-dd"),
     Province_Code: Optional[str] = Query(None, description="省份编码"),
@@ -415,7 +415,7 @@ async def get_bayonet_rank_list(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/BigData/GetAvgBayonetAnalysis")
+@router.get("/Revenue/GetAvgBayonetAnalysis")
 async def get_avg_bayonet_analysis(
     Statistics_Date: Optional[str] = Query(None, description="统计日期，格式yyyy-MM-dd"),
     Province_Code: Optional[str] = Query(None, description="省份编码"),
@@ -432,7 +432,7 @@ async def get_avg_bayonet_analysis(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/BigData/GetProvinceAvgBayonetAnalysis")
+@router.get("/Revenue/GetProvinceAvgBayonetAnalysis")
 async def get_province_avg_bayonet_analysis(
     Province_Code: Optional[str] = Query(None, description="省份编码"),
     Statistics_Date: Optional[str] = Query(None, description="统计日期/月份"),
@@ -446,7 +446,7 @@ async def get_province_avg_bayonet_analysis(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/BigData/GetBayonetSTAnalysis")
+@router.get("/Revenue/GetBayonetSTAnalysis")
 async def get_bayonet_st_analysis(
     StartMonth: Optional[str] = Query(None, description="统计开始月份"),
     EndMonth: Optional[str] = Query(None, description="统计结束月份"),

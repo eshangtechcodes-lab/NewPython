@@ -63,17 +63,8 @@ def get_test_params(method, route):
 _DOC_PARAMS = None
 
 # 旧 C# API 中路由与新 Python API 路由不一致的映射
-# 原因：BigDataController 的卡口接口在旧API上路由前缀是 Revenue/ 而不是 BigData/
+# 注: 路由已对齐，无需映射
 OLD_ROUTE_MAP = {
-    "/BigData/GetBayonetEntryList": "/Revenue/GetBayonetEntryList",
-    "/BigData/GetBayonetSTAList": "/Revenue/GetBayonetSTAList",
-    "/BigData/GetBayonetOAList": "/Revenue/GetBayonetOAList",
-    "/BigData/GetBayonetProvinceOAList": "/Revenue/GetBayonetProvinceOAList",
-    "/BigData/GetSPBayonetList": "/Revenue/GetSPBayonetList",
-    "/BigData/GetBayonetRankList": "/Revenue/GetBayonetRankList",
-    "/BigData/GetAvgBayonetAnalysis": "/Revenue/GetAvgBayonetAnalysis",
-    "/BigData/GetProvinceAvgBayonetAnalysis": "/Revenue/GetProvinceAvgBayonetAnalysis",
-    "/BigData/GetBayonetSTAnalysis": "/Revenue/GetBayonetSTAnalysis",
 }
 
 
