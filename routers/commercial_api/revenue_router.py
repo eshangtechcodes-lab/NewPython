@@ -1681,6 +1681,9 @@ async def get_company_revenue_report(
                     company_node["children"].append(trade_node)
 
             company_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
+            # 确保 children 至少有一个骨架节点
+            if not company_node["children"]:
+                company_node["children"] = [{"node": make_node(), "children": []}]
             result_list.append(company_node)
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))

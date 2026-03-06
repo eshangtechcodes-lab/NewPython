@@ -111,6 +111,15 @@ def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_
         })
 
     total_vc = sum(float(r.get("VEHICLE_COUNT") or 0) for r in prov_rows)
+    # 顶层城市列表(也像非省份模型一样聚合)
+    city_map = {}
+    for r in city_rows:
+        cn = r.get("CITY_NAME") or ""
+        city_map[cn] = city_map.get(cn, 0) + float(r.get("VEHICLE_COUNT") or 0)
+    city_sorted_top = sorted(city_map.items(), key=lambda x: x[1], reverse=True)[:city_top]
+    top_city_list = [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted_top]
+    if not top_city_list:
+        top_city_list = [{"name": None, "value": None}]
     return {
         "Serverpart_ID": sp_id,
         "Serverpart_Name": sp_name,
@@ -119,7 +128,7 @@ def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_
         "OwnerProvince": prov_sorted[0][0] if prov_sorted else None,
         "Vehicle_Count": int(total_vc),
         "OwnerProvinceList": prov_list,
-        "OwnerCityList": None,
+        "OwnerCityList": top_city_list,
     }
 
 
