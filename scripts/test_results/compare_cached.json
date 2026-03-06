@@ -698,7 +698,7 @@
     "route": "/Revenue/GetServerpartBrand",
     "ctrl": "Revenue",
     "old": "C=100",
-    "new": "C=100,T=0",
+    "new": "C=100",
     "result": "PASS"
   },
   {
@@ -707,7 +707,7 @@
     "route": "/Revenue/GetServerpartEndAccountList",
     "ctrl": "Revenue",
     "old": "C=100",
-    "new": "C=100,T=0",
+    "new": "C=100",
     "result": "PASS"
   },
   {
@@ -716,7 +716,7 @@
     "route": "/Revenue/GetShopEndAccountList",
     "ctrl": "Revenue",
     "old": "C=100",
-    "new": "C=100,T=0",
+    "new": "C=100",
     "result": "PASS"
   },
   {
@@ -833,7 +833,7 @@
     "route": "/Revenue/GetRevenueTrend",
     "ctrl": "Revenue",
     "old": "C=100,T=0",
-    "new": "C=100",
+    "new": "C=100,T=0",
     "result": "PASS"
   },
   {

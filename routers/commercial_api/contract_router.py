@@ -164,6 +164,7 @@ async def get_merchant_account_split(
             "SubRoyaltyTheory": round(total_sub_royalty_theory, 2),
             "ReceivableAmount": round(total_sub_royalty_price - total_sub_royalty_theory, 2),
             "MerchantAccountList": merchant_list,
+            "ProjectDetailList": None,
         }
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:

@@ -57,10 +57,13 @@ async def get_analysisins_list(searchModel: dict = None, db: DatabaseHelper = De
         page_params = (params if params else []) + [page_size, offset]
         page_rows = db.execute_query(data_sql, page_params)
 
-        # 格式化日期
+        # 格式化日期，补全搜索参数字段
         for r in page_rows:
             if r.get("OPERATE_DATE"):
                 r["OPERATE_DATE"] = str(r["OPERATE_DATE"])
+            r["ANALYSISINS_FORMATS"] = formats
+            r["ANALYSISINS_TYPES"] = types
+            r["SERVERPART_IDS"] = sp_ids
 
         json_list = JsonListData.create(data_list=page_rows, total=total,
                                         page_index=page_index, page_size=page_size)
@@ -83,6 +86,9 @@ async def get_analysisins_detail(ANALYSISINSId: Optional[int] = Query(None, desc
         data = rows[0]
         if data.get("OPERATE_DATE"):
             data["OPERATE_DATE"] = str(data["OPERATE_DATE"])
+        data["ANALYSISINS_FORMATS"] = None
+        data["ANALYSISINS_TYPES"] = None
+        data["SERVERPART_IDS"] = None
 
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
@@ -209,6 +215,7 @@ async def get_transaction_analysis(tapModel: dict = None, db: DatabaseHelper = D
                     "name": f"{hour}时",
                     "value": value,
                     "key": type_name,
+                    "data": None,
                 })
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
@@ -266,7 +273,11 @@ async def get_serverpart_type_analysis(postData: dict = None, db: DatabaseHelper
         # TODO: 实现查询逻辑 - ESCG.BusinessAnalysisHelper.GetServerpartTypeList
         logger.warning("GetServerpartTypeAnalysis 查询逻辑暂未实现")
         json_list = JsonListData.create(data_list=[], total=0)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        resp = json_list.model_dump()
+        resp["OtherData"] = None
+        resp["legend"] = None
+        resp["ColumnList"] = []
+        return Result.success(data=resp, msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetServerpartTypeAnalysis AES解密失败: {ve}")
         return Result.fail(msg=f"解密失败{ve}")

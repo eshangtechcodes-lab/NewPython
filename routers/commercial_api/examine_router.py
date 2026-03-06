@@ -126,6 +126,14 @@ async def get_examine_detail(EXAMINEId: Optional[int] = Query(None, description=
         data["EXAMINE_DATE"] = _translate_datetime(data.get("EXAMINE_DATE"))
         if data.get("EXAMINE_OPERATEDATE"):
             data["EXAMINE_OPERATEDATE"] = str(data["EXAMINE_OPERATEDATE"])
+        # 补全C#模型的搜索参数字段
+        data["DetailList"] = None
+        data["EXAMINE_DATE_Start"] = None
+        data["EXAMINE_DATE_End"] = None
+        data["EXAMINE_IDS"] = None
+        data["EXAMINE_TYPES"] = None
+        data["SERVERPART_IDS"] = None
+        data["SPREGIONTYPE_IDS"] = None
 
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
@@ -215,6 +223,11 @@ async def get_meeting_detail(MEETINGId: Optional[int] = Query(None, description=
         data["MEETING_DATE"] = _translate_datetime(data.get("MEETING_DATE"))
         if data.get("MEETING_OPERATEDATE"):
             data["MEETING_OPERATEDATE"] = str(data["MEETING_OPERATEDATE"])
+        data["MEETING_DATE_Start"] = None
+        data["MEETING_DATE_End"] = None
+        data["MEETING_IDS"] = None
+        data["SERVERPART_IDS"] = None
+        data["SPREGIONTYPE_IDS"] = None
 
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
@@ -307,6 +320,13 @@ async def get_patrol_detail(PATROLId: Optional[int] = Query(None, description="�
         data["PATROL_DATE"] = _translate_datetime(data.get("PATROL_DATE"))
         if data.get("PATROL_OPERATEDATE"):
             data["PATROL_OPERATEDATE"] = str(data["PATROL_OPERATEDATE"])
+        data["PATROL_DATE_Start"] = None
+        data["PATROL_DATE_End"] = None
+        data["PATROL_IDS"] = None
+        data["PATROL_IMG"] = None
+        data["PATROL_TYPES"] = None
+        data["SERVERPART_IDS"] = None
+        data["SPREGIONTYPE_IDS"] = None
 
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
