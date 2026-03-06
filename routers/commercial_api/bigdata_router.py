@@ -70,10 +70,14 @@ def _build_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, prov
     prov_sorted = sorted(prov_map.items(), key=lambda x: x[1], reverse=True)[:prov_top]
     prov_list = [{"name": p[0], "value": str(int(p[1]))} for p in prov_sorted]
 
+    total_vc = sum(float(r.get("VEHICLE_COUNT") or 0) for r in city_rows)
     return {
         "Serverpart_ID": sp_id,
         "Serverpart_Name": sp_name,
         "Serverpart_Region": region,
+        "OwnerCity": city_sorted[0][0] if city_sorted else None,
+        "OwnerProvince": prov_sorted[0][0] if prov_sorted else None,
+        "Vehicle_Count": int(total_vc),
         "OwnerCityList": city_list,
         "OwnerProvinceList": prov_list,
     }
@@ -100,14 +104,19 @@ def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_
         prov_list.append({
             "name": pn,
             "value": str(int(pv)),
-            "CityList": [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted],
+            "OwnerCityList": [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted],
         })
 
+    total_vc = sum(float(r.get("VEHICLE_COUNT") or 0) for r in prov_rows)
     return {
         "Serverpart_ID": sp_id,
         "Serverpart_Name": sp_name,
         "Serverpart_Region": region,
-        "ProvinceList": prov_list,
+        "OwnerCity": None,
+        "OwnerProvince": prov_sorted[0][0] if prov_sorted else None,
+        "Vehicle_Count": int(total_vc),
+        "OwnerProvinceList": prov_list,
+        "OwnerCityList": None,
     }
 
 
@@ -294,7 +303,9 @@ async def get_bayonet_oa_list(
                 result_list.append(oa)
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        resp = json_list.model_dump()
+        resp["OtherData"] = None
+        return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetOAList 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -372,7 +383,9 @@ async def get_bayonet_province_oa_list(
                 result_list.append(oa)
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        resp = json_list.model_dump()
+        resp["OtherData"] = None
+        return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetProvinceOAList 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -519,7 +532,7 @@ async def get_bayonet_st_analysis(
                     else:
                         stay = round(float(slot_row.get("STAY_TIMES") or 0) / 3600, 2)
                 data.append([out_time, stay])
-            result_list.append({"name": vt, "data": data})
+            result_list.append({"name": vt, "data": data, "value": None, "CommonScatterList": None})
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
@@ -627,14 +640,19 @@ async def get_province_month_analysis(
             model = {
                 "Statistics_Year": year,
                 "Statistics_Month": month,
+                "SPRegionType_Id": None,
                 "SPRegionType_Name": r.get("SPREGIONTYPE_NAME"),
                 "Serverpart_ID": r.get("SERVERPART_ID"),
                 "Serverpart_Name": r.get("SERVERPART_NAME"),
                 "Vehicle_Count": total_vehicle,
+                "MinVehicle_Count": None,
                 "SectionFlow_Count": total_section,
                 "Entry_Rate": entry_rate,
                 "RevenueAmount": None,
+                "ShopRevenueAmount": None,
                 "AvgVehicleAmount": None,
+                "Stay_Times": None,
+                "RegionList": None,
             }
             result_list.append(model)
 
@@ -758,7 +776,9 @@ async def get_bayonet_oa_analysis(
     try:
         logger.warning("GetBayonetOAAnalysis 暂未完整实现")
         json_list = JsonListData.create(data_list=[], total=0)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        resp = json_list.model_dump()
+        resp["OtherData"] = None
+        return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
@@ -839,6 +859,18 @@ async def get_date_analysis(
                 "LastYearSouthEastSERVERPART_FLOW": 0,
                 "LastYearNorthWestSECTIONFLOW_NUM": 0,
                 "LastYearNorthWestSERVERPART_FLOW": 0,
+                "ThisYearTotalANALOG": None,
+                "ThisYearSouthEastANALOG": None,
+                "ThisYearNorthWestANALOG": None,
+                "LastYearTotalANALOG": None,
+                "LastYearSouthEastANALOG": None,
+                "LastYearNorthWestANALOG": None,
+                "CurRevenueAmount": None,
+                "CurRevenueAmount_A": None,
+                "CurRevenueAmount_B": None,
+                "LyRevenueAmount": None,
+                "LyRevenueAmount_A": None,
+                "LyRevenueAmount_B": None,
             }
 
             for region in ['东', '南', '西', '北']:
@@ -874,12 +906,22 @@ async def get_date_analysis(
                 model["ThisYearTotalSECTIONFLOW_NUM"] - model["LastYearTotalSECTIONFLOW_NUM"])
             model["TotalDiffSERVERPART_FLOW"] = (
                 model["ThisYearTotalSERVERPART_FLOW"] - model["LastYearTotalSERVERPART_FLOW"])
+            model["SouthEastDiffSECTIONFLOW_NUM"] = (
+                model["ThisYearSouthEastSECTIONFLOW_NUM"] - model["LastYearSouthEastSECTIONFLOW_NUM"])
+            model["SouthEastDiffSERVERPART_FLOW"] = (
+                model["ThisYearSouthEastSERVERPART_FLOW"] - model["LastYearSouthEastSERVERPART_FLOW"])
+            model["NorthWestDiffSECTIONFLOW_NUM"] = (
+                model["ThisYearNorthWestSECTIONFLOW_NUM"] - model["LastYearNorthWestSECTIONFLOW_NUM"])
+            model["NorthWestDiffSERVERPART_FLOW"] = (
+                model["ThisYearNorthWestSERVERPART_FLOW"] - model["LastYearNorthWestSERVERPART_FLOW"])
 
             result_list.append(model)
             cur_date += timedelta(days=1)
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        resp = json_list.model_dump()
+        resp["OtherData"] = []
+        return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetDateAnalysis 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -908,7 +950,9 @@ async def get_cur_busy_rank(postData: dict = None, db: DatabaseHelper = Depends(
         # TODO: 实现查询逻辑（需要 Redis）
         logger.warning("GetCurBusyRank 查询逻辑暂未实现（需Redis）")
         json_list = JsonListData.create(data_list=[], total=0)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        resp = json_list.model_dump()
+        resp["OtherData"] = None
+        return Result.success(data=resp, msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetCurBusyRank AES解密失败: {ve}")
         return Result.fail(msg=f"解密失败{ve}")
@@ -1003,11 +1047,14 @@ async def get_revenue_trend_chart(postData: dict = None, db: DatabaseHelper = De
                     except:
                         pass
 
+            avg_ticket = round(total_amount / ticket_count, 2) if ticket_count > 0 else 0
             result_list.append({
                 "TradeDate": now_time,
                 "TotalAmount": total_amount,
                 "TicketCount": ticket_count,
                 "TotalCount": total_count,
+                "AvgTicketAmount": avg_ticket,
+                "ConnectState": None,
             })
             last_time = now_time
             half_time += 0.5
@@ -1037,7 +1084,7 @@ async def get_energy_revenue_info(postData: dict = None, db: DatabaseHelper = De
 
         # TODO: 实现查询逻辑
         logger.warning("GetEnergyRevenueInfo 查询逻辑暂未实现")
-        return Result.success(data={}, msg="查询成功")
+        return Result.success(data={"data": None, "key": None, "name": None, "value": None}, msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetEnergyRevenueInfo AES解密失败: {ve}")
         return Result.fail(msg=f"解密失败{ve}")
