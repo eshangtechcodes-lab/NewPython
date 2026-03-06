@@ -1341,6 +1341,7 @@ async def get_province_vehicle_tree_list(
                 "node": {
                     "Index": 999 if not prov else 1,
                     "ProvinceOrCityName": "其他" if not prov else prov,
+                    "ProvinceOrCityPName": None,
                     "TotalCount": total_vc,
                     "SPRegionTypeList": sp_list,
                 },
@@ -1365,7 +1366,9 @@ async def get_province_vehicle_tree_list(
 
         result = [{
             "node": {
+                "Index": 1,
                 "ProvinceOrCityName": "全部省份",
+                "ProvinceOrCityPName": None,
                 "TotalCount": all_total,
                 "SPRegionTypeList": all_sp,
             },
