@@ -1,0 +1,97 @@
+共 24 个新API有问题的DIFF接口
+
+[1] POST /Analysis/GetServerpartTypeAnalysis
+    旧=C=100,T=6  新=C=100,T=0
+    入参: {"name": "", "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtAysNAzZVR3I="}
+
+[2] GET /BaseInfo/GetBrandAnalysis
+    旧=C=100  新=C=101
+    入参: {"ProvinceCode": "340000", "Serverpart_ID": "416", "Statistics_Date": "2026-02-13", "ShowAllShop": "false", "BusinessTradeIds": ""}
+
+[3] GET /BaseInfo/GetServerpartList
+    旧=C=100,T=10  新=C=100,T=0
+    入参: {"Province_Code": "340000", "Serverpart_ID": "416", "PageIndex": "1", "PageSize": "10", "ShowWeather": "false", "ShowService": "false", "SPRegionType_ID": ""}
+
+[4] GET /BaseInfo/GetServerpartInfo
+    旧=C=100  新=C=101
+    入参: {"ServerpartId": "416"}
+
+[5] POST /BaseInfo/GetServerpartServiceSummary
+    旧=C=100  新=C=101
+    入参: {"name": "", "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2MDExFbKDMdPHBHEDt/Vk4vEXRVQHxDPwB1BS0uQw53LWpVEU0oM2wkCTp+QgQ8N1BTG3w="}
+
+[6] POST /BaseInfo/GetBrandStructureAnalysis
+    旧=C=100,T=4  新=C=100,T=0
+    入参: {"name": "", "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ3ImMh1SJC8APHtWEQEUKEwmNgp6"}
+
+[7] GET /BigData/GetBayonetSTAList
+    旧=C=100,T=2  新=C=100,T=0
+    入参: {"StatisticsDate": "2026-02-13", "Serverpart_ID": "416"}
+
+[8] GET /BigData/GetBayonetOAList
+    旧=C=100,T=2  新=C=100,T=0
+    入参: {"StatisticsMonth": "202602", "Serverpart_ID": "416"}
+
+[9] GET /BigData/GetBayonetProvinceOAList
+    旧=C=100,T=2  新=C=100,T=0
+    入参: {"StatisticsMonth": "202602", "Serverpart_ID": "416"}
+
+[10] GET /BigData/GetBayonetSTAnalysis
+    旧=C=100,T=3  新=C=100,T=0
+    入参: {"StartMonth": "202601", "EndMonth": "202602", "Province_Code": "340000"}
+
+[11] POST /BigData/GetRevenueTrendChart
+    旧=C=100,T=45  新=C=100,T=0
+    入参: {"name": "", "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2M2MwJZMywSGn1+EUYMMk43KFZGPSIMFSZ4OihTNEhqJX8xGip0fBlzAwJ8OHR9LV9BeHA="}
+
+[12] GET /Budget/GetBudgetProjectDetailList
+    旧=C=100,T=13  新=C=100,T=0
+    入参: {}
+
+[13] GET /Contract/GetMerchantAccountSplit
+    旧=C=100  新=C=101
+    入参: {"StatisticsMonth": "202602", "StatisticsStartMonth": "202602", "calcType": "1"}
+
+[14] GET /Customer/GetCustomerRatio
+    旧=C=100,T=3  新=C=100,T=0
+    入参: {"statisticsType": "1", "provinceCode": "340000", "statisticsMonth": "202602"}
+
+[15] GET /Customer/GetCustomerConsumeRatio
+    旧=C=100,T=2  新=C=100,T=0
+    入参: {"provinceCode": "340000", "statisticsMonth": "202602"}
+
+[16] GET /Customer/GetCustomerAgeRatio
+    旧=C=100,T=2  新=C=100,T=0
+    入参: {"provinceCode": "340000", "statisticsMonth": "202602"}
+
+[17] GET /Customer/GetCustomerGroupRatio
+    旧=C=100,T=2  新=C=100,T=0
+    入参: {"provinceCode": "340000", "statisticsMonth": "202602"}
+
+[18] GET /Customer/GetAnalysisDescDetail
+    旧=C=100  新=C=101
+    入参: {"statisticsType": "1", "statisticsMonth": "202602", "serverpartId": "416", "provinceCode": "340000"}
+
+[19] GET /Examine/GetPATROLDetail
+    旧=C=100  新=C=101
+    入参: {"PATROLId": "10"}
+
+[20] GET /Revenue/GetUnUpLoadShops
+    旧=C=100,T=27  新=C=100,T=0
+    入参: {"pushProvinceCode": "340000", "Statistics_Date": "2026-02-13", "Serverpart_ID": "416", "SPRegionType_ID": ""}
+
+[21] GET /Revenue/GetRevenueReport
+    旧=C=100,T=10356318.57  新=C=100,T=0
+    入参: {"provinceCode": "340000", "startTime": "2026-01-15", "endTime": "2026-02-13"}
+
+[22] GET /Revenue/GetServerpartINCAnalysis
+    旧=C=100,T=1  新=C=100,T=0
+    入参: {"calcType": "1", "pushProvinceCode": "340000", "curYear": "2026", "HolidayType": "2", "StatisticsDate": "2026-02-13", "compareYear": "2026", "CurStartDate": "2026-01-15", "ServerpartId": "416"}
+
+[23] GET /Revenue/GetMonthlySPINCAnalysis
+    旧=C=100,T=1  新=C=100,T=0
+    入参: {"calcType": "1", "pushProvinceCode": "340000", "curYear": "2026", "compareYear": "2026", "StatisticsDate": "2026-02-13", "StatisticsMonth": "202602", "StatisticsStartMonth": "202602", "ServerpartId": "416"}
+
+[24] GET /Revenue/GetCompanyRevenueReport
+    旧=C=100,T=3  新=C=100,T=0
+    入参: {"ProvinceCode": "340000", "StartTime": "2026-01-15", "EndTime": "2026-02-13", "ServerpartId": "416"}

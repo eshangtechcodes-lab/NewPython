@@ -120,8 +120,37 @@
 
 ### 阶段四：集成测试（2-3天）
 
-- 全量接口对比测试
-- 性能基准测试
+> 详细的测试工作流见 `/api-testing` 工作流文件。
+
+#### 测试策略：基线缓存法（解决旧 API 太慢的问题）
+
+旧 C# API 因 WCF 中间层架构极慢（单次全量对比 60 分钟+），采用**基线缓存**策略：
+
+```
+Step 1: 并发采集旧 API 全量响应 → 保存到 JSON（~15min，只需一次）
+Step 2: 读缓存 + 调新 API → 秒级对比（~3min，每次迭代后执行）
+```
+
+#### 测试工具链
+
+| 脚本 | 用途 | 命令 |
+|------|------|------|
+| `scripts/baseline_collect.py` | 采集旧 API 基线缓存 | `python scripts/baseline_collect.py` |
+| `scripts/compare_cached.py` | 基于缓存快速对比 | `python scripts/compare_cached.py` |
+| `scripts/compare_all.py` | 串行实时对比（备用） | `python scripts/compare_all.py` |
+| `scripts/perf_check_old_api.py` | 旧 API 性能基准测试 | `python scripts/perf_check_old_api.py` |
+
+#### 接口文档
+
+- 位置：`D:\CSharp\Project\000_通用版本\000_通用版本\030_EShangApi\docs\CommercialApi接口文档说明.md`
+- 包含每个接口的完整参数定义、测试用例、预期响应和参考耗时
+- 基础 URL 替换：`https://api.eshangtech.com/CommercialApi/` → `http://127.0.0.1:8900/CommercialApi/`
+
+#### 已知测试限制
+
+- 旧 API 约 76 个路由返回 404（路由不存在），无法对比
+- 旧 API 约 14 个 AES 加密接口传空参数返回 999（预期行为）
+- 旧 API 并发能力弱（>2 线程会 500，采集脚本已限制为 2 线程）
 
 ---
 

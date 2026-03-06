@@ -1,0 +1,48 @@
+
+[1] GET /BigData/GetBayonetRankList  旧非100
+    旧=C=200  新=C=100,T=0
+    入参: {"Statistics_Date": "2026-02-13", "Province_Code": "340000"}
+
+[2] GET /BigData/GetAvgBayonetAnalysis  旧非100
+    旧=C=101  新=C=100
+    入参: {"Statistics_Date": "2026-02-13", "Province_Code": "340000"}
+
+[3] GET /BigData/CorrectBayonet  旧非100
+    旧=C=999  新=C=100
+    入参: {"ServerpartId": "416", "StartDate": "2026-01-15", "EndDate": "2026-02-13", "ReferenceStartDate": "2025-12-01", "ReferenceEndDate": "2025-12-31"}
+
+[4] GET /Examine/WeChat_GetExamineDetail  旧T=0
+    旧=C=100,T=0  新=C=101
+    入参: {"ExamineId": "10"}
+
+[5] GET /Examine/WeChat_GetPatrolList  旧非100
+    旧=C=999  新=C=100,T=1
+    入参: {"SPRegionType_ID": "", "Serverpart_ID": "416", "SearchStartDate": "", "SearchEndDate": ""}
+
+[6] GET /Examine/GetPatrolAnalysis  旧非100
+    旧=C=200  新=C=100
+    入参: {"provinceCode": "340000", "ServerpartId": "416", "SPRegionType_ID": "", "StartDate": "2026-01-15", "EndDate": "2026-02-13"}
+
+[7] GET /Revenue/GetRevenueBudget  旧非100
+    旧=C=101  新=C=100
+    入参: {"Province_Code": "340000", "Statistics_Date": "2026-02-13", "Serverpart_ID": "416", "SPRegionType_ID": ""}
+
+[8] GET /Revenue/GetProvinceRevenueBudget  旧非100
+    旧=C=101  新=C=100
+    入参: {"StatisticsDate": "2026-02-13", "ProvinceCode": "340000", "StatisticsType": "1", "ShowWholeYear": "false", "ServerpartID": "416"}
+
+[9] GET /Revenue/GetTransactionTimeAnalysis  旧非100
+    旧=C=101  新=C=100
+    入参: {"Province_Code": "340000", "Statistics_Date": "2026-02-13", "Serverpart_ID": "416", "SPRegionType_ID": ""}
+
+[10] GET /Revenue/GetShopCurRevenue  旧非100
+    旧=C=101  新=C=100,T=0
+    入参: {"serverPartId": "416", "statisticsDate": "2026-02-14"}
+
+[11] GET /Revenue/GetShopINCAnalysis  旧非100
+    旧=C=101  新=C=100,T=0
+    入参: {"calcType": "1", "pushProvinceCode": "340000", "curYear": "2026", "compareYear": "2026", "HolidayType": "2", "ServerpartId": "416", "StatisticsDate": "2026-02-13", "CurStartDate": "2026-01-15"}
+
+[12] GET /Suggestion/GetMemberUnreadData  旧非100
+    旧=C=999  新=C=100
+    入参: {"ModuleGuids": "", "ProvinceCode": "340000", "MembershipId": "1"}

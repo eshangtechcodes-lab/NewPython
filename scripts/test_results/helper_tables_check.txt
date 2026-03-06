@@ -1,0 +1,178 @@
+
+======================================================================
+  BigData (卡口)
+======================================================================
+
+  📄 BigData\BayonetHelper.cs
+    ✅ T_BAYONETDAILY_AH
+    ✅ T_BAYONETHOURMONTH_AH
+    ✅ T_BAYONETOWMONTHLY_AH
+    ✅ T_BAYONETOWNERMONTH_AH
+    ✅ T_BAYONETPROVINCEMONTH_AH
+    ✅ T_BAYONETWARNING
+    ✅ T_BUSINESSWARNING
+    ✅ T_ENDACCOUNT_DAILY
+    ✅ T_HOLIDAY
+    ✅ T_REVENUEDAILY
+    ✅ T_SECTIONFLOW
+    ✅ T_SECTIONFLOWMONTH
+    ✅ T_SERVERPART
+    ✅ T_SERVERPARTSHOP
+
+  📄 BigData\BAYONETDAILY_AHHelper.cs
+    ✅ T_BAYONETDAILY_AH
+
+  📄 BigData\BAYONETHOURMONTH_AHHelper.cs
+    ✅ T_BAYONETHOURMONTH_AH
+
+  📄 BigData\BAYONETOWNERMONTH_AHHelper.cs
+    ✅ T_BAYONETOWNERMONTH_AH
+
+  📄 BigData\BigDataHelper.cs
+    ✅ T_GASORDERINFO
+    ✅ T_UREAMASTER
+    ✅ T_WATERMASTER
+
+======================================================================
+  Revenue (营收)
+======================================================================
+
+  📄 Revenue\RevenueHelper.cs
+    ✅ T_BUSINESSREVENUE
+
+  📄 Revenue\RevenuePushHelper.cs
+    ✅ T_ACCOUNTRECEIVABLE
+    ✅ T_BUSINESSLOG
+    ✅ T_COMMODITYSALE
+    ✅ T_ENDACCOUNT
+    ✅ T_ENDACCOUNT_TEMP
+    ✅ T_GOODSDELIVER
+    ✅ T_HOLIDAY
+    ✅ T_MOBILEPAYSHARE
+    ✅ T_PROVINCEREVENUE
+    ✅ T_REVENUEDAILY
+    ✅ T_REVENUEDASHBOARD
+    ✅ T_REVENUEMONTHLY
+    ✅ T_SERVERPART
+    ✅ T_SERVERPARTSHOP
+
+  📄 Revenue\AccountHelper.cs
+    ✅ T_ACCOUNTRECDETAIL
+    ✅ T_BUSINESSPROJECT
+    ✅ T_BUSINESSWARNING
+    ✅ T_MERCHANTSPLIT
+    ✅ T_MONTHLYREVENUE
+    ✅ T_PERIODMONTHPROFIT
+    ✅ T_PROFITCONTRIBUTE
+    ✅ T_PROVINCEREVENUE
+    ✅ T_REVENUEMONTHLY
+    ✅ T_SECTIONFLOW
+    ✅ T_SERVERPARTSHOP
+
+  📄 Revenue\ENDACCOUNTHelper.cs (未找到表名引用)
+
+  📄 Revenue\HolidayHelper.cs
+    ✅ T_BAYONETDAILY_AH
+    ✅ T_HOLIDAYREVENUE
+    ✅ T_PROVINCEREVENUE
+    ✅ T_SECTIONFLOW
+    ✅ T_SERVERPART
+    ✅ T_SERVERPARTSHOP
+
+  📄 Revenue\TransactionHelper.cs
+    ✅ T_ANALOGDATA
+    ✅ T_BAYONETDAILY_AH
+    ✅ T_BAYONETHOURMONTH_AH
+    ✅ T_CONSUMPTIONLEVEL
+    ✅ T_ENDACCOUNT_TEMP
+    ✅ T_REVENUEDAILY
+    ✅ T_SERVERPART
+    ✅ T_SERVERPARTSHOP
+    ✅ T_TRANSACTIONANALYSIS
+    ✅ T_YSSELLMASTER
+    ✅ T_YSSELLMASTERMONTH
+    ✅ T_YSSELLMASTER_YES
+
+  📄 Revenue\SalableCommodityHelper.cs (未找到表名引用)
+
+======================================================================
+  BaseInfo
+======================================================================
+
+  📄 BaseInfo\ServerpartHelper.cs
+    ✅ T_ACCOUNTWARNING
+    ✅ T_BUSINESSPROJECT
+    ✅ T_NOTICEINFO
+    ✅ T_RTSERVERPART
+    ✅ T_SERVERPART
+    ✅ T_SERVERPARTINFO
+    ✅ T_SERVERPARTMAP
+    ✅ T_SERVERPARTSHOP
+
+  📄 BaseInfo\BrandAnalysisHelper.cs
+    ✅ T_BRAND
+    ✅ T_REGISTERCOMPACT
+    ✅ T_SERVERPARTSHOP
+
+  📄 BaseInfo\BaseInfoHelper.cs
+    ✅ T_AUTOSTATISTICS
+    ✅ T_ENDACCOUNT_TEMP
+    ✅ T_SERVERPART
+    ✅ T_SERVERPARTSHOP
+
+======================================================================
+  Budget
+======================================================================
+
+  📄 Budget\BUDGETDETAIL_AHHelper.cs
+    ✅ T_BUDGETDETAIL_AH
+    ✅ T_BUDGETPROJECT_AH
+    ✅ T_REVENUEDAILY
+
+  📄 Budget\BUDGETEXPENSEHelper.cs
+    ✅ T_BUDGETDETAIL_AH
+    ✅ T_BUDGETEXPENSE
+    ✅ T_BUDGETPROJECT_AH
+    ✅ T_ENDACCOUNT_TEMP
+    ✅ T_REVENUEDAILY
+    ✅ T_SERVERPART
+
+  📄 Budget\BUDGETPROJECT_AHHelper.cs
+    ✅ T_BUDGETPROJECT_AH
+
+  📄 Budget\BudgetShowAhHelper.cs
+    ✅ T_BUDGETDETAIL_AH
+    ✅ T_BUDGETPROJECT_AH
+
+======================================================================
+  Contract
+======================================================================
+
+  📄 Contract\ContractAnalysisHelper.cs
+    ✅ T_PAYMENTCONFIRM
+    ✅ T_REGISTERCOMPACT
+    ✅ T_RTREGISTERCOMPACT
+
+======================================================================
+  Suggestion
+======================================================================
+
+  📄 Suggestion\SuggestionHelper.cs
+    ✅ T_OPERATELOG
+    ✅ T_RTMEMBERSHIP
+
+======================================================================
+  Customer
+======================================================================
+
+  📄 BigData\CustomerHelper.cs
+    ✅ T_CUSTOMERGROUP
+    ✅ T_CUSTOMERGROUP_AMOUNT
+    ✅ T_CUSTOMER_AGE
+    ✅ T_CUSTOMER_CONSUME
+    ✅ T_CUSTOMER_GAC
+    ✅ T_CUSTOMER_SHOP
+
+======================================================================
+  总结: 需要 62 张表, 已有 62, 缺失 0
+======================================================================

@@ -1,0 +1,155 @@
+[
+  {
+    "method": "GET",
+    "path": "/Examine/GetEXAMINEDetail",
+    "desc": "考核明细",
+    "status": "SKIP",
+    "msg": "原API异常: TIMEOUT",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetMEETINGDetail",
+    "desc": "晨会明细",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetPATROLDetail",
+    "desc": "巡检明细",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "POST",
+    "path": "/Examine/GetEXAMINEList",
+    "desc": "考核列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "POST",
+    "path": "/Examine/GetMEETINGList",
+    "desc": "晨会列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "POST",
+    "path": "/Examine/GetPATROLList",
+    "desc": "巡检列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/WeChat_GetExamineDetail",
+    "desc": "微信考核明细",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/Analysis/GetANALYSISINSDetail",
+    "desc": "分析明细",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "POST",
+    "path": "/Analysis/GetANALYSISINSList",
+    "desc": "分析列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/Analysis/GetShopMerchant",
+    "desc": "门店商家",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/Budget/GetBUDGETPROJECT_AHDetail",
+    "desc": "预算明细",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "POST",
+    "path": "/Budget/GetBUDGETPROJECT_AHList",
+    "desc": "预算列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetSPRegionList",
+    "desc": "片区列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetBusinessTradeList",
+    "desc": "业态列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetServerPartList",
+    "desc": "服务区列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetOwnerUnitListByProvinceCode",
+    "desc": "业主单位",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  },
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetBrandList",
+    "desc": "品牌列表",
+    "status": "SKIP",
+    "msg": "原API返回404",
+    "old_code": null,
+    "new_code": null
+  }
+]

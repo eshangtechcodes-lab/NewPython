@@ -213,6 +213,21 @@ ALTER TABLE T_XXX MODIFY BRAND_ID INTEGER;
 
 ### 5.1 运行对比脚本
 
+**CommercialApi 接口（推荐使用缓存对比，~3分钟完成全量对比）：**
+
+```powershell
+# 快速对比（读旧 API 缓存 + 调新 API）
+python scripts/compare_cached.py
+```
+
+> 首次运行前需先采集基线缓存：`python scripts/baseline_collect.py`（~15分钟）
+> 详细说明见 `/api-testing` 工作流。
+
+> 接口文档参考：`D:\CSharp\Project\000_通用版本\000_通用版本\030_EShangApi\docs\CommercialApi接口文档说明.md`
+> 文档包含每个接口的精确参数定义、测试用例和参考耗时。
+
+**EShangApiMain 接口（传统对比）：**
+
 修改 `scripts/compare_api.py`，替换为当前接口的路径，然后执行：
 
 ```powershell
@@ -345,6 +360,43 @@ git push
 **现象**: 达梦端口号错误（18071 应为 5236）、SYSDBA 密码错误
 **解决方案**: 连接参数统一在 `config.py` 管理，首次连接时先 `test_connection()` 验证
 **检查时机**: 前置条件
+
+### 🔴 P9: Schema 前缀不能用（2026-03-05 新增）
+
+**现象**: SQL 写 `HIGHWAY_SELLDATA.T_CUSTOMERGROUP` 报错"对象不存在"
+**根因**: C# 代码中 SQL 带 Oracle schema 前缀，但达梦中所有表统一在 NEWPYTHON 下
+**解决方案**: SQL 中**不要加任何 schema 前缀**，直接用表名
+**检查时机**: 第四步 4.2（实现 Service 时，从 C# SQL 翻译时）
+
+### 🔴 P10: Province_Code 是内码不是编码（2026-03-05 新增）
+
+**现象**: `Province_Code=340000` 查到 0 条
+**根因**: T_SERVERPART.PROVINCE_CODE 存的是数据字典内码（如 3544），不是行政区划编码
+**解决方案**: 先查 `SELECT FIELDENUM_ID FROM T_FIELDENUM WHERE FIELDENUM_VALUE = '340000'` 转换
+**检查时机**: 所有涉及 Province_Code 参数的接口
+
+### 🔴 P11: 达梦字段名与 Oracle 不同（2026-03-05 新增）
+
+**现象**: SQL 报"无效的列名 STATISTIC_TYPE"
+**根因**: Oracle 有 `STATISTIC_TYPE`，达梦中只有 `STATISTICS_TYPE`（多一个S）
+**解决方案**: 实现前先 `SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME='xxx'` 验证
+**检查时机**: 第四步 4.2 开始写 SQL 前
+
+### 🟡 P12: 参数名相似但含义不同（2026-03-05 新增）
+
+**现象**: `GetServerpartList` 只返回 1 条
+**根因**: C# 中 `Serverpart_ID`(带下划线)是"当前服务区标记"不参与 WHERE，`ServerpartId`(无下划线)才是过滤条件
+**解决方案**: 仔细看 C# 代码哪些参数参与 WHERE 构建，哪些仅用于业务逻辑
+**检查时机**: 第一步 1.1 和第四步 4.3
+
+### 🟡 P13: 测试数据 ID 在达梦中不存在（2026-03-05 新增）
+
+**现象**: `GetPATROLDetail` C=101（无数据）
+**根因**: 测试参数用 `PATROLId=10`，达梦最小 ID 是 687379
+**解决方案**: 实现前先查达梦中有效 ID：`SELECT xxx_ID FROM T_xxx ORDER BY xxx_ID DESC FETCH FIRST 5 ROWS ONLY`
+**检查时机**: 第五步 5.1 对比前，确认 doc_params.json 中的 ID 有效
+
+> 📄 完整踩坑记录详见 **docs/api_migration_pitfalls.md**
 
 ---
 

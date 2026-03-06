@@ -1,0 +1,1010 @@
+[
+  {
+    "idx": 1,
+    "method": "POST",
+    "route": "/AbnormalAudit/GetCurrentEarlyWarning",
+    "ctrl": "AbnormalAudit",
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
+  },
+  {
+    "idx": 2,
+    "method": "POST",
+    "route": "/AbnormalAudit/GetMonthEarlyWarning",
+    "ctrl": "AbnormalAudit",
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
+  },
+  {
+    "idx": 3,
+    "method": "POST",
+    "route": "/Analysis/GetANALYSISINSList",
+    "ctrl": "Analysis",
+    "old": "C=100,T=236",
+    "new": "C=100,T=236",
+    "result": "PASS"
+  },
+  {
+    "idx": 4,
+    "method": "GET",
+    "route": "/Analysis/GetANALYSISINSDetail",
+    "ctrl": "Analysis",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 5,
+    "method": "GET",
+    "route": "/Analysis/GetShopMerchant",
+    "ctrl": "Analysis",
+    "old": "C=100,T=76",
+    "new": "C=100,T=76",
+    "result": "PASS"
+  },
+  {
+    "idx": 6,
+    "method": "POST",
+    "route": "/Analysis/SolidTransactionAnalysis",
+    "ctrl": "Analysis",
+    "old": "C=200",
+    "new": "C=200",
+    "result": "PASS"
+  },
+  {
+    "idx": 7,
+    "method": "POST",
+    "route": "/Analysis/GetTransactionAnalysis",
+    "ctrl": "Analysis",
+    "old": "C=100,T=288",
+    "new": "C=100,T=288",
+    "result": "PASS"
+  },
+  {
+    "idx": 8,
+    "method": "GET",
+    "route": "/Analysis/TranslateSentence",
+    "ctrl": "Analysis",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 9,
+    "method": "GET",
+    "route": "/Analysis/GetMapConfigByProvinceCode",
+    "ctrl": "Analysis",
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
+  },
+  {
+    "idx": 10,
+    "method": "POST",
+    "route": "/Analysis/GetServerpartTypeAnalysis",
+    "ctrl": "Analysis",
+    "old": "C=100,T=6",
+    "new": "C=100,T=0",
+    "result": "DIFF"
+  },
+  {
+    "idx": 11,
+    "method": "GET",
+    "route": "/BaseInfo/GetSPRegionList",
+    "ctrl": "BaseInfo",
+    "old": "C=100,T=7",
+    "new": "C=100,T=7",
+    "result": "PASS"
+  },
+  {
+    "idx": 12,
+    "method": "GET",
+    "route": "/BaseInfo/GetBusinessTradeList",
+    "ctrl": "BaseInfo",
+    "old": "C=100,T=35",
+    "new": "C=100,T=35",
+    "result": "PASS"
+  },
+  {
+    "idx": 13,
+    "method": "POST",
+    "route": "/BaseInfo/GetBusinessTradeList",
+    "ctrl": "BaseInfo",
+    "old": "C=100,T=230",
+    "new": "C=100,T=230",
+    "result": "PASS"
+  },
+  {
+    "idx": 14,
+    "method": "GET",
+    "route": "/BaseInfo/GetBrandAnalysis",
+    "ctrl": "BaseInfo",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 15,
+    "method": "GET",
+    "route": "/BaseInfo/GetServerpartList",
+    "ctrl": "BaseInfo",
+    "old": "C=100,T=10",
+    "new": "C=100,T=10",
+    "result": "PASS"
+  },
+  {
+    "idx": 16,
+    "method": "GET",
+    "route": "/BaseInfo/GetServerpartInfo",
+    "ctrl": "BaseInfo",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 17,
+    "method": "GET",
+    "route": "/BaseInfo/GetServerInfoTree",
+    "ctrl": "BaseInfo",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 18,
+    "method": "POST",
+    "route": "/BaseInfo/GetServerpartServiceSummary",
+    "ctrl": "BaseInfo",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 19,
+    "method": "POST",
+    "route": "/BaseInfo/GetBrandStructureAnalysis",
+    "ctrl": "BaseInfo",
+    "old": "C=100,T=4",
+    "new": "C=100,T=4",
+    "result": "PASS"
+  },
+  {
+    "idx": 20,
+    "method": "GET",
+    "route": "/BigData/GetBayonetEntryList",
+    "ctrl": "BigData",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 21,
+    "method": "GET",
+    "route": "/BigData/GetBayonetSTAList",
+    "ctrl": "BigData",
+    "old": "C=100,T=2",
+    "new": "C=100,T=2",
+    "result": "PASS"
+  },
+  {
+    "idx": 22,
+    "method": "GET",
+    "route": "/BigData/GetBayonetOAList",
+    "ctrl": "BigData",
+    "old": "C=100,T=2",
+    "new": "C=100,T=2",
+    "result": "PASS"
+  },
+  {
+    "idx": 23,
+    "method": "GET",
+    "route": "/BigData/GetBayonetProvinceOAList",
+    "ctrl": "BigData",
+    "old": "C=100,T=2",
+    "new": "C=100,T=2",
+    "result": "PASS"
+  },
+  {
+    "idx": 24,
+    "method": "GET",
+    "route": "/BigData/GetSPBayonetList",
+    "ctrl": "BigData",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 25,
+    "method": "GET",
+    "route": "/BigData/GetBayonetRankList",
+    "ctrl": "BigData",
+    "old": "C=200",
+    "new": "C=200",
+    "result": "PASS"
+  },
+  {
+    "idx": 26,
+    "method": "GET",
+    "route": "/BigData/GetAvgBayonetAnalysis",
+    "ctrl": "BigData",
+    "old": "C=101",
+    "new": "C=101",
+    "result": "PASS"
+  },
+  {
+    "idx": 27,
+    "method": "GET",
+    "route": "/BigData/GetProvinceAvgBayonetAnalysis",
+    "ctrl": "BigData",
+    "old": "C=100,T=3",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 28,
+    "method": "GET",
+    "route": "/BigData/GetBayonetSTAnalysis",
+    "ctrl": "BigData",
+    "old": "C=100,T=3",
+    "new": "C=100,T=3",
+    "result": "PASS"
+  },
+  {
+    "idx": 29,
+    "method": "GET",
+    "route": "/BigData/GetMonthAnalysis",
+    "ctrl": "BigData",
+    "old": "C=100,T=2",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 30,
+    "method": "GET",
+    "route": "/BigData/GetProvinceMonthAnalysis",
+    "ctrl": "BigData",
+    "old": "C=100,T=1",
+    "new": "C=100,T=1",
+    "result": "PASS"
+  },
+  {
+    "idx": 31,
+    "method": "GET",
+    "route": "/BigData/GetBayonetWarning",
+    "ctrl": "BigData",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 32,
+    "method": "GET",
+    "route": "/BigData/GetHolidayBayonetWarning",
+    "ctrl": "BigData",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 33,
+    "method": "GET",
+    "route": "/BigData/GetBayonetGrowthAnalysis",
+    "ctrl": "BigData",
+    "old": "C=100",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 34,
+    "method": "GET",
+    "route": "/BigData/GetBayonetCompare",
+    "ctrl": "BigData",
+    "old": "C=100",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 35,
+    "method": "GET",
+    "route": "/BigData/GetHolidayCompare",
+    "ctrl": "BigData",
+    "old": "C=100",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 36,
+    "method": "GET",
+    "route": "/BigData/GetBayonetOAAnalysis",
+    "ctrl": "BigData",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 37,
+    "method": "GET",
+    "route": "/BigData/GetDateAnalysis",
+    "ctrl": "BigData",
+    "old": "C=100,T=30",
+    "new": "C=100,T=30",
+    "result": "PASS"
+  },
+  {
+    "idx": 38,
+    "method": "POST",
+    "route": "/BigData/GetCurBusyRank",
+    "ctrl": "BigData",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 39,
+    "method": "POST",
+    "route": "/BigData/GetRevenueTrendChart",
+    "ctrl": "BigData",
+    "old": "C=100,T=46",
+    "new": "C=100,T=0",
+    "result": "DIFF"
+  },
+  {
+    "idx": 40,
+    "method": "POST",
+    "route": "/BigData/GetEnergyRevenueInfo",
+    "ctrl": "BigData",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 41,
+    "method": "POST",
+    "route": "/Budget/GetBUDGETPROJECT_AHList",
+    "ctrl": "Budget",
+    "old": "C=100,T=255",
+    "new": "C=100,T=255",
+    "result": "PASS"
+  },
+  {
+    "idx": 42,
+    "method": "GET",
+    "route": "/Budget/GetBUDGETPROJECT_AHDetail",
+    "ctrl": "Budget",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 43,
+    "method": "GET",
+    "route": "/Budget/GetBudgetProjectDetailList",
+    "ctrl": "Budget",
+    "old": "C=100,T=13",
+    "new": "C=100,T=29383",
+    "result": "DIFF"
+  },
+  {
+    "idx": 44,
+    "method": "GET",
+    "route": "/Budget/GetBudgetMainShow",
+    "ctrl": "Budget",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 45,
+    "method": "GET",
+    "route": "/BusinessProcess/GetBusinessProcessList",
+    "ctrl": "BusinessProcess",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 46,
+    "method": "GET",
+    "route": "/Contract/GetContractAnalysis",
+    "ctrl": "Contract",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 47,
+    "method": "GET",
+    "route": "/Contract/GetMerchantAccountSplit",
+    "ctrl": "Contract",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 48,
+    "method": "GET",
+    "route": "/Contract/GetMerchantAccountDetail",
+    "ctrl": "Contract",
+    "old": "C=101",
+    "new": "C=101",
+    "result": "PASS"
+  },
+  {
+    "idx": 49,
+    "method": "GET",
+    "route": "/Customer/GetCustomerRatio",
+    "ctrl": "Customer",
+    "old": "C=100,T=3",
+    "new": "C=100,T=3",
+    "result": "PASS"
+  },
+  {
+    "idx": 50,
+    "method": "GET",
+    "route": "/Customer/GetCustomerConsumeRatio",
+    "ctrl": "Customer",
+    "old": "C=100,T=2",
+    "new": "C=100,T=2",
+    "result": "PASS"
+  },
+  {
+    "idx": 51,
+    "method": "GET",
+    "route": "/Customer/GetCustomerAgeRatio",
+    "ctrl": "Customer",
+    "old": "C=100,T=2",
+    "new": "C=100,T=2",
+    "result": "PASS"
+  },
+  {
+    "idx": 52,
+    "method": "GET",
+    "route": "/Customer/GetCustomerGroupRatio",
+    "ctrl": "Customer",
+    "old": "C=100,T=2",
+    "new": "C=100,T=2",
+    "result": "PASS"
+  },
+  {
+    "idx": 53,
+    "method": "GET",
+    "route": "/Customer/GetAnalysisDescList",
+    "ctrl": "Customer",
+    "old": "C=100,T=1",
+    "new": "C=100,T=1",
+    "result": "PASS"
+  },
+  {
+    "idx": 54,
+    "method": "GET",
+    "route": "/Customer/GetAnalysisDescDetail",
+    "ctrl": "Customer",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 55,
+    "method": "GET",
+    "route": "/Customer/GetCustomerSaleRatio",
+    "ctrl": "Customer",
+    "old": "C=100",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 56,
+    "method": "POST",
+    "route": "/Examine/GetEXAMINEList",
+    "ctrl": "Examine",
+    "old": "C=100,T=3695",
+    "new": "C=100,T=3695",
+    "result": "PASS"
+  },
+  {
+    "idx": 57,
+    "method": "GET",
+    "route": "/Examine/GetEXAMINEDetail",
+    "ctrl": "Examine",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 58,
+    "method": "POST",
+    "route": "/Examine/GetMEETINGList",
+    "ctrl": "Examine",
+    "old": "C=100,T=70994",
+    "new": "C=100,T=70993",
+    "result": "DIFF"
+  },
+  {
+    "idx": 59,
+    "method": "GET",
+    "route": "/Examine/GetMEETINGDetail",
+    "ctrl": "Examine",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 60,
+    "method": "POST",
+    "route": "/Examine/GetPATROLList",
+    "ctrl": "Examine",
+    "old": "C=100,T=104608",
+    "new": "C=100,T=104608",
+    "result": "PASS"
+  },
+  {
+    "idx": 61,
+    "method": "GET",
+    "route": "/Examine/GetPATROLDetail",
+    "ctrl": "Examine",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 62,
+    "method": "GET",
+    "route": "/Examine/WeChat_GetExamineList",
+    "ctrl": "Examine",
+    "old": "C=100",
+    "new": "C=100,T=1",
+    "result": "PASS"
+  },
+  {
+    "idx": 63,
+    "method": "GET",
+    "route": "/Examine/WeChat_GetExamineDetail",
+    "ctrl": "Examine",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 64,
+    "method": "GET",
+    "route": "/Examine/WeChat_GetPatrolList",
+    "ctrl": "Examine",
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
+  },
+  {
+    "idx": 65,
+    "method": "GET",
+    "route": "/Examine/WeChat_GetMeetingList",
+    "ctrl": "Examine",
+    "old": "C=100",
+    "new": "C=100,T=1",
+    "result": "PASS"
+  },
+  {
+    "idx": 66,
+    "method": "GET",
+    "route": "/Examine/GetPatrolAnalysis",
+    "ctrl": "Examine",
+    "old": "C=200",
+    "new": "C=200",
+    "result": "PASS"
+  },
+  {
+    "idx": 67,
+    "method": "GET",
+    "route": "/Examine/GetExamineAnalysis",
+    "ctrl": "Examine",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 68,
+    "method": "GET",
+    "route": "/Examine/GetExamineResultList",
+    "ctrl": "Examine",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 69,
+    "method": "GET",
+    "route": "/Examine/GetPatrolResultList",
+    "ctrl": "Examine",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 70,
+    "method": "POST",
+    "route": "/Examine/GetEvaluateResList",
+    "ctrl": "Examine",
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
+  },
+  {
+    "idx": 71,
+    "method": "GET",
+    "route": "/Revenue/GetRevenuePushList",
+    "ctrl": "Revenue",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 72,
+    "method": "GET",
+    "route": "/Revenue/GetSummaryRevenue",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 73,
+    "method": "GET",
+    "route": "/Revenue/GetSummaryRevenueMonth",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 74,
+    "method": "GET",
+    "route": "/Revenue/GetWechatPushSalesList",
+    "ctrl": "Revenue",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 75,
+    "method": "GET",
+    "route": "/Revenue/GetUnUpLoadShops",
+    "ctrl": "Revenue",
+    "old": "C=100,T=27",
+    "new": "C=100,T=0",
+    "result": "DIFF"
+  },
+  {
+    "idx": 76,
+    "method": "GET",
+    "route": "/Revenue/GetServerpartBrand",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 77,
+    "method": "GET",
+    "route": "/Revenue/GetServerpartEndAccountList",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 78,
+    "method": "GET",
+    "route": "/Revenue/GetShopEndAccountList",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 79,
+    "method": "POST",
+    "route": "/Revenue/GetBudgetExpenseList",
+    "ctrl": "Revenue",
+    "old": "C=100,T=158",
+    "new": "C=100,T=158",
+    "result": "PASS"
+  },
+  {
+    "idx": 80,
+    "method": "GET",
+    "route": "/Revenue/GetBudgetExpenseList",
+    "ctrl": "Revenue",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 81,
+    "method": "GET",
+    "route": "/Revenue/GetRevenueBudget",
+    "ctrl": "Revenue",
+    "old": "C=101",
+    "new": "C=101",
+    "result": "PASS"
+  },
+  {
+    "idx": 82,
+    "method": "GET",
+    "route": "/Revenue/GetProvinceRevenueBudget",
+    "ctrl": "Revenue",
+    "old": "C=101",
+    "new": "C=101",
+    "result": "PASS"
+  },
+  {
+    "idx": 83,
+    "method": "GET",
+    "route": "/Revenue/GetMobileShare",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 84,
+    "method": "GET",
+    "route": "/Revenue/GetMallDeliver",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 85,
+    "method": "GET",
+    "route": "/Revenue/GetTransactionAnalysis",
+    "ctrl": "Revenue",
+    "old": "C=100,T=0.0",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 86,
+    "method": "GET",
+    "route": "/Revenue/GetTransactionTimeAnalysis",
+    "ctrl": "Revenue",
+    "old": "C=101",
+    "new": "C=101",
+    "result": "PASS"
+  },
+  {
+    "idx": 87,
+    "method": "GET",
+    "route": "/Revenue/GetTransactionConvert",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 88,
+    "method": "GET",
+    "route": "/Revenue/GetBusinessTradeRevenue",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 89,
+    "method": "GET",
+    "route": "/Revenue/GetBusinessTradeLevel",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 90,
+    "method": "GET",
+    "route": "/Revenue/GetBusinessBrandLevel",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 91,
+    "method": "GET",
+    "route": "/Revenue/GetRevenueTrend",
+    "ctrl": "Revenue",
+    "old": "C=100,T=0",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 92,
+    "method": "GET",
+    "route": "/Revenue/GetRevenueReport",
+    "ctrl": "Revenue",
+    "old": "C=100,T=10356318.57",
+    "new": "C=100,T=0",
+    "result": "DIFF"
+  },
+  {
+    "idx": 93,
+    "method": "GET",
+    "route": "/Revenue/GetRevenueReportDetil",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 94,
+    "method": "GET",
+    "route": "/Revenue/GetSalableCommodity",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 95,
+    "method": "GET",
+    "route": "/Revenue/GetSPRevenueRank",
+    "ctrl": "Revenue",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 96,
+    "method": "GET",
+    "route": "/Revenue/GetRevenueYOY",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 97,
+    "method": "GET",
+    "route": "/Revenue/GetHolidayCompare",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 98,
+    "method": "GET",
+    "route": "/Revenue/GetAccountReceivable",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 99,
+    "method": "GET",
+    "route": "/Revenue/GetCurRevenue",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 100,
+    "method": "GET",
+    "route": "/Revenue/GetShopCurRevenue",
+    "ctrl": "Revenue",
+    "old": "C=101",
+    "new": "C=101",
+    "result": "PASS"
+  },
+  {
+    "idx": 101,
+    "method": "GET",
+    "route": "/Revenue/GetLastSyncDateTime",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 102,
+    "method": "GET",
+    "route": "/Revenue/GetHolidayAnalysis",
+    "ctrl": "Revenue",
+    "old": "C=100",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 103,
+    "method": "GET",
+    "route": "/Revenue/GetHolidayAnalysisBatch",
+    "ctrl": "Revenue",
+    "old": "C=100,T=1",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 104,
+    "method": "GET",
+    "route": "/Revenue/GetServerpartINCAnalysis",
+    "ctrl": "Revenue",
+    "old": "C=100,T=1",
+    "new": "C=100,T=0",
+    "result": "DIFF"
+  },
+  {
+    "idx": 105,
+    "method": "GET",
+    "route": "/Revenue/GetShopINCAnalysis",
+    "ctrl": "Revenue",
+    "old": "C=101",
+    "new": "C=101",
+    "result": "PASS"
+  },
+  {
+    "idx": 106,
+    "method": "GET",
+    "route": "/Revenue/GetMonthlyBusinessAnalysis",
+    "ctrl": "Revenue",
+    "old": "C=100,T=6",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 107,
+    "method": "GET",
+    "route": "/Revenue/GetMonthlySPINCAnalysis",
+    "ctrl": "Revenue",
+    "old": "C=100,T=1",
+    "new": "C=100,T=0",
+    "result": "DIFF"
+  },
+  {
+    "idx": 108,
+    "method": "GET",
+    "route": "/Revenue/GetTransactionDetailList",
+    "ctrl": "Revenue",
+    "old": "C=100,T=0",
+    "new": "C=100,T=0",
+    "result": "PASS"
+  },
+  {
+    "idx": 109,
+    "method": "GET",
+    "route": "/Revenue/GetHolidayRevenueRatio",
+    "ctrl": "Revenue",
+    "old": "C=100,T=2",
+    "new": "C=100",
+    "result": "PASS"
+  },
+  {
+    "idx": 110,
+    "method": "POST",
+    "route": "/Revenue/GetBusinessRevenueList",
+    "ctrl": "Revenue",
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
+  },
+  {
+    "idx": 111,
+    "method": "POST",
+    "route": "/Revenue/GetMonthlyBusinessRevenue",
+    "ctrl": "Revenue",
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
+  },
+  {
+    "idx": 112,
+    "method": "GET",
+    "route": "/Revenue/GetCompanyRevenueReport",
+    "ctrl": "Revenue",
+    "old": "C=100,T=3",
+    "new": "C=100,T=0",
+    "result": "DIFF"
+  }
+]
