@@ -4,7 +4,7 @@ CommercialApi - BaseInfo 路由
 对应原 CommercialApi/Controllers/BaseInfoController.cs
 所有接口路由与原 C# API 完全一致
 """
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from typing import Optional
 from loguru import logger
 
@@ -385,6 +385,7 @@ async def get_serverpart_info(
 # ===== 11. GetServerInfoTree =====
 @router.get("/BaseInfo/GetServerInfoTree")
 async def get_server_info_tree(
+    request: Request,
     ProvinceCode: Optional[int] = Query(None, description="省份编码"),
     SPRegionTypeId: Optional[str] = Query("", description="区域内码"),
     ServerpartIds: Optional[str] = Query("", description="服务区内码集合"),
@@ -397,6 +398,16 @@ async def get_server_info_tree(
     TODO: 实现完整 ServerpartHelper.GetServerInfoTree 逻辑
     """
     try:
+        # 从Header获取省份编码和服务区编码（页面权限验证来源）
+        if ProvinceCode is None:
+            header_pc = request.headers.get("ProvinceCode", "")
+            if header_pc:
+                try:
+                    ProvinceCode = int(header_pc)
+                except ValueError:
+                    pass
+        if not ServerpartIds:
+            ServerpartIds = request.headers.get("ServerpartCodes", "")
         if ProvinceCode is None:
             return Result.fail(code=200, msg="查询失败，请传入正确的省份编码！")
 

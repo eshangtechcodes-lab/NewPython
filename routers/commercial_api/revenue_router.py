@@ -4,7 +4,7 @@ CommercialApi - Revenue 路由
 对应原 CommercialApi/Controllers/RevenueController.cs
 营收相关接口（原2657行，40+接口，此处按方法签名完整定义路由）
 """
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from typing import Optional
 from loguru import logger
 
@@ -361,6 +361,7 @@ async def get_transaction_convert(
 # ===== 业态分析 =====
 @router.get("/Revenue/GetBusinessTradeRevenue")
 async def get_business_trade_revenue(
+    request: Request,
     ProvinceCode: Optional[str] = Query(None, description="省份编码"),
     StatisticsDate: Optional[str] = Query(None, description="统计日期"),
     ServerpartId: Optional[str] = Query("", description="服务区内码"),
@@ -370,12 +371,16 @@ async def get_business_trade_revenue(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取业态营收占比"""
+    # 从Header获取省份编码（页面权限验证来源）
+    if not ProvinceCode:
+        ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessTradeRevenue 暂未完整实现")
     return Result.success(data={}, msg="查询成功")
 
 
 @router.get("/Revenue/GetBusinessTradeLevel")
 async def get_business_trade_level(
+    request: Request,
     ProvinceCode: Optional[str] = Query(None, description="省份编码"),
     StatisticsDate: Optional[str] = Query(None, description="统计日期"),
     ServerpartId: Optional[int] = Query(None, description="服务区内码"),
@@ -383,12 +388,15 @@ async def get_business_trade_level(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取业态消费水平占比"""
+    if not ProvinceCode:
+        ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessTradeLevel 暂未完整实现")
     return Result.success(data={}, msg="查询成功")
 
 
 @router.get("/Revenue/GetBusinessBrandLevel")
 async def get_business_brand_level(
+    request: Request,
     ProvinceCode: Optional[str] = Query(None, description="省份编码"),
     StatisticsDate: Optional[str] = Query(None, description="统计日期"),
     ServerpartId: Optional[int] = Query(None, description="服务区内码"),
@@ -396,6 +404,8 @@ async def get_business_brand_level(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取品牌消费水平占比"""
+    if not ProvinceCode:
+        ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetBusinessBrandLevel 暂未完整实现")
     return Result.success(data={}, msg="查询成功")
 
@@ -407,11 +417,14 @@ async def get_business_brand_level(
 
 @router.get("/Revenue/GetRevenueTrend")
 async def get_revenue_trend_get(
+    request: Request,
     ProvinceCode: Optional[str] = Query(None, description="省份编码"),
     StatisticsType: int = Query(1, description="统计类型"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取营收趋势图（GET）"""
+    if not ProvinceCode:
+        ProvinceCode = request.headers.get("ProvinceCode", "")
     logger.warning("GetRevenueTrend GET 暂未完整实现")
     return Result.success(data={}, msg="查询成功")
 

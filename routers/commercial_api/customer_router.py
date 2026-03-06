@@ -4,7 +4,7 @@ CommercialApi - Customer 路由
 对应原 CommercialApi/Controllers/CustomerController.cs
 客群分析相关接口（8个接口）
 """
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from typing import Optional
 from loguru import logger
 
@@ -285,6 +285,7 @@ async def get_analysis_desc_detail(
 
 @router.get("/Customer/GetCustomerSaleRatio")
 async def get_customer_sale_ratio(
+    request: Request,
     ProvinceCode: Optional[str] = Query(None, description="省份编码"),
     StatisticsMonth: Optional[str] = Query(None, description="统计月份"),
     ServerpartId: Optional[int] = Query(None, description="服务区内码"),
@@ -297,6 +298,9 @@ async def get_customer_sale_ratio(
 ):
     """获取客群消费偏好数据"""
     try:
+        # 从Header获取省份编码（页面权限验证来源）
+        if not ProvinceCode:
+            ProvinceCode = request.headers.get("ProvinceCode", "")
         logger.warning("GetCustomerSaleRatio 暂未完整实现")
         json_list = JsonListData.create(data_list=[], total=0)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
