@@ -1185,3 +1185,186 @@ async def get_company_revenue_report(
         logger.error(f"GetCompanyRevenueReport 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
 
+
+# ===== GetRevenueCompare =====
+@router.get("/Revenue/GetRevenueCompare")
+async def get_revenue_compare(
+    request: Request,
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取营收同比环比对比数据"""
+    try:
+        # 从Header读取ProvinceCode
+        if not ProvinceCode:
+            ProvinceCode = request.headers.get("ProvinceCode", "")
+        # TODO: 实现 RevenuePushHelper.GetRevenueCompare
+        logger.warning("GetRevenueCompare 查询逻辑暂未实现")
+        return Result.fail(code=101, msg="查询失败，无数据返回！")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== GetHolidaySPRAnalysis =====
+@router.get("/Revenue/GetHolidaySPRAnalysis")
+async def get_holiday_spr_analysis(
+    pushProvinceCode: str = Query(..., description="省份编码"),
+    curYear: int = Query(..., description="本年年份"),
+    compareYear: int = Query(..., description="历年年份"),
+    HolidayType: int = Query(..., description="节日类型: 1元旦 2春运 3清明 4五一 5端午 6暑期 7中秋 8国庆"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+    businessType: Optional[str] = Query("", description="经营模式"),
+    businessTrade: Optional[str] = Query("", description="经营业态"),
+    businessRegion: Optional[str] = Query("", description="经营区域"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取节假日服务区营收分析"""
+    try:
+        # TODO: 实现 HolidayHelper.GetHolidaySPRAnalysis
+        logger.warning("GetHolidaySPRAnalysis 查询逻辑暂未实现")
+        return Result.fail(code=101, msg="查询失败，无数据返回！")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== GetHolidayDailyAnalysis =====
+@router.get("/Revenue/GetHolidayDailyAnalysis")
+async def get_holiday_daily_analysis(
+    pushProvinceCode: str = Query(..., description="省份编码"),
+    curYear: int = Query(..., description="本年年份"),
+    compareYear: int = Query(..., description="历年年份"),
+    HolidayType: int = Query(..., description="节日类型"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+    SPRegionTypeId: Optional[str] = Query("", description="片区内码"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    businessType: Optional[str] = Query("", description="经营模式"),
+    businessTrade: Optional[str] = Query("", description="经营业态"),
+    businessRegion: Optional[str] = Query("", description="经营区域"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取节假日各类项目所有天数对客分析"""
+    try:
+        # TODO: 实现 HolidayHelper.GetHolidayDailyAnalysis
+        logger.warning("GetHolidayDailyAnalysis 查询逻辑暂未实现")
+        return Result.fail(code=101, msg="查询失败，无数据返回！")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== GetMonthINCAnalysis =====
+@router.get("/Revenue/GetMonthINCAnalysis")
+async def get_month_inc_analysis(
+    pushProvinceCode: str = Query(..., description="省份编码"),
+    StatisticsStartMonth: str = Query(..., description="统计开始月份"),
+    StatisticsEndMonth: str = Query(..., description="统计结束月份"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    businessRegion: Optional[int] = Query(None, description="经营区域"),
+    BusinessTradeType: Optional[str] = Query("", description="经营业态大类"),
+    shopTrade: Optional[str] = Query("", description="商品业态"),
+    compactStartDate: Optional[str] = Query("", description="合同开始日期"),
+    compactEndDate: Optional[str] = Query("", description="合同结束日期"),
+    calcQOQ: bool = Query(False, description="是否计算环比"),
+    calcYOY: bool = Query(False, description="是否计算同比"),
+    calcBayonet: bool = Query(False, description="是否计算车流量"),
+    hasAnalog: bool = Query(True, description="是否包含模拟车流"),
+    statisticsType: int = Query(1, description="统计类型"),
+    accountType: int = Query(0, description="收入结算类型"),
+    showRevenue: int = Query(0, description="经营增幅"),
+    showBayonet: int = Query(0, description="车流增幅"),
+    showLevel: int = Query(1, description="显示层级"),
+    solidType: bool = Query(True, description="查询固化"),
+    showWarning: Optional[bool] = Query(True, description="显示预警"),
+    warningType: Optional[int] = Query(None, description="预警类型"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取月度经营增长分析（含车流量对比）"""
+    try:
+        # TODO: 实现 AccountHelper.GetMonthINCAnalysis（4800行极复杂逻辑）
+        logger.warning("GetMonthINCAnalysis 查询逻辑暂未实现")
+        return Result.fail(code=101, msg="查询失败，无数据返回！")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== GetMonthINCAnalysisSummary =====
+@router.get("/Revenue/GetMonthINCAnalysisSummary")
+async def get_month_inc_analysis_summary(
+    StatisticsStartMonth: str = Query(..., description="统计开始月份"),
+    StatisticsEndMonth: str = Query(..., description="统计结束月份"),
+    BusinessTradeType: Optional[str] = Query("", description="经营业态大类"),
+    shopTrade: Optional[str] = Query("", description="经营业态"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """汇总月度经营项目预警数值"""
+    try:
+        # TODO: 实现 AccountHelper.GetMonthINCAnalysisSummary
+        logger.warning("GetMonthINCAnalysisSummary 查询逻辑暂未实现")
+        json_list = JsonListData.create(data_list=[], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== StorageMonthINCAnalysis =====
+@router.get("/Revenue/StorageMonthINCAnalysis")
+async def storage_month_inc_analysis(
+    pushProvinceCode: str = Query(..., description="省份编码"),
+    StatisticsMonth: str = Query(..., description="统计月份"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    hasAnalog: bool = Query(True, description="是否包含模拟车流"),
+    accountType: int = Query(0, description="收入结算类型"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """固化月度经营预警数据"""
+    try:
+        # TODO: 实现 AccountHelper.StorageMonthINCAnalysis
+        logger.warning("StorageMonthINCAnalysis 查询逻辑暂未实现")
+        return Result.success(data={}, msg="生成成功")
+    except Exception as ex:
+        return Result.fail(msg=f"生成失败{ex}")
+
+
+# ===== GetShopSABFIList =====
+@router.get("/Revenue/GetShopSABFIList")
+async def get_shop_sabfi_list(
+    pushProvinceCode: str = Query(..., description="省份编码"),
+    StatisticsMonth: str = Query(..., description="统计月份"),
+    ServerpartId: str = Query(..., description="服务区内码"),
+    BusinessTradeType: Optional[str] = Query("", description="经营业态大类"),
+    BusinessTrade: Optional[str] = Query("", description="经营业态"),
+    accountType: int = Query(0, description="收入结算类型"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """月度服务区门店商业适配指数（SABFI）"""
+    try:
+        # TODO: 实现 AccountHelper.GetShopSABFIList
+        logger.warning("GetShopSABFIList 查询逻辑暂未实现")
+        json_list = JsonListData.create(data_list=[], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== GetShopMonthSABFIList =====
+@router.get("/Revenue/GetShopMonthSABFIList")
+async def get_shop_month_sabfi_list(
+    calcSelf: bool = Query(..., description="是否计算自营"),
+    StatisticsStartMonth: str = Query(..., description="统计开始月份"),
+    StatisticsEndMonth: str = Query(..., description="统计结束月份"),
+    BusinessProjectId: Optional[int] = Query(None, description="经营项目内码"),
+    ServerpartShopId: Optional[str] = Query("", description="门店内码"),
+    ServerpartId: Optional[int] = Query(None, description="服务区内码"),
+    ServerpartShopName: Optional[str] = Query("", description="门店名称"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取门店每月商业适配指数（SABFI）"""
+    try:
+        # TODO: 实现 AccountHelper.GetShopMonthSABFIList
+        logger.warning("GetShopMonthSABFIList 查询逻辑暂未实现")
+        json_list = JsonListData.create(data_list=[], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")

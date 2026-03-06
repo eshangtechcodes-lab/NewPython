@@ -1044,3 +1044,69 @@ async def get_energy_revenue_info(postData: dict = None, db: DatabaseHelper = De
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
+
+# ===== GetBayonetOwnerAHTreeList =====
+@router.get("/BigData/GetBayonetOwnerAHTreeList")
+async def get_bayonet_owner_ah_tree_list(
+    dataType: int = Query(..., description="数据类型: 1=明细, 其他=汇总"),
+    serverPartId: str = Query(..., description="服务区内码"),
+    statisticsStartMonth: int = Query(..., description="开始日期(yyyyMM)"),
+    statisticsEndMonth: int = Query(..., description="结束日期(yyyyMM)"),
+    rankNum: Optional[int] = Query(None, description="城市top排名"),
+    isSync: bool = Query(True, description="是否异步执行"),
+    pageIndex: Optional[int] = Query(1, description="页码"),
+    pageSize: Optional[int] = Query(10, description="每页条数"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取安徽卡口所有者树形数据"""
+    try:
+        # TODO: 实现 BayonetHelper.GetBayonetOwnerAHTreeList / GetBayonetOwnerAHTreeDetail
+        logger.warning("GetBayonetOwnerAHTreeList 查询逻辑暂未实现")
+        json_list = JsonListData.create(data_list=[], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== GetProvinceVehicleTreeList =====
+@router.get("/BigData/GetProvinceVehicleTreeList")
+async def get_province_vehicle_tree_list(
+    serverPartId: str = Query(..., description="服务区内码集合"),
+    statisticsStartMonth: int = Query(..., description="开始日期(yyyyMM)"),
+    statisticsEndMonth: int = Query(..., description="结束日期(yyyyMM)"),
+    rankNum: Optional[int] = Query(None, description="城市top排名"),
+    pageIndex: Optional[int] = Query(1, description="页码"),
+    pageSize: Optional[int] = Query(10, description="每页条数"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取各省入区车辆统计表(树形)"""
+    try:
+        # TODO: 实现 BayonetHelper.GetProvinceVehicleTreeList
+        logger.warning("GetProvinceVehicleTreeList 查询逻辑暂未实现")
+        json_list = JsonListData.create(data_list=[], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== GetProvinceVehicleDetail =====
+@router.get("/BigData/GetProvinceVehicleDetail")
+async def get_province_vehicle_detail(
+    statisticsStartMonth: int = Query(..., description="开始日期(yyyyMM)"),
+    statisticsEndMonth: int = Query(..., description="结束日期(yyyyMM)"),
+    provinceName: str = Query(..., description="省份名称"),
+    serverPartId: Optional[str] = Query("", description="服务区内码"),
+    cityName: Optional[str] = Query("", description="城市名称"),
+    rankNum: Optional[int] = Query(None, description="城市top排名"),
+    pageIndex: Optional[int] = Query(1, description="页码"),
+    pageSize: Optional[int] = Query(10, description="每页条数"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取各省入区车辆统计表明细"""
+    try:
+        # TODO: 实现 BayonetHelper.GetProvinceVehicleDetail
+        logger.warning("GetProvinceVehicleDetail 查询逻辑暂未实现")
+        json_list = JsonListData.create(data_list=[], total=0)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        return Result.fail(msg=f"查询失败{ex}")
