@@ -933,9 +933,86 @@ async def get_revenue_trend_chart(postData: dict = None, db: DatabaseHelper = De
         if not province_code:
             return Result.fail(code=205, msg="查询失败,请传入省份编码！")
 
-        # TODO: 实现查询逻辑（需要 Redis）
-        logger.warning("GetRevenueTrendChart 查询逻辑暂未实现（需Redis）")
-        json_list = JsonListData.create(data_list=[], total=0)
+        import math
+        from datetime import datetime as dt
+
+        # 获取服务区编码列表
+        serverpart_codes = []
+        if serverpart_code:
+            serverpart_codes = [serverpart_code]
+        elif serverpart_id:
+            rows = db.execute_query(
+                f'SELECT "SERVERPART_CODE" FROM "T_SERVERPART" WHERE "SERVERPART_ID" IN ({serverpart_id})')
+            serverpart_codes = [r["SERVERPART_CODE"] for r in rows if r.get("SERVERPART_CODE")]
+        else:
+            # 获取省份对应的FieldEnum_ID
+            fe_rows = db.execute_query(
+                """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
+                {"pc": province_code})
+            if fe_rows:
+                province_id = fe_rows[0]["FIELDENUM_ID"]
+                rows = db.execute_query(
+                    f'SELECT "SERVERPART_CODE" FROM "T_SERVERPART" WHERE "STATISTICS_TYPE" = 1000 AND "STATISTIC_TYPE" = 1000 AND "PROVINCE_CODE" = {province_id}')
+                serverpart_codes = [r["SERVERPART_CODE"] for r in rows if r.get("SERVERPART_CODE")]
+
+        # 从 Redis 读取营收趋势数据
+        import redis
+        redis_client = redis.Redis(host='127.0.0.1', port=6379, db=1, decode_responses=True)
+        table_name = f"RevenueTrend:{dt.now().strftime('%Y%m%d')}"
+        all_data = redis_client.hgetall(table_name)
+
+        # 解析 Redis 数据
+        import json as json_lib
+        trend_list = []
+        for k, v in all_data.items():
+            try:
+                item = json_lib.loads(v)
+                trend_list.append(item)
+            except:
+                pass
+
+        # 按每半小时统计营收趋势
+        now_hours = dt.now().hour + dt.now().minute / 60.0
+        result_list = []
+        last_time = "0000"
+
+        half_time = 0.5
+        while half_time <= now_hours:
+            hour_part = int(math.floor(half_time))
+            min_part = int(half_time * 60 % 60)
+            now_time = f"{hour_part:02d}{min_part:02d}"
+
+            total_amount = 0.0
+            ticket_count = 0
+            total_count = 0
+
+            # 遍历匹配的数据
+            for item in trend_list:
+                sc = item.get("ServerpartCode", "")
+                td = item.get("TradeDate", "")
+                if sc in serverpart_codes:
+                    try:
+                        td_val = float(td) if td else 0
+                        lt_val = float(last_time)
+                        nt_val = float(now_time)
+                        if td_val > lt_val and td_val <= nt_val:
+                            total_amount += float(item.get("TotalAmount", 0) or 0)
+                            ticket_count += int(float(item.get("TicketCount", 0) or 0))
+                            total_count += int(float(item.get("TotalCount", 0) or 0))
+                    except:
+                        pass
+
+            result_list.append({
+                "TradeDate": now_time,
+                "TotalAmount": total_amount,
+                "TicketCount": ticket_count,
+                "TotalCount": total_count,
+            })
+            last_time = now_time
+            half_time += 0.5
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetRevenueTrendChart AES解密失败: {ve}")

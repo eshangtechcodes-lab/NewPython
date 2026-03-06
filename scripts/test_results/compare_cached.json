@@ -347,7 +347,7 @@
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
     "old": "C=100,T=46",
-    "new": "C=100,T=0",
+    "new": "C=100,T=30",
     "result": "DIFF"
   },
   {
@@ -671,8 +671,8 @@
     "route": "/Revenue/GetUnUpLoadShops",
     "ctrl": "Revenue",
     "old": "C=100,T=27",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=27",
+    "result": "PASS"
   },
   {
     "idx": 76,
@@ -824,7 +824,7 @@
     "route": "/Revenue/GetRevenueReport",
     "ctrl": "Revenue",
     "old": "C=100,T=10356318.57",
-    "new": "C=100,T=0",
+    "new": "C=100,T=10356318.570000002",
     "result": "DIFF"
   },
   {

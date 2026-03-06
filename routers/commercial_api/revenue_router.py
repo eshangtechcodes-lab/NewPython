@@ -83,9 +83,74 @@ async def get_un_upload_shops(
     db: DatabaseHelper = Depends(get_db)
 ):
     """查询服务区未上传结账信息的门店列表"""
-    logger.warning("GetUnUpLoadShops 暂未完整实现")
-    json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    try:
+        from datetime import datetime as dt
+
+        # 确定使用 T_ENDACCOUNT 还是 T_ENDACCOUNT_TEMP
+        stat_date = Statistics_Date or dt.now().strftime("%Y-%m-%d")
+        stat_dt = dt.strptime(stat_date.split(" ")[0], "%Y-%m-%d")
+        table_suffix = "" if stat_dt < dt.now().replace(hour=0, minute=0, second=0, microsecond=0) - __import__("datetime").timedelta(days=9) else "_TEMP"
+
+        # 省份条件
+        where_sql = ""
+        if Serverpart_ID:
+            where_sql += f' AND B."SERVERPART_ID" = {Serverpart_ID}'
+        elif SPRegionType_ID:
+            where_sql += f' AND B."SPREGIONTYPE_ID" = {SPRegionType_ID}'
+        elif pushProvinceCode:
+            fe_rows = db.execute_query(
+                """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
+                {"pc": pushProvinceCode})
+            if fe_rows:
+                where_sql += f' AND B."PROVINCE_CODE" = {fe_rows[0]["FIELDENUM_ID"]}'
+        if Revenue_Include == 1:
+            where_sql += f' AND A."REVENUE_INCLUDE" = 1'
+
+        date_str = stat_date.split(" ")[0]
+
+        sql = f"""SELECT B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_INDEX", B."SERVERPART_CODE",
+                A."SERVERPARTSHOP_ID", A."SHOPREGION", A."SHOPTRADE", A."SHOPCODE", A."SHOPNAME"
+            FROM "T_SERVERPARTSHOP" A, "T_SERVERPART" B
+            WHERE COALESCE(A."BUSINESS_DATE", TO_DATE('{date_str}','YYYY-MM-DD')) < TO_DATE('{date_str}','YYYY-MM-DD') + 1
+                AND COALESCE(A."BUSINESS_ENDDATE", TO_DATE('{date_str}','YYYY-MM-DD')) >= TO_DATE('{date_str}','YYYY-MM-DD')
+                AND COALESCE(A."STATISTIC_TYPE", 1000) = 1000
+                AND COALESCE(A."BUSINESS_STATE", 1000) = 1000
+                AND A."SERVERPART_ID" = B."SERVERPART_ID"
+                AND A."SHOPTRADE" NOT IN ('9032','9999')
+                AND A."ISVALID" = 1
+                AND NOT EXISTS (SELECT 1 FROM "T_ENDACCOUNT{table_suffix}" C
+                    WHERE A."SERVERPART_ID" = C."SERVERPART_ID" AND A."SHOPCODE" = C."SHOPCODE"
+                        AND C."VALID" = 1 AND TRUNC(C."STATISTICS_DATE") = TO_DATE('{date_str}','YYYY-MM-DD')){where_sql}
+            UNION ALL
+            SELECT B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_INDEX", B."SERVERPART_CODE",
+                A."SERVERPARTSHOP_ID", A."SHOPREGION", A."SHOPTRADE", A."SHOPCODE", A."SHOPNAME"
+            FROM "T_SERVERPARTSHOP" A, "T_SERVERPART" B
+            WHERE COALESCE(A."STATISTIC_TYPE", 1000) = 1000
+                AND COALESCE(A."BUSINESS_STATE", 1000) = 1000
+                AND A."SERVERPART_ID" = B."SERVERPART_ID"
+                AND A."SHOPTRADE" NOT IN ('9032','9999')
+                AND A."ISVALID" = 1
+                AND EXISTS (SELECT 1 FROM "T_ENDACCOUNT{table_suffix}" C
+                    WHERE A."SERVERPART_ID" = C."SERVERPART_ID" AND A."SHOPCODE" = C."SHOPCODE"
+                        AND C."VALID" = 1 AND TRUNC(C."STATISTICS_DATE") = TO_DATE('{date_str}','YYYY-MM-DD')
+                        AND C."DIFFERENCE_REASON" = '无结账信息' AND C."CASHPAY" = 0){where_sql}"""
+
+        rows = db.execute_query(sql)
+        result_list = []
+        for r in rows:
+            result_list.append({
+                "Serverpart_ID": r.get("SERVERPART_ID"),
+                "Serverpart_Name": r.get("SERVERPART_NAME", ""),
+                "ServerpartShop_ID": r.get("SERVERPARTSHOP_ID"),
+                "ServerpartShop_Name": r.get("SHOPNAME", ""),
+                "Statistics_Date": stat_date,
+            })
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetUnUpLoadShops 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 @router.get("/Revenue/GetServerpartBrand")
@@ -362,9 +427,115 @@ async def get_revenue_report(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取服务区经营报表"""
-    logger.warning("GetRevenueReport 暂未完整实现")
-    json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    try:
+        from datetime import datetime as dt
+        # 获取省份对应的FieldEnum_ID
+        fe_rows = db.execute_query(
+            """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
+            {"pc": provinceCode})
+        if not fe_rows:
+            return Result.fail(code=200, msg="查询失败，无数数据返回！")
+        province_id = fe_rows[0]["FIELDENUM_ID"]
+
+        # 构建 WHERE 条件
+        where_parts = [
+            'A."SERVERPART_ID" = B."SERVERPART_ID"',
+            'A."REVENUEDAILY_STATE" = 1',
+            'B."STATISTIC_TYPE" = 1000',
+            'B."STATISTICS_TYPE" = 1000',
+            f'B."PROVINCE_CODE" = {province_id}',
+        ]
+        params = {}
+        if startTime:
+            sd = dt.strptime(startTime, "%Y-%m-%d").strftime("%Y%m%d") if "-" in startTime else startTime
+            where_parts.append(f'A."STATISTICS_DATE" >= {sd}')
+        if endTime:
+            ed = dt.strptime(endTime, "%Y-%m-%d").strftime("%Y%m%d") if "-" in endTime else endTime
+            where_parts.append(f'A."STATISTICS_DATE" <= {ed}')
+
+        where_sql = " AND ".join(where_parts)
+
+        sql = f"""SELECT B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
+                B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
+                SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT",
+                SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAY_AMOUNT",
+                SUM(A."CASHPAY_AMOUNT") AS "CASHPAY_AMOUNT",
+                SUM(A."OTHERPAY_AMOUNT") AS "OTHERPAY_AMOUNT",
+                SUM(A."TICKET_COUNT") AS "TICKET_COUNT",
+                SUM(A."TOTAL_COUNT") AS "TOTAL_COUNT",
+                SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFF_AMOUNT",
+                SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT"
+            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
+            WHERE {where_sql}
+            GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
+                B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX"
+            ORDER BY B."SPREGIONTYPE_INDEX", B."SPREGIONTYPE_ID", B."SERVERPART_INDEX", B."SERVERPART_CODE" """
+
+        rows = db.execute_query(sql, params)
+        if not rows:
+            return Result.fail(code=200, msg="查询失败，无数数据返回！")
+
+        # 汇总总营收
+        total_revenue = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows), 2)
+        total_ticket = sum(int(r.get("TICKET_COUNT") or 0) for r in rows)
+        total_count = round(sum(float(r.get("TOTAL_COUNT") or 0) for r in rows), 2)
+        total_off = round(sum(float(r.get("TOTALOFF_AMOUNT") or 0) for r in rows), 2)
+        total_diff = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows), 2)
+
+        # 按片区分组
+        region_map = {}
+        for r in rows:
+            rid = r.get("SPREGIONTYPE_ID") or "null"
+            if rid not in region_map:
+                region_map[rid] = {
+                    "Region_Name": r.get("SPREGIONTYPE_NAME") or "无管理中心",
+                    "Total_Revenue": 0,
+                    "Revenue_Proportion": "",
+                    "revenueServerModels": [],
+                }
+            region_map[rid]["Total_Revenue"] += float(r.get("REVENUE_AMOUNT") or 0)
+
+            # 添加服务区
+            sp_revenue = float(r.get("REVENUE_AMOUNT") or 0)
+            region_rev = region_map[rid]["Total_Revenue"]
+            prop = f"{sp_revenue / region_rev * 100:.2f}%" if region_rev != 0 else ""
+            region_map[rid]["revenueServerModels"].append({
+                "Serverpart_Id": str(r.get("SERVERPART_ID", "")),
+                "Serverpart_Name": r.get("SERVERPART_NAME", ""),
+                "Total_Revenue": sp_revenue,
+                "Province_Code": provinceCode,
+                "Revenue_Proportion": prop,
+            })
+
+        # 重新计算片区占比和服务区占比
+        region_list = []
+        for rid, region in region_map.items():
+            region["Revenue_Proportion"] = f"{region['Total_Revenue'] / total_revenue * 100:.2f}%" if total_revenue != 0 else ""
+            # 重新计算服务区占比
+            for sp in region["revenueServerModels"]:
+                sp["Revenue_Proportion"] = f"{sp['Total_Revenue'] / region['Total_Revenue'] * 100:.2f}%" if region['Total_Revenue'] != 0 else ""
+            # 按营收倒序排列服务区
+            region["revenueServerModels"].sort(key=lambda x: x["Total_Revenue"], reverse=True)
+            region_list.append(region)
+        # 按营收倒序排列片区
+        region_list.sort(key=lambda x: x["Total_Revenue"], reverse=True)
+
+        result = {
+            "Total_Revenue": total_revenue,
+            "TicketCount": total_ticket,
+            "TotalCount": total_count,
+            "TotalOffAmount": total_off,
+            "Different_Price_Less": 0,
+            "Different_Price_More": 0,
+            "Province_InsideAmount": total_revenue,
+            "revenueRegionModels": region_list,
+        }
+
+        return Result.success(data=result, msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetRevenueReport 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 @router.get("/Revenue/GetRevenueReportDetil")
