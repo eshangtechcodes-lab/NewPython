@@ -92,38 +92,6 @@ async def get_analysisins_detail(ANALYSISINSId: Optional[int] = Query(None, desc
 
 
 
-# ===== 5. GetShopMerchant =====
-@router.get("/Analysis/GetShopMerchant")
-async def get_shop_merchant(ShopName: Optional[str] = Query(None, description="门店名称"), db: DatabaseHelper = Depends(get_db)):
-    """获取门店商家信息（返参：name门店名称, value商家名称, key服务区名称）"""
-    try:
-        sql = """SELECT 
-            A."SERVERPART_NAME", A."SHOPSHORTNAME", A."SELLER_NAME"
-        FROM "T_SERVERPARTSHOP" A
-        WHERE A."SERVERPART_CODE" LIKE '34%' 
-            AND A."ISVALID" = 1
-            AND A."SHOPSHORTNAME" LIKE ?
-            AND A."SELLER_NAME" IS NOT NULL
-        GROUP BY A."SERVERPART_NAME", A."SHOPSHORTNAME", A."SELLER_NAME"
-        ORDER BY A."SERVERPART_NAME", A."SHOPSHORTNAME"
-        """
-        rows = db.execute_query(sql, [f'%{ShopName}%'])
-
-        result_list = []
-        for r in rows:
-            result_list.append({
-                "name": str(r.get("SHOPSHORTNAME", "")),
-                "value": str(r.get("SELLER_NAME", "")),
-                "key": str(r.get("SERVERPART_NAME", ""))
-            })
-
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetShopMerchant 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
 # ===== 6. SolidTransactionAnalysis =====
 @router.post("/Analysis/SolidTransactionAnalysis")
 async def solid_transaction_analysis(analysisParamModel: dict = None, db: DatabaseHelper = Depends(get_db)):
