@@ -941,7 +941,7 @@
     "route": "/Revenue/GetHolidayAnalysisBatch",
     "ctrl": "Revenue",
     "old": "C=100,T=1",
-    "new": "C=100",
+    "new": "C=100,T=1",
     "result": "PASS"
   },
   {
