@@ -861,6 +861,327 @@ async def get_company_revenue_report(
     db: DatabaseHelper = Depends(get_db)
 ):
     """按照安徽驿达子公司运营的门店返回经营数据报表"""
-    logger.warning("GetCompanyRevenueReport 暂未完整实现")
-    json_list = JsonListData.create(data_list=[], total=0)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    try:
+        from datetime import datetime as dt
+        from collections import defaultdict
+
+        # 1. 查省份FIELDENUM_ID
+        fe_rows = db.execute_query(
+            """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
+            {"pc": ProvinceCode})
+        if not fe_rows:
+            return Result.fail(code=200, msg="查询失败，省份编码不正确！")
+        province_id = fe_rows[0]["FIELDENUM_ID"]
+
+        # 2. 构建WHERE条件
+        where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
+        if ServerpartId:
+            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+        else:
+            where_sql += f' AND B."STATISTIC_TYPE" = 1000 AND B."STATISTICS_TYPE" = 1000 AND B."PROVINCE_CODE" = {province_id}'
+        if StartTime:
+            sd = dt.strptime(StartTime, "%Y-%m-%d").strftime("%Y%m%d") if "-" in StartTime else StartTime
+            where_sql += f' AND A."STATISTICS_DATE" >= {sd}'
+        if EndTime:
+            ed = dt.strptime(EndTime, "%Y-%m-%d").strftime("%Y%m%d") if "-" in EndTime else EndTime
+            where_sql += f' AND A."STATISTICS_DATE" <= {ed}'
+
+        # 3. 查询营收数据
+        sql = f"""SELECT 
+                B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX", B."STATISTICS_TYPE",
+                B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
+                A."SERVERPARTSHOP_ID", A."BUSINESS_TYPE", A."SHOPTRADE",
+                SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT", SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAY_AMOUNT",
+                SUM(A."CASHPAY_AMOUNT") AS "CASHPAY_AMOUNT", SUM(A."OTHERPAY_AMOUNT") AS "OTHERPAY_AMOUNT",
+                SUM(A."TICKET_COUNT") AS "TICKET_COUNT", SUM(A."TOTAL_COUNT") AS "TOTAL_COUNT",
+                SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFF_AMOUNT", SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT"
+            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
+            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1{where_sql}
+            GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX", B."STATISTICS_TYPE",
+                B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
+                A."SERVERPARTSHOP_ID", A."BUSINESS_TYPE", A."SHOPTRADE" """
+        rows = db.execute_query(sql)
+        if not rows or not any(r.get("SERVERPARTSHOP_ID") for r in rows):
+            json_list = JsonListData.create(data_list=[], total=0)
+            return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+        # 4. 查门店信息（SERVERPARTSHOP_ID可能是逗号分隔的多个ID）
+        all_shop_ids = set()
+        for r in rows:
+            sid = r.get("SERVERPARTSHOP_ID")
+            if sid:
+                for s in str(sid).split(","):
+                    s = s.strip()
+                    if s:
+                        all_shop_ids.add(s)
+        shop_map = {}
+        if all_shop_ids:
+            id_list = list(all_shop_ids)
+            chunk_size = 500
+            for i in range(0, len(id_list), chunk_size):
+                chunk = id_list[i:i+chunk_size]
+                ids_in = ",".join(chunk)
+                shop_rows = db.execute_query(f'SELECT * FROM "T_SERVERPARTSHOP" WHERE "SERVERPARTSHOP_ID" IN ({ids_in})')
+                for s in (shop_rows or []):
+                    shop_map[s.get("SERVERPARTSHOP_ID")] = s
+
+        # 5. 查业态
+        trade_rows = db.execute_query(f"""SELECT "AUTOSTATISTICS_ID","AUTOSTATISTICS_PID","AUTOSTATISTICS_NAME","AUTOSTATISTICS_INDEX"
+            FROM "T_AUTOSTATISTICS" WHERE "PROVINCE_CODE" = {province_id} AND "AUTOSTATISTICS_STATE" > 0""")
+        trade_map = {}
+        for t in (trade_rows or []):
+            trade_map[str(t["AUTOSTATISTICS_ID"])] = t["AUTOSTATISTICS_NAME"]
+
+        # 6. 查业务限制(T_RTBUSINESSLIMIT)
+        push_limit = defaultdict(set)
+        if all_shop_ids:
+            ids_in = ",".join(list(all_shop_ids)[:1000])
+            limit_rows = db.execute_query(f"""SELECT A."SERVERPARTSHOP_ID", R."DATA_VALUE"
+                FROM "T_SERVERPARTSHOP" A, "T_RTBUSINESSLIMIT" R
+                WHERE A."SERVERPARTSHOP_ID" = R."SERVERPARTSHOP_ID" AND R."DATA_TYPE" = 1030
+                    AND R."DATA_VALUE" IN (2010,2020,2030,2040,2050,2060)
+                    AND A."SERVERPARTSHOP_ID" IN ({ids_in})
+                GROUP BY A."SERVERPARTSHOP_ID", R."DATA_VALUE" """)
+            for lr in (limit_rows or []):
+                push_limit[lr["SERVERPARTSHOP_ID"]].add(int(lr["DATA_VALUE"]))
+
+        # 7. 给每行标记该归属哪个公司
+        def safe_int(v):
+            try: return int(v) if v is not None else 0
+            except: return 0
+
+        def safe_float(v):
+            try: return float(v) if v is not None else 0.0
+            except: return 0.0
+
+        processed = []
+        for r in rows:
+            item = {
+                "SPRegionTypeId": safe_int(r.get("SPREGIONTYPE_ID")),
+                "SPRegionTypeName": str(r.get("SPREGIONTYPE_NAME") or ""),
+                "SPRegionTypeIndex": safe_int(r.get("SPREGIONTYPE_INDEX")),
+                "ServerpartId": safe_int(r.get("SERVERPART_ID")),
+                "ServerpartName": str(r.get("SERVERPART_NAME") or ""),
+                "ServerpartIndex": safe_int(r.get("SERVERPART_INDEX")),
+                "ServerpartShopId": str(r.get("SERVERPARTSHOP_ID") or ""),
+                "RevenueAmount": safe_float(r.get("REVENUE_AMOUNT")),
+                "BusinessTrade": 0, "BusinessTradeName": "",
+                "BusinessBrand": 0, "BrandName": "",
+                "ShopShortName": "", "MerchantsName": "",
+            }
+            shop_id_str = str(r.get("SERVERPARTSHOP_ID") or "")
+            if not shop_id_str:
+                if safe_int(r.get("TICKET_COUNT")) > 0:
+                    item["MerchantsName"] = "安徽驿达运营管理有限公司"
+                processed.append(item)
+                continue
+            # 拆分逗号分隔的ID，查所有匹配门店
+            sub_ids = [s.strip() for s in shop_id_str.split(",") if s.strip()]
+            exist_shops = [shop_map[int(sid)] for sid in sub_ids if int(sid) in shop_map]
+            if not exist_shops:
+                item["MerchantsName"] = "安徽驿达运营管理有限公司"
+                processed.append(item)
+                continue
+            # 优先判定: 驿佳(-2846) > 百和(-2802) > 驿达
+            yijia_shops = [s for s in exist_shops if safe_int(s.get("SELLER_ID")) == -2846]
+            baihe_shops = [s for s in exist_shops if safe_int(s.get("SELLER_ID")) == -2802]
+            if yijia_shops:
+                shop = yijia_shops[0]
+                item["MerchantsName"] = "安徽驿佳商贸有限公司"
+                item["BusinessTrade"] = safe_int(shop.get("BUSINESS_TRADE"))
+                item["BusinessBrand"] = safe_int(shop.get("BUSINESS_BRAND"))
+                item["BrandName"] = str(shop.get("BRAND_NAME") or "")
+                item["ShopShortName"] = str(shop.get("SHOPSHORTNAME") or "")
+            elif baihe_shops:
+                shop = baihe_shops[0]
+                item["MerchantsName"] = "安徽百和餐饮有限公司"
+                item["ShopShortName"] = str(shop.get("SHOPSHORTNAME") or "")
+                # 查pushLimit确定trade
+                for sid in sub_ids:
+                    limits = push_limit.get(int(sid), set())
+                    if 2040 in limits:
+                        item["BusinessTrade"] = 2040; item["BusinessTradeName"] = "咖啡"; break
+                    elif 2050 in limits:
+                        item["BusinessTrade"] = 2050; item["BusinessTradeName"] = "老乡鸡"; break
+                    elif 2060 in limits:
+                        item["BusinessTrade"] = 2060; item["BusinessTradeName"] = "肯德基"; break
+                else:
+                    item["BusinessTrade"] = 2000; item["BusinessTradeName"] = "餐饮"
+            else:
+                shop = exist_shops[0]
+                item["MerchantsName"] = "安徽驿达运营管理有限公司"
+                bt = max((safe_int(s.get("BUSINESS_TRADE")) for s in exist_shops), default=0)
+                item["BusinessTrade"] = bt
+                item["ShopShortName"] = str(shop.get("SHOPSHORTNAME") or "")
+
+            # 匹配业态名称
+            trade_id = str(item["BusinessTrade"])
+            if trade_id in trade_map and not item["BusinessTradeName"]:
+                item["BusinessTradeName"] = trade_map[trade_id]
+
+            item["ShopShort_Name"] = str(r.get("SERVERPART_NAME") or "") + item["ShopShortName"]
+            processed.append(item)
+
+        # 8. 构建嵌套结果
+        total_revenue = sum(p["RevenueAmount"] for p in processed)
+        if total_revenue == 0:
+            total_revenue = 1
+
+        company_names = ["安徽驿达运营管理有限公司", "安徽驿佳商贸有限公司", "安徽百和餐饮有限公司"]
+        result_list = []
+
+        def make_node(**kwargs):
+            base = {"CompanyId": 0, "CompanyName": None, "SPRegionType_Id": None, "SPRegionType_Name": None,
+                    "Serverpart_Id": None, "Serverpart_Name": None, "BusinessType_Name": None,
+                    "BusinessTrade_Id": None, "BusinessTrade_Name": None, "ServerpartShop_Id": None,
+                    "ShopShort_Name": None, "Total_Revenue": None, "Revenue_Proportion": None,
+                    "TicketCount": None, "TotalCount": None, "TotalOffAmount": None, "MobilePayment": None,
+                    "Different_Price_Less": None, "Different_Price_More": None}
+            base.update(kwargs)
+            return base
+
+        def bind_sp_nodes(items, company_name, trade_id, trade_name):
+            """按片区->服务区分组"""
+            region_groups = defaultdict(list)
+            for it in items:
+                region_groups[(it["SPRegionTypeId"], it["SPRegionTypeName"], it["SPRegionTypeIndex"])].append(it)
+            region_nodes = []
+            for (rid, rname, rindex), sp_items in sorted(region_groups.items(), key=lambda x: (x[0][2], x[0][0])):
+                rev = round(sum(s["RevenueAmount"] for s in sp_items), 2)
+                region_node = {
+                    "node": make_node(CompanyName=company_name, BusinessTrade_Id=trade_id,
+                                     BusinessTrade_Name=trade_name, SPRegionType_Id=rid,
+                                     SPRegionType_Name=rname, Total_Revenue=rev,
+                                     Revenue_Proportion=round(rev / total_revenue * 100, 2)),
+                    "children": []
+                }
+                server_groups = defaultdict(list)
+                for s in sp_items:
+                    server_groups[(s["ServerpartId"], s["ServerpartName"], s["ServerpartIndex"])].append(s)
+                for (sid, sname, sindex), s_items in sorted(server_groups.items(), key=lambda x: x[0][2]):
+                    srv = round(sum(x["RevenueAmount"] for x in s_items), 2)
+                    shop_ids_str = ",".join(set(x["ServerpartShopId"] for x in s_items if x["ServerpartShopId"]))
+                    region_node["children"].append({
+                        "node": make_node(CompanyName=company_name, BusinessTrade_Id=trade_id,
+                                         BusinessTrade_Name=trade_name, SPRegionType_Id=rid,
+                                         SPRegionType_Name=rname, Serverpart_Id=sid,
+                                         Serverpart_Name=sname, ServerpartShop_Id=shop_ids_str or None,
+                                         Total_Revenue=srv,
+                                         Revenue_Proportion=round(srv / total_revenue * 100, 2)),
+                        "children": []
+                    })
+                region_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
+                region_nodes.append(region_node)
+            return region_nodes
+
+        for company_name in company_names:
+            company_items = [p for p in processed if p["MerchantsName"] == company_name]
+            if not company_items:
+                continue
+            company_rev = round(sum(c["RevenueAmount"] for c in company_items), 2)
+            company_node = {
+                "node": make_node(CompanyName=company_name, Total_Revenue=company_rev,
+                                 Revenue_Proportion=round(company_rev / total_revenue * 100, 2)),
+                "children": []
+            }
+
+            if company_name == "安徽驿达运营管理有限公司":
+                # 按业态父级分组
+                parent_trades = [t for t in (trade_rows or []) if str(t.get("AUTOSTATISTICS_PID")) == "-1"]
+                parent_trades.sort(key=lambda x: safe_int(x.get("AUTOSTATISTICS_INDEX")))
+                for pt in parent_trades:
+                    pid = str(pt["AUTOSTATISTICS_ID"])
+                    child_ids = {str(t["AUTOSTATISTICS_ID"]) for t in (trade_rows or [])
+                                 if str(t.get("AUTOSTATISTICS_PID")) == pid or str(t["AUTOSTATISTICS_ID"]) == pid}
+                    trade_items = [c for c in company_items if str(c["BusinessTrade"]) in child_ids]
+                    if not trade_items:
+                        continue
+                    t_rev = round(sum(t["RevenueAmount"] for t in trade_items), 2)
+                    trade_node = {
+                        "node": make_node(CompanyName=company_name,
+                                         BusinessTrade_Id=safe_float(pt["AUTOSTATISTICS_ID"]),
+                                         BusinessTrade_Name=pt["AUTOSTATISTICS_NAME"],
+                                         Total_Revenue=t_rev,
+                                         Revenue_Proportion=round(t_rev / total_revenue * 100, 2)),
+                        "children": bind_sp_nodes(trade_items, company_name,
+                                                  safe_float(pt["AUTOSTATISTICS_ID"]), pt["AUTOSTATISTICS_NAME"])
+                    }
+                    trade_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
+                    company_node["children"].append(trade_node)
+                # 其他（BusinessTrade=0的）
+                other_items = [c for c in company_items if c["BusinessTrade"] == 0]
+                if other_items:
+                    o_rev = round(sum(o["RevenueAmount"] for o in other_items), 2)
+                    other_node = {
+                        "node": make_node(CompanyName=company_name, BusinessTrade_Id=0,
+                                         BusinessTrade_Name="其他", Total_Revenue=o_rev,
+                                         Revenue_Proportion=round(o_rev / total_revenue * 100, 2)),
+                        "children": bind_sp_nodes(other_items, company_name, 0, "其他")
+                    }
+                    other_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
+                    company_node["children"].append(other_node)
+
+            elif company_name == "安徽驿佳商贸有限公司":
+                # 便利店 + 品牌分
+                store_items = company_items  # 简化处理
+                if store_items:
+                    s_rev = round(sum(s["RevenueAmount"] for s in store_items), 2)
+                    store_node = {
+                        "node": make_node(CompanyName=company_name, BusinessTrade_Id=0,
+                                         BusinessTrade_Name="服务区便利店", Total_Revenue=s_rev,
+                                         Revenue_Proportion=round(s_rev / total_revenue * 100, 2)),
+                        "children": []
+                    }
+                    sg = defaultdict(list)
+                    for s in store_items:
+                        sg[(s["ServerpartId"], s["ServerpartName"], s.get("ShopShort_Name", ""))].append(s)
+                    for (sid, sname, ssn), items in sg.items():
+                        srv = round(sum(x["RevenueAmount"] for x in items), 2)
+                        store_node["children"].append({
+                            "node": make_node(CompanyName=company_name, BusinessTrade_Name="服务区便利店",
+                                             Serverpart_Id=sid, Serverpart_Name=sname,
+                                             ShopShort_Name=ssn, Total_Revenue=srv,
+                                             Revenue_Proportion=round(srv / total_revenue * 100, 2)),
+                            "children": []
+                        })
+                    store_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
+                    company_node["children"].append(store_node)
+
+            else:  # 百和餐饮
+                trade_groups = defaultdict(list)
+                for c in company_items:
+                    trade_groups[(c["BusinessTrade"], c["BusinessTradeName"])].append(c)
+                for (tid, tname), items in trade_groups.items():
+                    t_rev = round(sum(t["RevenueAmount"] for t in items), 2)
+                    trade_node = {
+                        "node": make_node(CompanyName=company_name, BusinessTrade_Id=tid,
+                                         BusinessTrade_Name=tname, Total_Revenue=t_rev,
+                                         Revenue_Proportion=round(t_rev / total_revenue * 100, 2)),
+                        "children": []
+                    }
+                    sg = defaultdict(list)
+                    for t in items:
+                        sg[(t["ServerpartId"], t["ServerpartName"], t.get("ShopShort_Name", ""))].append(t)
+                    for (sid, sname, ssn), s_items in sg.items():
+                        srv = round(sum(x["RevenueAmount"] for x in s_items), 2)
+                        trade_node["children"].append({
+                            "node": make_node(CompanyName=company_name, BusinessTrade_Id=tid,
+                                             BusinessTrade_Name=tname, Serverpart_Id=sid,
+                                             Serverpart_Name=sname, ShopShort_Name=ssn,
+                                             Total_Revenue=srv,
+                                             Revenue_Proportion=round(srv / total_revenue * 100, 2)),
+                            "children": []
+                        })
+                    trade_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
+                    company_node["children"].append(trade_node)
+
+            company_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
+            result_list.append(company_node)
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetCompanyRevenueReport 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
+

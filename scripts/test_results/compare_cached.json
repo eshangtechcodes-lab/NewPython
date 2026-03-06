@@ -995,7 +995,7 @@
     "route": "/Revenue/GetCompanyRevenueReport",
     "ctrl": "Revenue",
     "old": "C=100,T=3",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=3",
+    "result": "PASS"
   }
 ]
