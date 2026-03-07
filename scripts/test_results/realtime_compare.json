@@ -1,9 +1,9 @@
 {
-  "time": "2026-03-07 23:53:15",
-  "elapsed": 37.7,
+  "time": "2026-03-08 00:11:51",
+  "elapsed": 37.5,
   "stats": {
-    "PASS": 36,
-    "DIFF": 38,
+    "PASS": 37,
+    "DIFF": 37,
     "ERROR": 0
   },
   "diffs": [
@@ -11,10 +11,10 @@
       "route": "GET /BigData/GetBayonetGrowthAnalysis",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.EntryList[0].LargeVehicleEntry_Rate: 新API缺少字段",
-        ".Result_Data.EntryList[0].LargeVehicle_Count: 新API缺少字段",
-        ".Result_Data.EntryList[0].MediumVehicleEntry_GrowthRate: 新API缺少字段",
-        ".Result_Data.EntryList[0]: ...还有10条差异"
+        ".Result_Data.EntryList[0].SPRegionType_Id: 新API缺少字段",
+        ".Result_Data.EntryList[0].SPRegionType_Index: 新API缺少字段",
+        ".Result_Data.EntryList[0].SPRegionType_Name: 新API缺少字段",
+        ".Result_Data.EntryList[0]: ...还有3条差异"
       ]
     },
     {
@@ -213,12 +213,10 @@
     },
     {
       "route": "GET /Revenue/GetMonthlyBusinessAnalysis",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 2处差异",
       "diffs": [
-        ".Result_Data.List[0].AccountINC.QOQData: 新API缺少字段",
-        ".Result_Data.List[0].AccountINC.increaseDataQOQ: 新API缺少字段",
-        ".Result_Data.List[0].AccountINC.increaseRateQOQ: 新API缺少字段",
-        ".Result_Data.List[0]: ...还有11条差异"
+        ".Result_Data.List[0].RevenueINC.curYearData: 旧=1671572.32 新=1671572.3199999998",
+        ".Result_Data.List[0].RevenueINC.lYearData: 旧=1671572.32 新=1671572.3199999998"
       ]
     },
     {
@@ -226,16 +224,6 @@
       "detail": "Code=999, 1处差异",
       "diffs": [
         ".Result_Desc: 旧=查询失败未将对象引用设置到对象的实例。 新=解密失败请求数据中缺少 value 字段"
-      ]
-    },
-    {
-      "route": "GET /Revenue/GetMonthlySPINCAnalysis",
-      "detail": "Code=100, 4处差异",
-      "diffs": [
-        ".Result_Data.List[0].AccountINC.QOQData: 新API缺少字段",
-        ".Result_Data.List[0].AccountINC.curYearData: 类型不同 旧=float 新=str",
-        ".Result_Data.List[0].AccountINC.increaseDataQOQ: 新API缺少字段",
-        ".Result_Data.List[0]: ...还有15条差异"
       ]
     },
     {
@@ -277,7 +265,7 @@
         ".Result_Data.Serverpart_RevenueS: 旧=1045082.46 新=1567685.4600000002",
         ".Result_Data.ShopList: 列表长度不同 旧=15 新=14",
         ".Result_Data.ShopList[0].BusinessType_Logo: 旧=https://user.eshangtech.com/UploadImageDir/Picture 新=",
-        ".Result_Data.ShopList[0].BusinessType_Name: 旧=自营老乡鸡 新=226"
+        ".Result_Data.ShopList[0].BusinessType_Name: 旧=自营老乡鸡 新=中餐馆"
       ]
     },
     {
@@ -303,13 +291,9 @@
     },
     {
       "route": "GET /Revenue/GetServerpartINCAnalysis",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 1处差异",
       "diffs": [
-        ".Result_Data.List[0].AccountINC.curYearData: 类型不同 旧=NoneType 新=float",
-        ".Result_Data.List[0].AccountINC.lYearData: 类型不同 旧=NoneType 新=float",
-        ".Result_Data.List[0].BayonetINC.curYearData: 类型不同 旧=NoneType 新=float",
-        ".Result_Data.List[0]: ...还有5条差异",
-        ".Result_Data.OtherData: 旧=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2 新=2026年春运时间为2026/2/2至2026/2/13\r\n2026年春运时间为2026/2/2至2"
+        ".Result_Data.OtherData: 旧=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2 新=2026年春运时间为2026/2/2 0:00:00至2026/2/13\r\n2026年春运时间为20"
       ]
     },
     {
@@ -317,9 +301,9 @@
       "detail": "Code=100, 4处差异",
       "diffs": [
         ".Result_Data.List[0].BusinessProjectId: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.List[0].SABFIList[0].data: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.List[0].SABFIList[0].key: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.List[0]: ...还有3条差异"
+        ".Result_Data.List[0].SABFIList[0].name: 旧=1 新=营业收入",
+        ".Result_Data.List[0].SABFIList[0].value: 旧= 新=1671572.32",
+        ".Result_Data.List[0]: ...还有1条差异"
       ]
     },
     {
@@ -366,10 +350,9 @@
     },
     {
       "route": "GET /Revenue/GetTransactionConvert",
-      "detail": "Code=100, 2处差异",
+      "detail": "Code=100, 1处差异",
       "diffs": [
-        ".Result_Data.BayonetList.data[0][1]: 旧=534.0 新=533.0",
-        ".Result_Data.TransactionList.name: 类型不同 旧=NoneType 新=str"
+        ".Result_Data.BayonetList.data[0][1]: 旧=534.0 新=533.0"
       ]
     },
     {
