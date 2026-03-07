@@ -3338,7 +3338,7 @@ async def get_serverpart_inc_analysis(
             return Result.fail(code=101, msg="查询失败，无数据返回！")
 
         h_name = holiday_names.get(HolidayType, "")
-        holiday_period = f"{curYear}年{h_name}时间为{date_no_pad(stats_start)} 0:00:00至{date_no_pad(stat_date)}\r\n{compareYear}年{h_name}时间为{date_no_pad(compare_start)} 0:00:00至{date_no_pad(compare_end)}"
+        holiday_period = f"{curYear}年{h_name}时间为{date_no_pad(stats_start)} 0:00:00至{stat_date.strftime('%Y-%m-%d')}\r\n{compareYear}年{h_name}时间为{date_no_pad(compare_start)} 0:00:00至{compare_end.strftime('%Y-%m-%d')}"
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
         resp = json_list.model_dump()
@@ -3540,14 +3540,14 @@ async def get_monthly_business_analysis(
                     return sum(float(r.get(col) or 0) for r in data if r.get("SHOPTRADE") == filter_val)
                 return sum(float(r.get(col) or 0) for r in data)
 
-            cur_rev = get_sum(rev_rows, "REVENUE_AMOUNT", shoptrade_filter)
-            l_rev = get_sum(cy_rows, "REVENUE_AMOUNT", shoptrade_filter)
-            cur_acc = get_sum(rev_rows, "ACCOUNT_AMOUNT", shoptrade_filter)
-            l_acc = get_sum(cy_rows, "ACCOUNT_AMOUNT", shoptrade_filter)
+            cur_rev = round(get_sum(rev_rows, "REVENUE_AMOUNT", shoptrade_filter), 2)
+            l_rev = round(get_sum(cy_rows, "REVENUE_AMOUNT", shoptrade_filter), 2)
+            cur_acc = round(get_sum(rev_rows, "ACCOUNT_AMOUNT", shoptrade_filter), 2)
+            l_acc = round(get_sum(cy_rows, "ACCOUNT_AMOUNT", shoptrade_filter), 2)
 
             res = {
-                "RevenueINC": {"curYearData": cur_rev, "lYearData": l_rev, "increaseData": cur_rev - l_rev, "increaseRate": None},
-                "AccountINC": {"curYearData": cur_acc, "lYearData": l_acc, "increaseData": cur_acc - l_acc, "increaseRate": None},
+                "RevenueINC": {"curYearData": cur_rev, "lYearData": l_rev, "increaseData": round(cur_rev - l_rev, 2), "increaseRate": None},
+                "AccountINC": {"curYearData": cur_acc, "lYearData": l_acc, "increaseData": round(cur_acc - l_acc, 2), "increaseRate": None},
                 "BayonetINC": None
             }
             if l_rev != 0: res["RevenueINC"]["increaseRate"] = round((res["RevenueINC"]["increaseData"] / l_rev) * 100, 2)
