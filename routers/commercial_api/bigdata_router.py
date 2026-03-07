@@ -2124,6 +2124,24 @@ async def get_date_analysis(
             key = (r.get("STATISTICS_DATE"), r.get("SERVERPART_REGION"))
             flow_map[key] = r
 
+        # 查询营收数据 (今年+去年)
+        rev_sql = f"""SELECT "STATISTICS_DATE", SUM("REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+            FROM "T_REVENUEDAILY"
+            WHERE "REVENUEDAILY_STATE" = 1 AND "SERVERPART_ID" = {Serverpart_ID}
+                AND "STATISTICS_DATE" >= {start_str} AND "STATISTICS_DATE" <= {end_str}
+            GROUP BY "STATISTICS_DATE"
+            UNION ALL
+            SELECT "STATISTICS_DATE", SUM("REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+            FROM "T_REVENUEDAILY"
+            WHERE "REVENUEDAILY_STATE" = 1 AND "SERVERPART_ID" = {Serverpart_ID}
+                AND "STATISTICS_DATE" >= {ly_start_str} AND "STATISTICS_DATE" <= {ly_end_str}
+            GROUP BY "STATISTICS_DATE" """
+        rev_rows = db.execute_query(rev_sql) or []
+        rev_map = {}
+        for r in rev_rows:
+            d = r.get("STATISTICS_DATE")
+            rev_map[d] = float(r.get("REVENUE_AMOUNT", 0) or 0)
+
         # 遍历日期范围组装数据
         result_list = []
         cur_date = start_dt
@@ -2151,12 +2169,12 @@ async def get_date_analysis(
                 "LastYearTotalANALOG": None,
                 "LastYearSouthEastANALOG": None,
                 "LastYearNorthWestANALOG": None,
-                "CurRevenueAmount": None,
-                "CurRevenueAmount_A": None,
-                "CurRevenueAmount_B": None,
-                "LyRevenueAmount": None,
-                "LyRevenueAmount_A": None,
-                "LyRevenueAmount_B": None,
+                "CurRevenueAmount": rev_map.get(date_num, 0.0),
+                "CurRevenueAmount_A": 0.0,
+                "CurRevenueAmount_B": 0.0,
+                "LyRevenueAmount": rev_map.get(ly_date_num, 0.0),
+                "LyRevenueAmount_A": 0.0,
+                "LyRevenueAmount_B": 0.0,
             }
 
             for region in ['东', '南', '西', '北']:
@@ -2216,8 +2234,8 @@ async def get_date_analysis(
             "LastYearNorthWestSECTIONFLOW_NUM": None, "LastYearNorthWestSERVERPART_FLOW": None,
             "ThisYearTotalANALOG": None, "ThisYearSouthEastANALOG": None, "ThisYearNorthWestANALOG": None,
             "LastYearTotalANALOG": None, "LastYearSouthEastANALOG": None, "LastYearNorthWestANALOG": None,
-            "CurRevenueAmount": None, "CurRevenueAmount_A": None, "CurRevenueAmount_B": None,
-            "LyRevenueAmount": None, "LyRevenueAmount_A": None, "LyRevenueAmount_B": None,
+            "CurRevenueAmount": 0.0, "CurRevenueAmount_A": 0.0, "CurRevenueAmount_B": 0.0,
+            "LyRevenueAmount": 0.0, "LyRevenueAmount_A": 0.0, "LyRevenueAmount_B": 0.0,
             "TotalDiffSECTIONFLOW_NUM": None, "TotalDiffSERVERPART_FLOW": None,
             "SouthEastDiffSECTIONFLOW_NUM": None, "SouthEastDiffSERVERPART_FLOW": None,
             "NorthWestDiffSECTIONFLOW_NUM": None, "NorthWestDiffSERVERPART_FLOW": None,
