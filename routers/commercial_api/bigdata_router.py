@@ -1739,16 +1739,18 @@ async def get_bayonet_compare(
             cur_list.append({
                 "name": date_no_pad(cd),
                 "value": str(cur_map.get(cd.strftime("%Y%m%d"), 0)),
+                "data": None, "key": None,
             })
             cmp_list.append({
                 "name": date_no_pad(ld),
                 "value": str(cmp_map.get(ld.strftime("%Y%m%d"), 0)),
+                "data": None, "key": None,
             })
 
         return Result.success(data={
-            "curHoliday": None, "curHolidayDays": None,
+            "curHoliday": None, "curHolidayDays": 0,
             "curList": cur_list,
-            "compareHoliday": None, "compareHolidayDays": None,
+            "compareHoliday": None, "compareHolidayDays": 0,
             "compareList": cmp_list,
         }, msg="查询成功")
     except Exception as ex:
@@ -1853,8 +1855,8 @@ async def get_holiday_compare(
         for i in range(max_d):
             cd = s_date + timedelta(days=i)
             ld = cs_date + timedelta(days=i)
-            cur_list.append({"name": date_no_pad(cd), "value": str(cur_map.get(cd.strftime("%Y%m%d"), 0))})
-            cmp_list.append({"name": date_no_pad(ld), "value": str(cmp_map.get(ld.strftime("%Y%m%d"), 0))})
+            cur_list.append({"name": date_no_pad(cd), "value": str(cur_map.get(cd.strftime("%Y%m%d"), 0)), "data": None, "key": None})
+            cmp_list.append({"name": date_no_pad(ld), "value": str(cmp_map.get(ld.strftime("%Y%m%d"), 0)), "data": None, "key": None})
 
         return Result.success(data={
             "curHoliday": cur_holiday, "curHolidayDays": cur_days,
@@ -2034,8 +2036,8 @@ async def get_bayonet_oa_analysis(
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
         resp["OtherData"] = [
-            str(start_month_val) if start_month_val else (StartMonth or ""),
-            str(end_month_val) if end_month_val else (EndMonth or ""),
+            str(start_month_val) if start_month_val else (StartMonth if StartMonth else ""),
+            str(end_month_val) if end_month_val else (EndMonth if EndMonth else ""),
         ]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:

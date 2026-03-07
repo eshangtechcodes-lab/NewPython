@@ -1,23 +1,12 @@
 {
-  "time": "2026-03-07 22:29:10",
-  "elapsed": 37.1,
+  "time": "2026-03-07 22:35:27",
+  "elapsed": 39.6,
   "stats": {
-    "PASS": 33,
-    "DIFF": 41,
+    "PASS": 36,
+    "DIFF": 38,
     "ERROR": 0
   },
   "diffs": [
-    {
-      "route": "GET /BigData/GetBayonetCompare",
-      "detail": "Code=100, 6处差异",
-      "diffs": [
-        ".Result_Data.compareHolidayDays: 类型不同 旧=int 新=NoneType",
-        ".Result_Data.compareList[0].data: 新API缺少字段",
-        ".Result_Data.compareList[0].key: 新API缺少字段",
-        ".Result_Data.curHolidayDays: 类型不同 旧=int 新=NoneType",
-        ".Result_Data.curList[0].data: 新API缺少字段"
-      ]
-    },
     {
       "route": "GET /BigData/GetBayonetGrowthAnalysis",
       "detail": "Code=100, 4处差异",
@@ -54,16 +43,6 @@
         ".Result_Data.List[0].CurRevenueAmount_B: 类型不同 旧=float 新=NoneType",
         ".Result_Data.List[0]: ...还有27条差异",
         ".Result_Data.OtherData[0].CurRevenueAmount: 类型不同 旧=float 新=NoneType"
-      ]
-    },
-    {
-      "route": "GET /BigData/GetHolidayCompare",
-      "detail": "Code=100, 4处差异",
-      "diffs": [
-        ".Result_Data.compareList[0].data: 新API缺少字段",
-        ".Result_Data.compareList[0].key: 新API缺少字段",
-        ".Result_Data.curList[0].data: 新API缺少字段",
-        ".Result_Data.curList[0].key: 新API缺少字段"
       ]
     },
     {
@@ -207,14 +186,6 @@
         ".Result_Data.List[0].ServerpartId: 类型不同 旧=int 新=NoneType",
         ".Result_Data.List[0].ServerpartName: 类型不同 旧=str 新=NoneType",
         ".Result_Data.List[0]: ...还有65条差异"
-      ]
-    },
-    {
-      "route": "GET /Revenue/GetHolidayDailyAnalysis",
-      "detail": "Code=100, 2处差异",
-      "diffs": [
-        ".Result_Data.List[10].data: 旧= 新=0",
-        ".Result_Data.List[10].value: 旧= 新=0"
       ]
     },
     {

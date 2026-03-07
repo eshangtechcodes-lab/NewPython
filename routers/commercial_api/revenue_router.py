@@ -4596,10 +4596,13 @@ async def get_holiday_daily_analysis(
         for i in range(day_span + 1):
             cd = s_date + timedelta(days=i)
             ld = cs_date + timedelta(days=i)
-            cv = cur_map.get(cd.strftime("%Y%m%d"), Decimal('0'))
-            lv = cmp_map.get(ld.strftime("%Y%m%d"), Decimal('0'))
+            cd_key = cd.strftime("%Y%m%d")
+            ld_key = ld.strftime("%Y%m%d")
+            # C#对齐: 没有数据的日期返回空串（C# decimal? 未赋值时ToString()=""）
+            cv = str(cur_map[cd_key]) if cd_key in cur_map else ""
+            lv = str(cmp_map[ld_key]) if ld_key in cmp_map else ""
             result_list.append({
-                "name": str(i + 1), "value": str(cv), "data": str(lv),
+                "name": str(i + 1), "value": cv, "data": lv,
                 "key": None,
                 "date": f"{date_no_pad(cd)},{date_no_pad(ld)}",
             })
