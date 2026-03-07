@@ -1830,7 +1830,7 @@ async def get_transaction_convert(
                 b_data[h] = [float(h), safe_dec(r.get("TICKET_COUNT"))]
 
         return Result.success(data={
-            "TransactionList": {"name": "客单数", "data": t_data if t_rows else None, "value": None, "CommonScatterList": None},
+            "TransactionList": {"name": "客单数" if t_rows else None, "data": t_data if t_rows else None, "value": None, "CommonScatterList": None},
             "BayonetList": {"name": "车流量", "data": b_data, "value": None, "CommonScatterList": None},
         }, msg="查询成功")
     except Exception as ex:
@@ -2346,13 +2346,26 @@ async def get_revenue_report_detail(
         rows = db.execute_query(sql) or []
 
         from decimal import Decimal
+        # 查询业态名称字典
+        trade_name_map = {}
+        try:
+            trade_sql = """SELECT "AUTOSTATISTICS_ID", "AUTOSTATISTICS_NAME" FROM "T_AUTOSTATISTICS" WHERE "AUTOSTATISTICS_TYPE" = 2000"""
+            trade_rows = db.execute_query(trade_sql) or []
+            for tr in trade_rows:
+                tid = str(tr.get("AUTOSTATISTICS_ID", ""))
+                trade_name_map[tid] = tr.get("AUTOSTATISTICS_NAME", "其他业态")
+        except Exception:
+            pass
+
         shop_list = []
         total_rev = Decimal('0')
         for r in rows:
             rv = safe_dec(r.get("REVENUE"))
             total_rev += Decimal(str(rv))
+            trade_id = str(r.get("BUSINESS_TRADE", "") or "")
+            trade_name = trade_name_map.get(trade_id, "其他业态") if trade_id else "其他业态"
             shop_list.append({
-                "BusinessType_Name": str(r.get("BUSINESS_TRADE", "")),
+                "BusinessType_Name": trade_name,
                 "BusinessType_Revenue": rv,
             })
 
@@ -3249,10 +3262,20 @@ async def get_serverpart_inc_analysis(
             cur_b = cur_bay_map.get(sp_id, {})
             cy_b = cy_bay_map.get(sp_id, {})
 
-            rev_inc = make_inc(safe_f(cur_r.get("REVENUE_AMOUNT")), safe_f(cy_r.get("REVENUE_AMOUNT")))
-            acc_inc = make_inc(safe_f(cur_r.get("ACCOUNT_AMOUNT")), safe_f(cy_r.get("ACCOUNT_AMOUNT")))
-            bay_inc = make_inc(safe_f(cur_b.get("SERVERPART_FLOW")), safe_f(cy_b.get("SERVERPART_FLOW")))
-            sec_inc = make_inc(safe_f(cur_b.get("SECTIONFLOW_NUM")), safe_f(cy_b.get("SECTIONFLOW_NUM")))
+            def safe_or_none(d, key):
+                """有数据返回float，无数据返回None"""
+                v = d.get(key) if d else None
+                if v is None:
+                    return None
+                try:
+                    return float(v)
+                except:
+                    return None
+
+            rev_inc = make_inc(safe_or_none(cur_r, "REVENUE_AMOUNT"), safe_or_none(cy_r, "REVENUE_AMOUNT"))
+            acc_inc = make_inc(safe_or_none(cur_r, "ACCOUNT_AMOUNT"), safe_or_none(cy_r, "ACCOUNT_AMOUNT"))
+            bay_inc = make_inc(safe_or_none(cur_b, "SERVERPART_FLOW"), safe_or_none(cy_b, "SERVERPART_FLOW"))
+            sec_inc = make_inc(safe_or_none(cur_b, "SECTIONFLOW_NUM"), safe_or_none(cy_b, "SECTIONFLOW_NUM"))
 
             # 车流增长率>1000没有可比性
             if bay_inc["increaseRate"] and abs(bay_inc["increaseRate"]) > 1000:
@@ -3315,7 +3338,7 @@ async def get_serverpart_inc_analysis(
             return Result.fail(code=101, msg="查询失败，无数据返回！")
 
         h_name = holiday_names.get(HolidayType, "")
-        holiday_period = f"{curYear}年{h_name}时间为{date_no_pad(stats_start)}至{date_no_pad(stat_date)}\r\n{compareYear}年{h_name}时间为{date_no_pad(compare_start)}至{date_no_pad(compare_end)}"
+        holiday_period = f"{curYear}年{h_name}时间为{date_no_pad(stats_start)} 0:00:00至{date_no_pad(stat_date)}\r\n{compareYear}年{h_name}时间为{date_no_pad(compare_start)} 0:00:00至{date_no_pad(compare_end)}"
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
         resp = json_list.model_dump()
@@ -3573,6 +3596,14 @@ async def get_monthly_business_analysis(
             r.setdefault("Cost_Amount", None)
             r.setdefault("Ca_Cost", None)
             r.setdefault("Profit_Amount", None)
+            # 给所有INC补QOQ字段
+            for inc_key in ["RevenueINC", "AccountINC", "BayonetINC"]:
+                inc = r.get(inc_key)
+                if inc and isinstance(inc, dict):
+                    inc.setdefault("QOQData", None)
+                    inc.setdefault("increaseDataQOQ", None)
+                    inc.setdefault("increaseRateQOQ", None)
+                    inc.setdefault("rankNum", None)
 
         json_list = JsonListData.create(data_list=results, total=len(results), page_size=10)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
@@ -3684,9 +3715,12 @@ async def get_monthly_sp_inc_analysis(
         cy_flow_map = {r["SERVERPART_ID"]: r for r in dt_cy_bayonet}
 
         def calc_inc(cur_val, l_val):
-            inc = float(cur_val or 0) - float(l_val or 0)
-            rate = round((inc / float(l_val)) * 100, 2) if l_val and float(l_val) != 0 else None
-            return {"curYearData": cur_val, "lYearData": l_val, "increaseData": inc, "increaseRate": rate}
+            cur_f = float(cur_val) if cur_val is not None else None
+            l_f = float(l_val) if l_val is not None else None
+            inc = round(cur_f - l_f, 2) if cur_f is not None and l_f is not None else None
+            rate = round((inc / l_f) * 100, 2) if inc is not None and l_f and l_f != 0 else None
+            return {"curYearData": cur_f, "lYearData": l_f, "increaseData": inc, "increaseRate": rate,
+                    "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
 
         for sp in dt_serverpart:
             sp_id = sp["SERVERPART_ID"]
@@ -4499,10 +4533,10 @@ async def get_holiday_spr_analysis(
                     cur_info = cur_sp_map.get(sp_id, {"rev": 0, "rev_cur": 0})
                     cmp_info = cmp_sp_map.get(sp_id, {"rev": 0, "rev_cur": 0})
                     ch.append({
-                        "node": {"ServerpartId": sp_id, "ServerpartName": sr.get("SERVERPART_NAME", ""),
+                        "node": {"SPRegionTypeId": rid, "ServerpartId": sp_id, "ServerpartName": sr.get("SERVERPART_NAME", ""),
                                  "curYearRevenue": {"value": str(cur_info.get("rev_cur", 0)), "data": str(cur_info.get("rev", 0))},
                                  "lYearRevenue": {"value": str(cmp_info.get("rev_cur", 0)), "data": str(cmp_info.get("rev", 0))}},
-                        "children": [],
+                        "children": None,
                     })
             result_list.append({
                 "node": {"SPRegionTypeId": rid, "SPRegionTypeName": rname,
@@ -4936,13 +4970,13 @@ async def get_shop_month_sabfi_list(
                 "Revenue_SD": None,
                 "Revenue_AVG": None,
                 "SABFIList": [
-                    {"name": "营业收入", "value": str(safe_dec(r.get("REVENUE"))), "data": None, "key": None},
-                    {"name": "客单笔数", "value": str(safe_dec(r.get("TICKET"))), "data": None, "key": None},
-                    {"name": "客单价", "value": str(round(safe_dec(r.get("REVENUE")) / safe_dec(r.get("TICKET")), 2) if safe_dec(r.get("TICKET")) > 0 else 0), "data": None, "key": None},
-                    {"name": "营收标准差", "value": "0", "data": None, "key": None},
-                    {"name": "营收平均值", "value": "0", "data": None, "key": None},
-                    {"name": "营收变异系数", "value": "0", "data": None, "key": None},
-                    {"name": "SABFI指数", "value": "0", "data": None, "key": None},
+                    {"name": "营业收入", "value": str(safe_dec(r.get("REVENUE"))), "data": "", "key": ""},
+                    {"name": "客单笔数", "value": str(safe_dec(r.get("TICKET"))), "data": "", "key": ""},
+                    {"name": "客单价", "value": str(round(safe_dec(r.get("REVENUE")) / safe_dec(r.get("TICKET")), 2) if safe_dec(r.get("TICKET")) > 0 else 0), "data": "", "key": ""},
+                    {"name": "营收标准差", "value": "0", "data": "", "key": ""},
+                    {"name": "营收平均值", "value": "0", "data": "", "key": ""},
+                    {"name": "营收变异系数", "value": "0", "data": "", "key": ""},
+                    {"name": "SABFI指数", "value": "0", "data": "", "key": ""},
                 ],
                 "ServerpartId": ServerpartId,
                 "ServerpartName": None,
