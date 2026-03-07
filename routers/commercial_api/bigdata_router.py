@@ -1631,6 +1631,7 @@ async def get_bayonet_growth_analysis(
                 "SPRegionType_Id": r.get("SPREGIONTYPE_ID"),
                 "SPRegionType_Name": r.get("SPREGIONTYPE_NAME", ""),
                 "SPRegionType_Index": r.get("SPREGIONTYPE_INDEX"),
+                "Serverpart_Index": None,
                 "Vehicle_Count": vc,
                 "Entry_GrowthRate": growth if growth != 0.0 else None,
                 "Entry_Rate": None,
@@ -1643,7 +1644,7 @@ async def get_bayonet_growth_analysis(
                 "MinVehicleEntry_GrowthRate": None,
                 "MinVehicleEntry_Rate": None,
                 "MinVehicle_Count": None,
-                "SectionFlow_Num": None,
+                "SectionFlow_Count": None,
             })
 
         sum_entry = sum(e["Vehicle_Count"] for e in entry_list)
@@ -1663,13 +1664,14 @@ async def get_bayonet_growth_analysis(
 
         merged_list = sorted([
             {"Serverpart_ID": sid, "Serverpart_Name": v["name"], "Serverpart_Region": "",
+             "Serverpart_Index": None,
              "SPRegionType_Id": None, "SPRegionType_Name": None, "SPRegionType_Index": None,
              "Vehicle_Count": v["vc"], "Entry_GrowthRate": None, "Entry_Rate": None,
              "LargeVehicleEntry_GrowthRate": None, "LargeVehicleEntry_Rate": None,
              "LargeVehicle_Count": None, "MediumVehicleEntry_GrowthRate": None,
              "MediumVehicleEntry_Rate": None, "MediumVehicle_Count": None,
              "MinVehicleEntry_GrowthRate": None, "MinVehicleEntry_Rate": None,
-             "MinVehicle_Count": None, "SectionFlow_Num": None}
+             "MinVehicle_Count": None, "SectionFlow_Count": None}
             for sid, v in sp_agg.items()
         ], key=lambda x: -x["Vehicle_Count"])
 

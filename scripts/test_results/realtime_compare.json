@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 00:29:44",
-  "elapsed": 38.6,
+  "time": "2026-03-08 00:38:27",
+  "elapsed": 39.4,
   "stats": {
     "PASS": 38,
     "DIFF": 36,
@@ -9,12 +9,11 @@
   "diffs": [
     {
       "route": "GET /BigData/GetBayonetGrowthAnalysis",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 3处差异",
       "diffs": [
-        ".Result_Data.EntryList[0].SPRegionType_Id: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.EntryList[0].SPRegionType_Index: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.EntryList[0].SPRegionType_Name: 类型不同 旧=NoneType 新=str",
-        ".Result_Data.EntryList[0]: ...还有3条差异"
+        ".Result_Data.EntryList[0].SectionFlow_Count: 新API缺少字段",
+        ".Result_Data.EntryList[0].SectionFlow_Num: 新API多出字段",
+        ".Result_Data.EntryList[0].Serverpart_Index: 新API缺少字段"
       ]
     },
     {
