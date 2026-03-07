@@ -4500,10 +4500,12 @@ async def get_holiday_spr_analysis(
         total_cmp_d = sum(v["rev_cur"] for v in cmp_sp_map.values())
 
         result_list = [{
-            "node": {"SPRegionTypeId": None, "SPRegionTypeName": "整体对客销售",
+            "node": {"SPRegionTypeId": 0, "SPRegionTypeName": "整体对客销售",
                      "ServerpartId": None, "ServerpartName": None,
                      "curYearRevenue": {"value": str(total_cur_d), "data": str(total_cur)},
-                     "lYearRevenue": {"value": str(total_cmp_d), "data": str(total_cmp)}},
+                     "lYearRevenue": {"value": str(total_cmp_d), "data": str(total_cmp)},
+                     "curYearAccount": None, "lYearAccount": None,
+                     "curYearBayonet": None, "lYearBayonet": None},
             "children": None,
         }]
 
@@ -4538,14 +4540,18 @@ async def get_holiday_spr_analysis(
                     ch.append({
                         "node": {"SPRegionTypeId": rid, "ServerpartId": sp_id, "ServerpartName": sr.get("SERVERPART_NAME", ""),
                                  "curYearRevenue": {"value": str(cur_info.get("rev_cur", 0)), "data": str(cur_info.get("rev", 0))},
-                                 "lYearRevenue": {"value": str(cmp_info.get("rev_cur", 0)), "data": str(cmp_info.get("rev", 0))}},
+                                 "lYearRevenue": {"value": str(cmp_info.get("rev_cur", 0)), "data": str(cmp_info.get("rev", 0))},
+                                 "curYearAccount": None, "lYearAccount": None,
+                                 "curYearBayonet": None, "lYearBayonet": None},
                         "children": None,
                     })
             result_list.append({
                 "node": {"SPRegionTypeId": rid, "SPRegionTypeName": rname,
                          "ServerpartId": None, "ServerpartName": None,
                          "curYearRevenue": {"value": "0", "data": str(r_cur)},
-                         "lYearRevenue": {"value": "0", "data": str(r_cmp)}},
+                         "lYearRevenue": {"value": "0", "data": str(r_cmp)},
+                         "curYearAccount": None, "lYearAccount": None,
+                         "curYearBayonet": None, "lYearBayonet": None},
                 "children": ch,
             })
 

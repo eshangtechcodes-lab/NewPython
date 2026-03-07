@@ -2165,12 +2165,12 @@ async def get_date_analysis(
                 "LastYearSouthEastSERVERPART_FLOW": 0,
                 "LastYearNorthWestSECTIONFLOW_NUM": 0,
                 "LastYearNorthWestSERVERPART_FLOW": 0,
-                "ThisYearTotalANALOG": None,
-                "ThisYearSouthEastANALOG": None,
-                "ThisYearNorthWestANALOG": None,
-                "LastYearTotalANALOG": None,
-                "LastYearSouthEastANALOG": None,
-                "LastYearNorthWestANALOG": None,
+                "ThisYearTotalANALOG": 0,
+                "ThisYearSouthEastANALOG": 0,
+                "ThisYearNorthWestANALOG": 0,
+                "LastYearTotalANALOG": 0,
+                "LastYearSouthEastANALOG": 0,
+                "LastYearNorthWestANALOG": 0,
                 "CurRevenueAmount": rev_map.get(date_num, 0.0),
                 "CurRevenueAmount_A": 0.0,
                 "CurRevenueAmount_B": 0.0,
@@ -2185,27 +2185,35 @@ async def get_date_analysis(
                 if r:
                     sf = r.get("SECTIONFLOW_NUM") or 0
                     sp = r.get("SERVERPART_FLOW") or 0
+                    analog = r.get("SERVERPART_FLOW_ANALOG") or 0
                     model["ThisYearTotalSECTIONFLOW_NUM"] += sf
                     model["ThisYearTotalSERVERPART_FLOW"] += sp
+                    model["ThisYearTotalANALOG"] += analog
                     if region in south_east:
                         model["ThisYearSouthEastSECTIONFLOW_NUM"] += sf
                         model["ThisYearSouthEastSERVERPART_FLOW"] += sp
+                        model["ThisYearSouthEastANALOG"] += analog
                     else:
                         model["ThisYearNorthWestSECTIONFLOW_NUM"] += sf
                         model["ThisYearNorthWestSERVERPART_FLOW"] += sp
+                        model["ThisYearNorthWestANALOG"] += analog
                 # 去年数据
                 r_ly = flow_map.get((ly_date_num, region))
                 if r_ly:
                     sf = r_ly.get("SECTIONFLOW_NUM") or 0
                     sp = r_ly.get("SERVERPART_FLOW") or 0
+                    analog = r_ly.get("SERVERPART_FLOW_ANALOG") or 0
                     model["LastYearTotalSECTIONFLOW_NUM"] += sf
                     model["LastYearTotalSERVERPART_FLOW"] += sp
+                    model["LastYearTotalANALOG"] += analog
                     if region in south_east:
                         model["LastYearSouthEastSECTIONFLOW_NUM"] += sf
                         model["LastYearSouthEastSERVERPART_FLOW"] += sp
+                        model["LastYearSouthEastANALOG"] += analog
                     else:
                         model["LastYearNorthWestSECTIONFLOW_NUM"] += sf
                         model["LastYearNorthWestSERVERPART_FLOW"] += sp
+                        model["LastYearNorthWestANALOG"] += analog
 
             # 计算差值
             model["TotalDiffSECTIONFLOW_NUM"] = (
@@ -2226,22 +2234,23 @@ async def get_date_analysis(
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
-        _oth = {
-            "STATISTICS_DATE": None,
-            "ThisYearTotalSECTIONFLOW_NUM": None, "ThisYearTotalSERVERPART_FLOW": None,
-            "LastYearTotalSECTIONFLOW_NUM": None, "LastYearTotalSERVERPART_FLOW": None,
-            "ThisYearSouthEastSECTIONFLOW_NUM": None, "ThisYearSouthEastSERVERPART_FLOW": None,
-            "ThisYearNorthWestSECTIONFLOW_NUM": None, "ThisYearNorthWestSERVERPART_FLOW": None,
-            "LastYearSouthEastSECTIONFLOW_NUM": None, "LastYearSouthEastSERVERPART_FLOW": None,
-            "LastYearNorthWestSECTIONFLOW_NUM": None, "LastYearNorthWestSERVERPART_FLOW": None,
-            "ThisYearTotalANALOG": None, "ThisYearSouthEastANALOG": None, "ThisYearNorthWestANALOG": None,
-            "LastYearTotalANALOG": None, "LastYearSouthEastANALOG": None, "LastYearNorthWestANALOG": None,
-            "CurRevenueAmount": 0.0, "CurRevenueAmount_A": 0.0, "CurRevenueAmount_B": 0.0,
-            "LyRevenueAmount": 0.0, "LyRevenueAmount_A": 0.0, "LyRevenueAmount_B": 0.0,
-            "TotalDiffSECTIONFLOW_NUM": None, "TotalDiffSERVERPART_FLOW": None,
-            "SouthEastDiffSECTIONFLOW_NUM": None, "SouthEastDiffSERVERPART_FLOW": None,
-            "NorthWestDiffSECTIONFLOW_NUM": None, "NorthWestDiffSERVERPART_FLOW": None,
-        }
+        # OtherData汇总所有日期
+        sum_keys = ["ThisYearTotalSECTIONFLOW_NUM", "ThisYearTotalSERVERPART_FLOW",
+                     "LastYearTotalSECTIONFLOW_NUM", "LastYearTotalSERVERPART_FLOW",
+                     "ThisYearSouthEastSECTIONFLOW_NUM", "ThisYearSouthEastSERVERPART_FLOW",
+                     "ThisYearNorthWestSECTIONFLOW_NUM", "ThisYearNorthWestSERVERPART_FLOW",
+                     "LastYearSouthEastSECTIONFLOW_NUM", "LastYearSouthEastSERVERPART_FLOW",
+                     "LastYearNorthWestSECTIONFLOW_NUM", "LastYearNorthWestSERVERPART_FLOW",
+                     "ThisYearTotalANALOG", "ThisYearSouthEastANALOG", "ThisYearNorthWestANALOG",
+                     "LastYearTotalANALOG", "LastYearSouthEastANALOG", "LastYearNorthWestANALOG",
+                     "CurRevenueAmount", "CurRevenueAmount_A", "CurRevenueAmount_B",
+                     "LyRevenueAmount", "LyRevenueAmount_A", "LyRevenueAmount_B",
+                     "TotalDiffSECTIONFLOW_NUM", "TotalDiffSERVERPART_FLOW",
+                     "SouthEastDiffSECTIONFLOW_NUM", "SouthEastDiffSERVERPART_FLOW",
+                     "NorthWestDiffSECTIONFLOW_NUM", "NorthWestDiffSERVERPART_FLOW"]
+        _oth = {"STATISTICS_DATE": None}
+        for k in sum_keys:
+            _oth[k] = sum(m.get(k, 0) or 0 for m in result_list)
         resp["OtherData"] = [_oth]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
@@ -2748,7 +2757,9 @@ async def get_province_vehicle_tree_list(
                     "ProvinceName": prov,
                     "VehicleCount": rt_counts.get(rt_id, 0),
                     "CityName": city or "其他",
-                    "IsOther": 1 if not city else 0,
+                    "IsOther": True if not city else False,
+                    "ServerPartId": None,
+                    "ServerPartIds": None,
                 })
             city_nodes.append({
                 "node": {
@@ -2783,7 +2794,9 @@ async def get_province_vehicle_tree_list(
                     "SPRegionTypeName": info["SPRegionTypeName"],
                     "ProvinceName": prov,
                     "CityName": None,
-                    "IsOther": 0,
+                    "IsOther": False,
+                    "ServerPartId": None,
+                    "ServerPartIds": None,
                     "VehicleCount": rt_totals.get(rt_id, 0),
                 })
             province_nodes.append({
@@ -2811,7 +2824,9 @@ async def get_province_vehicle_tree_list(
                 "SPRegionTypeId": info["SPRegionTypeId"],
                 "SPRegionTypeName": info["SPRegionTypeName"],
                 "CityName": None,
-                "IsOther": 0,
+                "IsOther": False,
+                "ServerPartId": None,
+                "ServerPartIds": None,
                 "VehicleCount": rt_all.get(rt_id, 0),
             })
 
