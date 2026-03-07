@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-07 23:45:39",
-  "elapsed": 36.3,
+  "time": "2026-03-07 23:53:15",
+  "elapsed": 37.7,
   "stats": {
     "PASS": 36,
     "DIFF": 38,
@@ -11,10 +11,10 @@
       "route": "GET /BigData/GetBayonetGrowthAnalysis",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.EntryList[0].Entry_GrowthRate: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.EntryList[0].Entry_Rate: 新API缺少字段",
-        ".Result_Data.EntryList[0].LargeVehicleEntry_GrowthRate: 新API缺少字段",
-        ".Result_Data.EntryList[0]: ...还有13条差异"
+        ".Result_Data.EntryList[0].LargeVehicleEntry_Rate: 新API缺少字段",
+        ".Result_Data.EntryList[0].LargeVehicle_Count: 新API缺少字段",
+        ".Result_Data.EntryList[0].MediumVehicleEntry_GrowthRate: 新API缺少字段",
+        ".Result_Data.EntryList[0]: ...还有10条差异"
       ]
     },
     {
@@ -355,30 +355,30 @@
     },
     {
       "route": "GET /Revenue/GetTransactionAnalysis",
-      "detail": "Code=100, 6处差异",
+      "detail": "Code=100, 5处差异",
       "diffs": [
-        ".Result_Data.AvgTicketPrice: 类型不同 旧=NoneType 新=float",
         ".Result_Data.ProvinceAvgTicketPrice: 旧=26.94 新=25.71",
         ".Result_Data.ProvinceRevenueAmount: 旧=5887533.52 新=7748488.45",
         ".Result_Data.Serverpart_Name: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.TicketProvinceCount: 旧=218571 新=301428"
+        ".Result_Data.TicketProvinceCount: 旧=218571 新=301428",
+        ".Result_Data.TotalProvinceCount: 旧=610707.44 新=780218.81"
       ]
     },
     {
       "route": "GET /Revenue/GetTransactionConvert",
-      "detail": "Code=100, 7处差异",
+      "detail": "Code=100, 2处差异",
       "diffs": [
-        ".Result_Data.BayonetList.CommonScatterList: 新API缺少字段",
-        ".Result_Data.BayonetList.data[0][0]: 类型不同 旧=float 新=int",
-        ".Result_Data.BayonetList.value: 新API缺少字段",
-        ".Result_Data.TransactionList.CommonScatterList: 新API缺少字段",
-        ".Result_Data.TransactionList.data: 类型不同 旧=NoneType 新=list"
+        ".Result_Data.BayonetList.data[0][1]: 旧=534.0 新=533.0",
+        ".Result_Data.TransactionList.name: 类型不同 旧=NoneType 新=str"
       ]
     },
     {
       "route": "GET /Revenue/GetUnUpLoadShops",
-      "detail": "Code: 旧=100 新=999",
-      "diffs": []
+      "detail": "Code=100, 2处差异",
+      "diffs": [
+        ".Result_Data.List[0].ServerpartShop_ID: 旧=7872 新=3080",
+        ".Result_Data.List[0].ServerpartShop_Name: 旧=南区年货节门店 新=南区驿达万佳生活馆"
+      ]
     }
   ]
 }

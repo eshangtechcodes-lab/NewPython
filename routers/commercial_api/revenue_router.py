@@ -1625,8 +1625,8 @@ async def get_transaction_analysis(
         ticket_count = 0
         total_count = 0.0
         revenue_amount = 0.0
-        avg_ticket_price = 0.0
-        if day_rows:
+        avg_ticket_price = None
+        if day_rows and day_rows[0].get("TICKETCOUNT") is not None:
             ticket_count = safe_int(day_rows[0].get("TICKETCOUNT"))
             total_count = safe_dec(day_rows[0].get("TOTALCOUNT"))
             revenue_amount = safe_dec(day_rows[0].get("CASHPAY"))
@@ -1808,11 +1808,11 @@ async def get_transaction_convert(
                 AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = {month_str}{where_sql}
             GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
         t_rows = db.execute_query(t_sql) or []
-        t_data = [[h, 0] for h in range(24)]
+        t_data = [[float(h), 0] for h in range(24)]
         for r in t_rows:
             h = int(safe_dec(r.get("STATISTICS_HOUR")))
             if 0 <= h < 24:
-                t_data[h] = [h, safe_dec(r.get("TICKET_COUNT"))]
+                t_data[h] = [float(h), safe_dec(r.get("TICKET_COUNT"))]
 
         # 时段车流
         b_sql = f"""SELECT A."STATISTICS_HOUR",
@@ -1823,15 +1823,15 @@ async def get_transaction_convert(
                 AND A."STATISTICS_MONTH" = {month_str}{where_sql}
             GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
         b_rows = db.execute_query(b_sql) or []
-        b_data = [[h, 0] for h in range(24)]
+        b_data = [[float(h), 0] for h in range(24)]
         for r in b_rows:
             h = int(safe_dec(r.get("STATISTICS_HOUR")))
             if 0 <= h < 24:
-                b_data[h] = [h, safe_dec(r.get("TICKET_COUNT"))]
+                b_data[h] = [float(h), safe_dec(r.get("TICKET_COUNT"))]
 
         return Result.success(data={
-            "TransactionList": {"name": "客单数", "data": t_data},
-            "BayonetList": {"name": "车流量", "data": b_data},
+            "TransactionList": {"name": "客单数", "data": t_data if t_rows else None, "value": None, "CommonScatterList": None},
+            "BayonetList": {"name": "车流量", "data": b_data, "value": None, "CommonScatterList": None},
         }, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionConvert 查询失败: {ex}")
