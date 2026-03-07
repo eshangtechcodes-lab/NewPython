@@ -4962,53 +4962,90 @@ async def get_shop_month_sabfi_list(
     ServerpartShopName: Optional[str] = Query("", description="门店名称"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取门店每月商业适配指数 (SQL平移完成)"""
+    """获取门店每月商业适配指数 (对齐C# BindShopMonthSABFI)"""
     try:
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
+        from datetime import datetime as dt
 
-        where_sql = ""
-        if ServerpartId:
-            where_sql += f' AND A."SERVERPART_ID" = {ServerpartId}'
-        if ServerpartShopId:
-            where_sql += f' AND A."SERVERPARTSHOP_ID" IN ({ServerpartShopId})'
+        # 构建查询条件
+        if BusinessProjectId:
+            pc_sql = f"""SELECT * FROM "T_PROFITCONTRIBUTE"
+                WHERE "PROFITCONTRIBUTE_STATE" = 1 AND "BUSINESSPROJECT_ID" = {BusinessProjectId}
+                    AND "STATISTICS_DATE" BETWEEN {StatisticsStartMonth} AND {StatisticsEndMonth}
+                    AND "CALCULATE_SELFSHOP" = {1 if calcSelf else 2}"""
+        elif ServerpartShopId:
+            pc_sql = f"""SELECT * FROM "T_PROFITCONTRIBUTE"
+                WHERE "PROFITCONTRIBUTE_STATE" = 1 AND "SERVERPARTSHOP_ID" = '{ServerpartShopId}'
+                    AND "STATISTICS_DATE" BETWEEN {StatisticsStartMonth} AND {StatisticsEndMonth}
+                    AND "CALCULATE_SELFSHOP" = {1 if calcSelf else 2}"""
+        elif ServerpartId and ServerpartShopName:
+            pc_sql = f"""SELECT * FROM "T_PROFITCONTRIBUTE"
+                WHERE "PROFITCONTRIBUTE_STATE" = 1 AND "SERVERPART_ID" = {ServerpartId}
+                    AND "SERVERPARTSHOP_NAME" = '{ServerpartShopName}'
+                    AND "STATISTICS_DATE" BETWEEN {StatisticsStartMonth} AND {StatisticsEndMonth}
+                    AND "CALCULATE_SELFSHOP" = {1 if calcSelf else 2}"""
+        else:
+            json_list = JsonListData.create(data_list=[], total=0, page_size=10)
+            return Result.success(data=json_list.model_dump(), msg="查询成功")
 
-        sql = f"""SELECT A."STATISTICS_MONTH",
-                SUM(A."REVENUE_AMOUNT") AS "REVENUE",
-                SUM(A."TICKET_COUNT") AS "TICKET"
-            FROM "T_REVENUEMONTHLY" A
-            WHERE A."REVENUEMONTHLY_STATE" = 1
-                AND A."STATISTICS_MONTH" >= {StatisticsStartMonth} AND A."STATISTICS_MONTH" <= {StatisticsEndMonth}{where_sql}
-            GROUP BY A."STATISTICS_MONTH"
-            ORDER BY A."STATISTICS_MONTH" """
-        rows = db.execute_query(sql) or []
+        pc_rows = db.execute_query(pc_sql) or []
 
+        # 按月份分组
+        month_data = {}
+        for r in pc_rows:
+            m = str(r.get("STATISTICS_DATE", ""))
+            if m not in month_data:
+                month_data[m] = []
+            month_data[m].append(r)
+
+        # 遍历月份范围
         data_list = []
-        for r in rows:
-            m = str(r.get("STATISTICS_MONTH", ""))
-            # 格式化月份为 yyyy/MM
-            if len(m) == 6:
-                m_fmt = f"{m[:4]}/{m[4:]}"
-            else:
-                m_fmt = m
+        s_year = int(StatisticsStartMonth[:4])
+        s_month = int(StatisticsStartMonth[4:])
+        e_year = int(StatisticsEndMonth[:4])
+        e_month = int(StatisticsEndMonth[4:])
+        cur_y, cur_m = s_year, s_month
+        while cur_y * 100 + cur_m <= e_year * 100 + e_month:
+            m_key = f"{cur_y}{cur_m:02d}"
+            m_fmt = f"{cur_y}/{cur_m:02d}"
+            rows_m = month_data.get(m_key, [])
+            rows_m_int = month_data.get(int(m_key) if m_key.isdigit() else m_key, rows_m)
+            if not rows_m and rows_m_int:
+                rows_m = rows_m_int
+
+            def get_max(rr, eval_type, field):
+                """获取指定EVALUATE_TYPE的MAX值"""
+                vals = [r.get(field) for r in rr if str(r.get("EVALUATE_TYPE")) == str(eval_type) and r.get(field) is not None]
+                if vals:
+                    return str(max(vals))
+                return ""
+
+            sabfi_list = []
+            for et in range(1, 8):
+                sabfi_list.append({
+                    "name": str(et),
+                    "value": get_max(rows_m, et, "EVALUATE_SCORE"),
+                    "key": get_max(rows_m, et, "PROFITCONTRIBUTE_ID"),
+                    "data": get_max(rows_m, et, "PROFITCONTRIBUTE_PID"),
+                })
+
+            # 计算SABFI_Score
+            score_0 = get_max(rows_m, 0, "EVALUATE_SCORE")
+            try:
+                sabfi_score = float(score_0) if score_0 else 0.0
+            except:
+                sabfi_score = 0.0
+            # C#: SABFI_Score = SABFIList.Sum(o => o.value.TryParseToDecimal())
+            sabfi_sum = sum(float(s["value"]) if s["value"] else 0.0 for s in sabfi_list)
+
             data_list.append({
                 "StatisticsMonth": m_fmt,
                 "BusinessTrade": None,
                 "BusinessProjectName": None,
-                "SABFI_Score": 0.0,
+                "SABFI_Score": sabfi_sum,
                 "Revenue_SD": None,
                 "Revenue_AVG": None,
-                "SABFIList": [
-                    {"name": "营业收入", "value": str(safe_dec(r.get("REVENUE"))), "data": "", "key": ""},
-                    {"name": "客单笔数", "value": str(safe_dec(r.get("TICKET"))), "data": "", "key": ""},
-                    {"name": "客单价", "value": str(round(safe_dec(r.get("REVENUE")) / safe_dec(r.get("TICKET")), 2) if safe_dec(r.get("TICKET")) > 0 else 0), "data": "", "key": ""},
-                    {"name": "营收标准差", "value": "0", "data": "", "key": ""},
-                    {"name": "营收平均值", "value": "0", "data": "", "key": ""},
-                    {"name": "营收变异系数", "value": "0", "data": "", "key": ""},
-                    {"name": "SABFI指数", "value": "0", "data": "", "key": ""},
-                ],
-                "ServerpartId": ServerpartId,
+                "SABFIList": sabfi_list,
+                "ServerpartId": None,
                 "ServerpartName": None,
                 "ServerpartShopId": None,
                 "ServerpartShopName": None,
@@ -5020,6 +5057,13 @@ async def get_shop_month_sabfi_list(
                 "RevenueINC": None, "AccountINC": None, "TicketINC": None, "AvgTicketINC": None,
                 "CurTransaction": None, "Profit_Amount": None, "Cost_Amount": None, "Ca_Cost": None,
             })
+
+            # 下个月
+            if cur_m == 12:
+                cur_y += 1
+                cur_m = 1
+            else:
+                cur_m += 1
 
         json_list = JsonListData.create(data_list=data_list, total=len(data_list), page_size=10)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
