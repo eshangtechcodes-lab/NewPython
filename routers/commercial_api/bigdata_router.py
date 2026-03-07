@@ -989,7 +989,7 @@ async def get_province_avg_bayonet_analysis(
                 round(cur_stay - lm_stay, 2) if lm_stay else 0,
                 addup_vc=addup_vc, addup_sf=addup_sf))
 
-        json_list = JsonListData.create(data_list=data_list, total=len(data_list))
+        json_list = JsonListData.create(data_list=data_list, total=len(data_list), page_size=10)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetProvinceAvgBayonetAnalysis 查询失败: {ex}")

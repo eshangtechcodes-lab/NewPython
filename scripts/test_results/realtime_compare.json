@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-07 22:45:22",
-  "elapsed": 36.1,
+  "time": "2026-03-07 23:07:35",
+  "elapsed": 54.3,
   "stats": {
     "PASS": 36,
     "DIFF": 38,
@@ -243,32 +243,29 @@
     },
     {
       "route": "GET /Revenue/GetProvinceAvgBayonetAnalysis",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 4处差异",
       "diffs": [
         ".Result_Data.List[0].Entry_Rate: 旧=16.13 新=16.78",
         ".Result_Data.List[0].SectionFlow_AddUpCount: 旧=35291020 新=96632265",
         ".Result_Data.List[0].Stay_Times: 旧=15.86 新=16.01",
-        ".Result_Data.List[0]: ...还有2条差异",
-        ".Result_Data.PageSize: 旧=10 新=3"
+        ".Result_Data.List[0]: ...还有2条差异"
       ]
     },
     {
       "route": "GET /Revenue/GetRevenueCompare",
-      "detail": "Code=100, 11处差异",
+      "detail": "Code=100, 10处差异",
       "diffs": [
-        ".Result_Data.AvgTicketAmount: 类型不同 旧=float 新=int",
         ".Result_Data.AvgTicketAmountList[0].data: 类型不同 旧=list 新=NoneType",
         ".Result_Data.AvgTicketAmountList[0].name: 旧=工作日平均 新=当日",
         ".Result_Data.AvgTicketAmountList[0].value: 类型不同 旧=NoneType 新=str",
-        ".Result_Data.AvgTicketAmountRate: 类型不同 旧=NoneType 新=float"
+        ".Result_Data.AvgTicketAmountRate: 类型不同 旧=NoneType 新=float",
+        ".Result_Data.RevenueAmountList[0].data: 类型不同 旧=list 新=NoneType"
       ]
     },
     {
       "route": "GET /Revenue/GetRevenueReport",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 3处差异",
       "diffs": [
-        ".Result_Data.Different_Price_Less: 旧=-10263.5 新=0.0",
-        ".Result_Data.Different_Price_More: 旧=5094.7 新=0.0",
         ".Result_Data.Revenue_AmountN: 旧=56583401.36 新=0.0",
         ".Result_Data.Revenue_AmountS: 旧=49422106.93 新=0.0",
         ".Result_Data.revenueRegionModels[2].Total_Revenue: 旧=19162981.46 新=19162981.459999997"
@@ -276,13 +273,13 @@
     },
     {
       "route": "GET /Revenue/GetRevenueReportDetil",
-      "detail": "Code=100, 8处差异",
+      "detail": "Code=100, 7处差异",
       "diffs": [
-        ".Result_Data.Serverpart_Revenue: 旧=3197328.83 新=3197328.8299999996",
         ".Result_Data.Serverpart_RevenueN: 旧=2152246.37 新=1629643.37",
         ".Result_Data.Serverpart_RevenueS: 旧=1045082.46 新=1567685.4600000002",
         ".Result_Data.ShopList: 列表长度不同 旧=15 新=14",
-        ".Result_Data.ShopList[0].BusinessType_Logo: 类型不同 旧=str 新=NoneType"
+        ".Result_Data.ShopList[0].BusinessType_Logo: 旧=https://user.eshangtech.com/UploadImageDir/Picture 新=",
+        ".Result_Data.ShopList[0].BusinessType_Name: 旧=自营老乡鸡 新=226"
       ]
     },
     {
@@ -300,9 +297,9 @@
       "route": "GET /Revenue/GetSalableCommodity",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.SalableCommodity: 类型不同 旧=float 新=int",
+        ".Result_Data.SalableCommodity: 旧=24.7 新=0.0",
         ".Result_Data.SalableCommodityList: 列表长度不同 旧=5 新=0",
-        ".Result_Data.UnSalableCommodity: 类型不同 旧=float 新=int",
+        ".Result_Data.UnSalableCommodity: 旧=10.6 新=0.0",
         ".Result_Data.UnSalableCommodityList: 列表长度不同 旧=5 新=0"
       ]
     },

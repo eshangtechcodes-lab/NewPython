@@ -2197,7 +2197,9 @@ async def get_revenue_report(
                 SUM(A."TICKET_COUNT") AS "TICKET_COUNT",
                 SUM(A."TOTAL_COUNT") AS "TOTAL_COUNT",
                 SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFF_AMOUNT",
-                SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT"
+                SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT",
+                SUM(NVL(A."DIFFERENT_AMOUNT_LESS_A",0) + NVL(A."DIFFERENT_AMOUNT_LESS_B",0)) AS "DIFFERENT_PRICE_LESS",
+                SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE"
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE {where_sql}
             GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
@@ -2214,6 +2216,9 @@ async def get_revenue_report(
         total_count = round(sum(float(r.get("TOTAL_COUNT") or 0) for r in rows), 2)
         total_off = round(sum(float(r.get("TOTALOFF_AMOUNT") or 0) for r in rows), 2)
         total_diff = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows), 2)
+        # C#对齐: Different_Price_Less/More 从汇总字段计算
+        diff_less = round(sum(float(r.get("DIFFERENT_PRICE_LESS") or 0) for r in rows), 2)
+        diff_more = round(sum(float(r.get("DIFFERENT_PRICE_MORE") or 0) for r in rows), 2)
 
         # 按片区分组
         region_map = {}
@@ -2258,8 +2263,8 @@ async def get_revenue_report(
             "TicketCount": total_ticket,
             "TotalCount": total_count,
             "TotalOffAmount": total_off,
-            "Different_Price_Less": 0.0,
-            "Different_Price_More": 0.0,
+            "Different_Price_Less": diff_less,
+            "Different_Price_More": diff_more,
             "MobilePayment": None,
             "Province_InsideAmount": total_revenue,
             "Province_ExternalAmount": 0.0,
@@ -2317,11 +2322,12 @@ async def get_revenue_report_detail(
             ORDER BY SUM(A."REVENUE_AMOUNT") DESC"""
         rows = db.execute_query(sql) or []
 
+        from decimal import Decimal
         shop_list = []
-        total_rev = 0.0
+        total_rev = Decimal('0')
         for r in rows:
             rv = safe_dec(r.get("REVENUE"))
-            total_rev += rv
+            total_rev += Decimal(str(rv))
             shop_list.append({
                 "BusinessType_Name": str(r.get("BUSINESS_TRADE", "")),
                 "BusinessType_Revenue": rv,
@@ -2337,7 +2343,7 @@ async def get_revenue_report_detail(
 
         # 补充ShopList item的旧API字段
         for s in shop_list:
-            s.setdefault("BusinessType_Logo", None)
+            s.setdefault("BusinessType_Logo", "")
             s.setdefault("Serverpart_S", "南区")
             s.setdefault("Serverpart_RevenueS", 0.0)
             s.setdefault("Serverpart_N", "北区")
@@ -2346,7 +2352,7 @@ async def get_revenue_report_detail(
 
         return Result.success(data={
             "Serverpart_Name": sp_name,
-            "Serverpart_Revenue": total_rev,
+            "Serverpart_Revenue": float(total_rev),
             "Serverpart_S": "南区",
             "Serverpart_RevenueS": south_rev,
             "Serverpart_N": "北区",
@@ -2410,9 +2416,9 @@ async def get_salable_commodity(
             unsalable.append({"Commodity_name": r.get("GOODS_NAME", ""), "Proportion": round(sc / total * 100, 2) if total > 0 else 0})
 
         return Result.success(data={
-            "SalableCommodity": len(salable),
+            "SalableCommodity": float(len(salable)),
             "SalableCommodityList": salable,
-            "UnSalableCommodity": len(unsalable),
+            "UnSalableCommodity": float(len(unsalable)),
             "UnSalableCommodityList": unsalable,
         }, msg="查询成功")
     except Exception as ex:
@@ -4279,7 +4285,7 @@ async def get_revenue_compare(
         cur_rows = db.execute_query(cur_sql) or []
         rev = safe_dec(cur_rows[0].get("CASHPAY")) if cur_rows else 0
         ticket = safe_dec(cur_rows[0].get("TICKETCOUNT")) if cur_rows else 0
-        avg = round(rev / ticket, 2) if ticket > 0 else 0
+        avg = round(rev / ticket, 2) if ticket > 0 else 0.0
 
         # 查去年同日
         yoy_sql = f"""SELECT SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
@@ -4291,7 +4297,7 @@ async def get_revenue_compare(
         yoy_rows = db.execute_query(yoy_sql) or []
         yoy_rev = safe_dec(yoy_rows[0].get("CASHPAY")) if yoy_rows else 0
         yoy_ticket = safe_dec(yoy_rows[0].get("TICKETCOUNT")) if yoy_rows else 0
-        yoy_avg = round(yoy_rev / yoy_ticket, 2) if yoy_ticket > 0 else 0
+        yoy_avg = round(yoy_rev / yoy_ticket, 2) if yoy_ticket > 0 else 0.0
 
         rev_rate = round((rev - yoy_rev) / yoy_rev * 100, 2) if yoy_rev > 0 else None
         ticket_rate = round((ticket - yoy_ticket) / yoy_ticket * 100, 2) if yoy_ticket > 0 else None
