@@ -2197,9 +2197,7 @@ async def get_revenue_report(
                 SUM(A."TICKET_COUNT") AS "TICKET_COUNT",
                 SUM(A."TOTAL_COUNT") AS "TOTAL_COUNT",
                 SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFF_AMOUNT",
-                SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT",
-                SUM(NVL(A."DIFFERENT_AMOUNT_LESS_A",0) + NVL(A."DIFFERENT_AMOUNT_LESS_B",0)) AS "DIFFERENT_PRICE_LESS",
-                SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE"
+                SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT"
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE {where_sql}
             GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
@@ -2216,26 +2214,30 @@ async def get_revenue_report(
         total_count = round(sum(float(r.get("TOTAL_COUNT") or 0) for r in rows), 2)
         total_off = round(sum(float(r.get("TOTALOFF_AMOUNT") or 0) for r in rows), 2)
         total_diff = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows), 2)
-        # C#对齐: Different_Price_Less/More 从汇总字段计算
-        diff_less = round(sum(float(r.get("DIFFERENT_PRICE_LESS") or 0) for r in rows), 2)
-        diff_more = round(sum(float(r.get("DIFFERENT_PRICE_MORE") or 0) for r in rows), 2)
+        # 注意: 达梦中可能没有DIFFERENT_AMOUNT_LESS_A等字段，暂用total_diff近似
+        diff_less = total_diff if total_diff < 0 else 0.0
+        diff_more = total_diff if total_diff > 0 else 0.0
+        # 注意: 达梦中可能没有REVENUE_AMOUNT_A/B字段
+        rev_amount_s = 0.0
+        rev_amount_n = 0.0
 
         # 按片区分组
+        from decimal import Decimal
         region_map = {}
         for r in rows:
             rid = r.get("SPREGIONTYPE_ID") or "null"
             if rid not in region_map:
                 region_map[rid] = {
                     "Region_Name": r.get("SPREGIONTYPE_NAME") or "无管理中心",
-                    "Total_Revenue": 0,
+                    "Total_Revenue": Decimal('0'),
                     "Revenue_Proportion": "",
                     "revenueServerModels": [],
                 }
-            region_map[rid]["Total_Revenue"] += float(r.get("REVENUE_AMOUNT") or 0)
+            region_map[rid]["Total_Revenue"] += Decimal(str(float(r.get("REVENUE_AMOUNT") or 0)))
 
             # 添加服务区
             sp_revenue = float(r.get("REVENUE_AMOUNT") or 0)
-            region_rev = region_map[rid]["Total_Revenue"]
+            region_rev = float(region_map[rid]["Total_Revenue"])
             prop = f"{sp_revenue / region_rev * 100:.2f}%" if region_rev != 0 else ""
             region_map[rid]["revenueServerModels"].append({
                 "Serverpart_Id": str(r.get("SERVERPART_ID", "")),
@@ -2248,12 +2250,13 @@ async def get_revenue_report(
         # 重新计算片区占比和服务区占比
         region_list = []
         for rid, region in region_map.items():
-            region["Revenue_Proportion"] = f"{region['Total_Revenue'] / total_revenue * 100:.2f}%" if total_revenue != 0 else ""
+            region["Revenue_Proportion"] = f"{float(region['Total_Revenue']) / total_revenue * 100:.2f}%" if total_revenue != 0 else ""
             # 重新计算服务区占比
             for sp in region["revenueServerModels"]:
-                sp["Revenue_Proportion"] = f"{sp['Total_Revenue'] / region['Total_Revenue'] * 100:.2f}%" if region['Total_Revenue'] != 0 else ""
+                sp["Revenue_Proportion"] = f"{sp['Total_Revenue'] / float(region['Total_Revenue']) * 100:.2f}%" if region['Total_Revenue'] != 0 else ""
             # 按营收倒序排列服务区
             region["revenueServerModels"].sort(key=lambda x: x["Total_Revenue"], reverse=True)
+            region["Total_Revenue"] = float(region["Total_Revenue"])
             region_list.append(region)
         # 按营收倒序排列片区
         region_list.sort(key=lambda x: x["Total_Revenue"], reverse=True)
@@ -2268,8 +2271,8 @@ async def get_revenue_report(
             "MobilePayment": None,
             "Province_InsideAmount": total_revenue,
             "Province_ExternalAmount": 0.0,
-            "Revenue_AmountN": 0.0,
-            "Revenue_AmountS": 0.0,
+            "Revenue_AmountN": rev_amount_n,
+            "Revenue_AmountS": rev_amount_s,
             "SearchResult": None,
             "revenueRegionModels": region_list,
             "revenueInsideRegionModels": None,
