@@ -1,21 +1,12 @@
 {
-  "time": "2026-03-08 00:38:27",
-  "elapsed": 39.4,
+  "time": "2026-03-08 00:43:28",
+  "elapsed": 39.3,
   "stats": {
-    "PASS": 38,
-    "DIFF": 36,
+    "PASS": 39,
+    "DIFF": 35,
     "ERROR": 0
   },
   "diffs": [
-    {
-      "route": "GET /BigData/GetBayonetGrowthAnalysis",
-      "detail": "Code=100, 3处差异",
-      "diffs": [
-        ".Result_Data.EntryList[0].SectionFlow_Count: 新API缺少字段",
-        ".Result_Data.EntryList[0].SectionFlow_Num: 新API多出字段",
-        ".Result_Data.EntryList[0].Serverpart_Index: 新API缺少字段"
-      ]
-    },
     {
       "route": "GET /BigData/GetBayonetOAAnalysis",
       "detail": "Code=100, 1处差异",
@@ -187,10 +178,10 @@
       "route": "GET /Revenue/GetHolidaySPRAnalysis",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].node.SPRegionTypeId: 新API缺少字段",
-        ".Result_Data.List[0].node.ServerpartId: 新API缺少字段",
-        ".Result_Data.List[0].node.ServerpartName: 新API缺少字段",
-        ".Result_Data.List[0]: ...还有12条差异"
+        ".Result_Data.List[0].node.SPRegionTypeId: 类型不同 旧=int 新=NoneType",
+        ".Result_Data.List[0].node.curYearAccount: 新API缺少字段",
+        ".Result_Data.List[0].node.curYearBayonet: 新API缺少字段",
+        ".Result_Data.List[0]: ...还有10条差异"
       ]
     },
     {
