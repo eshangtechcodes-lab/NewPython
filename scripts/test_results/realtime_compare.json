@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-07 23:37:16",
-  "elapsed": 37.3,
+  "time": "2026-03-07 23:42:28",
+  "elapsed": 36.1,
   "stats": {
     "PASS": 36,
     "DIFF": 38,
@@ -148,12 +148,9 @@
     },
     {
       "route": "GET /Revenue/GetBusinessTradeRevenue",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 1处差异",
       "diffs": [
-        ".Result_Data.BusinessTradeRank[0].data: 旧=客单 16776笔,金额 318,031.60元 新=16776",
-        ".Result_Data.BusinessTradeRank[0].key: 旧=229 新=318031.6",
-        ".Result_Data.BusinessTradeRank[0].name: 旧=中式快餐 新=229",
-        ".Result_Data.BusinessTradeRank[0]: ...还有1条差异"
+        ".Result_Data.BusinessTradeRank[0].value: 旧=35.53 新=28.89"
       ]
     },
     {

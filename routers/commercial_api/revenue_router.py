@@ -1883,19 +1883,32 @@ async def get_business_trade_revenue(
         total_ticket = sum(safe_dec(r.get("TICKET_COUNT")) for r in rows)
         total_rev = sum(safe_dec(r.get("REVENUE_AMOUNT")) for r in rows)
 
+        # 查询业态名称字典：T_AUTOSTATISTICS
+        trade_name_map = {}
+        try:
+            trade_sql = """SELECT "AUTOSTATISTICS_ID", "AUTOSTATISTICS_NAME" FROM "T_AUTOSTATISTICS" WHERE "AUTOSTATISTICS_TYPE" = 2000"""
+            trade_rows = db.execute_query(trade_sql) or []
+            for tr in trade_rows:
+                tid = str(tr.get("AUTOSTATISTICS_ID", ""))
+                trade_name_map[tid] = tr.get("AUTOSTATISTICS_NAME", "其他业态")
+        except Exception:
+            pass
+
         rank_list = []
         for r in rows:
             tc = safe_dec(r.get("TICKET_COUNT"))
             ra = safe_dec(r.get("REVENUE_AMOUNT"))
+            trade_id = str(r.get("BUSINESS_TRADE", "") or "")
+            trade_name = trade_name_map.get(trade_id, "其他业态") if trade_id else "其他业态"
             if DataType == 1:
                 pct = round(tc / total_ticket * 100, 2) if total_ticket > 0 else 0
             else:
                 pct = round(ra / total_rev * 100, 2) if total_rev > 0 else 0
             rank_list.append({
-                "name": str(r.get("BUSINESS_TRADE", "")),
-                "value": str(pct),
-                "data": str(round(tc)),
-                "key": str(round(ra, 2)),
+                "name": trade_name,
+                "value": f"{pct:.2f}",
+                "data": f"客单 {int(tc)}笔,金额 {ra:,.2f}元",
+                "key": trade_id if trade_id else "0",
             })
 
         return Result.success(data={
