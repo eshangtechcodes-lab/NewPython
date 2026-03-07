@@ -1663,7 +1663,7 @@ async def get_bayonet_growth_analysis(
 
         merged_list = sorted([
             {"Serverpart_ID": sid, "Serverpart_Name": v["name"], "Serverpart_Region": "",
-             "SPRegionType_Id": v["rid"], "SPRegionType_Name": v["rname"], "SPRegionType_Index": v["rindex"],
+             "SPRegionType_Id": None, "SPRegionType_Name": None, "SPRegionType_Index": None,
              "Vehicle_Count": v["vc"], "Entry_GrowthRate": None, "Entry_Rate": None,
              "LargeVehicleEntry_GrowthRate": None, "LargeVehicleEntry_Rate": None,
              "LargeVehicle_Count": None, "MediumVehicleEntry_GrowthRate": None,
