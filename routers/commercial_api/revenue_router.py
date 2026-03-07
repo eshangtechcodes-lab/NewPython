@@ -4500,7 +4500,8 @@ async def get_holiday_spr_analysis(
         total_cmp_d = sum(v["rev_cur"] for v in cmp_sp_map.values())
 
         result_list = [{
-            "node": {"SPRegionTypeName": "整体对客销售",
+            "node": {"SPRegionTypeId": None, "SPRegionTypeName": "整体对客销售",
+                     "ServerpartId": None, "ServerpartName": None,
                      "curYearRevenue": {"value": str(total_cur_d), "data": str(total_cur)},
                      "lYearRevenue": {"value": str(total_cmp_d), "data": str(total_cmp)}},
             "children": None,
@@ -4542,6 +4543,7 @@ async def get_holiday_spr_analysis(
                     })
             result_list.append({
                 "node": {"SPRegionTypeId": rid, "SPRegionTypeName": rname,
+                         "ServerpartId": None, "ServerpartName": None,
                          "curYearRevenue": {"value": "0", "data": str(r_cur)},
                          "lYearRevenue": {"value": "0", "data": str(r_cmp)}},
                 "children": ch,
