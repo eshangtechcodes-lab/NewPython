@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-07 23:42:28",
-  "elapsed": 36.1,
+  "time": "2026-03-07 23:45:39",
+  "elapsed": 36.3,
   "stats": {
     "PASS": 36,
     "DIFF": 38,
@@ -377,11 +377,8 @@
     },
     {
       "route": "GET /Revenue/GetUnUpLoadShops",
-      "detail": "Code=100, 2处差异",
-      "diffs": [
-        ".Result_Data.List[0].ServerpartShop_ID: 旧=7872 新=3064",
-        ".Result_Data.List[0].ServerpartShop_Name: 旧=南区年货节门店 新=北区麦当劳"
-      ]
+      "detail": "Code: 旧=100 新=999",
+      "diffs": []
     }
   ]
 }
