@@ -2579,8 +2579,9 @@ async def get_revenue_yoy(
         cmp_days = (ce_date - cs_date).days + 1
         max_days = max(cur_days, cmp_days)
 
-        cur_acc = 0.0
-        cmp_acc = 0.0
+        from decimal import Decimal
+        cur_acc = Decimal('0')
+        cmp_acc = Decimal('0')
         cur_list = []
         cmp_list = []
 
@@ -2589,21 +2590,21 @@ async def get_revenue_yoy(
             cmp_d = cs_date + timedelta(days=i)
             cv = cur_map.get(cur_d.strftime("%Y%m%d"), 0)
             lv = cmp_map.get(cmp_d.strftime("%Y%m%d"), 0)
-            cur_acc += cv
-            cmp_acc += lv
+            cur_acc += Decimal(str(cv))
+            cmp_acc += Decimal(str(lv))
 
             cur_list.append({
                 "name": date_no_pad(cur_d),
-                "value": str(cv), "data": str(cur_acc),
+                "value": str(cv), "data": str(cur_acc), "key": None,
             })
             cmp_list.append({
                 "name": date_no_pad(cmp_d),
-                "value": str(lv), "data": str(cmp_acc),
+                "value": str(lv), "data": str(cmp_acc), "key": None,
             })
 
         return Result.success(data={
-            "curRevenue": cur_acc, "curList": cur_list,
-            "compareRevenue": cmp_acc, "compareList": cmp_list,
+            "curRevenue": float(cur_acc), "curList": cur_list,
+            "compareRevenue": float(cmp_acc), "compareList": cmp_list,
             "curHoliday": None, "curHolidayDays": 0,
             "compareHoliday": None, "compareHolidayDays": 0,
         }, msg="查询成功")

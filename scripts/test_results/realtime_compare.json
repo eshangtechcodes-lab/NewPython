@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-07 22:35:27",
-  "elapsed": 39.6,
+  "time": "2026-03-07 22:38:56",
+  "elapsed": 37.7,
   "stats": {
     "PASS": 36,
     "DIFF": 38,
@@ -67,13 +67,12 @@
     },
     {
       "route": "GET /BigData/GetProvinceVehicleTreeList",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 4处差异",
       "diffs": [
         ".Result_Data.List[0].children[0].children[0].children: 类型不同 旧=NoneType 新=list",
         ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].CityName: 新API缺少字段",
         ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].IsOther: 新API缺少字段",
-        ".Result_Data.List[0]: ...还有5条差异",
-        ".Result_Desc: 旧=成功 新=查询成功"
+        ".Result_Data.List[0]: ...还有5条差异"
       ]
     },
     {
@@ -288,13 +287,13 @@
     },
     {
       "route": "GET /Revenue/GetRevenueYOY",
-      "detail": "Code=100, 8处差异",
+      "detail": "Code=100, 6处差异",
       "diffs": [
         ".Result_Data.compareList[0].data: 旧=64875.72 新=38204.42",
-        ".Result_Data.compareList[0].key: 新API缺少字段",
         ".Result_Data.compareList[0].value: 旧=64875.72 新=38204.42",
-        ".Result_Data.compareRevenue: 旧=3197328.83 新=1567685.4599999997",
-        ".Result_Data.curList[0].data: 旧=64875.72 新=38204.42"
+        ".Result_Data.compareRevenue: 旧=3197328.83 新=1567685.46",
+        ".Result_Data.curList[0].data: 旧=64875.72 新=38204.42",
+        ".Result_Data.curList[0].value: 旧=64875.72 新=38204.42"
       ]
     },
     {
