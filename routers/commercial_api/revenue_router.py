@@ -4751,9 +4751,22 @@ async def get_month_inc_analysis(
                     "SPRegionTypeId": rid, "SPRegionTypeName": rname,
                     "ServerpartId": r.get("SERVERPART_ID"),
                     "ServerpartName": r.get("SERVERPART_NAME", ""),
-                    "RevenueINC": {"curYearData": rev, "lYearData": 0, "increaseData": rev, "increaseRate": None},
+                    "RevenueINC": {"curYearData": rev, "lYearData": 0, "increaseData": rev, "increaseRate": None,
+                                   "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
+                    "AccountINC": {"curYearData": tic, "lYearData": 0, "increaseData": tic, "increaseRate": None,
+                                   "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
+                    "BayonetINC": None,
+                    "TicketINC": None,
+                    "AvgTicketINC": None,
+                    "BayonetINC_ORI": None,
+                    "SectionFlowINC": None,
+                    "ShopINCList": None,
+                    "RankDiff": None,
+                    "Cost_Amount": None,
+                    "Ca_Cost": None,
+                    "Profit_Amount": None,
                 },
-                "children": []
+                "children": None
             })
 
         result_list = []
@@ -4762,7 +4775,20 @@ async def get_month_inc_analysis(
                 "node": {
                     "SPRegionTypeId": rid, "SPRegionTypeName": rinfo["name"],
                     "ServerpartId": 0, "ServerpartName": "",
-                    "RevenueINC": {"curYearData": rinfo["revenue"], "lYearData": 0, "increaseData": rinfo["revenue"], "increaseRate": None},
+                    "RevenueINC": {"curYearData": round(rinfo["revenue"], 2), "lYearData": 0, "increaseData": round(rinfo["revenue"], 2), "increaseRate": None,
+                                   "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
+                    "AccountINC": {"curYearData": round(rinfo["ticket"], 2), "lYearData": 0, "increaseData": round(rinfo["ticket"], 2), "increaseRate": None,
+                                   "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
+                    "BayonetINC": None,
+                    "TicketINC": None,
+                    "AvgTicketINC": None,
+                    "BayonetINC_ORI": None,
+                    "SectionFlowINC": None,
+                    "ShopINCList": None,
+                    "RankDiff": None,
+                    "Cost_Amount": None,
+                    "Ca_Cost": None,
+                    "Profit_Amount": None,
                 },
                 "children": rinfo["children"]
             })
