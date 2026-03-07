@@ -1,9 +1,9 @@
 {
-  "time": "2026-03-08 00:18:10",
-  "elapsed": 38.9,
+  "time": "2026-03-08 00:29:44",
+  "elapsed": 38.6,
   "stats": {
-    "PASS": 37,
-    "DIFF": 37,
+    "PASS": 38,
+    "DIFF": 36,
     "ERROR": 0
   },
   "diffs": [
@@ -11,9 +11,9 @@
       "route": "GET /BigData/GetBayonetGrowthAnalysis",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.EntryList[0].SPRegionType_Id: 新API缺少字段",
-        ".Result_Data.EntryList[0].SPRegionType_Index: 新API缺少字段",
-        ".Result_Data.EntryList[0].SPRegionType_Name: 新API缺少字段",
+        ".Result_Data.EntryList[0].SPRegionType_Id: 类型不同 旧=NoneType 新=int",
+        ".Result_Data.EntryList[0].SPRegionType_Index: 类型不同 旧=NoneType 新=int",
+        ".Result_Data.EntryList[0].SPRegionType_Name: 类型不同 旧=NoneType 新=str",
         ".Result_Data.EntryList[0]: ...还有3条差异"
       ]
     },
@@ -38,11 +38,11 @@
       "route": "GET /BigData/GetDateAnalysis",
       "detail": "Code=100, 9处差异",
       "diffs": [
-        ".Result_Data.List[0].CurRevenueAmount: 类型不同 旧=float 新=NoneType",
-        ".Result_Data.List[0].CurRevenueAmount_A: 类型不同 旧=float 新=NoneType",
-        ".Result_Data.List[0].CurRevenueAmount_B: 类型不同 旧=float 新=NoneType",
-        ".Result_Data.List[0]: ...还有27条差异",
-        ".Result_Data.OtherData[0].CurRevenueAmount: 类型不同 旧=float 新=NoneType"
+        ".Result_Data.List[0].CurRevenueAmount_A: 旧=37498.79 新=0.0",
+        ".Result_Data.List[0].CurRevenueAmount_B: 旧=27376.93 新=0.0",
+        ".Result_Data.List[0].LastYearNorthWestANALOG: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0]: ...还有26条差异",
+        ".Result_Data.OtherData[0].CurRevenueAmount: 旧=3264971.43 新=0.0"
       ]
     },
     {
@@ -69,9 +69,9 @@
       "route": "GET /BigData/GetProvinceVehicleTreeList",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].children[0].children[0].children: 类型不同 旧=NoneType 新=list",
-        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].CityName: 新API缺少字段",
-        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].IsOther: 新API缺少字段",
+        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].IsOther: 类型不同 旧=bool 新=int",
+        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].ServerPartId: 新API缺少字段",
+        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].ServerPartIds: 新API缺少字段",
         ".Result_Data.List[0]: ...还有5条差异"
       ]
     },
@@ -209,14 +209,6 @@
       "detail": "Code=100, 1处差异",
       "diffs": [
         ".Result_Data.List[0].name: 旧=车流增加，服务区营收减少 新=管理中心（自营：自营经营收入）"
-      ]
-    },
-    {
-      "route": "GET /Revenue/GetMonthlyBusinessAnalysis",
-      "detail": "Code=100, 2处差异",
-      "diffs": [
-        ".Result_Data.List[1].ServerpartId: 新API缺少字段",
-        ".Result_Data.List[1].ServerpartName: 类型不同 旧=NoneType 新=str"
       ]
     },
     {
