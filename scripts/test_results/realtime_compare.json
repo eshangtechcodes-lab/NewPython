@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-07 22:38:56",
-  "elapsed": 37.7,
+  "time": "2026-03-07 22:45:22",
+  "elapsed": 36.1,
   "stats": {
     "PASS": 36,
     "DIFF": 38,
@@ -265,13 +265,13 @@
     },
     {
       "route": "GET /Revenue/GetRevenueReport",
-      "detail": "Code=100, 6处差异",
+      "detail": "Code=100, 5处差异",
       "diffs": [
-        ".Result_Data.Different_Price_Less: 类型不同 旧=float 新=int",
-        ".Result_Data.Different_Price_More: 类型不同 旧=float 新=int",
-        ".Result_Data.Province_ExternalAmount: 类型不同 旧=float 新=NoneType",
-        ".Result_Data.Revenue_AmountN: 类型不同 旧=float 新=NoneType",
-        ".Result_Data.Revenue_AmountS: 类型不同 旧=float 新=NoneType"
+        ".Result_Data.Different_Price_Less: 旧=-10263.5 新=0.0",
+        ".Result_Data.Different_Price_More: 旧=5094.7 新=0.0",
+        ".Result_Data.Revenue_AmountN: 旧=56583401.36 新=0.0",
+        ".Result_Data.Revenue_AmountS: 旧=49422106.93 新=0.0",
+        ".Result_Data.revenueRegionModels[2].Total_Revenue: 旧=19162981.46 新=19162981.459999997"
       ]
     },
     {
