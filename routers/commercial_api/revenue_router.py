@@ -5014,7 +5014,7 @@ async def get_shop_month_sabfi_list(
                 "ServerpartShopName": None,
                 "Brand_Id": None, "Brand_Name": None, "BrandType_Name": None, "Brand_ICO": None,
                 "ShopTrade": 0, "BusinessTradeName": None, "BusinessTradeType": 0,
-                "BusinessProjectId": BusinessProjectId, "CompactStartDate": None, "CompactEndDate": None,
+                "BusinessProjectId": None, "CompactStartDate": None, "CompactEndDate": None,
                 "BusinessType": None, "SettlementModes": None,
                 "MERCHANTS_ID": None, "MERCHANTS_ID_Encrypted": None, "MERCHANTS_NAME": None,
                 "RevenueINC": None, "AccountINC": None, "TicketINC": None, "AvgTicketINC": None,
