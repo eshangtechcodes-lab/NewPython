@@ -1,9 +1,9 @@
 {
-  "time": "2026-03-08 00:43:28",
-  "elapsed": 39.3,
+  "time": "2026-03-08 00:48:45",
+  "elapsed": 38.8,
   "stats": {
-    "PASS": 39,
-    "DIFF": 35,
+    "PASS": 40,
+    "DIFF": 34,
     "ERROR": 0
   },
   "diffs": [
@@ -276,16 +276,6 @@
       "detail": "Code=100, 1处差异",
       "diffs": [
         ".Result_Data.OtherData: 旧=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2 新=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2"
-      ]
-    },
-    {
-      "route": "GET /Revenue/GetShopMonthSABFIList",
-      "detail": "Code=100, 4处差异",
-      "diffs": [
-        ".Result_Data.List[0].BusinessProjectId: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.List[0].SABFIList[0].name: 旧=1 新=营业收入",
-        ".Result_Data.List[0].SABFIList[0].value: 旧= 新=1671572.32",
-        ".Result_Data.List[0]: ...还有1条差异"
       ]
     },
     {
