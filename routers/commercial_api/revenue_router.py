@@ -3568,7 +3568,7 @@ async def get_monthly_business_analysis(
 
         # 2. 自营
         self_run = bind_inc(cur_rev_rows, cy_rev_rows, None, None, shoptrade_filter="自营")
-        self_run.update({"SPRegionTypeId": 1, "SPRegionTypeName": "自营", "ServerpartName": ""})
+        self_run.update({"SPRegionTypeId": 1, "SPRegionTypeName": "自营", "ServerpartId": None, "ServerpartName": None})
         results.append(self_run)
 
         # 3. 细分业态 (1便利店, 2餐饮客房, 3商铺租赁)
@@ -3580,7 +3580,7 @@ async def get_monthly_business_analysis(
         
         # 4. 外包 (ShopTrade 3)
         coop = bind_inc(cur_rev_rows, cy_rev_rows, cur_flow_rows, cy_flow_rows, shoptrade_filter=3)
-        coop.update({"SPRegionTypeId": 2, "SPRegionTypeName": "外包", "ServerpartName": ""})
+        coop.update({"SPRegionTypeId": 2, "SPRegionTypeName": "外包", "ServerpartId": None, "ServerpartName": None})
         results.append(coop)
 
         # 补充旧API字段

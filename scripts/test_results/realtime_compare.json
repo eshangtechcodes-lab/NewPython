@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 00:11:51",
-  "elapsed": 37.5,
+  "time": "2026-03-08 00:18:10",
+  "elapsed": 38.9,
   "stats": {
     "PASS": 37,
     "DIFF": 37,
@@ -198,10 +198,10 @@
       "route": "GET /Revenue/GetMonthINCAnalysis",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].children[0].children: 列表长度不同 旧=1 新=0",
-        ".Result_Data.List[0].children[0].node.AccountINC: 新API缺少字段",
-        ".Result_Data.List[0].children[0].node.AvgTicketINC: 新API缺少字段",
-        ".Result_Data.List[0]: ...还有24条差异"
+        ".Result_Data.List[0].children[0].children: 类型不同 旧=list 新=NoneType",
+        ".Result_Data.List[0].children[0].node.AccountINC.QOQData: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0].children[0].node.AccountINC.curYearData: 旧=661945.17 新=58067.0",
+        ".Result_Data.List[0]: ...还有22条差异"
       ]
     },
     {
@@ -215,8 +215,8 @@
       "route": "GET /Revenue/GetMonthlyBusinessAnalysis",
       "detail": "Code=100, 2处差异",
       "diffs": [
-        ".Result_Data.List[0].RevenueINC.curYearData: 旧=1671572.32 新=1671572.3199999998",
-        ".Result_Data.List[0].RevenueINC.lYearData: 旧=1671572.32 新=1671572.3199999998"
+        ".Result_Data.List[1].ServerpartId: 新API缺少字段",
+        ".Result_Data.List[1].ServerpartName: 类型不同 旧=NoneType 新=str"
       ]
     },
     {
@@ -293,7 +293,7 @@
       "route": "GET /Revenue/GetServerpartINCAnalysis",
       "detail": "Code=100, 1处差异",
       "diffs": [
-        ".Result_Data.OtherData: 旧=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2 新=2026年春运时间为2026/2/2 0:00:00至2026/2/13\r\n2026年春运时间为20"
+        ".Result_Data.OtherData: 旧=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2 新=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2"
       ]
     },
     {
