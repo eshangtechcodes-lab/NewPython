@@ -577,11 +577,13 @@ async def get_un_upload_shops(
                         AND C."DIFFERENCE_REASON" = '无结账信息' AND C."CASHPAY" = 0){where_sql}"""
 
         rows = db.execute_query(sql)
-        # 按 SERVERPART_INDEX, SERVERPART_CODE, SHOPREGION, SHOPTRADE 排序
+        def safe_sort_int(v):
+            try: return int(v) if v is not None else 0
+            except: return 0
         rows = sorted(rows or [], key=lambda x: (
-            x.get("SERVERPART_INDEX") or 0,
-            str(x.get("SERVERPART_CODE") or ""),
-            x.get("SHOPREGION") or 0,
+            safe_sort_int(x.get("SERVERPART_INDEX")),
+            safe_sort_int(x.get("SERVERPART_CODE")),
+            str(x.get("SHOPREGION") or ""),
             str(x.get("SHOPTRADE") or ""),
         ))
         result_list = []
