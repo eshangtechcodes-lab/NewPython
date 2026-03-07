@@ -1578,12 +1578,13 @@ async def get_bayonet_growth_analysis(
 
         # 查当日车流
         sql1 = f"""SELECT B."SERVERPART_ID",B."SERVERPART_NAME",A."SERVERPART_REGION",
+                B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
                 SUM(A."SERVERPART_FLOW") AS "VEHICLE_COUNT"
             FROM "T_SECTIONFLOW" A, "T_SERVERPART" B
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."SERVERPART_FLOW" > 0
                 AND A."STATISTICS_DATE" >= {s_date.strftime('%Y%m%d')}
                 AND A."STATISTICS_DATE" <= {e_date.strftime('%Y%m%d')}{where_sql}
-            GROUP BY B."SERVERPART_ID",B."SERVERPART_NAME",A."SERVERPART_REGION" """
+            GROUP BY B."SERVERPART_ID",B."SERVERPART_NAME",A."SERVERPART_REGION",B."SPREGIONTYPE_ID",B."SPREGIONTYPE_NAME",B."SPREGIONTYPE_INDEX" """
         rows = db.execute_query(sql1) or []
 
         if not rows:
@@ -1627,6 +1628,9 @@ async def get_bayonet_growth_analysis(
                 "Serverpart_ID": sp_id,
                 "Serverpart_Name": r.get("SERVERPART_NAME", ""),
                 "Serverpart_Region": region + "区",
+                "SPRegionType_Id": r.get("SPREGIONTYPE_ID"),
+                "SPRegionType_Name": r.get("SPREGIONTYPE_NAME", ""),
+                "SPRegionType_Index": r.get("SPREGIONTYPE_INDEX"),
                 "Vehicle_Count": vc,
                 "Entry_GrowthRate": growth if growth != 0.0 else None,
                 "Entry_Rate": None,
@@ -1646,16 +1650,20 @@ async def get_bayonet_growth_analysis(
 
         growth_list = None
         if ShowGrowthRate:
-            growth_list = sorted(entry_list, key=lambda x: (-x["Entry_GrowthRate"], -x["Vehicle_Count"]))
+            growth_list = sorted(entry_list, key=lambda x: (-(x["Entry_GrowthRate"] or 0), -x["Vehicle_Count"]))
 
         # 按服务区合并
-        sp_agg = defaultdict(lambda: {"name": "", "vc": 0.0})
+        sp_agg = defaultdict(lambda: {"name": "", "vc": 0.0, "rid": None, "rname": "", "rindex": None})
         for e in entry_list:
             sp_agg[e["Serverpart_ID"]]["name"] = e["Serverpart_Name"]
             sp_agg[e["Serverpart_ID"]]["vc"] += e["Vehicle_Count"]
+            sp_agg[e["Serverpart_ID"]]["rid"] = e.get("SPRegionType_Id")
+            sp_agg[e["Serverpart_ID"]]["rname"] = e.get("SPRegionType_Name", "")
+            sp_agg[e["Serverpart_ID"]]["rindex"] = e.get("SPRegionType_Index")
 
         merged_list = sorted([
             {"Serverpart_ID": sid, "Serverpart_Name": v["name"], "Serverpart_Region": "",
+             "SPRegionType_Id": v["rid"], "SPRegionType_Name": v["rname"], "SPRegionType_Index": v["rindex"],
              "Vehicle_Count": v["vc"], "Entry_GrowthRate": None, "Entry_Rate": None,
              "LargeVehicleEntry_GrowthRate": None, "LargeVehicleEntry_Rate": None,
              "LargeVehicle_Count": None, "MediumVehicleEntry_GrowthRate": None,
@@ -2719,6 +2727,8 @@ async def get_province_vehicle_tree_list(
                     "SPRegionTypeName": info["SPRegionTypeName"],
                     "ProvinceName": prov,
                     "VehicleCount": rt_counts.get(rt_id, 0),
+                    "CityName": city or "其他",
+                    "IsOther": 1 if not city else 0,
                 })
             city_nodes.append({
                 "node": {
@@ -2728,7 +2738,7 @@ async def get_province_vehicle_tree_list(
                     "TotalCount": total_vc,
                     "SPRegionTypeList": sp_list,
                 },
-                "children": [],
+                "children": None,
             })
 
         # 4. 按省份汇总
@@ -2752,6 +2762,8 @@ async def get_province_vehicle_tree_list(
                     "SPRegionTypeId": info["SPRegionTypeId"],
                     "SPRegionTypeName": info["SPRegionTypeName"],
                     "ProvinceName": prov,
+                    "CityName": None,
+                    "IsOther": 0,
                     "VehicleCount": rt_totals.get(rt_id, 0),
                 })
             province_nodes.append({
@@ -2778,6 +2790,8 @@ async def get_province_vehicle_tree_list(
                 "SPRegionTypeIndex": info["SPRegionTypeIndex"],
                 "SPRegionTypeId": info["SPRegionTypeId"],
                 "SPRegionTypeName": info["SPRegionTypeName"],
+                "CityName": None,
+                "IsOther": 0,
                 "VehicleCount": rt_all.get(rt_id, 0),
             })
 
