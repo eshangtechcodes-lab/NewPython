@@ -312,15 +312,40 @@ async def get_serverpart_type_analysis(postData: dict = None, db: DatabaseHelper
         province_code = params.get("ProvinceCode", "")
         logger.info(f"GetServerpartTypeAnalysis 解密参数: ProvinceCode={province_code}")
 
-        # TODO: 实现查询逻辑 - ESCG.BusinessAnalysisHelper.GetServerpartTypeList
-        logger.warning("GetServerpartTypeAnalysis 查询逻辑暂未实现")
-        _ckm = {"data": None, "key": None, "name": None, "value": None}
-        json_list = JsonListData.create(data_list=[_ckm], total=0)
-        resp = json_list.model_dump()
-        resp["OtherData"] = None
-        resp["legend"] = None
-        resp["ColumnList"] = [_ckm]
-        return Result.success(data=resp, msg="查询成功")
+        # 1. 省份编码转内码
+        pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
+        pc_rows = db.execute_query(pc_sql, {"pc": province_code})
+        province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else province_code
+
+        # 2. 查询 V_SPCONTRIBUTION（达梦中尝试不带schema前缀，兼容Oracle/达梦）
+        rows = []
+        for schema_prefix in ["", "PLATFORM_DASHBOARD.", "NEWPYTHON."]:
+            try:
+                sql = f"""SELECT A.SERVERPART_ID, A.SERVERPART_NAME, A.SERVERPART_TYPE, A.THEORY_TYPE,
+                                 A.NOMINAL_BIAS, A.ECONOMIC_BENIFITRATE
+                          FROM {schema_prefix}V_SPCONTRIBUTION A, T_SERVERPART B
+                          WHERE A.SERVERPART_ID = B.SERVERPART_ID AND B.PROVINCE_CODE = :pid"""
+                rows = db.execute_query(sql, {"pid": province_id})
+                break
+            except Exception:
+                continue
+
+        # 3. 按类型统计
+        type_names = {1000: "立标杆", 2000: "提能级", 3000: "稳赢收", 4000: "保功能"}
+        result_list = []
+        for tp, name in type_names.items():
+            count = sum(1 for r in rows if str(r.get("SERVERPART_TYPE")) == str(tp))
+            result_list.append({"name": name, "value": str(tp), "data": str(count), "key": "1"})
+
+        # 无偏差 / 偏差
+        no_bias = sum(1 for r in rows if float(r.get("NOMINAL_BIAS") or 0) == 0)
+        has_bias = sum(1 for r in rows if float(r.get("NOMINAL_BIAS") or 0) != 0)
+        result_list.append({"name": "无偏差", "value": "0", "data": str(no_bias), "key": "2"})
+        result_list.append({"name": "偏差", "value": "1", "data": str(has_bias), "key": "2"})
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetServerpartTypeAnalysis AES解密失败: {ve}")
         return Result.fail(msg=f"解密失败{ve}")

@@ -77,8 +77,8 @@
     "route": "/Analysis/GetServerpartTypeAnalysis",
     "ctrl": "Analysis",
     "old": "C=100,T=6",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=6",
+    "result": "PASS"
   },
   {
     "idx": 10,
@@ -230,8 +230,8 @@
     "route": "/Revenue/GetProvinceAvgBayonetAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=3",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=3",
+    "result": "PASS"
   },
   {
     "idx": 27,
@@ -248,8 +248,8 @@
     "route": "/BigData/GetMonthAnalysis",
     "ctrl": "BigData",
     "old": "C=100,T=2",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=2",
+    "result": "PASS"
   },
   {
     "idx": 29,
@@ -337,8 +337,8 @@
     "method": "POST",
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
-    "old": "C=100,T=35",
-    "new": "C=100,T=35",
+    "old": "C=100,T=36",
+    "new": "C=100,T=36",
     "result": "PASS"
   },
   {
@@ -401,8 +401,8 @@
     "route": "/Budget/GetBudgetProjectDetailList",
     "ctrl": "Budget",
     "old": "C=100,T=13",
-    "new": "C=100,T=29383",
-    "result": "DIFF"
+    "new": "C=100,T=13",
+    "result": "PASS"
   },
   {
     "idx": 46,
@@ -968,7 +968,7 @@
     "route": "/Revenue/GetMonthlyBusinessAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=6",
-    "new": "C=100,T=0",
+    "new": "C=999",
     "result": "DIFF"
   },
   {
@@ -977,8 +977,8 @@
     "route": "/Revenue/GetMonthlySPINCAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=1",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=1",
+    "result": "PASS"
   },
   {
     "idx": 110,
@@ -995,8 +995,8 @@
     "route": "/Revenue/GetHolidayRevenueRatio",
     "ctrl": "Revenue",
     "old": "C=100,T=2",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=2",
+    "result": "PASS"
   },
   {
     "idx": 112,
@@ -1031,8 +1031,8 @@
     "route": "/Revenue/GetRevenueCompare",
     "ctrl": "Revenue",
     "old": "C=100",
-    "new": "C=101",
-    "result": "DIFF"
+    "new": "C=100",
+    "result": "PASS"
   },
   {
     "idx": 116,
@@ -1040,8 +1040,8 @@
     "route": "/Revenue/GetHolidaySPRAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=8",
-    "new": "C=101",
-    "result": "DIFF"
+    "new": "C=100,T=8",
+    "result": "PASS"
   },
   {
     "idx": 117,
@@ -1049,8 +1049,8 @@
     "route": "/Revenue/GetHolidayDailyAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=13",
-    "new": "C=101",
-    "result": "DIFF"
+    "new": "C=100,T=13",
+    "result": "PASS"
   },
   {
     "idx": 118,
@@ -1058,8 +1058,8 @@
     "route": "/Revenue/GetMonthINCAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=1",
-    "new": "C=101",
-    "result": "DIFF"
+    "new": "C=100,T=1",
+    "result": "PASS"
   },
   {
     "idx": 119,
@@ -1067,8 +1067,8 @@
     "route": "/Revenue/GetMonthINCAnalysisSummary",
     "ctrl": "Revenue",
     "old": "C=100,T=4",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=4",
+    "result": "PASS"
   },
   {
     "idx": 120,
@@ -1085,8 +1085,8 @@
     "route": "/Revenue/GetShopSABFIList",
     "ctrl": "Revenue",
     "old": "C=100,T=1",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=1",
+    "result": "PASS"
   },
   {
     "idx": 122,
@@ -1094,7 +1094,7 @@
     "route": "/Revenue/GetShopMonthSABFIList",
     "ctrl": "Revenue",
     "old": "C=100,T=1",
-    "new": "C=100,T=0",
-    "result": "DIFF"
+    "new": "C=100,T=1",
+    "result": "PASS"
   }
 ]

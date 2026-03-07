@@ -83,6 +83,10 @@ app.include_router(commercial_examine_router, prefix="/CommercialApi", tags=["Co
 from routers.commercial_api.business_process_router import router as commercial_bp_router
 app.include_router(commercial_bp_router, prefix="/CommercialApi", tags=["CommercialApi - 业务审批"])
 
+# 临时调试路由
+from routers.commercial_api.debug_router import router as debug_router
+app.include_router(debug_router, prefix="/CommercialApi", tags=["Debug"])
+
 
 
 

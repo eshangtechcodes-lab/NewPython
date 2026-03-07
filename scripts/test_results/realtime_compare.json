@@ -1,0 +1,422 @@
+{
+  "time": "2026-03-07 22:29:10",
+  "elapsed": 37.1,
+  "stats": {
+    "PASS": 33,
+    "DIFF": 41,
+    "ERROR": 0
+  },
+  "diffs": [
+    {
+      "route": "GET /BigData/GetBayonetCompare",
+      "detail": "Code=100, 6处差异",
+      "diffs": [
+        ".Result_Data.compareHolidayDays: 类型不同 旧=int 新=NoneType",
+        ".Result_Data.compareList[0].data: 新API缺少字段",
+        ".Result_Data.compareList[0].key: 新API缺少字段",
+        ".Result_Data.curHolidayDays: 类型不同 旧=int 新=NoneType",
+        ".Result_Data.curList[0].data: 新API缺少字段"
+      ]
+    },
+    {
+      "route": "GET /BigData/GetBayonetGrowthAnalysis",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.EntryList[0].Entry_GrowthRate: 类型不同 旧=NoneType 新=int",
+        ".Result_Data.EntryList[0].Entry_Rate: 新API缺少字段",
+        ".Result_Data.EntryList[0].LargeVehicleEntry_GrowthRate: 新API缺少字段",
+        ".Result_Data.EntryList[0]: ...还有13条差异"
+      ]
+    },
+    {
+      "route": "GET /BigData/GetBayonetOAAnalysis",
+      "detail": "Code=100, 1处差异",
+      "diffs": [
+        ".Result_Data.OtherData[0]: 旧= 新=202602"
+      ]
+    },
+    {
+      "route": "GET /BigData/GetBayonetOwnerAHTreeList",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].children: 列表长度不同 旧=32 新=1",
+        ".Result_Data.List[0].children[0].children: 列表长度不同 旧=13 新=0",
+        ".Result_Data.List[0].children[0].node.EastLargeCount: 旧=1581 新=9091",
+        ".Result_Data.List[0]: ...还有11条差异"
+      ]
+    },
+    {
+      "route": "GET /BigData/GetDateAnalysis",
+      "detail": "Code=100, 9处差异",
+      "diffs": [
+        ".Result_Data.List[0].CurRevenueAmount: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0].CurRevenueAmount_A: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0].CurRevenueAmount_B: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0]: ...还有27条差异",
+        ".Result_Data.OtherData[0].CurRevenueAmount: 类型不同 旧=float 新=NoneType"
+      ]
+    },
+    {
+      "route": "GET /BigData/GetHolidayCompare",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.compareList[0].data: 新API缺少字段",
+        ".Result_Data.compareList[0].key: 新API缺少字段",
+        ".Result_Data.curList[0].data: 新API缺少字段",
+        ".Result_Data.curList[0].key: 新API缺少字段"
+      ]
+    },
+    {
+      "route": "GET /BigData/GetMonthAnalysis",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].AvgVehicleAmount: 旧=14.01 新=13.04",
+        ".Result_Data.List[0].MinVehicle_Count: 类型不同 旧=int 新=NoneType",
+        ".Result_Data.List[0].RegionList: 类型不同 旧=list 新=NoneType",
+        ".Result_Data.List[0]: ...还有2条差异"
+      ]
+    },
+    {
+      "route": "GET /BigData/GetProvinceMonthAnalysis",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].AvgVehicleAmount: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0].RegionList: 类型不同 旧=list 新=NoneType",
+        ".Result_Data.List[0].RevenueAmount: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0]: ...还有2条差异"
+      ]
+    },
+    {
+      "route": "GET /BigData/GetProvinceVehicleTreeList",
+      "detail": "Code=100, 5处差异",
+      "diffs": [
+        ".Result_Data.List[0].children[0].children[0].children: 类型不同 旧=NoneType 新=list",
+        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].CityName: 新API缺少字段",
+        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].IsOther: 新API缺少字段",
+        ".Result_Data.List[0]: ...还有5条差异",
+        ".Result_Desc: 旧=成功 新=查询成功"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetAccountReceivable",
+      "detail": "Code=100, 16处差异",
+      "diffs": [
+        ".Result_Data.CommissionList: 列表长度不同 旧=4 新=0",
+        ".Result_Data.CommissionRatio: 旧=17.07 新=0.0",
+        ".Result_Data.MerchantList.AcountList: 类型不同 旧=list 新=NoneType",
+        ".Result_Data.MerchantList.EntryList: 类型不同 旧=list 新=NoneType",
+        ".Result_Data.MerchantList.ReceivableList: 类型不同 旧=list 新=NoneType"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetBayonetOAList",
+      "detail": "Code=100, 5处差异",
+      "diffs": [
+        ".Result_Data.List[0].OwnerCity: 类型不同 旧=list 新=str",
+        ".Result_Data.List[0].OwnerCityList: 列表长度不同 旧=6 新=10",
+        ".Result_Data.List[0].OwnerProvince: 类型不同 旧=list 新=str",
+        ".Result_Data.List[0]: ...还有2条差异",
+        ".Result_Data.OtherData: 类型不同 旧=list 新=NoneType"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetBayonetProvinceOAList",
+      "detail": "Code=100, 5处差异",
+      "diffs": [
+        ".Result_Data.List[0].OwnerCity: 类型不同 旧=list 新=NoneType",
+        ".Result_Data.List[0].OwnerCityList: 列表长度不同 旧=6 新=10",
+        ".Result_Data.List[0].OwnerProvince: 类型不同 旧=list 新=str",
+        ".Result_Data.List[0]: ...还有5条差异",
+        ".Result_Data.OtherData: 类型不同 旧=list 新=NoneType"
+      ]
+    },
+    {
+      "route": "POST /Revenue/GetBudgetExpenseList",
+      "detail": "Code=100, 3处差异",
+      "diffs": [
+        ".Result_Data.List: 列表长度不同 旧=0 新=20",
+        ".Result_Data.PageIndex: 旧=0 新=1",
+        ".Result_Data.PageSize: 旧=0 新=20"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetBusinessBrandLevel",
+      "detail": "Code=100, 6处差异",
+      "diffs": [
+        ".Result_Data.ColumnList: 列表长度不同 旧=3 新=53",
+        ".Result_Data.ColumnList[0].data: 新API缺少字段",
+        ".Result_Data.ColumnList[0].key: 新API多出字段",
+        ".Result_Data.ColumnList[0].name: 旧=低消费 新=北区361度",
+        ".Result_Data.ColumnList[0]: ...还有1条差异"
+      ]
+    },
+    {
+      "route": "POST /Revenue/GetBusinessRevenueList",
+      "detail": "Code=999, 1处差异",
+      "diffs": [
+        ".Result_Desc: 旧=查询失败未将对象引用设置到对象的实例。 新=解密失败请求数据中缺少 value 字段"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetBusinessTradeLevel",
+      "detail": "Code=100, 5处差异",
+      "diffs": [
+        ".Result_Data.ColumnList: 列表长度不同 旧=3 新=4",
+        ".Result_Data.ColumnList[0].data: 新API缺少字段",
+        ".Result_Data.ColumnList[0].name: 旧=低消费 新=1",
+        ".Result_Data.ColumnList[0].value: 类型不同 旧=list 新=str",
+        ".Result_Data.legend: 类型不同 旧=list 新=NoneType"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetBusinessTradeRevenue",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.BusinessTradeRank[0].data: 旧=客单 16776笔,金额 318,031.60元 新=16776",
+        ".Result_Data.BusinessTradeRank[0].key: 旧=229 新=318031.6",
+        ".Result_Data.BusinessTradeRank[0].name: 旧=中式快餐 新=229",
+        ".Result_Data.BusinessTradeRank[0]: ...还有1条差异"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetCompanyRevenueReport",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].children: 列表长度不同 旧=5 新=1",
+        ".Result_Data.List[0].children[0].children: 列表长度不同 旧=1 新=0",
+        ".Result_Data.List[0].children[0].node.BusinessTrade_Id: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0]: ...还有2条差异"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetHolidayAnalysis",
+      "detail": "Code=100, 73处差异",
+      "diffs": [
+        ".Result_Data.HolidayType: 类型不同 旧=NoneType 新=int",
+        ".Result_Data.compareYear: 类型不同 旧=NoneType 新=str",
+        ".Result_Data.curDate: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.curYear: 类型不同 旧=NoneType 新=str",
+        ".Result_Data.curYearAccount.data: 类型不同 旧=str 新=NoneType"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetHolidayAnalysisBatch",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].HolidayType: 旧=2 新=0",
+        ".Result_Data.List[0].ServerpartId: 类型不同 旧=int 新=NoneType",
+        ".Result_Data.List[0].ServerpartName: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.List[0]: ...还有65条差异"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetHolidayDailyAnalysis",
+      "detail": "Code=100, 2处差异",
+      "diffs": [
+        ".Result_Data.List[10].data: 旧= 新=0",
+        ".Result_Data.List[10].value: 旧= 新=0"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetHolidaySPRAnalysis",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].node.SPRegionTypeId: 新API缺少字段",
+        ".Result_Data.List[0].node.ServerpartId: 新API缺少字段",
+        ".Result_Data.List[0].node.ServerpartName: 新API缺少字段",
+        ".Result_Data.List[0]: ...还有12条差异"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetMonthINCAnalysis",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].children[0].children: 列表长度不同 旧=1 新=0",
+        ".Result_Data.List[0].children[0].node.AccountINC: 新API缺少字段",
+        ".Result_Data.List[0].children[0].node.AvgTicketINC: 新API缺少字段",
+        ".Result_Data.List[0]: ...还有24条差异"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetMonthINCAnalysisSummary",
+      "detail": "Code=100, 1处差异",
+      "diffs": [
+        ".Result_Data.List[0].name: 旧=车流增加，服务区营收减少 新=管理中心（自营：自营经营收入）"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetMonthlyBusinessAnalysis",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].AccountINC.QOQData: 新API缺少字段",
+        ".Result_Data.List[0].AccountINC.increaseDataQOQ: 新API缺少字段",
+        ".Result_Data.List[0].AccountINC.increaseRateQOQ: 新API缺少字段",
+        ".Result_Data.List[0]: ...还有11条差异"
+      ]
+    },
+    {
+      "route": "POST /Revenue/GetMonthlyBusinessRevenue",
+      "detail": "Code=999, 1处差异",
+      "diffs": [
+        ".Result_Desc: 旧=查询失败未将对象引用设置到对象的实例。 新=解密失败请求数据中缺少 value 字段"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetMonthlySPINCAnalysis",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].AccountINC.QOQData: 新API缺少字段",
+        ".Result_Data.List[0].AccountINC.curYearData: 类型不同 旧=float 新=str",
+        ".Result_Data.List[0].AccountINC.increaseDataQOQ: 新API缺少字段",
+        ".Result_Data.List[0]: ...还有15条差异"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetProvinceAvgBayonetAnalysis",
+      "detail": "Code=100, 5处差异",
+      "diffs": [
+        ".Result_Data.List[0].Entry_Rate: 旧=16.13 新=16.78",
+        ".Result_Data.List[0].SectionFlow_AddUpCount: 旧=35291020 新=96632265",
+        ".Result_Data.List[0].Stay_Times: 旧=15.86 新=16.01",
+        ".Result_Data.List[0]: ...还有2条差异",
+        ".Result_Data.PageSize: 旧=10 新=3"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetRevenueCompare",
+      "detail": "Code=100, 11处差异",
+      "diffs": [
+        ".Result_Data.AvgTicketAmount: 类型不同 旧=float 新=int",
+        ".Result_Data.AvgTicketAmountList[0].data: 类型不同 旧=list 新=NoneType",
+        ".Result_Data.AvgTicketAmountList[0].name: 旧=工作日平均 新=当日",
+        ".Result_Data.AvgTicketAmountList[0].value: 类型不同 旧=NoneType 新=str",
+        ".Result_Data.AvgTicketAmountRate: 类型不同 旧=NoneType 新=float"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetRevenueReport",
+      "detail": "Code=100, 6处差异",
+      "diffs": [
+        ".Result_Data.Different_Price_Less: 类型不同 旧=float 新=int",
+        ".Result_Data.Different_Price_More: 类型不同 旧=float 新=int",
+        ".Result_Data.Province_ExternalAmount: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.Revenue_AmountN: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.Revenue_AmountS: 类型不同 旧=float 新=NoneType"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetRevenueReportDetil",
+      "detail": "Code=100, 8处差异",
+      "diffs": [
+        ".Result_Data.Serverpart_Revenue: 旧=3197328.83 新=3197328.8299999996",
+        ".Result_Data.Serverpart_RevenueN: 旧=2152246.37 新=1629643.37",
+        ".Result_Data.Serverpart_RevenueS: 旧=1045082.46 新=1567685.4600000002",
+        ".Result_Data.ShopList: 列表长度不同 旧=15 新=14",
+        ".Result_Data.ShopList[0].BusinessType_Logo: 类型不同 旧=str 新=NoneType"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetRevenueYOY",
+      "detail": "Code=100, 8处差异",
+      "diffs": [
+        ".Result_Data.compareList[0].data: 旧=64875.72 新=38204.42",
+        ".Result_Data.compareList[0].key: 新API缺少字段",
+        ".Result_Data.compareList[0].value: 旧=64875.72 新=38204.42",
+        ".Result_Data.compareRevenue: 旧=3197328.83 新=1567685.4599999997",
+        ".Result_Data.curList[0].data: 旧=64875.72 新=38204.42"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetSalableCommodity",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.SalableCommodity: 类型不同 旧=float 新=int",
+        ".Result_Data.SalableCommodityList: 列表长度不同 旧=5 新=0",
+        ".Result_Data.UnSalableCommodity: 类型不同 旧=float 新=int",
+        ".Result_Data.UnSalableCommodityList: 列表长度不同 旧=5 新=0"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetServerpartINCAnalysis",
+      "detail": "Code=100, 5处差异",
+      "diffs": [
+        ".Result_Data.List[0].AccountINC.curYearData: 类型不同 旧=NoneType 新=float",
+        ".Result_Data.List[0].AccountINC.lYearData: 类型不同 旧=NoneType 新=float",
+        ".Result_Data.List[0].BayonetINC.curYearData: 类型不同 旧=NoneType 新=float",
+        ".Result_Data.List[0]: ...还有5条差异",
+        ".Result_Data.OtherData: 旧=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2 新=2026年春运时间为2026/2/2至2026/2/13\r\n2026年春运时间为2026/2/2至2"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetShopMonthSABFIList",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].BusinessProjectId: 类型不同 旧=NoneType 新=int",
+        ".Result_Data.List[0].SABFIList[0].data: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.List[0].SABFIList[0].key: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.List[0]: ...还有3条差异"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetShopSABFIList",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.List[0].children: 列表长度不同 旧=1 新=3",
+        ".Result_Data.List[0].children[0].children: 列表长度不同 旧=1 新=4",
+        ".Result_Data.List[0].children[0].children[0].children: 类型不同 旧=NoneType 新=list",
+        ".Result_Data.List[0]: ...还有20条差异"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetSummaryRevenue",
+      "detail": "Code=100, 4处差异",
+      "diffs": [
+        ".Result_Data.BusinessTradeList: 列表长度不同 旧=5 新=0",
+        ".Result_Data.BusinessTypeList: 列表长度不同 旧=2 新=0",
+        ".Result_Data.RevenuePushModel: 类型不同 旧=dict 新=NoneType",
+        ".Result_Data.SPRegionList: 列表长度不同 旧=1 新=0"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetSummaryRevenueMonth",
+      "detail": "Code=100, 38处差异",
+      "diffs": [
+        ".Result_Data.BusinessTradeList: 列表长度不同 旧=0 新=6",
+        ".Result_Data.BusinessTypeList: 列表长度不同 旧=5 新=2",
+        ".Result_Data.BusinessTypeList[0].data: 旧=54301323.49 新=0.00",
+        ".Result_Data.BusinessTypeList[0].key: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.BusinessTypeList[0].name: 旧=自营 新=外包"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetTransactionAnalysis",
+      "detail": "Code=100, 6处差异",
+      "diffs": [
+        ".Result_Data.AvgTicketPrice: 类型不同 旧=NoneType 新=float",
+        ".Result_Data.ProvinceAvgTicketPrice: 旧=26.94 新=25.71",
+        ".Result_Data.ProvinceRevenueAmount: 旧=5887533.52 新=7748488.45",
+        ".Result_Data.Serverpart_Name: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.TicketProvinceCount: 旧=218571 新=301428"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetTransactionConvert",
+      "detail": "Code=100, 7处差异",
+      "diffs": [
+        ".Result_Data.BayonetList.CommonScatterList: 新API缺少字段",
+        ".Result_Data.BayonetList.data[0][0]: 类型不同 旧=float 新=int",
+        ".Result_Data.BayonetList.value: 新API缺少字段",
+        ".Result_Data.TransactionList.CommonScatterList: 新API缺少字段",
+        ".Result_Data.TransactionList.data: 类型不同 旧=NoneType 新=list"
+      ]
+    },
+    {
+      "route": "GET /Revenue/GetUnUpLoadShops",
+      "detail": "Code=100, 2处差异",
+      "diffs": [
+        ".Result_Data.List[0].ServerpartShop_ID: 旧=7872 新=3064",
+        ".Result_Data.List[0].ServerpartShop_Name: 旧=南区年货节门店 新=北区麦当劳"
+      ]
+    }
+  ]
+}
