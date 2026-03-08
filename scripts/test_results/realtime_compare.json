@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 11:33:12",
-  "elapsed": 39.0,
+  "time": "2026-03-08 11:44:05",
+  "elapsed": 41.7,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -178,8 +178,8 @@
       "diffs": [
         ".Result_Data.List[0].node.curYearAccount: 类型不同 旧=dict 新=NoneType",
         ".Result_Data.List[0].node.curYearBayonet: 类型不同 旧=dict 新=NoneType",
-        ".Result_Data.List[0].node.curYearRevenue.data: 旧=57178915.78 新=57178915.77999997",
-        ".Result_Data.List[0]: ...还有9条差异"
+        ".Result_Data.List[0].node.curYearRevenue.key: 新API缺少字段",
+        ".Result_Data.List[0]: ...还有7条差异"
       ]
     },
     {
@@ -229,13 +229,8 @@
     },
     {
       "route": "GET /Revenue/GetRevenueReport",
-      "detail": "Code=100, 4处差异",
-      "diffs": [
-        ".Result_Data.Different_Price_Less: 旧=-10263.5 新=-5168.8",
-        ".Result_Data.Different_Price_More: 旧=5094.7 新=0.0",
-        ".Result_Data.Revenue_AmountN: 旧=56583401.36 新=0.0",
-        ".Result_Data.Revenue_AmountS: 旧=49422106.93 新=0.0"
-      ]
+      "detail": "Code: 旧=100 新=999",
+      "diffs": []
     },
     {
       "route": "GET /Revenue/GetRevenueReportDetil",

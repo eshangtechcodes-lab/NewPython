@@ -2212,7 +2212,6 @@ async def get_revenue_report(
 
         sql = f"""SELECT B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
                 B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
-                B."SERVERPART_REGION",
                 SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT",
                 SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAY_AMOUNT",
                 SUM(A."CASHPAY_AMOUNT") AS "CASHPAY_AMOUNT",
@@ -2224,8 +2223,7 @@ async def get_revenue_report(
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE {where_sql}
             GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
-                B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
-                B."SERVERPART_REGION"
+                B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX"
             ORDER BY B."SPREGIONTYPE_INDEX", B."SPREGIONTYPE_ID", B."SERVERPART_INDEX", B."SERVERPART_CODE" """
 
         rows = db.execute_query(sql, params)
@@ -2237,12 +2235,16 @@ async def get_revenue_report(
         total_ticket = sum(int(r.get("TICKET_COUNT") or 0) for r in rows)
         total_count = round(sum(float(r.get("TOTAL_COUNT") or 0) for r in rows), 2)
         total_off = round(sum(float(r.get("TOTALOFF_AMOUNT") or 0) for r in rows), 2)
-        # 各差异分段
+        # 分别汇总正负差异
         diff_less = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows if float(r.get("DIFFERENT_AMOUNT") or 0) < 0), 2)
         diff_more = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows if float(r.get("DIFFERENT_AMOUNT") or 0) > 0), 2)
-        # 按区域分 N=北+西, S=东+南
-        rev_amount_n = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows if (r.get("SERVERPART_REGION") or "") in ("北", "西")), 2)
-        rev_amount_s = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows if (r.get("SERVERPART_REGION") or "") in ("东", "南")), 2)
+        # N/S区域: 通过SPREGIONTYPE_NAME中的方位关键字判断
+        # C#中按SERVERPART_REGION(东南西北)分组，达梦没有这个字段
+        # 使用SPREGIONTYPE_NAME中"北区"/"南区"关键字近似
+        rev_amount_n = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows
+            if "北" in str(r.get("SPREGIONTYPE_NAME") or "")), 2)
+        rev_amount_s = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows
+            if "南" in str(r.get("SPREGIONTYPE_NAME") or "")), 2)
 
         # 按片区分组
         from decimal import Decimal
