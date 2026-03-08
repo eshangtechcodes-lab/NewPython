@@ -189,11 +189,15 @@ async def get_transaction_analysis(tapModel: dict = None, db: DatabaseHelper = D
             for (start_range, end_range) in range_list:
                 # 构造区间名称
                 if start_range is not None and end_range is not None:
-                    type_name = f"{start_range}-{end_range}元"
+                    sr = int(start_range) if start_range == int(start_range) else start_range
+                    er = int(end_range) if end_range == int(end_range) else end_range
+                    type_name = f"{sr}-{er}元"
                 elif start_range is not None:
-                    type_name = f"{start_range}元以上"
+                    sr = int(start_range) if start_range == int(start_range) else start_range
+                    type_name = f"{sr}元以上"
                 elif end_range is not None:
-                    type_name = f"{end_range}元以下"
+                    er = int(end_range) if end_range == int(end_range) else end_range
+                    type_name = f"{er}元以下"
                 else:
                     continue
 
@@ -218,7 +222,7 @@ async def get_transaction_analysis(tapModel: dict = None, db: DatabaseHelper = D
                     "data": None,
                 })
 
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionAnalysis 查询失败: {ex}")
