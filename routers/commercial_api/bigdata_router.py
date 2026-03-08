@@ -85,8 +85,8 @@ def _build_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, prov
         "Serverpart_ID": sp_id,
         "Serverpart_Name": sp_name,
         "Serverpart_Region": region,
-        "OwnerCity": city_sorted[0][0] if city_sorted else None,
-        "OwnerProvince": prov_sorted[0][0] if prov_sorted else None,
+        "OwnerCity": [c[0] for c in city_sorted],
+        "OwnerProvince": [p[0] for p in prov_sorted],
         "Vehicle_Count": int(total_vc),
         "OwnerCityList": city_list if city_list else [{"name": None, "value": None}],
         "OwnerProvinceList": prov_list,
@@ -387,7 +387,7 @@ async def get_bayonet_oa_list(
     StatisticsMonth: Optional[str] = Query(None, description="统计月份，格式yyyyMM"),
     Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
     Serverpart_Region: Optional[str] = Query("", description="服务区方位"),
-    OwnerCityLength: int = Query(10, description="显示车牌所在城市数量"),
+    OwnerCityLength: int = Query(6, description="显示车牌所在城市数量"),
     OwnerProvinceLenth: int = Query(4, description="显示车牌所在省份数量"),
     ContainWhole: bool = Query(False, description="是否显示全服务区数据"),
     db: DatabaseHelper = Depends(get_db)
@@ -455,7 +455,7 @@ async def get_bayonet_oa_list(
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
-        resp["OtherData"] = None
+        resp["OtherData"] = [sm, sm]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetOAList 查询失败: {ex}")
@@ -467,7 +467,7 @@ async def get_bayonet_province_oa_list(
     StatisticsMonth: Optional[str] = Query(None, description="统计月份，格式yyyyMM"),
     Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
     Serverpart_Region: Optional[str] = Query("", description="服务区方位"),
-    OwnerCityLength: int = Query(10, description="显示城市数量"),
+    OwnerCityLength: int = Query(6, description="显示城市数量"),
     ContainWhole: bool = Query(False, description="是否显示全服务区数据"),
     isExclude: bool = Query(False, description="是否统计其他省份"),
     db: DatabaseHelper = Depends(get_db)
@@ -535,7 +535,7 @@ async def get_bayonet_province_oa_list(
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
-        resp["OtherData"] = None
+        resp["OtherData"] = [sm, sm]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetProvinceOAList 查询失败: {ex}")
