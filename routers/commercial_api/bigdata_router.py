@@ -2062,8 +2062,8 @@ async def get_bayonet_oa_analysis(
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
         resp["OtherData"] = [
-            str(start_month_val) if start_month_val else (StartMonth if StartMonth else ""),
-            str(end_month_val) if end_month_val else (EndMonth if EndMonth else ""),
+            StartMonth if StartMonth else "",
+            EndMonth if EndMonth else "",
         ]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
