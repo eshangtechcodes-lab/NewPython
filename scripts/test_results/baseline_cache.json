@@ -1,28 +1,13 @@
 {
   "meta": {
     "api_base": "http://127.0.0.1:8900/CommercialApi",
-    "collect_time": "2026-03-08 17:45:18",
+    "collect_time": "2026-03-08 18:12:24",
     "total_routes": 123,
-    "total_time_sec": 36.9,
+    "total_time_sec": 38.3,
     "timeout": 90,
     "workers": 2
   },
   "results": {
-    "POST:/AbnormalAudit/GetCurrentEarlyWarning": {
-      "key": "POST:/AbnormalAudit/GetCurrentEarlyWarning",
-      "idx": 1,
-      "method": "POST",
-      "route": "/AbnormalAudit/GetCurrentEarlyWarning",
-      "params": {},
-      "http_status": 200,
-      "response": {
-        "Result_Code": 999,
-        "Result_Desc": "查询失败未将对象引用设置到对象的实例。",
-        "Result_Data": null
-      },
-      "elapsed": 0.014,
-      "error": null
-    },
     "POST:/AbnormalAudit/GetMonthEarlyWarning": {
       "key": "POST:/AbnormalAudit/GetMonthEarlyWarning",
       "idx": 2,
@@ -35,59 +20,22 @@
         "Result_Desc": "查询失败未将对象引用设置到对象的实例。",
         "Result_Data": null
       },
-      "elapsed": 0.012,
+      "elapsed": 0.019,
       "error": null
     },
-    "GET:/Analysis/GetANALYSISINSDetail": {
-      "key": "GET:/Analysis/GetANALYSISINSDetail",
-      "idx": 4,
-      "method": "GET",
-      "route": "/Analysis/GetANALYSISINSDetail",
-      "params": {
-        "ANALYSISINSId": "416"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "ANALYSISINS_ID": 416,
-          "ANALYSISINS_PID": null,
-          "STATISTICS_DATE": null,
-          "ANALYSISINS_TYPE": 1401,
-          "ANALYSISINS_TYPES": null,
-          "ANALYSISINS_FORMAT": 1000,
-          "ANALYSISINS_FORMATS": null,
-          "PROVINCE_CODE": 340000,
-          "SPREGIONTYPE_ID": 71,
-          "SERVERPART_ID": 498,
-          "SERVERPART_IDS": null,
-          "ANALYSIS_CONTENT": "浙江",
-          "KEY_CONTENT": "",
-          "PELLUCIDITY": 50.0,
-          "ANALYSISINS_INDEX": null,
-          "ANALYSISINS_STATE": 0,
-          "STAFF_ID": null,
-          "STAFF_NAME": "",
-          "OPERATE_DATE": "2023-04-07T17:25:45"
-        }
-      },
-      "elapsed": 0.146,
-      "error": null
-    },
-    "POST:/Analysis/SolidTransactionAnalysis": {
-      "key": "POST:/Analysis/SolidTransactionAnalysis",
-      "idx": 5,
+    "POST:/AbnormalAudit/GetCurrentEarlyWarning": {
+      "key": "POST:/AbnormalAudit/GetCurrentEarlyWarning",
+      "idx": 1,
       "method": "POST",
-      "route": "/Analysis/SolidTransactionAnalysis",
+      "route": "/AbnormalAudit/GetCurrentEarlyWarning",
       "params": {},
       "http_status": 200,
       "response": {
-        "Result_Code": 200,
-        "Result_Desc": "生成失败！请传入正确的参数",
+        "Result_Code": 999,
+        "Result_Desc": "查询失败未将对象引用设置到对象的实例。",
         "Result_Data": null
       },
-      "elapsed": 0.027,
+      "elapsed": 0.025,
       "error": null
     },
     "POST:/Analysis/GetANALYSISINSList": {
@@ -324,7 +272,59 @@
           ]
         }
       },
-      "elapsed": 0.201,
+      "elapsed": 0.167,
+      "error": null
+    },
+    "POST:/Analysis/SolidTransactionAnalysis": {
+      "key": "POST:/Analysis/SolidTransactionAnalysis",
+      "idx": 5,
+      "method": "POST",
+      "route": "/Analysis/SolidTransactionAnalysis",
+      "params": {},
+      "http_status": 200,
+      "response": {
+        "Result_Code": 200,
+        "Result_Desc": "生成失败！请传入正确的参数",
+        "Result_Data": null
+      },
+      "elapsed": 0.028,
+      "error": null
+    },
+    "GET:/Analysis/GetANALYSISINSDetail": {
+      "key": "GET:/Analysis/GetANALYSISINSDetail",
+      "idx": 4,
+      "method": "GET",
+      "route": "/Analysis/GetANALYSISINSDetail",
+      "params": {
+        "ANALYSISINSId": "416"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "ANALYSISINS_ID": 416,
+          "ANALYSISINS_PID": null,
+          "STATISTICS_DATE": null,
+          "ANALYSISINS_TYPE": 1401,
+          "ANALYSISINS_TYPES": null,
+          "ANALYSISINS_FORMAT": 1000,
+          "ANALYSISINS_FORMATS": null,
+          "PROVINCE_CODE": 340000,
+          "SPREGIONTYPE_ID": 71,
+          "SERVERPART_ID": 498,
+          "SERVERPART_IDS": null,
+          "ANALYSIS_CONTENT": "浙江",
+          "KEY_CONTENT": "",
+          "PELLUCIDITY": 50.0,
+          "ANALYSISINS_INDEX": null,
+          "ANALYSISINS_STATE": 0,
+          "STAFF_ID": null,
+          "STAFF_NAME": "",
+          "OPERATE_DATE": "2023-04-07T17:25:45"
+        }
+      },
+      "elapsed": 0.21,
       "error": null
     },
     "POST:/Analysis/GetTransactionAnalysis": {
@@ -2073,7 +2073,7 @@
           ]
         }
       },
-      "elapsed": 0.44,
+      "elapsed": 0.335,
       "error": null
     },
     "GET:/Analysis/GetMapConfigByProvinceCode": {
@@ -2090,7 +2090,7 @@
         "Result_Desc": "查询失败要解密的字符串，不是一个合法的加密字符串！",
         "Result_Data": null
       },
-      "elapsed": 0.012,
+      "elapsed": 0.018,
       "error": null
     },
     "POST:/Analysis/GetServerpartTypeAnalysis": {
@@ -2150,7 +2150,7 @@
           ]
         }
       },
-      "elapsed": 0.306,
+      "elapsed": 0.291,
       "error": null
     },
     "GET:/BaseInfo/GetSPRegionList": {
@@ -2201,7 +2201,7 @@
           ]
         }
       },
-      "elapsed": 0.164,
+      "elapsed": 0.26,
       "error": null
     },
     "GET:/BaseInfo/GetBusinessTradeList": {
@@ -2644,7 +2644,7 @@
           ]
         }
       },
-      "elapsed": 0.232,
+      "elapsed": 0.158,
       "error": null
     },
     "POST:/BaseInfo/GetBusinessTradeList": {
@@ -2667,7 +2667,7 @@
           "List": []
         }
       },
-      "elapsed": 0.154,
+      "elapsed": 0.185,
       "error": null
     },
     "GET:/Analysis/TranslateSentence": {
@@ -10869,7 +10869,7 @@
           "SearchResultList": []
         }
       },
-      "elapsed": 1.51,
+      "elapsed": 1.404,
       "error": null
     },
     "GET:/BaseInfo/GetBrandAnalysis": {
@@ -11219,7 +11219,421 @@
           ]
         }
       },
-      "elapsed": 0.564,
+      "elapsed": 0.346,
+      "error": null
+    },
+    "GET:/BaseInfo/GetServerpartInfo": {
+      "key": "GET:/BaseInfo/GetServerpartInfo",
+      "idx": 15,
+      "method": "GET",
+      "route": "/BaseInfo/GetServerpartInfo",
+      "params": {
+        "ServerpartId": "416"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "SERVERPART_ID": 416,
+          "SERVERPART_NAME": "新桥服务区",
+          "SERVERPART_INDEX": 1001,
+          "PROVINCE_CODE": 3544,
+          "SERVERPART_CODE": "341003",
+          "SERVERPART_TYPE": 1000,
+          "SPREGIONTYPE_ID": 72,
+          "SPREGIONTYPE_NAME": "皖中管理中心",
+          "SPREGIONTYPE_INDEX": 5,
+          "STATISTICS_TYPE": "1000",
+          "OWNERUNIT_ID": 249,
+          "OWNERUNIT_NAME": "安徽交控驿达服务开发集团有限公司",
+          "SERVERPART_ADDRESS": "合肥市经开区高刘社区",
+          "SERVERPART_X": 116.893886,
+          "SERVERPART_Y": 31.918931,
+          "STARTDATE": null,
+          "SERVERPART_TEL": "18956056157",
+          "OPERATE_DATE": null,
+          "HASMOTHER": true,
+          "HASPILOTLOUNGE": true,
+          "HASCHARGE": true,
+          "HASGUESTROOM": true,
+          "SERVERPART_DISTANCE": 0.0,
+          "ISCUR_SERVERPART": 0,
+          "ServerpartInfo": {
+            "RTSERVERPART_ID": 505,
+            "SERVERPART_ID": 416,
+            "SERVERPART_ADDRESS": "合肥市经开区高刘社区",
+            "EXPRESSWAY_NAME": "沪陕高速|G40",
+            "SELLERCOUNT": 5000,
+            "SERVERPART_X": 116.893886,
+            "SERVERPART_Y": 31.918931,
+            "SERVERPART_TEL": "18956056157",
+            "STARTDATE": "2013/6/6",
+            "SERVERPART_AREA": 13462.0,
+            "FLOORAREA": 96313.0,
+            "BUSINESSAREA": null,
+            "SHAREAREA": 68538.0,
+            "OWNEDCOMPANY": "安徽省驿达高速公路服务区经营管理有限公司",
+            "MANAGERCOMPANY": "六安北管理中心",
+            "CENTERSTAKE_NUM": "合六叶高速本路段公里数664+100KM",
+            "TAXPAYER_IDENTIFYCODE": "9134000078109626XT",
+            "WATERINTAKE_TYPE": 1,
+            "SEWAGEDISPOSAL_TYPE": 1,
+            "BUSINESS_REGION": 1000,
+            "SERVERPART_TARGET": "1010,1040,1050,1060,2020",
+            "SERVERPART_INFO": "新桥服务区于2020年改造升级，内部环境更加现代、主题特色更加突出、服务内容更加多元。目前，餐厅提供都市连锁快餐，含蒸式套餐、地方特色菜等各式菜品达50余种，有麦当劳、猫屎咖啡、老乡鸡、刘鸿盛等知名品牌进驻；全新的万佳生活馆24小时营业，有食品、饮料、水果、烟酒、生活用品、安徽土特产及工艺品等2000余种商品。全区覆盖免费WIFI，方便司乘处理商务和网上冲浪。\r\n       2014年7月，建成国内首个服务区候机楼，实现路空无缝对接，开创交通运输新方式。候机楼“一站式”服务与服务区基本服务有机结合，更加方便了司乘出行。设有值机服务中心，可实现订票、登机牌办理、航空信息咨询、候机等一站式业务，还专门为登机旅客提供标间客房和VIP旅客休息区、茶点供应、报刊阅览等服务。候机楼每天有10趟班车往返于服务区和机场之间，从服务区乘车前往新桥机场仅需15分钟，比到合肥市区再转车前往机场节省两个多小时。"
+          },
+          "RegionInfo": [
+            {
+              "SERVERPARTINFO_ID": 539,
+              "SERVERPART_ID": 416,
+              "SMALLPARKING": 183,
+              "PACKING": 10,
+              "TRUCKPACKING": 58,
+              "LONGPACKING": null,
+              "DANPACKING": 5,
+              "LIVESTOCKPACKING": 12,
+              "TOILETCOUNT": 0,
+              "BUSINESSTYPE": "自营",
+              "DININGROOMCOUNT": 1,
+              "DININGBXCOUNT": 10,
+              "HASMOTHER": 1,
+              "HASCHILD": 1,
+              "HASSHOWERROOM": 1,
+              "VEHICLEWATERFILLING": null,
+              "HASRESTROOM": 1,
+              "HASTHIRDTOILETS": 1,
+              "HASWATERROOM": 2,
+              "HASPILOTLOUNGE": 1,
+              "GREENSPACEAREA": null,
+              "POINTCONTROLCOUNT": 12,
+              "HASBACKGROUNDRADIO": 1,
+              "HASWIFI": 52,
+              "HASMESSAGESEARCH": 1,
+              "HASPANTRY": 65,
+              "SCENICAREA": "",
+              "SERVERPART_REGION": 20,
+              "SERVERPART_REGIONNAME": "南区",
+              "MICROWAVEOVEN": null,
+              "WASHERCOUNT": null,
+              "SLEEPINGPODS": null,
+              "HASGASSTATION": 1,
+              "REFUELINGGUN92": 8,
+              "REFUELINGGUN95": 4,
+              "REFUELINGGUN0": 3,
+              "STATEGRIDCHARGE": 8,
+              "LIAUTOCHARGE": 4,
+              "GACENERGYCHARGE": 0,
+              "OTHERCHARGE": 0,
+              "FLOORAREA": 96313.0,
+              "PARKINGAREA": 68538.0,
+              "BUILDINGAREA": 13462.0,
+              "TOILET_PAPER": null,
+              "MABROOMWATER_DISPENSER": null,
+              "NURSING_TABLE": null,
+              "BABY_COT": null,
+              "CHANGING_TABLE": null,
+              "DROOMWATER_DISPENSER": null,
+              "WASHER_PRICE": "",
+              "SLEEPCABIN_PRICE": "",
+              "SHOWERROOM": 2,
+              "REPAIR_TEL": "15055100755",
+              "REPAIR_TIME": "",
+              "UREA_COUNT": null,
+              "REFUELINGGUN98": null,
+              "TreeNodeName": null,
+              "TreeNodePName": null,
+              "SPRegionTypeId": null,
+              "SPRegionTypeIndex": null,
+              "ServerPartIndex": null,
+              "ImgList": [
+                {
+                  "name": "母婴室南.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270909498115_母婴室南/母婴室南.jpg",
+                  "data": null,
+                  "key": "1001"
+                },
+                {
+                  "name": "司机之家1.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270920212566_司机之家1/司机之家1.jpg",
+                  "data": null,
+                  "key": "1002"
+                },
+                {
+                  "name": "司机之家2.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270920289950_司机之家2/司机之家2.jpg",
+                  "data": null,
+                  "key": "1002"
+                },
+                {
+                  "name": "司机之家4.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270920412322_司机之家4/司机之家4.jpg",
+                  "data": null,
+                  "key": "1002"
+                },
+                {
+                  "name": "司机之家5.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270920477950_司机之家5/司机之家5.jpg",
+                  "data": null,
+                  "key": "1002"
+                },
+                {
+                  "name": "客房.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270851591917_客房/客房.jpg",
+                  "data": null,
+                  "key": "2001"
+                },
+                {
+                  "name": "南区便利店.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270905447069_南区便利店/南区便利店.jpg",
+                  "data": null,
+                  "key": "2002"
+                },
+                {
+                  "name": "南便利店.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270907441442_南便利店/南便利店.jpg",
+                  "data": null,
+                  "key": "2002"
+                }
+              ]
+            },
+            {
+              "SERVERPARTINFO_ID": 1108,
+              "SERVERPART_ID": 416,
+              "SMALLPARKING": 169,
+              "PACKING": 13,
+              "TRUCKPACKING": 58,
+              "LONGPACKING": 0,
+              "DANPACKING": 5,
+              "LIVESTOCKPACKING": 12,
+              "TOILETCOUNT": 0,
+              "BUSINESSTYPE": "自营",
+              "DININGROOMCOUNT": 1,
+              "DININGBXCOUNT": 10,
+              "HASMOTHER": 1,
+              "HASCHILD": 1,
+              "HASSHOWERROOM": 1,
+              "VEHICLEWATERFILLING": 0,
+              "HASRESTROOM": 1,
+              "HASTHIRDTOILETS": 1,
+              "HASWATERROOM": 2,
+              "HASPILOTLOUNGE": 1,
+              "GREENSPACEAREA": null,
+              "POINTCONTROLCOUNT": 12,
+              "HASBACKGROUNDRADIO": 1,
+              "HASWIFI": 52,
+              "HASMESSAGESEARCH": 1,
+              "HASPANTRY": 65,
+              "SCENICAREA": "",
+              "SERVERPART_REGION": 40,
+              "SERVERPART_REGIONNAME": "北区",
+              "MICROWAVEOVEN": 0,
+              "WASHERCOUNT": 0,
+              "SLEEPINGPODS": 0,
+              "HASGASSTATION": 1,
+              "REFUELINGGUN92": 8,
+              "REFUELINGGUN95": 4,
+              "REFUELINGGUN0": 3,
+              "STATEGRIDCHARGE": 8,
+              "LIAUTOCHARGE": 4,
+              "GACENERGYCHARGE": 0,
+              "OTHERCHARGE": 0,
+              "FLOORAREA": 0.0,
+              "PARKINGAREA": 0.0,
+              "BUILDINGAREA": 0.0,
+              "TOILET_PAPER": null,
+              "MABROOMWATER_DISPENSER": null,
+              "NURSING_TABLE": null,
+              "BABY_COT": null,
+              "CHANGING_TABLE": null,
+              "DROOMWATER_DISPENSER": null,
+              "WASHER_PRICE": "",
+              "SLEEPCABIN_PRICE": "",
+              "SHOWERROOM": 2,
+              "REPAIR_TEL": "15055100755",
+              "REPAIR_TIME": "",
+              "UREA_COUNT": null,
+              "REFUELINGGUN98": null,
+              "TreeNodeName": null,
+              "TreeNodePName": null,
+              "SPRegionTypeId": null,
+              "SPRegionTypeIndex": null,
+              "ServerPartIndex": null,
+              "ImgList": [
+                {
+                  "name": "北母婴室.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270916082124_北母婴室/北母婴室.jpg",
+                  "data": null,
+                  "key": "1001"
+                },
+                {
+                  "name": "司机之家1.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270924528774_司机之家1/司机之家1.jpg",
+                  "data": null,
+                  "key": "1002"
+                },
+                {
+                  "name": "司机之家2.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270924593533_司机之家2/司机之家2.jpg",
+                  "data": null,
+                  "key": "1002"
+                },
+                {
+                  "name": "司机之家3.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270925050849_司机之家3/司机之家3.jpg",
+                  "data": null,
+                  "key": "1002"
+                },
+                {
+                  "name": "司机之家4.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270925119896_司机之家4/司机之家4.jpg",
+                  "data": null,
+                  "key": "1002"
+                },
+                {
+                  "name": "客房.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270852411523_客房/客房.jpg",
+                  "data": null,
+                  "key": "2001"
+                },
+                {
+                  "name": "北超市1.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270913188521_北超市1/北超市1.jpg",
+                  "data": null,
+                  "key": "2002"
+                },
+                {
+                  "name": "北超市.jpg",
+                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270913292563_北超市/北超市.jpg",
+                  "data": null,
+                  "key": "2002"
+                }
+              ]
+            }
+          ],
+          "ImageLits": [
+            "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPART/202503051701299460_新桥/新桥.jpg"
+          ],
+          "weatherModel": null,
+          "tmwWeatherModel": null,
+          "LoadBearing_Id": null,
+          "LoadBearing_State": null
+        }
+      },
+      "elapsed": 0.34,
+      "error": null
+    },
+    "GET:/BaseInfo/GetServerInfoTree": {
+      "key": "GET:/BaseInfo/GetServerInfoTree",
+      "idx": 16,
+      "method": "GET",
+      "route": "/BaseInfo/GetServerInfoTree",
+      "params": {
+        "ProvinceCode": "340000",
+        "ServerpartIds": "416",
+        "SPRegionTypeId": ""
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 10,
+          "TotalCount": 0,
+          "List": []
+        }
+      },
+      "elapsed": 0.02,
+      "error": null
+    },
+    "POST:/BaseInfo/GetServerpartServiceSummary": {
+      "key": "POST:/BaseInfo/GetServerpartServiceSummary",
+      "idx": 17,
+      "method": "POST",
+      "route": "/BaseInfo/GetServerpartServiceSummary",
+      "params": {
+        "name": "",
+        "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2MDExFbKDMdPHBHEDt/Vk4vEXRVQHxDPwB1BS0uQw53LWpVEU0oM2wkCTp+QgQ8N1BTG3w="
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "ServerpartTotalCount": 133,
+          "ServerpartCount": 133,
+          "ParkingServiceCount": 0,
+          "WaterStationCount": 0,
+          "ViewingDeckCount": 0,
+          "RestAreaCount": 0,
+          "ClosedCountCount": 0,
+          "FLoorArea": 15702.75,
+          "ParkingArea": 8233.99,
+          "BuildingArea": 1670.19,
+          "GasStationCount": 126,
+          "ChargeStationCount": 126,
+          "ParkingLotCount": 125,
+          "AutoRepairCount": 120,
+          "ToiletCount": 126,
+          "DriverRoomCount": 22,
+          "NursingRoomCount": 107,
+          "StoreCount": 125,
+          "CateringCount": 104,
+          "LodgingCount": 15,
+          "WaterCount": 36,
+          "UreaCount": 21
+        }
+      },
+      "elapsed": 0.233,
+      "error": null
+    },
+    "POST:/BaseInfo/GetBrandStructureAnalysis": {
+      "key": "POST:/BaseInfo/GetBrandStructureAnalysis",
+      "idx": 18,
+      "method": "POST",
+      "route": "/BaseInfo/GetBrandStructureAnalysis",
+      "params": {
+        "name": "",
+        "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ3ImMh1SJC8APHtWEQEUKEwmNgp6"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 4,
+          "TotalCount": 4,
+          "List": [
+            {
+              "name": "地方特色",
+              "value": "294",
+              "data": null,
+              "key": "1000"
+            },
+            {
+              "name": "省内驰名商标",
+              "value": "33",
+              "data": null,
+              "key": "2000"
+            },
+            {
+              "name": "国内著名商标",
+              "value": "24",
+              "data": null,
+              "key": "3000"
+            },
+            {
+              "name": "国际品牌",
+              "value": "5",
+              "data": null,
+              "key": "4000"
+            }
+          ]
+        }
+      },
+      "elapsed": 0.161,
       "error": null
     },
     "GET:/BaseInfo/GetServerpartList": {
@@ -11832,380 +12246,7 @@
           "OtherData": []
         }
       },
-      "elapsed": 0.543,
-      "error": null
-    },
-    "GET:/BaseInfo/GetServerInfoTree": {
-      "key": "GET:/BaseInfo/GetServerInfoTree",
-      "idx": 16,
-      "method": "GET",
-      "route": "/BaseInfo/GetServerInfoTree",
-      "params": {
-        "ProvinceCode": "340000",
-        "ServerpartIds": "416",
-        "SPRegionTypeId": ""
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 10,
-          "TotalCount": 0,
-          "List": []
-        }
-      },
-      "elapsed": 0.03,
-      "error": null
-    },
-    "GET:/BaseInfo/GetServerpartInfo": {
-      "key": "GET:/BaseInfo/GetServerpartInfo",
-      "idx": 15,
-      "method": "GET",
-      "route": "/BaseInfo/GetServerpartInfo",
-      "params": {
-        "ServerpartId": "416"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "SERVERPART_ID": 416,
-          "SERVERPART_NAME": "新桥服务区",
-          "SERVERPART_INDEX": 1001,
-          "PROVINCE_CODE": 3544,
-          "SERVERPART_CODE": "341003",
-          "SERVERPART_TYPE": 1000,
-          "SPREGIONTYPE_ID": 72,
-          "SPREGIONTYPE_NAME": "皖中管理中心",
-          "SPREGIONTYPE_INDEX": 5,
-          "STATISTICS_TYPE": "1000",
-          "OWNERUNIT_ID": 249,
-          "OWNERUNIT_NAME": "安徽交控驿达服务开发集团有限公司",
-          "SERVERPART_ADDRESS": "合肥市经开区高刘社区",
-          "SERVERPART_X": 116.893886,
-          "SERVERPART_Y": 31.918931,
-          "STARTDATE": null,
-          "SERVERPART_TEL": "18956056157",
-          "OPERATE_DATE": null,
-          "HASMOTHER": true,
-          "HASPILOTLOUNGE": true,
-          "HASCHARGE": true,
-          "HASGUESTROOM": true,
-          "SERVERPART_DISTANCE": 0.0,
-          "ISCUR_SERVERPART": 0,
-          "ServerpartInfo": {
-            "RTSERVERPART_ID": 505,
-            "SERVERPART_ID": 416,
-            "SERVERPART_ADDRESS": "合肥市经开区高刘社区",
-            "EXPRESSWAY_NAME": "沪陕高速|G40",
-            "SELLERCOUNT": 5000,
-            "SERVERPART_X": 116.893886,
-            "SERVERPART_Y": 31.918931,
-            "SERVERPART_TEL": "18956056157",
-            "STARTDATE": "2013/6/6",
-            "SERVERPART_AREA": 13462.0,
-            "FLOORAREA": 96313.0,
-            "BUSINESSAREA": null,
-            "SHAREAREA": 68538.0,
-            "OWNEDCOMPANY": "安徽省驿达高速公路服务区经营管理有限公司",
-            "MANAGERCOMPANY": "六安北管理中心",
-            "CENTERSTAKE_NUM": "合六叶高速本路段公里数664+100KM",
-            "TAXPAYER_IDENTIFYCODE": "9134000078109626XT",
-            "WATERINTAKE_TYPE": 1,
-            "SEWAGEDISPOSAL_TYPE": 1,
-            "BUSINESS_REGION": 1000,
-            "SERVERPART_TARGET": "1010,1040,1050,1060,2020",
-            "SERVERPART_INFO": "新桥服务区于2020年改造升级，内部环境更加现代、主题特色更加突出、服务内容更加多元。目前，餐厅提供都市连锁快餐，含蒸式套餐、地方特色菜等各式菜品达50余种，有麦当劳、猫屎咖啡、老乡鸡、刘鸿盛等知名品牌进驻；全新的万佳生活馆24小时营业，有食品、饮料、水果、烟酒、生活用品、安徽土特产及工艺品等2000余种商品。全区覆盖免费WIFI，方便司乘处理商务和网上冲浪。\r\n       2014年7月，建成国内首个服务区候机楼，实现路空无缝对接，开创交通运输新方式。候机楼“一站式”服务与服务区基本服务有机结合，更加方便了司乘出行。设有值机服务中心，可实现订票、登机牌办理、航空信息咨询、候机等一站式业务，还专门为登机旅客提供标间客房和VIP旅客休息区、茶点供应、报刊阅览等服务。候机楼每天有10趟班车往返于服务区和机场之间，从服务区乘车前往新桥机场仅需15分钟，比到合肥市区再转车前往机场节省两个多小时。"
-          },
-          "RegionInfo": [
-            {
-              "SERVERPARTINFO_ID": 539,
-              "SERVERPART_ID": 416,
-              "SMALLPARKING": 183,
-              "PACKING": 10,
-              "TRUCKPACKING": 58,
-              "LONGPACKING": null,
-              "DANPACKING": 5,
-              "LIVESTOCKPACKING": 12,
-              "TOILETCOUNT": 0,
-              "BUSINESSTYPE": "自营",
-              "DININGROOMCOUNT": 1,
-              "DININGBXCOUNT": 10,
-              "HASMOTHER": 1,
-              "HASCHILD": 1,
-              "HASSHOWERROOM": 1,
-              "VEHICLEWATERFILLING": null,
-              "HASRESTROOM": 1,
-              "HASTHIRDTOILETS": 1,
-              "HASWATERROOM": 2,
-              "HASPILOTLOUNGE": 1,
-              "GREENSPACEAREA": null,
-              "POINTCONTROLCOUNT": 12,
-              "HASBACKGROUNDRADIO": 1,
-              "HASWIFI": 52,
-              "HASMESSAGESEARCH": 1,
-              "HASPANTRY": 65,
-              "SCENICAREA": "",
-              "SERVERPART_REGION": 20,
-              "SERVERPART_REGIONNAME": "南区",
-              "MICROWAVEOVEN": null,
-              "WASHERCOUNT": null,
-              "SLEEPINGPODS": null,
-              "HASGASSTATION": 1,
-              "REFUELINGGUN92": 8,
-              "REFUELINGGUN95": 4,
-              "REFUELINGGUN0": 3,
-              "STATEGRIDCHARGE": 8,
-              "LIAUTOCHARGE": 4,
-              "GACENERGYCHARGE": 0,
-              "OTHERCHARGE": 0,
-              "FLOORAREA": 96313.0,
-              "PARKINGAREA": 68538.0,
-              "BUILDINGAREA": 13462.0,
-              "TOILET_PAPER": null,
-              "MABROOMWATER_DISPENSER": null,
-              "NURSING_TABLE": null,
-              "BABY_COT": null,
-              "CHANGING_TABLE": null,
-              "DROOMWATER_DISPENSER": null,
-              "WASHER_PRICE": "",
-              "SLEEPCABIN_PRICE": "",
-              "SHOWERROOM": 2,
-              "REPAIR_TEL": "15055100755",
-              "REPAIR_TIME": "",
-              "UREA_COUNT": null,
-              "REFUELINGGUN98": null,
-              "TreeNodeName": null,
-              "TreeNodePName": null,
-              "SPRegionTypeId": null,
-              "SPRegionTypeIndex": null,
-              "ServerPartIndex": null,
-              "ImgList": [
-                {
-                  "name": "母婴室南.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270909498115_母婴室南/母婴室南.jpg",
-                  "data": null,
-                  "key": "1001"
-                },
-                {
-                  "name": "司机之家1.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270920212566_司机之家1/司机之家1.jpg",
-                  "data": null,
-                  "key": "1002"
-                },
-                {
-                  "name": "司机之家2.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270920289950_司机之家2/司机之家2.jpg",
-                  "data": null,
-                  "key": "1002"
-                },
-                {
-                  "name": "司机之家4.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270920412322_司机之家4/司机之家4.jpg",
-                  "data": null,
-                  "key": "1002"
-                },
-                {
-                  "name": "司机之家5.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270920477950_司机之家5/司机之家5.jpg",
-                  "data": null,
-                  "key": "1002"
-                },
-                {
-                  "name": "客房.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270851591917_客房/客房.jpg",
-                  "data": null,
-                  "key": "2001"
-                },
-                {
-                  "name": "南区便利店.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270905447069_南区便利店/南区便利店.jpg",
-                  "data": null,
-                  "key": "2002"
-                },
-                {
-                  "name": "南便利店.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270907441442_南便利店/南便利店.jpg",
-                  "data": null,
-                  "key": "2002"
-                }
-              ]
-            },
-            {
-              "SERVERPARTINFO_ID": 1108,
-              "SERVERPART_ID": 416,
-              "SMALLPARKING": 169,
-              "PACKING": 13,
-              "TRUCKPACKING": 58,
-              "LONGPACKING": 0,
-              "DANPACKING": 5,
-              "LIVESTOCKPACKING": 12,
-              "TOILETCOUNT": 0,
-              "BUSINESSTYPE": "自营",
-              "DININGROOMCOUNT": 1,
-              "DININGBXCOUNT": 10,
-              "HASMOTHER": 1,
-              "HASCHILD": 1,
-              "HASSHOWERROOM": 1,
-              "VEHICLEWATERFILLING": 0,
-              "HASRESTROOM": 1,
-              "HASTHIRDTOILETS": 1,
-              "HASWATERROOM": 2,
-              "HASPILOTLOUNGE": 1,
-              "GREENSPACEAREA": null,
-              "POINTCONTROLCOUNT": 12,
-              "HASBACKGROUNDRADIO": 1,
-              "HASWIFI": 52,
-              "HASMESSAGESEARCH": 1,
-              "HASPANTRY": 65,
-              "SCENICAREA": "",
-              "SERVERPART_REGION": 40,
-              "SERVERPART_REGIONNAME": "北区",
-              "MICROWAVEOVEN": 0,
-              "WASHERCOUNT": 0,
-              "SLEEPINGPODS": 0,
-              "HASGASSTATION": 1,
-              "REFUELINGGUN92": 8,
-              "REFUELINGGUN95": 4,
-              "REFUELINGGUN0": 3,
-              "STATEGRIDCHARGE": 8,
-              "LIAUTOCHARGE": 4,
-              "GACENERGYCHARGE": 0,
-              "OTHERCHARGE": 0,
-              "FLOORAREA": 0.0,
-              "PARKINGAREA": 0.0,
-              "BUILDINGAREA": 0.0,
-              "TOILET_PAPER": null,
-              "MABROOMWATER_DISPENSER": null,
-              "NURSING_TABLE": null,
-              "BABY_COT": null,
-              "CHANGING_TABLE": null,
-              "DROOMWATER_DISPENSER": null,
-              "WASHER_PRICE": "",
-              "SLEEPCABIN_PRICE": "",
-              "SHOWERROOM": 2,
-              "REPAIR_TEL": "15055100755",
-              "REPAIR_TIME": "",
-              "UREA_COUNT": null,
-              "REFUELINGGUN98": null,
-              "TreeNodeName": null,
-              "TreeNodePName": null,
-              "SPRegionTypeId": null,
-              "SPRegionTypeIndex": null,
-              "ServerPartIndex": null,
-              "ImgList": [
-                {
-                  "name": "北母婴室.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270916082124_北母婴室/北母婴室.jpg",
-                  "data": null,
-                  "key": "1001"
-                },
-                {
-                  "name": "司机之家1.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270924528774_司机之家1/司机之家1.jpg",
-                  "data": null,
-                  "key": "1002"
-                },
-                {
-                  "name": "司机之家2.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270924593533_司机之家2/司机之家2.jpg",
-                  "data": null,
-                  "key": "1002"
-                },
-                {
-                  "name": "司机之家3.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270925050849_司机之家3/司机之家3.jpg",
-                  "data": null,
-                  "key": "1002"
-                },
-                {
-                  "name": "司机之家4.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270925119896_司机之家4/司机之家4.jpg",
-                  "data": null,
-                  "key": "1002"
-                },
-                {
-                  "name": "客房.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270852411523_客房/客房.jpg",
-                  "data": null,
-                  "key": "2001"
-                },
-                {
-                  "name": "北超市1.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270913188521_北超市1/北超市1.jpg",
-                  "data": null,
-                  "key": "2002"
-                },
-                {
-                  "name": "北超市.jpg",
-                  "value": "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPARTINFO/202505270913292563_北超市/北超市.jpg",
-                  "data": null,
-                  "key": "2002"
-                }
-              ]
-            }
-          ],
-          "ImageLits": [
-            "https://ahyd.eshangtech.com/EShangApiMain/UploadImageDir/SERVERPART/202503051701299460_新桥/新桥.jpg"
-          ],
-          "weatherModel": null,
-          "tmwWeatherModel": null,
-          "LoadBearing_Id": null,
-          "LoadBearing_State": null
-        }
-      },
-      "elapsed": 0.37,
-      "error": null
-    },
-    "POST:/BaseInfo/GetBrandStructureAnalysis": {
-      "key": "POST:/BaseInfo/GetBrandStructureAnalysis",
-      "idx": 18,
-      "method": "POST",
-      "route": "/BaseInfo/GetBrandStructureAnalysis",
-      "params": {
-        "name": "",
-        "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ3ImMh1SJC8APHtWEQEUKEwmNgp6"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 4,
-          "TotalCount": 4,
-          "List": [
-            {
-              "name": "地方特色",
-              "value": "294",
-              "data": null,
-              "key": "1000"
-            },
-            {
-              "name": "省内驰名商标",
-              "value": "33",
-              "data": null,
-              "key": "2000"
-            },
-            {
-              "name": "国内著名商标",
-              "value": "24",
-              "data": null,
-              "key": "3000"
-            },
-            {
-              "name": "国际品牌",
-              "value": "5",
-              "data": null,
-              "key": "4000"
-            }
-          ]
-        }
-      },
-      "elapsed": 0.176,
+      "elapsed": 1.008,
       "error": null
     },
     "GET:/Revenue/GetBayonetEntryList": {
@@ -12229,7 +12270,7 @@
           "List": []
         }
       },
-      "elapsed": 0.124,
+      "elapsed": 0.178,
       "error": null
     },
     "GET:/Revenue/GetBayonetSTAList": {
@@ -12311,48 +12352,7 @@
           ]
         }
       },
-      "elapsed": 0.128,
-      "error": null
-    },
-    "POST:/BaseInfo/GetServerpartServiceSummary": {
-      "key": "POST:/BaseInfo/GetServerpartServiceSummary",
-      "idx": 17,
-      "method": "POST",
-      "route": "/BaseInfo/GetServerpartServiceSummary",
-      "params": {
-        "name": "",
-        "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2MDExFbKDMdPHBHEDt/Vk4vEXRVQHxDPwB1BS0uQw53LWpVEU0oM2wkCTp+QgQ8N1BTG3w="
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "ServerpartTotalCount": 133,
-          "ServerpartCount": 133,
-          "ParkingServiceCount": 0,
-          "WaterStationCount": 0,
-          "ViewingDeckCount": 0,
-          "RestAreaCount": 0,
-          "ClosedCountCount": 0,
-          "FLoorArea": 15702.75,
-          "ParkingArea": 8233.99,
-          "BuildingArea": 1670.19,
-          "GasStationCount": 126,
-          "ChargeStationCount": 126,
-          "ParkingLotCount": 125,
-          "AutoRepairCount": 120,
-          "ToiletCount": 126,
-          "DriverRoomCount": 22,
-          "NursingRoomCount": 107,
-          "StoreCount": 125,
-          "CateringCount": 104,
-          "LodgingCount": 15,
-          "WaterCount": 36,
-          "UreaCount": 21
-        }
-      },
-      "elapsed": 0.678,
+      "elapsed": 0.205,
       "error": null
     },
     "GET:/Revenue/GetBayonetOAList": {
@@ -12518,7 +12518,7 @@
           ]
         }
       },
-      "elapsed": 0.183,
+      "elapsed": 0.193,
       "error": null
     },
     "GET:/Revenue/GetBayonetProvinceOAList": {
@@ -12646,7 +12646,7 @@
           ]
         }
       },
-      "elapsed": 0.202,
+      "elapsed": 0.198,
       "error": null
     },
     "GET:/Revenue/GetSPBayonetList": {
@@ -12672,27 +12672,7 @@
           "List": []
         }
       },
-      "elapsed": 0.148,
-      "error": null
-    },
-    "GET:/Revenue/GetAvgBayonetAnalysis": {
-      "key": "GET:/Revenue/GetAvgBayonetAnalysis",
-      "idx": 25,
-      "method": "GET",
-      "route": "/Revenue/GetAvgBayonetAnalysis",
-      "params": {
-        "Statistics_Date": "2026-02-13",
-        "Province_Code": "340000",
-        "Serverpart_ID": "416",
-        "SPRegionType_ID": ""
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 101,
-        "Result_Desc": "查询失败，无数据返回！",
-        "Result_Data": null
-      },
-      "elapsed": 0.13,
+      "elapsed": 0.241,
       "error": null
     },
     "GET:/Revenue/GetBayonetRankList": {
@@ -12713,7 +12693,96 @@
         "Result_Desc": "查询失败，无数据返回！",
         "Result_Data": null
       },
-      "elapsed": 0.151,
+      "elapsed": 0.131,
+      "error": null
+    },
+    "GET:/Revenue/GetAvgBayonetAnalysis": {
+      "key": "GET:/Revenue/GetAvgBayonetAnalysis",
+      "idx": 25,
+      "method": "GET",
+      "route": "/Revenue/GetAvgBayonetAnalysis",
+      "params": {
+        "Statistics_Date": "2026-02-13",
+        "Province_Code": "340000",
+        "Serverpart_ID": "416",
+        "SPRegionType_ID": ""
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 101,
+        "Result_Desc": "查询失败，无数据返回！",
+        "Result_Data": null
+      },
+      "elapsed": 0.132,
+      "error": null
+    },
+    "GET:/Revenue/GetProvinceAvgBayonetAnalysis": {
+      "key": "GET:/Revenue/GetProvinceAvgBayonetAnalysis",
+      "idx": 26,
+      "method": "GET",
+      "route": "/Revenue/GetProvinceAvgBayonetAnalysis",
+      "params": {
+        "Province_Code": "340000",
+        "Statistics_Date": "2026-02-13"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 10,
+          "TotalCount": 3,
+          "List": [
+            {
+              "Serverpart_ID": null,
+              "Serverpart_Name": "Current",
+              "Serverpart_Region": null,
+              "Vehicle_Count": 4283,
+              "Vehicle_GrowthRate": 0.0,
+              "SectionFlow_Count": null,
+              "Entry_Rate": 16.13,
+              "Entry_GrowthRate": 0.0,
+              "Stay_Times": 15.86,
+              "StayTimes_GrowthRate": 0.0,
+              "Vehicle_AddUpCount": 5757208,
+              "SectionFlow_AddUpCount": 35291020,
+              "EntryAddUp_Rate": null
+            },
+            {
+              "Serverpart_ID": null,
+              "Serverpart_Name": "QOQ",
+              "Serverpart_Region": null,
+              "Vehicle_Count": 2050,
+              "Vehicle_GrowthRate": 49.25,
+              "SectionFlow_Count": null,
+              "Entry_Rate": 15.29,
+              "Entry_GrowthRate": 0.84,
+              "Stay_Times": 14.91,
+              "StayTimes_GrowthRate": 6.37,
+              "Vehicle_AddUpCount": 3857496,
+              "SectionFlow_AddUpCount": 25850383,
+              "EntryAddUp_Rate": null
+            },
+            {
+              "Serverpart_ID": null,
+              "Serverpart_Name": "YOY",
+              "Serverpart_Region": null,
+              "Vehicle_Count": 4432,
+              "Vehicle_GrowthRate": -50.31,
+              "SectionFlow_Count": null,
+              "Entry_Rate": 16.98,
+              "Entry_GrowthRate": -0.85,
+              "Stay_Times": 16.24,
+              "StayTimes_GrowthRate": -2.34,
+              "Vehicle_AddUpCount": 11585447,
+              "SectionFlow_AddUpCount": 67418715,
+              "EntryAddUp_Rate": null
+            }
+          ]
+        }
+      },
+      "elapsed": 0.165,
       "error": null
     },
     "GET:/Revenue/GetBayonetSTAnalysis": {
@@ -12802,76 +12871,7 @@
           ]
         }
       },
-      "elapsed": 0.119,
-      "error": null
-    },
-    "GET:/Revenue/GetProvinceAvgBayonetAnalysis": {
-      "key": "GET:/Revenue/GetProvinceAvgBayonetAnalysis",
-      "idx": 26,
-      "method": "GET",
-      "route": "/Revenue/GetProvinceAvgBayonetAnalysis",
-      "params": {
-        "Province_Code": "340000",
-        "Statistics_Date": "2026-02-13"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 10,
-          "TotalCount": 3,
-          "List": [
-            {
-              "Serverpart_ID": null,
-              "Serverpart_Name": "Current",
-              "Serverpart_Region": null,
-              "Vehicle_Count": 4283,
-              "Vehicle_GrowthRate": 0.0,
-              "SectionFlow_Count": null,
-              "Entry_Rate": 16.13,
-              "Entry_GrowthRate": 0.0,
-              "Stay_Times": 15.86,
-              "StayTimes_GrowthRate": 0.0,
-              "Vehicle_AddUpCount": 5757208,
-              "SectionFlow_AddUpCount": 35291020,
-              "EntryAddUp_Rate": null
-            },
-            {
-              "Serverpart_ID": null,
-              "Serverpart_Name": "QOQ",
-              "Serverpart_Region": null,
-              "Vehicle_Count": 2050,
-              "Vehicle_GrowthRate": 49.25,
-              "SectionFlow_Count": null,
-              "Entry_Rate": 15.29,
-              "Entry_GrowthRate": 0.84,
-              "Stay_Times": 14.91,
-              "StayTimes_GrowthRate": 6.37,
-              "Vehicle_AddUpCount": 3857496,
-              "SectionFlow_AddUpCount": 25850383,
-              "EntryAddUp_Rate": null
-            },
-            {
-              "Serverpart_ID": null,
-              "Serverpart_Name": "YOY",
-              "Serverpart_Region": null,
-              "Vehicle_Count": 4432,
-              "Vehicle_GrowthRate": -50.31,
-              "SectionFlow_Count": null,
-              "Entry_Rate": 16.98,
-              "Entry_GrowthRate": -0.85,
-              "Stay_Times": 16.24,
-              "StayTimes_GrowthRate": -2.34,
-              "Vehicle_AddUpCount": 11585447,
-              "SectionFlow_AddUpCount": 67418715,
-              "EntryAddUp_Rate": null
-            }
-          ]
-        }
-      },
-      "elapsed": 0.149,
+      "elapsed": 0.169,
       "error": null
     },
     "GET:/BigData/GetProvinceMonthAnalysis": {
@@ -12914,31 +12914,7 @@
           ]
         }
       },
-      "elapsed": 0.149,
-      "error": null
-    },
-    "GET:/BigData/GetBayonetWarning": {
-      "key": "GET:/BigData/GetBayonetWarning",
-      "idx": 30,
-      "method": "GET",
-      "route": "/BigData/GetBayonetWarning",
-      "params": {
-        "StatisticsDate": "2026-02-13",
-        "StatisticsHour": "1",
-        "StatisticsType": "1"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 0,
-          "TotalCount": 0,
-          "List": []
-        }
-      },
-      "elapsed": 0.127,
+      "elapsed": 0.152,
       "error": null
     },
     "GET:/BigData/GetMonthAnalysis": {
@@ -13019,7 +12995,7 @@
           "OtherData": true
         }
       },
-      "elapsed": 0.306,
+      "elapsed": 0.29,
       "error": null
     },
     "GET:/BigData/GetHolidayBayonetWarning": {
@@ -13046,7 +13022,31 @@
           "List": []
         }
       },
-      "elapsed": 0.156,
+      "elapsed": 0.151,
+      "error": null
+    },
+    "GET:/BigData/GetBayonetWarning": {
+      "key": "GET:/BigData/GetBayonetWarning",
+      "idx": 30,
+      "method": "GET",
+      "route": "/BigData/GetBayonetWarning",
+      "params": {
+        "StatisticsDate": "2026-02-13",
+        "StatisticsHour": "1",
+        "StatisticsType": "1"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 0,
+          "TotalCount": 0,
+          "List": []
+        }
+      },
+      "elapsed": 0.162,
       "error": null
     },
     "GET:/BigData/GetBayonetGrowthAnalysis": {
@@ -13095,7 +13095,7 @@
           "GrowthList": null
         }
       },
-      "elapsed": 0.162,
+      "elapsed": 0.226,
       "error": null
     },
     "GET:/BigData/GetBayonetCompare": {
@@ -13487,7 +13487,36 @@
           "compareHolidayDays": 0
         }
       },
-      "elapsed": 0.171,
+      "elapsed": 0.232,
+      "error": null
+    },
+    "GET:/BigData/GetBayonetOAAnalysis": {
+      "key": "GET:/BigData/GetBayonetOAAnalysis",
+      "idx": 35,
+      "method": "GET",
+      "route": "/BigData/GetBayonetOAAnalysis",
+      "params": {
+        "HolidayType": "2",
+        "ServerpartId": "416",
+        "StartMonth": "202602",
+        "EndMonth": "202602"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 0,
+          "TotalCount": 0,
+          "List": [],
+          "OtherData": [
+            "",
+            ""
+          ]
+        }
+      },
+      "elapsed": 0.152,
       "error": null
     },
     "GET:/BigData/GetHolidayCompare": {
@@ -13998,65 +14027,7 @@
           "compareHolidayDays": 40
         }
       },
-      "elapsed": 0.281,
-      "error": null
-    },
-    "GET:/BigData/GetBayonetOAAnalysis": {
-      "key": "GET:/BigData/GetBayonetOAAnalysis",
-      "idx": 35,
-      "method": "GET",
-      "route": "/BigData/GetBayonetOAAnalysis",
-      "params": {
-        "HolidayType": "2",
-        "ServerpartId": "416",
-        "StartMonth": "202602",
-        "EndMonth": "202602"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 0,
-          "TotalCount": 0,
-          "List": [],
-          "OtherData": [
-            "",
-            ""
-          ]
-        }
-      },
-      "elapsed": 0.136,
-      "error": null
-    },
-    "POST:/BigData/GetCurBusyRank": {
-      "key": "POST:/BigData/GetCurBusyRank",
-      "idx": 37,
-      "method": "POST",
-      "route": "/BigData/GetCurBusyRank",
-      "params": {
-        "name": "",
-        "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2M2MwJZMywSGn1+EUYMMk4hNUBGQmdcMCZ4PCxTMGp3I0RqRBAxNGFdLSRUFjgySDQiVlJCZ1wwJmsycXl8AwtKGBs8"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 0,
-          "TotalCount": 0,
-          "List": [],
-          "OtherData": {
-            "name": "服务承载",
-            "value": "0",
-            "data": "0",
-            "key": null
-          }
-        }
-      },
-      "elapsed": 0.156,
+      "elapsed": 0.293,
       "error": null
     },
     "GET:/BigData/GetDateAnalysis": {
@@ -15106,7 +15077,36 @@
           ]
         }
       },
-      "elapsed": 0.182,
+      "elapsed": 0.155,
+      "error": null
+    },
+    "POST:/BigData/GetCurBusyRank": {
+      "key": "POST:/BigData/GetCurBusyRank",
+      "idx": 37,
+      "method": "POST",
+      "route": "/BigData/GetCurBusyRank",
+      "params": {
+        "name": "",
+        "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2M2MwJZMywSGn1+EUYMMk4hNUBGQmdcMCZ4PCxTMGp3I0RqRBAxNGFdLSRUFjgySDQiVlJCZ1wwJmsycXl8AwtKGBs8"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 0,
+          "TotalCount": 0,
+          "List": [],
+          "OtherData": {
+            "name": "服务承载",
+            "value": "0",
+            "data": "0",
+            "key": null
+          }
+        }
+      },
+      "elapsed": 0.148,
       "error": null
     },
     "POST:/BigData/GetEnergyRevenueInfo": {
@@ -15129,7 +15129,319 @@
           "key": "1"
         }
       },
-      "elapsed": 0.007,
+      "elapsed": 0.005,
+      "error": null
+    },
+    "POST:/BigData/GetRevenueTrendChart": {
+      "key": "POST:/BigData/GetRevenueTrendChart",
+      "idx": 38,
+      "method": "POST",
+      "route": "/BigData/GetRevenueTrendChart",
+      "params": {
+        "name": "",
+        "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2M2MwJZMywSGn1+EUYMMk43KFZGPSIMFSZ4OihTNEhqJX8xGip0fBlzAwJ8OHR9LV9BeHA="
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 10,
+          "TotalCount": 36,
+          "List": [
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0030",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0100",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0130",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0200",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0230",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0300",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0330",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0400",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0430",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0500",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0530",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0600",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0630",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0700",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0730",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0800",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0830",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0900",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "0930",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1000",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1030",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1100",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1130",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1200",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1230",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1300",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1330",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1400",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1430",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1500",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1530",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1600",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1630",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1700",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1730",
+              "ConnectState": null
+            },
+            {
+              "TotalAmount": 0.0,
+              "TicketCount": 0.0,
+              "TotalCount": 0.0,
+              "AvgTicketAmount": 0.0,
+              "TradeDate": "1800",
+              "ConnectState": null
+            }
+          ]
+        }
+      },
+      "elapsed": 0.235,
       "error": null
     },
     "GET:/BigData/GetBayonetOwnerAHTreeList": {
@@ -24714,311 +25026,7 @@
           ]
         }
       },
-      "elapsed": 0.336,
-      "error": null
-    },
-    "POST:/BigData/GetRevenueTrendChart": {
-      "key": "POST:/BigData/GetRevenueTrendChart",
-      "idx": 38,
-      "method": "POST",
-      "route": "/BigData/GetRevenueTrendChart",
-      "params": {
-        "name": "",
-        "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2M2MwJZMywSGn1+EUYMMk43KFZGPSIMFSZ4OihTNEhqJX8xGip0fBlzAwJ8OHR9LV9BeHA="
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 10,
-          "TotalCount": 35,
-          "List": [
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0030",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0100",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0130",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0200",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0230",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0300",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0330",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0400",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0430",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0500",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0530",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0600",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0630",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0700",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0730",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0800",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0830",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0900",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "0930",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1000",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1030",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1100",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1130",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1200",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1230",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1300",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1330",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1400",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1430",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1500",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1530",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1600",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1630",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1700",
-              "ConnectState": null
-            },
-            {
-              "TotalAmount": 0.0,
-              "TicketCount": 0.0,
-              "TotalCount": 0.0,
-              "AvgTicketAmount": 0.0,
-              "TradeDate": "1730",
-              "ConnectState": null
-            }
-          ]
-        }
-      },
-      "elapsed": 0.526,
+      "elapsed": 0.354,
       "error": null
     },
     "GET:/BigData/GetProvinceVehicleTreeList": {
@@ -33496,7 +33504,7 @@
           ]
         }
       },
-      "elapsed": 0.273,
+      "elapsed": 0.277,
       "error": null
     },
     "GET:/BigData/GetProvinceVehicleDetail": {
@@ -33523,7 +33531,27 @@
           "List": []
         }
       },
-      "elapsed": 0.135,
+      "elapsed": 0.148,
+      "error": null
+    },
+    "POST:/Budget/GetBUDGETPROJECT_AHList": {
+      "key": "POST:/Budget/GetBUDGETPROJECT_AHList",
+      "idx": 43,
+      "method": "POST",
+      "route": "/Budget/GetBUDGETPROJECT_AHList",
+      "params": {},
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 0,
+          "PageSize": 0,
+          "TotalCount": 255,
+          "List": []
+        }
+      },
+      "elapsed": 0.17,
       "error": null
     },
     "GET:/Budget/GetBUDGETPROJECT_AHDetail": {
@@ -33556,27 +33584,7 @@
           "BUDGETPROJECT_AH_DESC": ""
         }
       },
-      "elapsed": 0.16,
-      "error": null
-    },
-    "POST:/Budget/GetBUDGETPROJECT_AHList": {
-      "key": "POST:/Budget/GetBUDGETPROJECT_AHList",
-      "idx": 43,
-      "method": "POST",
-      "route": "/Budget/GetBUDGETPROJECT_AHList",
-      "params": {},
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 0,
-          "PageSize": 0,
-          "TotalCount": 255,
-          "List": []
-        }
-      },
-      "elapsed": 0.194,
+      "elapsed": 0.148,
       "error": null
     },
     "GET:/Budget/GetBudgetMainShow": {
@@ -33707,7 +33715,7 @@
           }
         }
       },
-      "elapsed": 0.313,
+      "elapsed": 0.211,
       "error": null
     },
     "GET:/BusinessProcess/GetBusinessProcessList": {
@@ -33729,7 +33737,7 @@
           "List": []
         }
       },
-      "elapsed": 0.147,
+      "elapsed": 0.124,
       "error": null
     },
     "GET:/Contract/GetContractAnalysis": {
@@ -33757,7 +33765,7 @@
           "ContractList": null
         }
       },
-      "elapsed": 0.566,
+      "elapsed": 0.41,
       "error": null
     },
     "GET:/Budget/GetBudgetProjectDetailList": {
@@ -37784,71 +37792,7 @@
           ]
         }
       },
-      "elapsed": 1.946,
-      "error": null
-    },
-    "GET:/Contract/GetMerchantAccountDetail": {
-      "key": "GET:/Contract/GetMerchantAccountDetail",
-      "idx": 50,
-      "method": "GET",
-      "route": "/Contract/GetMerchantAccountDetail",
-      "params": {
-        "MerchantId": "1",
-        "StatisticsMonth": "202602"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 101,
-        "Result_Desc": "查询失败，无数据返回！",
-        "Result_Data": null
-      },
-      "elapsed": 0.131,
-      "error": null
-    },
-    "GET:/Customer/GetCustomerRatio": {
-      "key": "GET:/Customer/GetCustomerRatio",
-      "idx": 51,
-      "method": "GET",
-      "route": "/Customer/GetCustomerRatio",
-      "params": {
-        "statisticsType": "1",
-        "provinceCode": "340000",
-        "statisticsMonth": "202602"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 10,
-          "TotalCount": 3,
-          "List": [
-            {
-              "name": "男性",
-              "data": [
-                63.41
-              ]
-            },
-            {
-              "name": "女性",
-              "data": [
-                36.59
-              ]
-            },
-            {
-              "name": "年龄",
-              "data": [
-                9.76,
-                59.63,
-                20.61,
-                10.0
-              ]
-            }
-          ]
-        }
-      },
-      "elapsed": 0.185,
+      "elapsed": 1.739,
       "error": null
     },
     "GET:/Contract/GetMerchantAccountSplit": {
@@ -38783,7 +38727,25 @@
           ]
         }
       },
-      "elapsed": 1.259,
+      "elapsed": 1.022,
+      "error": null
+    },
+    "GET:/Contract/GetMerchantAccountDetail": {
+      "key": "GET:/Contract/GetMerchantAccountDetail",
+      "idx": 50,
+      "method": "GET",
+      "route": "/Contract/GetMerchantAccountDetail",
+      "params": {
+        "MerchantId": "1",
+        "StatisticsMonth": "202602"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 101,
+        "Result_Desc": "查询失败，无数据返回！",
+        "Result_Data": null
+      },
+      "elapsed": 0.136,
       "error": null
     },
     "GET:/Customer/GetCustomerConsumeRatio": {
@@ -38825,7 +38787,53 @@
           ]
         }
       },
-      "elapsed": 0.173,
+      "elapsed": 0.109,
+      "error": null
+    },
+    "GET:/Customer/GetCustomerRatio": {
+      "key": "GET:/Customer/GetCustomerRatio",
+      "idx": 51,
+      "method": "GET",
+      "route": "/Customer/GetCustomerRatio",
+      "params": {
+        "statisticsType": "1",
+        "provinceCode": "340000",
+        "statisticsMonth": "202602"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 10,
+          "TotalCount": 3,
+          "List": [
+            {
+              "name": "男性",
+              "data": [
+                63.41
+              ]
+            },
+            {
+              "name": "女性",
+              "data": [
+                36.59
+              ]
+            },
+            {
+              "name": "年龄",
+              "data": [
+                9.76,
+                59.63,
+                20.61,
+                10.0
+              ]
+            }
+          ]
+        }
+      },
+      "elapsed": 0.218,
       "error": null
     },
     "GET:/Customer/GetCustomerAgeRatio": {
@@ -38867,7 +38875,7 @@
           ]
         }
       },
-      "elapsed": 0.155,
+      "elapsed": 0.144,
       "error": null
     },
     "GET:/Customer/GetCustomerGroupRatio": {
@@ -38892,83 +38900,83 @@
               "name": "男性",
               "data": [
                 [
-                  25.0,
-                  26.0,
+                  23.0,
+                  11.0,
                   3.96
                 ],
                 [
-                  23.0,
-                  41.0,
+                  24.0,
+                  46.0,
                   1.16
                 ],
                 [
-                  23.0,
-                  80.0,
+                  21.0,
+                  61.0,
                   0.52
                 ],
                 [
-                  25.0,
-                  97.0,
+                  22.0,
+                  103.0,
                   0.34
                 ],
                 [
-                  29.0,
-                  25.0,
+                  28.0,
+                  20.0,
                   23.18
                 ],
                 [
-                  27.0,
-                  41.0,
+                  34.0,
+                  44.0,
                   7.02
                 ],
                 [
-                  31.0,
-                  77.0,
+                  29.0,
+                  75.0,
                   2.89
                 ],
                 [
-                  30.0,
-                  92.0,
+                  29.0,
+                  119.0,
                   1.83
                 ],
                 [
-                  43.0,
-                  18.0,
+                  44.0,
+                  6.0,
                   8.98
                 ],
                 [
-                  45.0,
-                  54.0,
+                  37.0,
+                  34.0,
                   3.2
                 ],
                 [
-                  43.0,
-                  66.0,
+                  38.0,
+                  70.0,
                   1.48
                 ],
                 [
-                  42.0,
-                  112.0,
+                  45.0,
+                  97.0,
                   1.04
                 ],
                 [
-                  54.0,
-                  20.0,
+                  59.0,
+                  18.0,
                   4.71
                 ],
                 [
-                  49.0,
-                  42.0,
+                  52.0,
+                  35.0,
                   1.75
                 ],
                 [
-                  56.0,
-                  88.0,
+                  55.0,
+                  85.0,
                   0.76
                 ],
                 [
                   47.0,
-                  110.0,
+                  118.0,
                   0.59
                 ]
               ]
@@ -38978,82 +38986,82 @@
               "data": [
                 [
                   24.0,
-                  8.0,
+                  11.0,
                   2.63
                 ],
                 [
-                  21.0,
-                  31.0,
+                  25.0,
+                  54.0,
                   0.68
                 ],
                 [
-                  24.0,
+                  25.0,
                   81.0,
                   0.28
                 ],
                 [
                   21.0,
-                  110.0,
+                  96.0,
                   0.18
                 ],
                 [
-                  31.0,
-                  28.0,
+                  35.0,
+                  2.0,
                   17.42
                 ],
                 [
-                  33.0,
-                  34.0,
+                  31.0,
+                  49.0,
                   4.48
                 ],
                 [
-                  35.0,
-                  61.0,
+                  33.0,
+                  76.0,
                   1.78
                 ],
                 [
-                  33.0,
-                  106.0,
+                  28.0,
+                  104.0,
                   1.02
                 ],
                 [
-                  37.0,
-                  18.0,
+                  40.0,
+                  24.0,
                   4.06
                 ],
                 [
-                  37.0,
-                  34.0,
+                  43.0,
+                  58.0,
                   1.08
                 ],
                 [
-                  42.0,
-                  83.0,
+                  45.0,
+                  61.0,
                   0.47
                 ],
                 [
-                  45.0,
-                  110.0,
+                  37.0,
+                  97.0,
                   0.3
                 ],
                 [
-                  50.0,
-                  23.0,
+                  51.0,
+                  17.0,
                   1.45
                 ],
                 [
-                  56.0,
-                  59.0,
+                  55.0,
+                  51.0,
                   0.43
                 ],
                 [
-                  52.0,
-                  77.0,
+                  54.0,
+                  67.0,
                   0.19
                 ],
                 [
-                  53.0,
-                  100.0,
+                  57.0,
+                  99.0,
                   0.12
                 ]
               ]
@@ -39061,7 +39069,7 @@
           ]
         }
       },
-      "elapsed": 0.183,
+      "elapsed": 0.159,
       "error": null
     },
     "GET:/Customer/GetAnalysisDescList": {
@@ -39092,7 +39100,7 @@
           ]
         }
       },
-      "elapsed": 0.198,
+      "elapsed": 0.177,
       "error": null
     },
     "GET:/Customer/GetAnalysisDescDetail": {
@@ -39116,7 +39124,7 @@
           "Key_Content": null
         }
       },
-      "elapsed": 0.161,
+      "elapsed": 0.127,
       "error": null
     },
     "GET:/Debug/QuerySQL": {
@@ -39129,7 +39137,7 @@
       },
       "http_status": 404,
       "response": null,
-      "elapsed": 0.042,
+      "elapsed": 0.031,
       "error": null
     },
     "GET:/Customer/GetCustomerSaleRatio": {
@@ -39559,7 +39567,7 @@
           ]
         }
       },
-      "elapsed": 0.558,
+      "elapsed": 0.426,
       "error": null
     },
     "GET:/Examine/GetEXAMINEDetail": {
@@ -39605,7 +39613,7 @@
           "DetailList": null
         }
       },
-      "elapsed": 0.193,
+      "elapsed": 0.123,
       "error": null
     },
     "POST:/Examine/GetEXAMINEList": {
@@ -39625,7 +39633,7 @@
           "List": []
         }
       },
-      "elapsed": 0.717,
+      "elapsed": 0.694,
       "error": null
     },
     "GET:/Examine/GetMEETINGDetail": {
@@ -39668,7 +39676,7 @@
           "MEETING_DESC": ""
         }
       },
-      "elapsed": 0.174,
+      "elapsed": 0.212,
       "error": null
     },
     "POST:/Examine/GetPATROLList": {
@@ -39688,7 +39696,7 @@
           "List": []
         }
       },
-      "elapsed": 12.415,
+      "elapsed": 12.187,
       "error": null
     },
     "GET:/Examine/GetPATROLDetail": {
@@ -39732,7 +39740,7 @@
           "PATROL_DESC": ""
         }
       },
-      "elapsed": 0.198,
+      "elapsed": 0.159,
       "error": null
     },
     "GET:/Examine/WeChat_GetExamineList": {
@@ -40918,7 +40926,7 @@
           }
         ]
       },
-      "elapsed": 0.29,
+      "elapsed": 0.212,
       "error": null
     },
     "GET:/Examine/WeChat_GetExamineDetail": {
@@ -40940,7 +40948,7 @@
           "List": []
         }
       },
-      "elapsed": 0.212,
+      "elapsed": 0.221,
       "error": null
     },
     "GET:/Examine/WeChat_GetPatrolList": {
@@ -40960,7 +40968,7 @@
         "Result_Desc": "查询失败String 引用没有设置为 String 的实例。\r\n参数名: s",
         "Result_Data": null
       },
-      "elapsed": 1.355,
+      "elapsed": 3.807,
       "error": null
     },
     "GET:/Examine/WeChat_GetMeetingList": {
@@ -62411,7 +62419,7 @@
           }
         ]
       },
-      "elapsed": 0.371,
+      "elapsed": 0.613,
       "error": null
     },
     "GET:/Examine/GetPatrolAnalysis": {
@@ -62432,7 +62440,7 @@
         "Result_Desc": "查询失败，无数据返回！",
         "Result_Data": null
       },
-      "elapsed": 0.22,
+      "elapsed": 0.175,
       "error": null
     },
     "GET:/Examine/GetExamineAnalysis": {
@@ -62459,7 +62467,7 @@
           "List": []
         }
       },
-      "elapsed": 0.172,
+      "elapsed": 0.163,
       "error": null
     },
     "GET:/Examine/GetExamineResultList": {
@@ -62486,7 +62494,7 @@
           "List": []
         }
       },
-      "elapsed": 0.192,
+      "elapsed": 0.173,
       "error": null
     },
     "GET:/Examine/GetPatrolResultList": {
@@ -62512,7 +62520,7 @@
           "List": []
         }
       },
-      "elapsed": 0.162,
+      "elapsed": 0.173,
       "error": null
     },
     "POST:/Examine/GetEvaluateResList": {
@@ -62527,7 +62535,7 @@
         "Result_Desc": "查询失败未将对象引用设置到对象的实例。",
         "Result_Data": null
       },
-      "elapsed": 0.017,
+      "elapsed": 0.025,
       "error": null
     },
     "GET:/Revenue/GetRevenuePushList": {
@@ -62552,7 +62560,7 @@
           "List": []
         }
       },
-      "elapsed": 0.302,
+      "elapsed": 0.296,
       "error": null
     },
     "POST:/Examine/GetMEETINGList": {
@@ -62572,7 +62580,7 @@
           "List": []
         }
       },
-      "elapsed": 17.052,
+      "elapsed": 19.479,
       "error": null
     },
     "GET:/Revenue/GetSummaryRevenue": {
@@ -62673,7 +62681,7 @@
           ]
         }
       },
-      "elapsed": 0.852,
+      "elapsed": 0.849,
       "error": null
     },
     "GET:/Revenue/GetSummaryRevenueMonth": {
@@ -62767,7 +62775,7 @@
           "SPRegionList": []
         }
       },
-      "elapsed": 0.319,
+      "elapsed": 0.277,
       "error": null
     },
     "GET:/Revenue/GetWechatPushSalesList": {
@@ -62791,7 +62799,7 @@
           "List": []
         }
       },
-      "elapsed": 0.302,
+      "elapsed": 0.251,
       "error": null
     },
     "GET:/Revenue/GetUnUpLoadShops": {
@@ -63006,7 +63014,7 @@
           ]
         }
       },
-      "elapsed": 0.168,
+      "elapsed": 0.154,
       "error": null
     },
     "GET:/Revenue/GetServerpartEndAccountList": {
@@ -63032,7 +63040,7 @@
           "ShopEndaccountList": null
         }
       },
-      "elapsed": 0.175,
+      "elapsed": 0.153,
       "error": null
     },
     "GET:/Revenue/GetServerpartBrand": {
@@ -63057,7 +63065,7 @@
           "listBusinessModel": null
         }
       },
-      "elapsed": 0.347,
+      "elapsed": 0.442,
       "error": null
     },
     "GET:/Revenue/GetShopEndAccountList": {
@@ -63092,7 +63100,7 @@
           "ShopEndaccountList": null
         }
       },
-      "elapsed": 0.173,
+      "elapsed": 0.161,
       "error": null
     },
     "GET:/Revenue/GetBudgetExpenseList": {
@@ -63116,27 +63124,7 @@
           "List": []
         }
       },
-      "elapsed": 0.127,
-      "error": null
-    },
-    "GET:/Revenue/GetRevenueBudget": {
-      "key": "GET:/Revenue/GetRevenueBudget",
-      "idx": 84,
-      "method": "GET",
-      "route": "/Revenue/GetRevenueBudget",
-      "params": {
-        "Province_Code": "340000",
-        "Statistics_Date": "2026-02-13",
-        "Serverpart_ID": "416",
-        "SPRegionType_ID": ""
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 101,
-        "Result_Desc": "查询失败，未录入预算数据！",
-        "Result_Data": null
-      },
-      "elapsed": 0.151,
+      "elapsed": 0.16,
       "error": null
     },
     "POST:/Revenue/GetBudgetExpenseList": {
@@ -63159,7 +63147,27 @@
           "List": []
         }
       },
-      "elapsed": 0.488,
+      "elapsed": 0.184,
+      "error": null
+    },
+    "GET:/Revenue/GetRevenueBudget": {
+      "key": "GET:/Revenue/GetRevenueBudget",
+      "idx": 84,
+      "method": "GET",
+      "route": "/Revenue/GetRevenueBudget",
+      "params": {
+        "Province_Code": "340000",
+        "Statistics_Date": "2026-02-13",
+        "Serverpart_ID": "416",
+        "SPRegionType_ID": ""
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 101,
+        "Result_Desc": "查询失败，未录入预算数据！",
+        "Result_Data": null
+      },
+      "elapsed": 0.216,
       "error": null
     },
     "GET:/Revenue/GetProvinceRevenueBudget": {
@@ -63180,7 +63188,7 @@
         "Result_Desc": "查询失败，无数据返回！",
         "Result_Data": null
       },
-      "elapsed": 0.24,
+      "elapsed": 0.352,
       "error": null
     },
     "GET:/Revenue/GetMallDeliver": {
@@ -63209,7 +63217,7 @@
           "MonthDeliver_Price": null
         }
       },
-      "elapsed": 0.244,
+      "elapsed": 0.173,
       "error": null
     },
     "GET:/Revenue/GetMobileShare": {
@@ -63245,7 +63253,7 @@
           "MonthRoyalty_Price": null
         }
       },
-      "elapsed": 0.461,
+      "elapsed": 0.443,
       "error": null
     },
     "GET:/Revenue/GetTransactionTimeAnalysis": {
@@ -63265,7 +63273,7 @@
         "Result_Desc": "查询失败，无数据返回！",
         "Result_Data": null
       },
-      "elapsed": 0.319,
+      "elapsed": 0.252,
       "error": null
     },
     "GET:/Revenue/GetTransactionAnalysis": {
@@ -63310,7 +63318,7 @@
           "transactionLevel": null
         }
       },
-      "elapsed": 0.523,
+      "elapsed": 0.566,
       "error": null
     },
     "GET:/Revenue/GetTransactionConvert": {
@@ -63440,7 +63448,7 @@
           }
         }
       },
-      "elapsed": 0.419,
+      "elapsed": 0.439,
       "error": null
     },
     "GET:/Revenue/GetBusinessTradeRevenue": {
@@ -63548,79 +63556,7 @@
           ]
         }
       },
-      "elapsed": 0.575,
-      "error": null
-    },
-    "GET:/Revenue/GetBusinessTradeLevel": {
-      "key": "GET:/Revenue/GetBusinessTradeLevel",
-      "idx": 92,
-      "method": "GET",
-      "route": "/Revenue/GetBusinessTradeLevel",
-      "params": {
-        "ProvinceCode": "340000",
-        "StatisticsDate": "2026-02-13",
-        "ServerpartId": "416",
-        "ShowWholeTrade": "false",
-        "ShowTradeCount": "false",
-        "SPRegionTypeID": "",
-        "BusinessTradeIds": ""
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "legend": [
-            "中式快餐",
-            "面馆",
-            "地方特色小吃",
-            "中餐馆",
-            "鞋帽服饰"
-          ],
-          "ColumnList": [
-            {
-              "name": "低消费",
-              "value": [
-                "1"
-              ],
-              "data": [
-                86.92,
-                73.8,
-                90.5,
-                52.17,
-                21.43
-              ]
-            },
-            {
-              "name": "普通消费",
-              "value": [
-                "2"
-              ],
-              "data": [
-                11.15,
-                20.74,
-                8.71,
-                8.7,
-                14.29
-              ]
-            },
-            {
-              "name": "高消费",
-              "value": [
-                "3,4"
-              ],
-              "data": [
-                1.93,
-                5.46,
-                0.79,
-                39.13,
-                64.28
-              ]
-            }
-          ]
-        }
-      },
-      "elapsed": 0.509,
+      "elapsed": 0.474,
       "error": null
     },
     "GET:/Revenue/GetBusinessBrandLevel": {
@@ -63692,7 +63628,79 @@
           ]
         }
       },
-      "elapsed": 0.339,
+      "elapsed": 0.279,
+      "error": null
+    },
+    "GET:/Revenue/GetBusinessTradeLevel": {
+      "key": "GET:/Revenue/GetBusinessTradeLevel",
+      "idx": 92,
+      "method": "GET",
+      "route": "/Revenue/GetBusinessTradeLevel",
+      "params": {
+        "ProvinceCode": "340000",
+        "StatisticsDate": "2026-02-13",
+        "ServerpartId": "416",
+        "ShowWholeTrade": "false",
+        "ShowTradeCount": "false",
+        "SPRegionTypeID": "",
+        "BusinessTradeIds": ""
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "legend": [
+            "中式快餐",
+            "面馆",
+            "地方特色小吃",
+            "中餐馆",
+            "鞋帽服饰"
+          ],
+          "ColumnList": [
+            {
+              "name": "低消费",
+              "value": [
+                "1"
+              ],
+              "data": [
+                86.92,
+                73.8,
+                90.5,
+                52.17,
+                21.43
+              ]
+            },
+            {
+              "name": "普通消费",
+              "value": [
+                "2"
+              ],
+              "data": [
+                11.15,
+                20.74,
+                8.71,
+                8.7,
+                14.29
+              ]
+            },
+            {
+              "name": "高消费",
+              "value": [
+                "3,4"
+              ],
+              "data": [
+                1.93,
+                5.46,
+                0.79,
+                39.13,
+                64.28
+              ]
+            }
+          ]
+        }
+      },
+      "elapsed": 0.549,
       "error": null
     },
     "GET:/Revenue/GetRevenueTrend": {
@@ -63718,7 +63726,7 @@
           "List": []
         }
       },
-      "elapsed": 0.312,
+      "elapsed": 0.33,
       "error": null
     },
     "GET:/Revenue/GetRevenueReport": {
@@ -64761,7 +64769,7 @@
           "SearchResult": null
         }
       },
-      "elapsed": 0.398,
+      "elapsed": 0.35,
       "error": null
     },
     "GET:/Revenue/GetSalableCommodity": {
@@ -64828,7 +64836,33 @@
           ]
         }
       },
-      "elapsed": 0.007,
+      "elapsed": 0.024,
+      "error": null
+    },
+    "GET:/Revenue/GetSPRevenueRank": {
+      "key": "GET:/Revenue/GetSPRevenueRank",
+      "idx": 98,
+      "method": "GET",
+      "route": "/Revenue/GetSPRevenueRank",
+      "params": {
+        "pushProvinceCode": "340000",
+        "Statistics_Date": "2026-02-13",
+        "Serverpart_ID": "416",
+        "SPRegionType_ID": ""
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "PageIndex": 1,
+          "PageSize": 10,
+          "TotalCount": 0,
+          "List": [],
+          "OtherData": 0.0
+        }
+      },
+      "elapsed": 0.353,
       "error": null
     },
     "GET:/Revenue/GetRevenueReportDetil": {
@@ -65007,33 +65041,7 @@
           ]
         }
       },
-      "elapsed": 0.417,
-      "error": null
-    },
-    "GET:/Revenue/GetSPRevenueRank": {
-      "key": "GET:/Revenue/GetSPRevenueRank",
-      "idx": 98,
-      "method": "GET",
-      "route": "/Revenue/GetSPRevenueRank",
-      "params": {
-        "pushProvinceCode": "340000",
-        "Statistics_Date": "2026-02-13",
-        "Serverpart_ID": "416",
-        "SPRegionType_ID": ""
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "PageIndex": 1,
-          "PageSize": 10,
-          "TotalCount": 0,
-          "List": [],
-          "OtherData": 0.0
-        }
-      },
-      "elapsed": 0.283,
+      "elapsed": 0.465,
       "error": null
     },
     "GET:/Revenue/GetRevenueYOY": {
@@ -65428,217 +65436,7 @@
           "compareHolidayDays": 0
         }
       },
-      "elapsed": 0.263,
-      "error": null
-    },
-    "GET:/Revenue/GetAccountReceivable": {
-      "key": "GET:/Revenue/GetAccountReceivable",
-      "idx": 101,
-      "method": "GET",
-      "route": "/Revenue/GetAccountReceivable",
-      "params": {
-        "pushProvinceCode": "340000",
-        "StatisticsDate": "2026-02-13",
-        "StatisticsMonth": "202602",
-        "StatisticsStartMonth": "202602",
-        "calcType": "1"
-      },
-      "http_status": 200,
-      "response": {
-        "Result_Code": 100,
-        "Result_Desc": "查询成功",
-        "Result_Data": {
-          "OwnerRevenue": 56411641.28,
-          "MerchantRevenue": 28867112.73,
-          "OwnerList": {
-            "AcountList": [
-              {
-                "name": "业主自营",
-                "value": "26776775.65"
-              },
-              {
-                "name": "自营提成",
-                "value": "768217.90"
-              },
-              {
-                "name": "合作分成",
-                "value": "11686035.93"
-              },
-              {
-                "name": "固定租金",
-                "value": "208471.69"
-              }
-            ],
-            "EntryList": [
-              {
-                "name": "业主自营",
-                "value": "25382503.53"
-              },
-              {
-                "name": "自营提成",
-                "value": "115989.85"
-              },
-              {
-                "name": "合作分成",
-                "value": "4347244.30"
-              },
-              {
-                "name": "固定租金",
-                "value": "183587.53"
-              }
-            ],
-            "ReceivableList": [
-              {
-                "name": "业主自营",
-                "value": "0"
-              },
-              {
-                "name": "自营提成",
-                "value": "-641788.98"
-              },
-              {
-                "name": "合作分成",
-                "value": "-6952642.67"
-              },
-              {
-                "name": "固定租金",
-                "value": "-8361.29"
-              }
-            ]
-          },
-          "MerchantList": {
-            "AcountList": [
-              {
-                "name": "业主自营",
-                "value": "0"
-              },
-              {
-                "name": "自营提成",
-                "value": "0"
-              },
-              {
-                "name": "合作分成",
-                "value": "14557221.67"
-              },
-              {
-                "name": "固定租金",
-                "value": "1807988.43"
-              }
-            ],
-            "EntryList": [
-              {
-                "name": "业主自营",
-                "value": "0"
-              },
-              {
-                "name": "自营提成",
-                "value": "641788.98"
-              },
-              {
-                "name": "合作分成",
-                "value": "21469061.85"
-              },
-              {
-                "name": "固定租金",
-                "value": "1816349.72"
-              }
-            ],
-            "ReceivableList": [
-              {
-                "name": "业主自营",
-                "value": "0"
-              },
-              {
-                "name": "自营提成",
-                "value": "641788.98"
-              },
-              {
-                "name": "合作分成",
-                "value": "6911840.18"
-              },
-              {
-                "name": "固定租金",
-                "value": "8361.29"
-              }
-            ]
-          },
-          "ProjectCount": 700,
-          "ProjectCountList": [
-            {
-              "name": "业主自营",
-              "value": "255"
-            },
-            {
-              "name": "自营提成",
-              "value": "12"
-            },
-            {
-              "name": "合作分成",
-              "value": "411"
-            },
-            {
-              "name": "固定租金",
-              "value": "22"
-            }
-          ],
-          "ProjectRatioList": [
-            {
-              "name": "业主自营",
-              "value": "36.43"
-            },
-            {
-              "name": "自营提成",
-              "value": "1.71"
-            },
-            {
-              "name": "合作分成",
-              "value": "58.71"
-            },
-            {
-              "name": "固定租金",
-              "value": "3.14"
-            }
-          ],
-          "RevenueRatioList": [
-            {
-              "name": "业主自营",
-              "value": "47.47"
-            },
-            {
-              "name": "自营提成",
-              "value": "1.36"
-            },
-            {
-              "name": "合作分成",
-              "value": "46.66"
-            },
-            {
-              "name": "固定租金",
-              "value": "4.51"
-            }
-          ],
-          "CommissionRatio": 17.07,
-          "CommissionList": [
-            {
-              "name": "业主自营",
-              "value": "0"
-            },
-            {
-              "name": "自营提成",
-              "value": "16.47"
-            },
-            {
-              "name": "合作分成",
-              "value": "17.98"
-            },
-            {
-              "name": "固定租金",
-              "value": "7.86"
-            }
-          ]
-        }
-      },
-      "elapsed": 0.196,
+      "elapsed": 0.312,
       "error": null
     },
     "GET:/Revenue/GetHolidayCompare": {
@@ -66152,7 +65950,217 @@
           "compareHolidayDays": 40
         }
       },
-      "elapsed": 0.412,
+      "elapsed": 0.433,
+      "error": null
+    },
+    "GET:/Revenue/GetAccountReceivable": {
+      "key": "GET:/Revenue/GetAccountReceivable",
+      "idx": 101,
+      "method": "GET",
+      "route": "/Revenue/GetAccountReceivable",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsDate": "2026-02-13",
+        "StatisticsMonth": "202602",
+        "StatisticsStartMonth": "202602",
+        "calcType": "1"
+      },
+      "http_status": 200,
+      "response": {
+        "Result_Code": 100,
+        "Result_Desc": "查询成功",
+        "Result_Data": {
+          "OwnerRevenue": 56411641.28,
+          "MerchantRevenue": 28867112.73,
+          "OwnerList": {
+            "AcountList": [
+              {
+                "name": "业主自营",
+                "value": "26776775.65"
+              },
+              {
+                "name": "自营提成",
+                "value": "768217.90"
+              },
+              {
+                "name": "合作分成",
+                "value": "11686035.93"
+              },
+              {
+                "name": "固定租金",
+                "value": "208471.69"
+              }
+            ],
+            "EntryList": [
+              {
+                "name": "业主自营",
+                "value": "25382503.53"
+              },
+              {
+                "name": "自营提成",
+                "value": "115989.85"
+              },
+              {
+                "name": "合作分成",
+                "value": "4347244.30"
+              },
+              {
+                "name": "固定租金",
+                "value": "183587.53"
+              }
+            ],
+            "ReceivableList": [
+              {
+                "name": "业主自营",
+                "value": "0"
+              },
+              {
+                "name": "自营提成",
+                "value": "-641788.98"
+              },
+              {
+                "name": "合作分成",
+                "value": "-6952642.67"
+              },
+              {
+                "name": "固定租金",
+                "value": "-8361.29"
+              }
+            ]
+          },
+          "MerchantList": {
+            "AcountList": [
+              {
+                "name": "业主自营",
+                "value": "0"
+              },
+              {
+                "name": "自营提成",
+                "value": "0"
+              },
+              {
+                "name": "合作分成",
+                "value": "14557221.67"
+              },
+              {
+                "name": "固定租金",
+                "value": "1807988.43"
+              }
+            ],
+            "EntryList": [
+              {
+                "name": "业主自营",
+                "value": "0"
+              },
+              {
+                "name": "自营提成",
+                "value": "641788.98"
+              },
+              {
+                "name": "合作分成",
+                "value": "21469061.85"
+              },
+              {
+                "name": "固定租金",
+                "value": "1816349.72"
+              }
+            ],
+            "ReceivableList": [
+              {
+                "name": "业主自营",
+                "value": "0"
+              },
+              {
+                "name": "自营提成",
+                "value": "641788.98"
+              },
+              {
+                "name": "合作分成",
+                "value": "6911840.18"
+              },
+              {
+                "name": "固定租金",
+                "value": "8361.29"
+              }
+            ]
+          },
+          "ProjectCount": 700,
+          "ProjectCountList": [
+            {
+              "name": "业主自营",
+              "value": "255"
+            },
+            {
+              "name": "自营提成",
+              "value": "12"
+            },
+            {
+              "name": "合作分成",
+              "value": "411"
+            },
+            {
+              "name": "固定租金",
+              "value": "22"
+            }
+          ],
+          "ProjectRatioList": [
+            {
+              "name": "业主自营",
+              "value": "36.43"
+            },
+            {
+              "name": "自营提成",
+              "value": "1.71"
+            },
+            {
+              "name": "合作分成",
+              "value": "58.71"
+            },
+            {
+              "name": "固定租金",
+              "value": "3.14"
+            }
+          ],
+          "RevenueRatioList": [
+            {
+              "name": "业主自营",
+              "value": "47.47"
+            },
+            {
+              "name": "自营提成",
+              "value": "1.36"
+            },
+            {
+              "name": "合作分成",
+              "value": "46.66"
+            },
+            {
+              "name": "固定租金",
+              "value": "4.51"
+            }
+          ],
+          "CommissionRatio": 17.07,
+          "CommissionList": [
+            {
+              "name": "业主自营",
+              "value": "0"
+            },
+            {
+              "name": "自营提成",
+              "value": "16.47"
+            },
+            {
+              "name": "合作分成",
+              "value": "17.98"
+            },
+            {
+              "name": "固定租金",
+              "value": "7.86"
+            }
+          ]
+        }
+      },
+      "elapsed": 0.178,
       "error": null
     },
     "GET:/Revenue/GetCurRevenue": {
@@ -66181,7 +66189,7 @@
           "AddTotalCount": null
         }
       },
-      "elapsed": 0.217,
+      "elapsed": 0.201,
       "error": null
     },
     "GET:/Revenue/GetShopCurRevenue": {
@@ -66199,7 +66207,7 @@
         "Result_Desc": "查询失败，无数据返回！",
         "Result_Data": null
       },
-      "elapsed": 0.164,
+      "elapsed": 0.175,
       "error": null
     },
     "GET:/Revenue/GetLastSyncDateTime": {
@@ -66448,7 +66456,7 @@
           }
         }
       },
-      "elapsed": 0.436,
+      "elapsed": 0.393,
       "error": null
     },
     "GET:/Revenue/GetHolidayAnalysisBatch": {
@@ -66654,7 +66662,7 @@
           ]
         }
       },
-      "elapsed": 0.471,
+      "elapsed": 0.475,
       "error": null
     },
     "GET:/Revenue/GetServerpartINCAnalysis": {
@@ -66739,7 +66747,7 @@
           "OtherData": "2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2026/2/2 0:00:00至2026/3/13 0:00:00"
         }
       },
-      "elapsed": 0.419,
+      "elapsed": 0.411,
       "error": null
     },
     "GET:/Revenue/GetShopINCAnalysis": {
@@ -66763,7 +66771,7 @@
         "Result_Desc": "查询失败，无数据返回！",
         "Result_Data": null
       },
-      "elapsed": 0.337,
+      "elapsed": 0.335,
       "error": null
     },
     "GET:/Revenue/GetMonthlyBusinessAnalysis": {
@@ -67019,7 +67027,7 @@
           ]
         }
       },
-      "elapsed": 0.318,
+      "elapsed": 0.435,
       "error": null
     },
     "GET:/Revenue/GetMonthlySPINCAnalysis": {
@@ -67094,7 +67102,7 @@
           ]
         }
       },
-      "elapsed": 0.351,
+      "elapsed": 0.44,
       "error": null
     },
     "GET:/Revenue/GetHolidayRevenueRatio": {
@@ -67209,7 +67217,7 @@
           ]
         }
       },
-      "elapsed": 0.019,
+      "elapsed": 0.037,
       "error": null
     },
     "GET:/Revenue/GetTransactionDetailList": {
@@ -67237,22 +67245,7 @@
           "List": []
         }
       },
-      "elapsed": 0.162,
-      "error": null
-    },
-    "POST:/Revenue/GetBusinessRevenueList": {
-      "key": "POST:/Revenue/GetBusinessRevenueList",
-      "idx": 113,
-      "method": "POST",
-      "route": "/Revenue/GetBusinessRevenueList",
-      "params": {},
-      "http_status": 200,
-      "response": {
-        "Result_Code": 999,
-        "Result_Desc": "查询失败未将对象引用设置到对象的实例。",
-        "Result_Data": null
-      },
-      "elapsed": 0.03,
+      "elapsed": 0.203,
       "error": null
     },
     "POST:/Revenue/GetMonthlyBusinessRevenue": {
@@ -67267,7 +67260,22 @@
         "Result_Desc": "查询失败未将对象引用设置到对象的实例。",
         "Result_Data": null
       },
-      "elapsed": 0.028,
+      "elapsed": 0.01,
+      "error": null
+    },
+    "POST:/Revenue/GetBusinessRevenueList": {
+      "key": "POST:/Revenue/GetBusinessRevenueList",
+      "idx": 113,
+      "method": "POST",
+      "route": "/Revenue/GetBusinessRevenueList",
+      "params": {},
+      "http_status": 200,
+      "response": {
+        "Result_Code": 999,
+        "Result_Desc": "查询失败未将对象引用设置到对象的实例。",
+        "Result_Data": null
+      },
+      "elapsed": 0.023,
       "error": null
     },
     "GET:/Revenue/GetRevenueCompare": {
@@ -68050,7 +68058,7 @@
           ]
         }
       },
-      "elapsed": 0.423,
+      "elapsed": 0.375,
       "error": null
     },
     "GET:/Revenue/GetCompanyRevenueReport": {
@@ -68643,7 +68651,7 @@
           ]
         }
       },
-      "elapsed": 0.453,
+      "elapsed": 0.775,
       "error": null
     },
     "GET:/Revenue/GetHolidayDailyAnalysis": {
@@ -68763,7 +68771,7 @@
           ]
         }
       },
-      "elapsed": 0.468,
+      "elapsed": 0.388,
       "error": null
     },
     "GET:/Revenue/GetHolidaySPRAnalysis": {
@@ -75501,7 +75509,7 @@
           ]
         }
       },
-      "elapsed": 1.059,
+      "elapsed": 1.046,
       "error": null
     },
     "GET:/Revenue/GetMonthINCAnalysisSummary": {
@@ -75549,7 +75557,7 @@
           ]
         }
       },
-      "elapsed": 0.155,
+      "elapsed": 0.14,
       "error": null
     },
     "GET:/Revenue/GetMonthINCAnalysis": {
@@ -76768,7 +76776,7 @@
           ]
         }
       },
-      "elapsed": 0.952,
+      "elapsed": 1.059,
       "error": null
     },
     "GET:/Revenue/GetShopSABFIList": {
@@ -78504,7 +78512,7 @@
           ]
         }
       },
-      "elapsed": 0.802,
+      "elapsed": 0.68,
       "error": null
     },
     "GET:/Revenue/GetShopMonthSABFIList": {
@@ -78611,7 +78619,7 @@
           ]
         }
       },
-      "elapsed": 0.135,
+      "elapsed": 0.1,
       "error": null
     },
     "GET:/Revenue/StorageMonthINCAnalysis": {
@@ -78630,7 +78638,7 @@
         "Result_Desc": "生成成功",
         "Result_Data": null
       },
-      "elapsed": 3.923,
+      "elapsed": 3.737,
       "error": null
     }
   }

@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 17:53:56",
-  "elapsed": 40.0,
+  "time": "2026-03-08 18:11:24",
+  "elapsed": 41.1,
   "stats": {
     "PASS": 45,
     "DIFF": 29,
@@ -19,7 +19,7 @@
     },
     {
       "route": "GET /BigData/GetDateAnalysis",
-      "detail": "Code=100, 9处差异",
+      "detail": "Code=100, 8处差异",
       "diffs": [
         ".Result_Data.List[0].CurRevenueAmount_A: 旧=37498.79 新=0.0",
         ".Result_Data.List[0].CurRevenueAmount_B: 旧=27376.93 新=0.0",
@@ -58,10 +58,9 @@
     },
     {
       "route": "GET /Revenue/GetBayonetOAList",
-      "detail": "Code=100, 3处差异",
+      "detail": "Code=100, 2处差异",
       "diffs": [
-        ".Result_Data.List[0].OwnerProvince: 列表长度不同 旧=5 新=4",
-        ".Result_Data.List[0].OwnerProvinceList: 列表长度不同 旧=5 新=4",
+        ".Result_Data.List[0].OwnerProvinceList[4].value: 旧=29302 新=16212",
         ".Result_Data.List[0].Vehicle_Count: 旧=94122 新=80892"
       ]
     },
@@ -93,12 +92,9 @@
     },
     {
       "route": "GET /Revenue/GetBusinessTradeLevel",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 1处差异",
       "diffs": [
-        ".Result_Data.ColumnList[0].data: 列表长度不同 旧=5 新=3",
-        ".Result_Data.ColumnList[0].data[0]: 旧=86.92 新=84.24",
-        ".Result_Data.legend: 列表长度不同 旧=5 新=3",
-        ".Result_Data.legend[0]: 旧=中式快餐 新=餐饮主食"
+        ".Result_Data.ColumnList[0].data[0]: 旧=86.92 新=86.97"
       ]
     },
     {
@@ -124,7 +120,7 @@
       "diffs": [
         ".Result_Data.ServerpartId: 类型不同 旧=NoneType 新=int",
         ".Result_Data.compareYear: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.curDate: 旧=2026/2/13 新=2026-02-13",
+        ".Result_Data.curDate: 类型不同 旧=str 新=NoneType",
         ".Result_Data.curYear: 类型不同 旧=NoneType 新=int",
         ".Result_Data.curYearAccount.data: 类型不同 旧=str 新=NoneType"
       ]
@@ -133,10 +129,10 @@
       "route": "GET /Revenue/GetHolidayAnalysisBatch",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].curDate: 旧=2026/2/13 新=2026-02-13",
         ".Result_Data.List[0].curYearAccount.data: 类型不同 旧=str 新=NoneType",
         ".Result_Data.List[0].curYearAccount.value: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.List[0]: ...还有60条差异"
+        ".Result_Data.List[0].curYearBayonet.data: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.List[0]: ...还有59条差异"
       ]
     },
     {
