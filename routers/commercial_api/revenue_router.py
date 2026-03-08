@@ -4494,10 +4494,10 @@ async def get_holiday_spr_analysis(
             cmp_sp_map[sp_id] = {"rev": safe_dec(r.get("REVENUE")), "rev_cur": safe_dec(r.get("REVENUE_CUR"))}
 
         # 整体
-        total_cur = sum(v["rev"] for v in cur_sp_map.values())
-        total_cmp = sum(v["rev"] for v in cmp_sp_map.values())
-        total_cur_d = sum(v["rev_cur"] for v in cur_sp_map.values())
-        total_cmp_d = sum(v["rev_cur"] for v in cmp_sp_map.values())
+        total_cur = round(sum(v["rev"] for v in cur_sp_map.values()), 2)
+        total_cmp = round(sum(v["rev"] for v in cmp_sp_map.values()), 2)
+        total_cur_d = round(sum(v["rev_cur"] for v in cur_sp_map.values()), 2)
+        total_cmp_d = round(sum(v["rev_cur"] for v in cmp_sp_map.values()), 2)
 
         result_list = [{
             "node": {"SPRegionTypeId": 0, "SPRegionTypeName": "整体对客销售",
