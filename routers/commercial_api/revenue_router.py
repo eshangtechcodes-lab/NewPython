@@ -4258,7 +4258,7 @@ async def get_business_revenue_list(postData: dict = None, db: DatabaseHelper = 
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetBusinessRevenueList AES解密失败: {ve}")
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="查询失败未将对象引用设置到对象的实例。")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 
@@ -4282,7 +4282,7 @@ async def get_monthly_business_revenue(postData: dict = None, db: DatabaseHelper
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetMonthlyBusinessRevenue AES解密失败: {ve}")
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="查询失败未将对象引用设置到对象的实例。")
     except Exception as ex:
         return Result.fail(msg=f"查询失败{ex}")
 

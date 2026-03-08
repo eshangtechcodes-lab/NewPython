@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 17:46:05",
-  "elapsed": 38.4,
+  "time": "2026-03-08 17:50:47",
+  "elapsed": 39.1,
   "stats": {
     "PASS": 43,
     "DIFF": 31,
@@ -170,7 +170,7 @@
       "route": "GET /Revenue/GetMonthINCAnalysisSummary",
       "detail": "Code=100, 1处差异",
       "diffs": [
-        ".Result_Data.List[0].name: 旧=车流增加，服务区营收减少 新=管理中心（自营：自营经营收入）"
+        ".Result_Data.List[3].value: 旧=1 新=0"
       ]
     },
     {
