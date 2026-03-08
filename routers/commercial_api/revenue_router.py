@@ -4690,7 +4690,7 @@ async def get_company_revenue_report(
 
         # 5. 查业态
         trade_rows = db.execute_query(f"""SELECT "AUTOSTATISTICS_ID","AUTOSTATISTICS_PID","AUTOSTATISTICS_NAME","AUTOSTATISTICS_INDEX"
-            FROM "T_AUTOSTATISTICS" WHERE "PROVINCE_CODE" = {province_id} AND "AUTOSTATISTICS_STATE" > 0""")
+            FROM "T_AUTOSTATISTICS" WHERE "PROVINCE_CODE" = {ProvinceCode} AND "AUTOSTATISTICS_STATE" > 0""")
         trade_map = {}
         for t in (trade_rows or []):
             trade_map[str(t["AUTOSTATISTICS_ID"])] = t["AUTOSTATISTICS_NAME"]
@@ -4823,7 +4823,7 @@ async def get_company_revenue_report(
                     server_groups[(s["ServerpartId"], s["ServerpartName"], s["ServerpartIndex"])].append(s)
                 for (sid, sname, sindex), s_items in sorted(server_groups.items(), key=lambda x: x[0][2]):
                     srv = round(sum(x["RevenueAmount"] for x in s_items), 2)
-                    shop_ids_str = ",".join(set(x["ServerpartShopId"] for x in s_items if x["ServerpartShopId"]))
+                    shop_ids_str = ",".join(dict.fromkeys(x["ServerpartShopId"] for x in s_items if x["ServerpartShopId"]))
                     region_node["children"].append({
                         "node": make_node(CompanyName=company_name, BusinessTrade_Id=trade_id,
                                          BusinessTrade_Name=trade_name, SPRegionType_Id=rid,
@@ -4831,7 +4831,7 @@ async def get_company_revenue_report(
                                          Serverpart_Name=sname, ServerpartShop_Id=shop_ids_str or None,
                                          Total_Revenue=srv,
                                          Revenue_Proportion=round(srv / total_revenue * 100, 2)),
-                        "children": []
+                        "children": None
                     })
                 region_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
                 region_nodes.append(region_node)
@@ -4890,7 +4890,7 @@ async def get_company_revenue_report(
                 if store_items:
                     s_rev = round(sum(s["RevenueAmount"] for s in store_items), 2)
                     store_node = {
-                        "node": make_node(CompanyName=company_name, BusinessTrade_Id=0,
+                        "node": make_node(CompanyName=company_name, BusinessTrade_Id=0.0,
                                          BusinessTrade_Name="服务区便利店", Total_Revenue=s_rev,
                                          Revenue_Proportion=round(s_rev / total_revenue * 100, 2)),
                         "children": []
@@ -4905,7 +4905,7 @@ async def get_company_revenue_report(
                                              Serverpart_Id=sid, Serverpart_Name=sname,
                                              ShopShort_Name=ssn, Total_Revenue=srv,
                                              Revenue_Proportion=round(srv / total_revenue * 100, 2)),
-                            "children": []
+                            "children": None
                         })
                     store_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
                     company_node["children"].append(store_node)
@@ -4917,7 +4917,7 @@ async def get_company_revenue_report(
                 for (tid, tname), items in trade_groups.items():
                     t_rev = round(sum(t["RevenueAmount"] for t in items), 2)
                     trade_node = {
-                        "node": make_node(CompanyName=company_name, BusinessTrade_Id=tid,
+                        "node": make_node(CompanyName=company_name, BusinessTrade_Id=safe_float(tid),
                                          BusinessTrade_Name=tname, Total_Revenue=t_rev,
                                          Revenue_Proportion=round(t_rev / total_revenue * 100, 2)),
                         "children": []
@@ -4928,12 +4928,12 @@ async def get_company_revenue_report(
                     for (sid, sname, ssn), s_items in sg.items():
                         srv = round(sum(x["RevenueAmount"] for x in s_items), 2)
                         trade_node["children"].append({
-                            "node": make_node(CompanyName=company_name, BusinessTrade_Id=tid,
+                            "node": make_node(CompanyName=company_name, BusinessTrade_Id=safe_float(tid),
                                              BusinessTrade_Name=tname, Serverpart_Id=sid,
                                              Serverpart_Name=sname, ShopShort_Name=ssn,
                                              Total_Revenue=srv,
                                              Revenue_Proportion=round(srv / total_revenue * 100, 2)),
-                            "children": []
+                            "children": None
                         })
                     trade_node["children"].sort(key=lambda x: x["node"]["Total_Revenue"] or 0, reverse=True)
                     company_node["children"].append(trade_node)
