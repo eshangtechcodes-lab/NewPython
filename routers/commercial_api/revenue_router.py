@@ -44,14 +44,14 @@ async def get_revenue_push_list(
         pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
         province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else pushProvinceCode
 
-        where_sql = f" AND B.PROVINCE_CODE = {province_id}"
+        where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
         if Serverpart_ID:
-            where_sql += f" AND B.SERVERPART_ID = {Serverpart_ID}"
+            where_sql += f' AND B."SERVERPART_ID" = {Serverpart_ID}'
         elif SPRegionType_ID:
             # 根据 SPRegionType_ID 查询 SPREGIONTYPE_ID
-            sp_res = db.execute_query("SELECT SPREGIONTYPE_ID FROM T_SERVERPART WHERE SERVERPART_ID = :sid", {"sid": SPRegionType_ID})
+            sp_res = db.execute_query('SELECT "SPREGIONTYPE_ID" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = :sid', {"sid": SPRegionType_ID})
             if sp_res:
-                where_sql += f" AND B.SPREGIONTYPE_ID = {sp_res[0]['SPREGIONTYPE_ID']}"
+                where_sql += f' AND B."SPREGIONTYPE_ID" = {sp_res[0]["SPREGIONTYPE_ID"]}'
 
         # 2. 日期确定
         st_date_str = Statistics_Date.split(" ")[0] if Statistics_Date else datetime.now().strftime("%Y-%m-%d")
@@ -62,28 +62,28 @@ async def get_revenue_push_list(
         if is_history:
             # 3.1 历史表 T_REVENUEDAILY 查询
             sql = f"""SELECT 
-                        B.SPREGIONTYPE_NAME, B.SERVERPART_NAME, A.SERVERPART_ID,
-                        C.SHOPNAME, C.SHOPREGION AS SHOPREGIONNAME,
-                        C.BUSINESS_TRADENAME AS BUSINESSTRADE_NAME, C.BRAND_NAME AS BUSINESSBRAND_NAME,
-                        SUM(A.TICKET_COUNT) AS TICKETCOUNT, SUM(A.TOTAL_COUNT) AS TOTALCOUNT,
-                        SUM(A.REVENUE_AMOUNT) AS CASHPAY, SUM(A.MOBILEPAY_AMOUNT) AS MOBILEPAYMENT,
-                        SUM(A.TOTALOFF_AMOUNT) AS TOTALOFFAMOUNT,
-                        SUM(CASE WHEN A.DIFFERENT_AMOUNT < 0 THEN A.DIFFERENT_AMOUNT ELSE 0 END) AS DIFFERENT_PRICE_LESS,
-                        SUM(CASE WHEN A.DIFFERENT_AMOUNT > 0 THEN A.DIFFERENT_AMOUNT ELSE 0 END) AS DIFFERENT_PRICE_MORE,
-                        CASE WHEN A.BUSINESS_TYPE = 1000 THEN '自营' ELSE '外包' END AS BUSINESS_TYPENAME,
-                        C.REVENUE_INCLUDE, 1 AS REVENUE_UPLOAD
+                        B."SPREGIONTYPE_NAME", B."SERVERPART_NAME", A."SERVERPART_ID",
+                        C."SHOPNAME", C."SHOPREGION" AS "SHOPREGIONNAME",
+                        C."BUSINESS_TRADENAME" AS "BUSINESSTRADE_NAME", C."BRAND_NAME" AS "BUSINESSBRAND_NAME",
+                        SUM(A."TICKET_COUNT") AS "TICKETCOUNT", SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
+                        SUM(A."REVENUE_AMOUNT") AS "CASHPAY", SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
+                        SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
+                        SUM(CASE WHEN A."DIFFERENT_AMOUNT" < 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_LESS",
+                        SUM(CASE WHEN A."DIFFERENT_AMOUNT" > 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_MORE",
+                        CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME",
+                        C."REVENUE_INCLUDE", 1 AS "REVENUE_UPLOAD"
                       FROM 
-                        T_REVENUEDAILY A
-                        JOIN T_SERVERPART B ON A.SERVERPART_ID = B.SERVERPART_ID
-                        LEFT JOIN T_SERVERPARTSHOP C ON A.SERVERPART_ID = C.SERVERPART_ID
+                        "T_REVENUEDAILY" A
+                        JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
+                        LEFT JOIN "T_SERVERPARTSHOP" C ON A."SERVERPART_ID" = C."SERVERPART_ID"
                       WHERE 
-                        A.REVENUEDAILY_STATE = 1 AND B.STATISTICS_TYPE = 1000 AND B.STATISTIC_TYPE = 1000
-                        AND A.STATISTICS_DATE = '{st_date.strftime('%Y%m%d')}'
-                        AND B.SERVERPART_CODE NOT IN ('348888','349999','638888','888888','899999')
+                        A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
+                        AND A."STATISTICS_DATE" = {st_date.strftime('%Y%m%d')}
+                        AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999')
                         {where_sql}
                       GROUP BY 
-                        B.SPREGIONTYPE_NAME, B.SERVERPART_NAME, A.SERVERPART_ID, C.SHOPNAME, C.SHOPREGION,
-                        C.BUSINESS_TRADENAME, C.BRAND_NAME, A.BUSINESS_TYPE, C.REVENUE_INCLUDE"""
+                        B."SPREGIONTYPE_NAME", B."SERVERPART_NAME", A."SERVERPART_ID", C."SHOPNAME", C."SHOPREGION",
+                        C."BUSINESS_TRADENAME", C."BRAND_NAME", A."BUSINESS_TYPE", C."REVENUE_INCLUDE" """
         else:
             # 3.2 实时表 T_ENDACCOUNT_TEMP 查询
             # 对应 C# 中的 T_ENDACCOUNT 逻辑
