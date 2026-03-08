@@ -5235,39 +5235,51 @@ async def get_month_inc_analysis_summary(
     shopTrade: Optional[str] = Query("", description="经营业态"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """汇总月度经营项目预警数值 (SQL平移完成)"""
+    """汇总月度经营项目预警数值 (按C#逻辑重写：查T_BUSINESSWARNING)"""
     try:
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
         where_sql = ""
-        if BusinessTradeType:
-            where_sql += f' AND A."BUSINESS_TYPE" IN ({BusinessTradeType})'
-        if shopTrade:
-            where_sql += f' AND A."SHOPTRADE" IN ({shopTrade})'
+        if StatisticsStartMonth:
+            where_sql += f' AND A."STATISTICS_MONTH" >= {StatisticsStartMonth}'
+        if StatisticsEndMonth:
+            where_sql += f' AND A."STATISTICS_MONTH" <= {StatisticsEndMonth}'
 
-        sql = f"""SELECT B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME",
-                COUNT(DISTINCT B."SERVERPART_ID") AS "SP_COUNT",
-                SUM(A."REVENUE_AMOUNT") AS "REVENUE"
-            FROM "T_REVENUEMONTHLY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEMONTHLY_STATE" = 1
-                AND B."STATISTIC_TYPE" = 1000
-                AND A."STATISTICS_MONTH" >= {StatisticsStartMonth} AND A."STATISTICS_MONTH" <= {StatisticsEndMonth}{where_sql}
-            GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME" """
+        # 经营业态过滤（子查询）
+        shop_sql = ""
+        if BusinessTradeType:
+            shop_sql += f' AND B."BUSINESSTRADETYPE" IN ({BusinessTradeType})'
+        if shopTrade:
+            shop_sql += f' AND B."BUSINESS_TRADE" IN ({shopTrade})'
+        if shop_sql:
+            shop_sql = f''' AND EXISTS (SELECT 1 FROM "T_BUSINESSWARNING" B
+                WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND B."DATATYPE" = 2
+                AND A."STATISTICS_MONTH" = B."STATISTICS_MONTH"{shop_sql})'''
+
+        sql = f"""SELECT
+                SUM(A."WARING_VUSPD") AS "WARING_VUSPD",
+                SUM(A."WARING_VUSHD") AS "WARING_VUSHD",
+                SUM(A."WARING_VURU") AS "WARING_VURU",
+                SUM(A."WARING_VDRD") AS "WARING_VDRD"
+            FROM "T_BUSINESSWARNING" A
+            WHERE A."DATATYPE" = 1{where_sql}{shop_sql}"""
         rows = db.execute_query(sql) or []
 
-        # 旧API返回的是预警汇总格式,每条记录是一个考核指标
-        # name=指标说明, value=预警服务区数, data=预警列表, key=指标序号
-        # 统计经营增幅降低的服务区数
-        total_sp = sum(int(r.get("SP_COUNT") or 0) for r in rows)
-        
-        data_list = [
-            {"name": "管理中心（自营：自营经营收入）", "value": "0", "data": None, "key": "1"},
-            {"name": "管理中心（外包：经营收入上缴金额）", "value": "0", "data": None, "key": "2"},
-            {"name": "服务区（自营+外包经营收入）", "value": "0", "data": None, "key": "3"},
-            {"name": f"共{total_sp}个服务区", "value": str(total_sp), "data": None, "key": "4"},
-        ]
+        if rows and rows[0] and any(rows[0].get(k) is not None for k in ["WARING_VUSPD","WARING_VUSHD","WARING_VURU","WARING_VDRD"]):
+            r = rows[0]
+            def sv(v):
+                return str(int(v)) if v is not None else "0"
+            data_list = [
+                {"name": "车流增加，服务区营收减少", "value": sv(r.get("WARING_VUSPD")), "data": None, "key": "1"},
+                {"name": "车流增加，门店的营收减少", "value": sv(r.get("WARING_VUSHD")), "data": None, "key": "2"},
+                {"name": "车流增加，营收增长不匹配", "value": sv(r.get("WARING_VURU")), "data": None, "key": "3"},
+                {"name": "车流减少，营收降低不匹配", "value": sv(r.get("WARING_VDRD")), "data": None, "key": "4"},
+            ]
+        else:
+            data_list = [
+                {"name": "车流增加，服务区营收减少", "value": "0", "data": None, "key": "1"},
+                {"name": "车流增加，门店的营收减少", "value": "0", "data": None, "key": "2"},
+                {"name": "车流增加，营收增长不匹配", "value": "0", "data": None, "key": "3"},
+                {"name": "车流减少，营收降低不匹配", "value": "0", "data": None, "key": "4"},
+            ]
 
         json_list = JsonListData.create(data_list=data_list, total=len(data_list), page_size=10)
         return Result.success(data=json_list.model_dump(), msg="查询成功")

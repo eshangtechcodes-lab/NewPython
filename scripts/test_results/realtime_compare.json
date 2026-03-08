@@ -1,19 +1,12 @@
 {
-  "time": "2026-03-08 16:51:31",
-  "elapsed": 39.0,
+  "time": "2026-03-08 17:46:05",
+  "elapsed": 38.4,
   "stats": {
-    "PASS": 41,
-    "DIFF": 33,
+    "PASS": 43,
+    "DIFF": 31,
     "ERROR": 0
   },
   "diffs": [
-    {
-      "route": "GET /BigData/GetBayonetOAAnalysis",
-      "detail": "Code=100, 1处差异",
-      "diffs": [
-        ".Result_Data.OtherData[0]: 旧= 新=202602"
-      ]
-    },
     {
       "route": "GET /BigData/GetBayonetOwnerAHTreeList",
       "detail": "Code=100, 4处差异",
@@ -30,8 +23,8 @@
       "diffs": [
         ".Result_Data.List[0].CurRevenueAmount_A: 旧=37498.79 新=0.0",
         ".Result_Data.List[0].CurRevenueAmount_B: 旧=27376.93 新=0.0",
-        ".Result_Data.List[0].LastYearNorthWestSECTIONFLOW_NUM: 类型不同 旧=float 新=int",
-        ".Result_Data.List[0]: ...还有20条差异",
+        ".Result_Data.List[0].LyRevenueAmount: 旧=187636.01 新=187351.01",
+        ".Result_Data.List[0]: ...还有2条差异",
         ".Result_Data.OtherData[0].CurRevenueAmount: 旧=3264971.43 新=3197328.83"
       ]
     },
@@ -65,24 +58,21 @@
     },
     {
       "route": "GET /Revenue/GetBayonetOAList",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 3处差异",
       "diffs": [
         ".Result_Data.List[0].OwnerProvince: 列表长度不同 旧=5 新=4",
         ".Result_Data.List[0].OwnerProvinceList: 列表长度不同 旧=5 新=4",
-        ".Result_Data.List[0].Vehicle_Count: 旧=94122 新=80892",
-        ".Result_Data.OtherData: 列表长度不同 旧=2 新=3",
-        ".Result_Data.OtherData[1]: 旧=大型车 新=中型车"
+        ".Result_Data.List[0].Vehicle_Count: 旧=94122 新=80892"
       ]
     },
     {
       "route": "GET /Revenue/GetBayonetProvinceOAList",
-      "detail": "Code=100, 6处差异",
+      "detail": "Code=100, 4处差异",
       "diffs": [
         ".Result_Data.List[0].OwnerProvince: 列表长度不同 旧=1 新=10",
         ".Result_Data.List[0].OwnerProvince[0]: 旧=其他 新=安徽省",
         ".Result_Data.List[0].OwnerProvinceList: 列表长度不同 旧=1 新=10",
-        ".Result_Data.List[0]: ...还有4条差异",
-        ".Result_Data.OtherData: 列表长度不同 旧=4 新=3"
+        ".Result_Data.List[0]: ...还有4条差异"
       ]
     },
     {
@@ -96,11 +86,9 @@
     },
     {
       "route": "GET /Revenue/GetBusinessBrandLevel",
-      "detail": "Code=100, 3处差异",
+      "detail": "Code=100, 1处差异",
       "diffs": [
-        ".Result_Data.ColumnList[0].data: 列表长度不同 旧=5 新=6",
-        ".Result_Data.ColumnList[0].data[0]: 旧=94.77 新=95.04",
-        ".Result_Data.legend: 列表长度不同 旧=5 新=6"
+        ".Result_Data.ColumnList[0].data[0]: 旧=94.77 新=95.04"
       ]
     },
     {
@@ -162,10 +150,10 @@
       "route": "GET /Revenue/GetHolidaySPRAnalysis",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].node.curYearAccount.key: 新API缺少字段",
-        ".Result_Data.List[0].node.curYearAccount.name: 新API缺少字段",
-        ".Result_Data.List[0].node.curYearAccount.value: 旧=0 新=0.0",
-        ".Result_Data.List[0]: ...还有17条差异"
+        ".Result_Data.List[3].children[30].node.curYearBayonet.data: 旧= 新=0",
+        ".Result_Data.List[3].children[30].node.curYearBayonet.value: 旧= 新=0",
+        ".Result_Data.List[3].children[30].node.lYearBayonet.data: 旧= 新=0",
+        ".Result_Data.List[3]: ...还有1条差异"
       ]
     },
     {
@@ -253,13 +241,6 @@
         ".Result_Data.SalableCommodityList: 列表长度不同 旧=5 新=0",
         ".Result_Data.UnSalableCommodity: 旧=10.6 新=0.0",
         ".Result_Data.UnSalableCommodityList: 列表长度不同 旧=5 新=0"
-      ]
-    },
-    {
-      "route": "GET /Revenue/GetServerpartINCAnalysis",
-      "detail": "Code=100, 1处差异",
-      "diffs": [
-        ".Result_Data.OtherData: 旧=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2 新=2026年春运时间为2026/2/2 0:00:00至2026-02-13\r\n2026年春运时间为2"
       ]
     },
     {
