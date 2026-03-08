@@ -1898,7 +1898,7 @@ async def get_transaction_convert(
 
         # 时段客单
         t_sql = f"""SELECT A."STATISTICS_HOUR",
-                ROUND(SUM(A."TICKET_COUNT") / MAX(A."STATISTICS_DAYS"),0) AS "TICKET_COUNT"
+                FLOOR(SUM(A."TICKET_COUNT") * 1.0 / MAX(A."STATISTICS_DAYS") + 0.5) AS "TICKET_COUNT"
             FROM "T_YSSELLMASTERMONTH" A, "T_SERVERPART" B
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
                 AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = {month_str}{where_sql}
@@ -1912,7 +1912,7 @@ async def get_transaction_convert(
 
         # 时段车流
         b_sql = f"""SELECT A."STATISTICS_HOUR",
-                ROUND(SUM(A."VEHICLE_COUNT") / MAX(A."STATISTICS_DAYS"),0) AS "TICKET_COUNT"
+                FLOOR(SUM(A."VEHICLE_COUNT") * 1.0 / MAX(A."STATISTICS_DAYS") + 0.5) AS "TICKET_COUNT"
             FROM "T_BAYONETHOURMONTH_AH" A, "T_SERVERPART" B
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
                 AND A."INOUT_TYPE" = 0 AND A."DATA_TYPE" IN (0,1)
