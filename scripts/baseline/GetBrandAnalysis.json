@@ -1,0 +1,33 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "BrandTag": [
+      [
+        "住宿",
+        "1",
+        "1000",
+        "257",
+        "https://eshangtech.com:18999//UploadImageDir/PictureManage/10260/2020_04_09_16_25_25_2288.png"
+      ]
+    ],
+    "ShopBrandList": [
+      {
+        "ServerpartShop_Id": "4489",
+        "Brand_Id": 1412,
+        "Brand_Name": "自营客房",
+        "BrandType_Name": "地方特色",
+        "Brand_ICO": "https://user.eshangtech.com/UploadImageDir/PictureManage/10292/2021_09_29_16_26_30_0155.png",
+        "Revenue_Amount": null,
+        "Business_TradeId": "257",
+        "Business_Trade": "住宿",
+        "Business_TradeICO": "https://eshangtech.com:18999//UploadImageDir/PictureManage/10260/2020_04_09_16_25_25_2288.png",
+        "Bussiness_Name": "安徽交控驿达服务开发集团有限公司",
+        "Bussiness_Time": "2022.04止",
+        "Bussiness_State": "2000",
+        "CurRevenue": 0.0,
+        "ShopEndaccountList": null
+      }
+    ]
+  }
+}

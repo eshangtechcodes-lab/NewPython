@@ -34,30 +34,39 @@
         "OPERATE_DATE": 20250101
       },
       {
-        "SHOPCOUNT_ID": 510177,
-        "SERVERPART_ID": 493,
-        "SPREGIONTYPE_NAME": "滁马片区",
-        "SHOP_TOTALCOUNT": 0,
-        "SHOP_BUSINESSCOUNT": 0,
-        "SHOP_REVENUECOUNT": 0,
+        "SHOPCOUNT_ID": 510071,
+        "SERVERPART_ID": 421,
+        "SPREGIONTYPE_NAME": "皖中管理中心",
+        "SHOP_TOTALCOUNT": 28,
+        "SHOP_BUSINESSCOUNT": 24,
+        "SHOP_REVENUECOUNT": 24,
         "OPERATE_DATE": 20250101
       },
       {
-        "SHOPCOUNT_ID": 509964,
-        "SERVERPART_ID": 492,
-        "SPREGIONTYPE_NAME": "皖东管理中心",
-        "SHOP_TOTALCOUNT": 35,
-        "SHOP_BUSINESSCOUNT": 21,
-        "SHOP_REVENUECOUNT": 21,
+        "SHOPCOUNT_ID": 509926,
+        "SERVERPART_ID": 431,
+        "SPREGIONTYPE_NAME": "皖北管理中心",
+        "SHOP_TOTALCOUNT": 15,
+        "SHOP_BUSINESSCOUNT": 9,
+        "SHOP_REVENUECOUNT": 9,
         "OPERATE_DATE": 20250101
       },
       {
-        "SHOPCOUNT_ID": 509993,
-        "SERVERPART_ID": 490,
-        "SPREGIONTYPE_NAME": "皖东管理中心",
-        "SHOP_TOTALCOUNT": 17,
-        "SHOP_BUSINESSCOUNT": 10,
-        "SHOP_REVENUECOUNT": 10,
+        "SHOPCOUNT_ID": 510034,
+        "SERVERPART_ID": 434,
+        "SPREGIONTYPE_NAME": "皖北管理中心",
+        "SHOP_TOTALCOUNT": 9,
+        "SHOP_BUSINESSCOUNT": 8,
+        "SHOP_REVENUECOUNT": 8,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 509898,
+        "SERVERPART_ID": 436,
+        "SPREGIONTYPE_NAME": "皖中管理中心",
+        "SHOP_TOTALCOUNT": 15,
+        "SHOP_BUSINESSCOUNT": 11,
+        "SHOP_REVENUECOUNT": 11,
         "OPERATE_DATE": 20250101
       },
       {
@@ -142,6 +151,15 @@
         "OPERATE_DATE": 20250101
       },
       {
+        "SHOPCOUNT_ID": 510062,
+        "SERVERPART_ID": 366,
+        "SPREGIONTYPE_NAME": "皖南管理中心",
+        "SHOP_TOTALCOUNT": 8,
+        "SHOP_BUSINESSCOUNT": 3,
+        "SHOP_REVENUECOUNT": 3,
+        "OPERATE_DATE": 20250101
+      },
+      {
         "SHOPCOUNT_ID": 510051,
         "SERVERPART_ID": 369,
         "SPREGIONTYPE_NAME": "皖南管理中心",
@@ -196,6 +214,42 @@
         "OPERATE_DATE": 20250101
       },
       {
+        "SHOPCOUNT_ID": 509892,
+        "SERVERPART_ID": 382,
+        "SPREGIONTYPE_NAME": "皖西管理中心",
+        "SHOP_TOTALCOUNT": 18,
+        "SHOP_BUSINESSCOUNT": 9,
+        "SHOP_REVENUECOUNT": 9,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510060,
+        "SERVERPART_ID": 383,
+        "SPREGIONTYPE_NAME": "皖西管理中心",
+        "SHOP_TOTALCOUNT": 16,
+        "SHOP_BUSINESSCOUNT": 7,
+        "SHOP_REVENUECOUNT": 7,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 509964,
+        "SERVERPART_ID": 492,
+        "SPREGIONTYPE_NAME": "皖东管理中心",
+        "SHOP_TOTALCOUNT": 35,
+        "SHOP_BUSINESSCOUNT": 21,
+        "SHOP_REVENUECOUNT": 21,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510177,
+        "SERVERPART_ID": 493,
+        "SPREGIONTYPE_NAME": "滁马片区",
+        "SHOP_TOTALCOUNT": 0,
+        "SHOP_BUSINESSCOUNT": 0,
+        "SHOP_REVENUECOUNT": 0,
+        "OPERATE_DATE": 20250101
+      },
+      {
         "SHOPCOUNT_ID": 510014,
         "SERVERPART_ID": 495,
         "SPREGIONTYPE_NAME": "皖中管理中心",
@@ -238,6 +292,51 @@
         "SHOP_TOTALCOUNT": 7,
         "SHOP_BUSINESSCOUNT": 2,
         "SHOP_REVENUECOUNT": 2,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510067,
+        "SERVERPART_ID": 600,
+        "SPREGIONTYPE_NAME": "皖中管理中心",
+        "SHOP_TOTALCOUNT": 7,
+        "SHOP_BUSINESSCOUNT": 6,
+        "SHOP_REVENUECOUNT": 6,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510372,
+        "SERVERPART_ID": 650,
+        "SPREGIONTYPE_NAME": "城市店及商城",
+        "SHOP_TOTALCOUNT": 2,
+        "SHOP_BUSINESSCOUNT": 2,
+        "SHOP_REVENUECOUNT": 2,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510041,
+        "SERVERPART_ID": 659,
+        "SPREGIONTYPE_NAME": "皖东管理中心",
+        "SHOP_TOTALCOUNT": 9,
+        "SHOP_BUSINESSCOUNT": 6,
+        "SHOP_REVENUECOUNT": 6,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510355,
+        "SERVERPART_ID": 426,
+        "SPREGIONTYPE_NAME": "皖西管理中心",
+        "SHOP_TOTALCOUNT": 4,
+        "SHOP_BUSINESSCOUNT": 2,
+        "SHOP_REVENUECOUNT": 2,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510326,
+        "SERVERPART_ID": 429,
+        "SPREGIONTYPE_NAME": "皖西管理中心",
+        "SHOP_TOTALCOUNT": 10,
+        "SHOP_BUSINESSCOUNT": 4,
+        "SHOP_REVENUECOUNT": 4,
         "OPERATE_DATE": 20250101
       },
       {
@@ -295,6 +394,33 @@
         "OPERATE_DATE": 20250101
       },
       {
+        "SHOPCOUNT_ID": 509908,
+        "SERVERPART_ID": 448,
+        "SPREGIONTYPE_NAME": "皖西管理中心",
+        "SHOP_TOTALCOUNT": 17,
+        "SHOP_BUSINESSCOUNT": 11,
+        "SHOP_REVENUECOUNT": 11,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510032,
+        "SERVERPART_ID": 450,
+        "SPREGIONTYPE_NAME": "皖西管理中心",
+        "SHOP_TOTALCOUNT": 16,
+        "SHOP_BUSINESSCOUNT": 8,
+        "SHOP_REVENUECOUNT": 8,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510037,
+        "SERVERPART_ID": 451,
+        "SPREGIONTYPE_NAME": "皖西管理中心",
+        "SHOP_TOTALCOUNT": 9,
+        "SHOP_BUSINESSCOUNT": 8,
+        "SHOP_REVENUECOUNT": 8,
+        "OPERATE_DATE": 20250101
+      },
+      {
         "SHOPCOUNT_ID": 510166,
         "SERVERPART_ID": 452,
         "SPREGIONTYPE_NAME": "宿州片区",
@@ -310,6 +436,15 @@
         "SHOP_TOTALCOUNT": 9,
         "SHOP_BUSINESSCOUNT": 6,
         "SHOP_REVENUECOUNT": 6,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 509883,
+        "SERVERPART_ID": 462,
+        "SPREGIONTYPE_NAME": "皖北管理中心",
+        "SHOP_TOTALCOUNT": 17,
+        "SHOP_BUSINESSCOUNT": 10,
+        "SHOP_REVENUECOUNT": 10,
         "OPERATE_DATE": 20250101
       },
       {
@@ -337,159 +472,6 @@
         "SHOP_TOTALCOUNT": 12,
         "SHOP_BUSINESSCOUNT": 9,
         "SHOP_REVENUECOUNT": 9,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510348,
-        "SERVERPART_ID": 727,
-        "SPREGIONTYPE_NAME": "",
-        "SHOP_TOTALCOUNT": 0,
-        "SHOP_BUSINESSCOUNT": 0,
-        "SHOP_REVENUECOUNT": 0,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509892,
-        "SERVERPART_ID": 382,
-        "SPREGIONTYPE_NAME": "皖西管理中心",
-        "SHOP_TOTALCOUNT": 18,
-        "SHOP_BUSINESSCOUNT": 9,
-        "SHOP_REVENUECOUNT": 9,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510372,
-        "SERVERPART_ID": 650,
-        "SPREGIONTYPE_NAME": "城市店及商城",
-        "SHOP_TOTALCOUNT": 2,
-        "SHOP_BUSINESSCOUNT": 2,
-        "SHOP_REVENUECOUNT": 2,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510355,
-        "SERVERPART_ID": 426,
-        "SPREGIONTYPE_NAME": "皖西管理中心",
-        "SHOP_TOTALCOUNT": 4,
-        "SHOP_BUSINESSCOUNT": 2,
-        "SHOP_REVENUECOUNT": 2,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510326,
-        "SERVERPART_ID": 429,
-        "SPREGIONTYPE_NAME": "皖西管理中心",
-        "SHOP_TOTALCOUNT": 10,
-        "SHOP_BUSINESSCOUNT": 4,
-        "SHOP_REVENUECOUNT": 4,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510071,
-        "SERVERPART_ID": 421,
-        "SPREGIONTYPE_NAME": "皖中管理中心",
-        "SHOP_TOTALCOUNT": 28,
-        "SHOP_BUSINESSCOUNT": 24,
-        "SHOP_REVENUECOUNT": 24,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509926,
-        "SERVERPART_ID": 431,
-        "SPREGIONTYPE_NAME": "皖北管理中心",
-        "SHOP_TOTALCOUNT": 15,
-        "SHOP_BUSINESSCOUNT": 9,
-        "SHOP_REVENUECOUNT": 9,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510034,
-        "SERVERPART_ID": 434,
-        "SPREGIONTYPE_NAME": "皖北管理中心",
-        "SHOP_TOTALCOUNT": 9,
-        "SHOP_BUSINESSCOUNT": 8,
-        "SHOP_REVENUECOUNT": 8,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510032,
-        "SERVERPART_ID": 450,
-        "SPREGIONTYPE_NAME": "皖西管理中心",
-        "SHOP_TOTALCOUNT": 16,
-        "SHOP_BUSINESSCOUNT": 8,
-        "SHOP_REVENUECOUNT": 8,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510037,
-        "SERVERPART_ID": 451,
-        "SPREGIONTYPE_NAME": "皖西管理中心",
-        "SHOP_TOTALCOUNT": 9,
-        "SHOP_BUSINESSCOUNT": 8,
-        "SHOP_REVENUECOUNT": 8,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509898,
-        "SERVERPART_ID": 436,
-        "SPREGIONTYPE_NAME": "皖中管理中心",
-        "SHOP_TOTALCOUNT": 15,
-        "SHOP_BUSINESSCOUNT": 11,
-        "SHOP_REVENUECOUNT": 11,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510062,
-        "SERVERPART_ID": 366,
-        "SPREGIONTYPE_NAME": "皖南管理中心",
-        "SHOP_TOTALCOUNT": 8,
-        "SHOP_BUSINESSCOUNT": 3,
-        "SHOP_REVENUECOUNT": 3,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510060,
-        "SERVERPART_ID": 383,
-        "SPREGIONTYPE_NAME": "皖西管理中心",
-        "SHOP_TOTALCOUNT": 16,
-        "SHOP_BUSINESSCOUNT": 7,
-        "SHOP_REVENUECOUNT": 7,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510067,
-        "SERVERPART_ID": 600,
-        "SPREGIONTYPE_NAME": "皖中管理中心",
-        "SHOP_TOTALCOUNT": 7,
-        "SHOP_BUSINESSCOUNT": 6,
-        "SHOP_REVENUECOUNT": 6,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510041,
-        "SERVERPART_ID": 659,
-        "SPREGIONTYPE_NAME": "皖东管理中心",
-        "SHOP_TOTALCOUNT": 9,
-        "SHOP_BUSINESSCOUNT": 6,
-        "SHOP_REVENUECOUNT": 6,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509908,
-        "SERVERPART_ID": 448,
-        "SPREGIONTYPE_NAME": "皖西管理中心",
-        "SHOP_TOTALCOUNT": 17,
-        "SHOP_BUSINESSCOUNT": 11,
-        "SHOP_REVENUECOUNT": 11,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509883,
-        "SERVERPART_ID": 462,
-        "SPREGIONTYPE_NAME": "皖北管理中心",
-        "SHOP_TOTALCOUNT": 17,
-        "SHOP_BUSINESSCOUNT": 10,
-        "SHOP_REVENUECOUNT": 10,
         "OPERATE_DATE": 20250101
       },
       {
@@ -544,6 +526,15 @@
         "SHOP_TOTALCOUNT": 44,
         "SHOP_BUSINESSCOUNT": 27,
         "SHOP_REVENUECOUNT": 27,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 509918,
+        "SERVERPART_ID": 362,
+        "SPREGIONTYPE_NAME": "皖南管理中心",
+        "SHOP_TOTALCOUNT": 27,
+        "SHOP_BUSINESSCOUNT": 19,
+        "SHOP_REVENUECOUNT": 19,
         "OPERATE_DATE": 20250101
       },
       {
@@ -655,6 +646,33 @@
         "OPERATE_DATE": 20250101
       },
       {
+        "SHOPCOUNT_ID": 509911,
+        "SERVERPART_ID": 518,
+        "SPREGIONTYPE_NAME": "皖东管理中心",
+        "SHOP_TOTALCOUNT": 19,
+        "SHOP_BUSINESSCOUNT": 13,
+        "SHOP_REVENUECOUNT": 13,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 509887,
+        "SERVERPART_ID": 479,
+        "SPREGIONTYPE_NAME": "皖南管理中心",
+        "SHOP_TOTALCOUNT": 10,
+        "SHOP_BUSINESSCOUNT": 6,
+        "SHOP_REVENUECOUNT": 6,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 509993,
+        "SERVERPART_ID": 490,
+        "SPREGIONTYPE_NAME": "皖东管理中心",
+        "SHOP_TOTALCOUNT": 17,
+        "SHOP_BUSINESSCOUNT": 10,
+        "SHOP_REVENUECOUNT": 10,
+        "OPERATE_DATE": 20250101
+      },
+      {
         "SHOPCOUNT_ID": 510187,
         "SERVERPART_ID": 379,
         "SPREGIONTYPE_NAME": "皖西管理中心",
@@ -697,6 +715,15 @@
         "SHOP_TOTALCOUNT": 0,
         "SHOP_BUSINESSCOUNT": 0,
         "SHOP_REVENUECOUNT": 0,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 509940,
+        "SERVERPART_ID": 496,
+        "SPREGIONTYPE_NAME": "皖南管理中心",
+        "SHOP_TOTALCOUNT": 20,
+        "SHOP_BUSINESSCOUNT": 13,
+        "SHOP_REVENUECOUNT": 13,
         "OPERATE_DATE": 20250101
       },
       {
@@ -1150,8 +1177,8 @@
         "OPERATE_DATE": 20250101
       },
       {
-        "SHOPCOUNT_ID": 510349,
-        "SERVERPART_ID": 728,
+        "SHOPCOUNT_ID": 510348,
+        "SERVERPART_ID": 727,
         "SPREGIONTYPE_NAME": "",
         "SHOP_TOTALCOUNT": 0,
         "SHOP_BUSINESSCOUNT": 0,
@@ -1159,39 +1186,12 @@
         "OPERATE_DATE": 20250101
       },
       {
-        "SHOPCOUNT_ID": 509918,
-        "SERVERPART_ID": 362,
-        "SPREGIONTYPE_NAME": "皖南管理中心",
-        "SHOP_TOTALCOUNT": 27,
-        "SHOP_BUSINESSCOUNT": 19,
-        "SHOP_REVENUECOUNT": 19,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509911,
-        "SERVERPART_ID": 518,
-        "SPREGIONTYPE_NAME": "皖东管理中心",
-        "SHOP_TOTALCOUNT": 19,
-        "SHOP_BUSINESSCOUNT": 13,
-        "SHOP_REVENUECOUNT": 13,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509887,
-        "SERVERPART_ID": 479,
-        "SPREGIONTYPE_NAME": "皖南管理中心",
-        "SHOP_TOTALCOUNT": 10,
-        "SHOP_BUSINESSCOUNT": 6,
-        "SHOP_REVENUECOUNT": 6,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509940,
-        "SERVERPART_ID": 496,
-        "SPREGIONTYPE_NAME": "皖南管理中心",
-        "SHOP_TOTALCOUNT": 20,
-        "SHOP_BUSINESSCOUNT": 13,
-        "SHOP_REVENUECOUNT": 13,
+        "SHOPCOUNT_ID": 510349,
+        "SERVERPART_ID": 728,
+        "SPREGIONTYPE_NAME": "",
+        "SHOP_TOTALCOUNT": 0,
+        "SHOP_BUSINESSCOUNT": 0,
+        "SHOP_REVENUECOUNT": 0,
         "OPERATE_DATE": 20250101
       },
       {
@@ -1361,6 +1361,24 @@
         "SERVERPART_ID": 889,
         "SPREGIONTYPE_NAME": "",
         "SHOP_TOTALCOUNT": 0,
+        "SHOP_BUSINESSCOUNT": 0,
+        "SHOP_REVENUECOUNT": 0,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510232,
+        "SERVERPART_ID": 903,
+        "SPREGIONTYPE_NAME": "城市店及商城",
+        "SHOP_TOTALCOUNT": 10,
+        "SHOP_BUSINESSCOUNT": 0,
+        "SHOP_REVENUECOUNT": 0,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 510233,
+        "SERVERPART_ID": 904,
+        "SPREGIONTYPE_NAME": "城市店及商城",
+        "SHOP_TOTALCOUNT": 2,
         "SHOP_BUSINESSCOUNT": 0,
         "SHOP_REVENUECOUNT": 0,
         "OPERATE_DATE": 20250101
@@ -1546,6 +1564,15 @@
         "OPERATE_DATE": 20250101
       },
       {
+        "SHOPCOUNT_ID": 509880,
+        "SERVERPART_ID": 460,
+        "SPREGIONTYPE_NAME": "皖北管理中心",
+        "SHOP_TOTALCOUNT": 27,
+        "SHOP_BUSINESSCOUNT": 10,
+        "SHOP_REVENUECOUNT": 10,
+        "OPERATE_DATE": 20250101
+      },
+      {
         "SHOPCOUNT_ID": 510043,
         "SERVERPART_ID": 516,
         "SPREGIONTYPE_NAME": "皖东管理中心",
@@ -1579,6 +1606,15 @@
         "SHOP_TOTALCOUNT": 26,
         "SHOP_BUSINESSCOUNT": 19,
         "SHOP_REVENUECOUNT": 19,
+        "OPERATE_DATE": 20250101
+      },
+      {
+        "SHOPCOUNT_ID": 509927,
+        "SERVERPART_ID": 456,
+        "SPREGIONTYPE_NAME": "皖北管理中心",
+        "SHOP_TOTALCOUNT": 14,
+        "SHOP_BUSINESSCOUNT": 11,
+        "SHOP_REVENUECOUNT": 11,
         "OPERATE_DATE": 20250101
       },
       {
@@ -1681,6 +1717,15 @@
         "OPERATE_DATE": 20250101
       },
       {
+        "SHOPCOUNT_ID": 510205,
+        "SERVERPART_ID": 1244,
+        "SPREGIONTYPE_NAME": "城市店及商城",
+        "SHOP_TOTALCOUNT": 4,
+        "SHOP_BUSINESSCOUNT": 0,
+        "SHOP_REVENUECOUNT": 0,
+        "OPERATE_DATE": 20250101
+      },
+      {
         "SHOPCOUNT_ID": 509962,
         "SERVERPART_ID": 646,
         "SPREGIONTYPE_NAME": "皖南管理中心",
@@ -1777,51 +1822,6 @@
         "SHOP_TOTALCOUNT": 0,
         "SHOP_BUSINESSCOUNT": 0,
         "SHOP_REVENUECOUNT": 0,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510205,
-        "SERVERPART_ID": 1244,
-        "SPREGIONTYPE_NAME": "城市店及商城",
-        "SHOP_TOTALCOUNT": 4,
-        "SHOP_BUSINESSCOUNT": 0,
-        "SHOP_REVENUECOUNT": 0,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510232,
-        "SERVERPART_ID": 903,
-        "SPREGIONTYPE_NAME": "城市店及商城",
-        "SHOP_TOTALCOUNT": 10,
-        "SHOP_BUSINESSCOUNT": 0,
-        "SHOP_REVENUECOUNT": 0,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 510233,
-        "SERVERPART_ID": 904,
-        "SPREGIONTYPE_NAME": "城市店及商城",
-        "SHOP_TOTALCOUNT": 2,
-        "SHOP_BUSINESSCOUNT": 0,
-        "SHOP_REVENUECOUNT": 0,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509880,
-        "SERVERPART_ID": 460,
-        "SPREGIONTYPE_NAME": "皖北管理中心",
-        "SHOP_TOTALCOUNT": 27,
-        "SHOP_BUSINESSCOUNT": 10,
-        "SHOP_REVENUECOUNT": 10,
-        "OPERATE_DATE": 20250101
-      },
-      {
-        "SHOPCOUNT_ID": 509927,
-        "SERVERPART_ID": 456,
-        "SPREGIONTYPE_NAME": "皖北管理中心",
-        "SHOP_TOTALCOUNT": 14,
-        "SHOP_BUSINESSCOUNT": 11,
-        "SHOP_REVENUECOUNT": 11,
         "OPERATE_DATE": 20250101
       },
       {
