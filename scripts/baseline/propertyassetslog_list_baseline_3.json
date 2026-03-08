@@ -1,0 +1,76 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "PageIndex": 2,
+    "PageSize": 5,
+    "TotalCount": 29,
+    "List": [
+      {
+        "PROPERTYASSETSLOG_ID": 25,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-07-31T18:13:05",
+        "OPERATE_DESC": "",
+        "OPERATE_TYPE": "修改",
+        "OPERATE_VALUE": "{}",
+        "OPERATE_NEWVALUE": "{}",
+        "OPERATE_ID": 2785,
+        "OPERATE_NAME": "严琅杰"
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 38,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-08-01T10:36:49",
+        "OPERATE_DESC": "状态状态:[有效]改为[无效]，",
+        "OPERATE_TYPE": "修改",
+        "OPERATE_VALUE": "{\"PROPERTYASSETS_STATE\":\"有效\"}",
+        "OPERATE_NEWVALUE": "{\"PROPERTYASSETS_STATE\":\"无效\"}",
+        "OPERATE_ID": 2785,
+        "OPERATE_NAME": "严琅杰"
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 1,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-07-30T15:07:44",
+        "OPERATE_DESC": "资产信息",
+        "OPERATE_TYPE": "PROPERTYASSETS_INFO",
+        "OPERATE_VALUE": "ces 1",
+        "OPERATE_NEWVALUE": "ces 2",
+        "OPERATE_ID": null,
+        "OPERATE_NAME": ""
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 2,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-07-30T15:07:44",
+        "OPERATE_DESC": "资产类型",
+        "OPERATE_TYPE": "PROPERTYASSETS_TYPE",
+        "OPERATE_VALUE": "1000",
+        "OPERATE_NEWVALUE": "2000",
+        "OPERATE_ID": null,
+        "OPERATE_NAME": ""
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 3,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-07-30T15:07:44",
+        "OPERATE_DESC": "区域，面积",
+        "OPERATE_TYPE": "PROPERTYASSETS_REGION,PROPERTYASSETS_AREA",
+        "OPERATE_VALUE": "15,60",
+        "OPERATE_NEWVALUE": "15,50",
+        "OPERATE_ID": null,
+        "OPERATE_NAME": ""
+      }
+    ]
+  }
+}

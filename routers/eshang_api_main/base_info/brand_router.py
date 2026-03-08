@@ -14,20 +14,21 @@ from __future__ import annotations
 - GET+POST /BaseInfo/DeleteBrand      — 删除品牌（软删除）
 """
 from typing import Optional
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from loguru import logger
 
 from core.database import DatabaseHelper
 from models.base import Result, JsonListData
 from models.common_model import SearchModel
 from services.base_info import brand_service
-from routers.deps import get_db
+from routers.deps import get_db, get_int_header
 
 router = APIRouter()
 
 
 @router.post("/BaseInfo/GetBrandList")
 async def get_brand_list(
+    request: Request,
     search_model: Optional[SearchModel] = None,
     db: DatabaseHelper = Depends(get_db)
 ):
@@ -43,6 +44,9 @@ async def get_brand_list(
         if search_model.SearchParameter is None:
             search_model.SearchParameter = {}
 
+        # 原 C# L801: searchModel.SearchParameter.PROVINCE_CODE = GetIntHeader("ProvinceCode", ...)
+        if not search_model.SearchParameter.get("PROVINCE_CODE"):
+            search_model.SearchParameter["PROVINCE_CODE"] = get_int_header(request, "ProvinceCode")
         total_count, brand_list = brand_service.get_brand_list(db, search_model)
 
         json_list = JsonListData.create(
@@ -60,6 +64,7 @@ async def get_brand_list(
 
 @router.get("/BaseInfo/GetCombineBrandList")
 async def get_combine_brand_list(
+    request: Request,
     PROVINCE_CODE: Optional[int] = Query(None, description="省份编码"),
     SPREGIONTYPE_IDS: str = Query("", description="片区内码"),
     SERVERPART_IDS: str = Query("", description="服务区内码"),
@@ -72,24 +77,32 @@ async def get_combine_brand_list(
     """
     获取组合品牌列表
     对应原: [Route("BaseInfo/GetCombineBrandList")]
-    入参: GET Query 参数
+    入参: GET Query 参数 + Header: ProvinceCode
     """
     try:
+        # 原 C# L845: PROVINCE_CODE = GetIntHeader("ProvinceCode", PROVINCE_CODE)
         if PROVINCE_CODE is None:
-            PROVINCE_CODE = 0
+            header_val = request.headers.get("provincecode") or request.headers.get("ProvinceCode")
+            if header_val:
+                try:
+                    PROVINCE_CODE = int(header_val)
+                except (ValueError, TypeError):
+                    PROVINCE_CODE = 0
+            else:
+                PROVINCE_CODE = 0
 
         brand_list, his_project_list = brand_service.get_combine_brand_list(
             db, PROVINCE_CODE, SPREGIONTYPE_IDS, SERVERPART_IDS,
             BRAND_INDUSTRY, BRAND_TYPE, BRAND_STATE, BRAND_NAME
         )
 
-        # 原 C# 使用 JsonList<T, List<T>> 双列表响应
+        # 原 C# 使用 JsonList<T, List<T>> 双列表响应，第二列表为 OtherData
         json_list = {
             "List": brand_list,
             "TotalCount": len(brand_list),
             "PageIndex": 1,
             "PageSize": len(brand_list),
-            "List2": his_project_list,
+            "OtherData": his_project_list,
         }
 
         return Result.success(data=json_list, msg="查询成功")
@@ -100,6 +113,7 @@ async def get_combine_brand_list(
 
 @router.api_route("/BaseInfo/GetTradeBrandTree", methods=["GET", "POST"])
 async def get_trade_brand_tree(
+    request: Request,
     BusinessTrade_PID: int = Query(-1, description="经营业态父级内码"),
     ProvinceCode: Optional[int] = Query(None, description="省份编码"),
     OwnerUnitId: Optional[int] = Query(None, description="业主单位内码"),
@@ -111,6 +125,9 @@ async def get_trade_brand_tree(
     对应原: [Route("BaseInfo/GetTradeBrandTree")]
     """
     try:
+        # 原 C# : ProvinceCode = GetIntHeader("ProvinceCode", ProvinceCode)
+        ProvinceCode = get_int_header(request, "ProvinceCode", ProvinceCode)
+
         tree = brand_service.get_trade_brand_tree(
             db, BusinessTrade_PID, ProvinceCode, OwnerUnitId, BrandState
         )

@@ -1,34 +1,28 @@
-======================================================================
-  原 C# API vs 新 Python API 真实对比
-======================================================================
+============================================================
+  对比接口: BaseInfo/GetSERVERPARTCRTList
+============================================================
 
-[1] 调用原 C# API:
+[原 API] 状态码: 200
   Result_Code: 100
-  Result_Desc: 查询成功
-  PageIndex:   0
-  PageSize:    0
-  TotalCount:  2005
-  List条数:    10
-  字段列表:    ['BRAND_ID', 'BRAND_PID', 'BRAND_INDEX', 'BRAND_NAME', 'BRAND_CATEGORY', 'BRAND_INDUSTRY', 'BUSINESSTRADE_NAME', 'BRAND_TYPE', 'BRAND_INTRO', 'BRAND_STATE', 'WECHATAPPSIGN_ID', 'WECHATAPPSIGN_NAME', 'WECHATAPP_APPID', 'OWNERUNIT_ID', 'OWNERUNIT_NAME', 'PROVINCE_CODE', 'STAFF_ID', 'STAFF_NAME', 'OPERATE_DATE', 'BRAND_DESC', 'MANAGE_TYPE', 'COMMISSION_RATIO', 'SPREGIONTYPE_IDS', 'SERVERPART_IDS', 'MerchantID', 'MerchantID_Encrypt', 'MerchantName', 'ServerpartList']
-  第一条: {"BRAND_ID": 1314, "BRAND_PID": -1, "BRAND_INDEX": 10, "BRAND_NAME": "艾比克", "BRAND_CATEGORY": 1000, "BRAND_INDUSTRY": 227, "BUSINESSTRADE_NAME": "西式快餐", "BRAND_TYPE": 3000, "BRAND_INTRO": "https://api.eshangtech.com/EShangApiMain/UploadImageDir/BRAND/202304171727136405_艾比克001_1681721694.jpg", "BRAND_STATE": 1, "WECHATAPPSIGN_ID": 1314, "WECHATAPPSIGN_NAME": "", "WECHATAPP_APPID": "", "OWNERUNIT_ID": 249, "OWNERUNIT_NAME": "安徽交控驿达服务开发集团有限公司", "PROVINCE_CODE": 340000, "STAFF_ID": 2633, "STAFF_NAME": "李红", "OPERATE_DATE": "2023-04-17T17:27:15", "BRAND_DESC": "", "MANAGE_TYPE": 2000, "COMMISSION_RATIO": "15%-20%", "SPREGIONTYPE_IDS": null, "SERVERPART_IDS": null, "MerchantID": "-1115", "MerchantID_Encrypt": "67A49622E286B41E", "MerchantName": "艾比克", "ServerpartList": [{"label": "青草服务区", "value": "805"}, {"label": "釜山服务区", "value": "495"}, {"label": "福山服务区", "value": "520"}, {"label": "四方湖服务区", "value": "443"}]}
+  TotalCount: 156
+  List 条数: 10
+  首条字段: ['ACCOUNTBODY_CODE', 'ACCOUNTBODY_NAME', 'ACCOUNTTAX', 'COSTCENTER_CODE', 'COSTCENTER_NAME', 'DEPARTMENT_CODE', 'OPERATE_DATE', 'PROPERTYTAX', 'RESPONSIBLEDEP_CODE', 'SERVERPARTCRT_ID', 'SERVERPART_CODE', 'SERVERPART_CODES', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_INDEX', 'SERVERPART_NAME', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_INDEX', 'SPREGIONTYPE_NAME', 'STAFF_ID', 'STAFF_NAME', 'STAYTAX']
 
-[2] 调用新 Python API:
+[新 API] 状态码: 200
   Result_Code: 100
-  Result_Desc: 查询成功
-  PageIndex:   0
-  PageSize:    0
-  TotalCount:  2005
-  List条数:    10
-  字段列表:    ['BRAND_ID', 'BRAND_PID', 'BRAND_INDEX', 'BRAND_NAME', 'BRAND_CATEGORY', 'BRAND_INDUSTRY', 'BRAND_TYPE', 'BRAND_INTRO', 'BRAND_STATE', 'WECHATAPPSIGN_ID', 'WECHATAPPSIGN_NAME', 'WECHATAPP_APPID', 'OWNERUNIT_ID', 'OWNERUNIT_NAME', 'PROVINCE_CODE', 'STAFF_ID', 'STAFF_NAME', 'OPERATE_DATE', 'BRAND_DESC', 'COMMISSION_RATIO', 'MANAGE_TYPE']
-  第一条: {"BRAND_ID": "1", "BRAND_PID": "-1", "BRAND_INDEX": "2000", "BRAND_NAME": "业主品牌", "BRAND_CATEGORY": "2000", "BRAND_INDUSTRY": null, "BRAND_TYPE": null, "BRAND_INTRO": null, "BRAND_STATE": "1", "WECHATAPPSIGN_ID": "13", "WECHATAPPSIGN_NAME": "高速驿网会员体系", "WECHATAPP_APPID": "wxec57324d9d721cea", "OWNERUNIT_ID": "13", "OWNERUNIT_NAME": "浙江省商业集团有限公司", "PROVINCE_CODE": null, "STAFF_ID": "1492", "STAFF_NAME": "阳贤", "OPERATE_DATE": "2020-04-15", "BRAND_DESC": null, "COMMISSION_RATIO": null, "MANAGE_TYPE": null}
+  TotalCount: 156
+  List 条数: 10
+  首条字段: ['ACCOUNTBODY_CODE', 'ACCOUNTBODY_NAME', 'ACCOUNTTAX', 'COSTCENTER_CODE', 'COSTCENTER_NAME', 'DEPARTMENT_CODE', 'OPERATE_DATE', 'PROPERTYTAX', 'RESPONSIBLEDEP_CODE', 'SERVERPARTCRT_ID', 'SERVERPART_CODE', 'SERVERPART_ID', 'STAFF_ID', 'STAFF_NAME', 'STAYTAX']
 
-======================================================================
-  差异分析
-======================================================================
- ✅ Result_Code     原:100  新:100
- ✅ Result_Desc     原:查询成功  新:查询成功
- ✅ PageIndex       原:0  新:0
- ✅ PageSize        原:0  新:0
- ✅ TotalCount      原:2005  新:2005
- ✅ List条数          原:10  新:10
- ❌ 新API缺少字段: {'ServerpartList', 'MerchantName', 'SPREGIONTYPE_IDS', 'BUSINESSTRADE_NAME', 'MerchantID', 'MerchantID_Encrypt', 'SERVERPART_IDS'}
+============================================================
+  对比结果
+============================================================
+  Result_Code: ✅ 一致
+  TotalCount: ✅ 一致
+  List 条数: ✅ 一致
+
+  共同字段: 15
+  仅原 API: ['SERVERPART_CODES', 'SERVERPART_IDS', 'SERVERPART_INDEX', 'SERVERPART_NAME', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_INDEX', 'SPREGIONTYPE_NAME']
+
+  首条数据对比:
+    ✅ 所有字段值一致

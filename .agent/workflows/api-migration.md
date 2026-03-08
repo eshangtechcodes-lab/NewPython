@@ -106,18 +106,24 @@ MIGRATE_TABLES = [
 ]
 ```
 
-### 3.2 在本机执行迁移
+### 3.2 在本机执行迁移（只迁移当前接口需要的表）
+
+> [!CAUTION]
+> **禁止不带参数运行！** 不带参数会全量重跑所有旧表，耗时极长且无意义。
+> 必须指定当前接口需要的表名：
 
 // turbo
 ```powershell
-python scripts/server_migrate.py
+# 只迁移当前接口需要的表（可指定多张）
+python scripts/server_migrate.py T_XXX
+python scripts/server_migrate.py T_XXX T_YYY
 ```
 
 脚本会自动：
 1. 读 Oracle 表结构
-2. 在达梦建表
-3. **从 Oracle 同步表注释和字段注释到达梦**
-4. 迁移数据（每 500 条批量提交）
+2. 在达梦建表（已存在则 MERGE INTO 合并差异）
+3. 从 Oracle 同步表注释和字段注释到达梦
+4. 迁移数据（每 2000 条批量提交）
 5. 校验行数
 
 > **注意**：序列创建可能因权限不足失败，脚本已做降级处理（仅警告不中断）。
@@ -167,17 +173,20 @@ python scripts/server_migrate.py
 
 ---
 
-## 第五步：对比验证
+## 第五步：对比验证（必须 3 组数据全部通过）
+
+> [!IMPORTANT]
+> **必须使用 3 组不同参数进行对比验证，全部通过才算验证通过。** 用 Python `requests` 直接对比（避免终端编码问题）。
 
 ### 5.1 运行对比脚本
 
-修改 `scripts/compare_api.py`，替换为当前接口的路径，然后执行：
+使用 Python `requests` 库同时调原 API 和新 API，每组参数逐条逐字段对比：
 
 ```powershell
 python scripts/compare_api.py
 ```
 
-### 5.2 对比清单（全部 ✅ 才算通过）
+### 5.2 对比清单（**3 组数据全部** ✅ 才算通过）
 
 | 检查项 | 要求 |
 |--------|------|
@@ -190,6 +199,13 @@ python scripts/compare_api.py
 | 字段值类型 | 一致（int/string/null） |
 | 排序 | 第一条数据相同 |
 | 空值处理 | null 的字段一致 |
+
+> [!WARNING]
+> **C#→Python 常见坑**：
+> - `not 0.0` 为 True：空值判定用 `val is None or str(val)==""` 而非 `not val`
+> - `TryParseToInt()` null→0：用 `_safe_int_zero()` 匹配
+> - `.ToString()` null→`""`：Python `str(None)` 是 `"None"`
+> - 金额对比用 `Decimal` 不用 `float`（精度丢失）
 
 ### 5.3 提交代码
 
@@ -354,18 +370,42 @@ git push
 
 ## 迁移进度跟踪
 
-| 接口路径 | 状态 | 日期 | 遇到的问题 | 备注 |
-|----------|------|------|-----------|------|
-| BaseInfo/GetBrandList | 🟡 PoC | 2026-03-04 | P1-P6 | PoC 验证，缺少关联字段 |
-| BaseInfo/GetBrandDetail | 🟡 PoC | 2026-03-04 | | |
-| BaseInfo/SynchroBrand | 🟡 PoC | 2026-03-04 | | |
-| BaseInfo/DeleteBrand | 🟡 PoC | 2026-03-04 | | |
-| **BaseInfo/GetOWNERUNITList** | **✅ 完成** | **2026-03-04** | **P9,P10,P11,P12** | **592条，18字段** |
-| **BaseInfo/GetOWNERUNITDetail** | **✅ 完成** | **2026-03-04** | | |
-| **BaseInfo/SynchroOWNERUNIT** | **✅ 完成** | **2026-03-04** | | |
-| **BaseInfo/DeleteOWNERUNIT** | **✅ 完成** | **2026-03-04** | | 软删除 |
-| **BaseInfo/GetSERVERPARTList** | **✅ 完成** | **2026-03-04** | **P13,P14** | **1168条，42字段** |
-| **BaseInfo/DeleteSERVERPART** | **✅ 完成** | **2026-03-04** | | 真删除 |
-| BaseInfo/GetServerpartShopList | ⬜ 待开始 | | | |
+> **总计已完成：38 个实体 + 16 个散装接口 / 188 个接口**（截至 2026-03-06）
 
-状态说明：⬜待开始 → 🔵进行中 → 🟡部分完成 → ✅已完成
+| 实体 | 接口数 | 状态 | 完成日期 | 遇到的问题 |
+|------|--------|------|---------|-----------| 
+| OWNERUNIT（业主单位） | 4 | ✅ | 2026-03-04 | P9,P10,P11,P12 |
+| SERVERPART（服务区站点） | 2 | ✅ | 2026-03-04 | P13,P14 |
+| ServerpartShop（门店） | 5 | ✅ | 2026-03-04 | |
+| Brand（品牌） | 6 | ✅ | 2026-03-04 | P1-P6 |
+| RTSERVERPARTSHOP（门店经营时间） | 4 | ✅ | 2026-03-04 | |
+| SERVERPARTSHOP_LOG（门店变更日志） | 1 | ✅ | 2026-03-04 | |
+| CASHWORKER（收银人员） | 4 | ✅ | 2026-03-04 | |
+| BusinessTrade（经营业态） | 6 | ✅ | 2026-03-05 | |
+| AUTOSTATISTICS（自定义统计归口） | 4 | ✅ | 2026-03-05 | |
+| COMMODITYTYPE（商品类别） | 6 | ✅ | 2026-03-05 | |
+| USERDEFINEDTYPE（商品自定义类别） | 5 | ✅ | 2026-03-05 | |
+| SERVERPARTCRT（服务区成本核算对照） | 5 | ✅ | 2026-03-05 | |
+| PROPERTYASSETS（服务区资产） | 7 | ✅ | 2026-03-05 | |
+| COMMODITY（在售商品） | 6 | ✅ | 2026-03-05 | P1,P14,P15(GBK) |
+| BUSINESSTRADE（大业态） | 0 | ⏭️ | 2026-03-05 | 原C#已注释废弃，跳过 |
+| PROPERTYSHOP（资产与商户对照） | 0 | ⏭️ | - | 用户要求先跳过 |
+| PROPERTYASSETSLOG（资产日志） | 0 | ⏭️ | - | 用户要求先跳过 |
+| BaseInfo 散装接口 | 15 | ✅ | 2026-03-05 | T_OWNERUNIT无CODE列 |
+| ContractController（合同备案） | 25 | ✅ | 2026-03-06 | 汇总SQL数据同步差异 |
+| BUSINESSPROJECT（经营项目） | 4 | ✅ | 2026-03-06 | SPREGIONTYPE_ID字段名、execute_query_first不存在 |
+| ShopRoyalty+SHOPROYALTYDETAIL（门店提成/拆分） | 8 | ✅ | 2026-03-06 | |
+| REVENUECONFIRM（营收回款确认） | 5 | ✅ | 2026-03-06 | POST+GET两版GetList，三表JOIN |
+| PAYMENTCONFIRM（商家应收回款） | 6 | ✅ | 2026-03-06 | 复杂GET查询+summaryList+级联删除 |
+| RTPAYMENTRECORD（商家回款记录） | 4 | ✅ | 2026-03-06 | 三表JOIN+删除级联更新 |
+| REMARKS（备注说明） | 4 | ✅ | 2026-03-06 | 标准CRUD+软删除 |
+| BUSINESSPAYMENT（经营项目执行情况） | 4 | ✅ | 2026-03-06 | 标准CRUD软删除STATUS=0 |
+| PROJECTWARNING（经营项目预警） | 4 | ✅ | 2026-03-06 | IN查询+日期范围+软删除STATE=0 |
+| PERIODWARNING（经营项目周期预警） | 4 | ✅ | 2026-03-06 | 原C# Delete方法体为空 |
+| BIZPSPLITMONTH（月度经营应收拆分） | 4 | ✅ | 2026-03-06 | 月份格式日期+审批状态 |
+| BUSINESSPROJECTSPLIT（经营项目应收拆分） | 4 | ✅ | 2026-03-06 | 简化版GetList(原6668行极复杂后处理) |
+| APPROVED（审批意见） | 1 | ✅ | 2026-03-06 | 仅GetList，日期范围+IN查询 |
+| SHOPEXPENSE（门店费用） | 5 | ✅ | 2026-03-06 | 简化版(原级联写SPLIT+备份历史库) |
+| PROJECTSPLITMONTH（月度拆分汇总） | 4 | ✅ | 2026-03-06 | 8个日期字段,STATISTICS_MONTH=yyyyMM |
+
+状态说明：⬜待开始 → 🔵进行中 → 🟡部分完成 → ✅已完成 → ⏭️跳过

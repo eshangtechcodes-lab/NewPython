@@ -12,7 +12,7 @@ from __future__ import annotations
 - DelServerpartShop: GET+POST, 入参 BaseOperateModel (body), 软删除
 """
 from typing import Optional
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel
 from loguru import logger
 
@@ -20,7 +20,7 @@ from core.database import DatabaseHelper
 from models.base import Result, JsonListData
 from models.common_model import SearchModel
 from services.base_info import serverpartshop_service
-from routers.deps import get_db
+from routers.deps import get_db, get_int_header
 
 router = APIRouter()
 
@@ -34,6 +34,7 @@ class BaseOperateModel(BaseModel):
 
 @router.post("/BaseInfo/GetServerpartShopList")
 async def get_serverpartshop_list(
+    request: Request,
     search_model: Optional[SearchModel] = None,
     db: DatabaseHelper = Depends(get_db)
 ):
@@ -44,7 +45,20 @@ async def get_serverpartshop_list(
     try:
         if search_model is None:
             search_model = SearchModel()
+        if search_model.SearchParameter is None:
+            search_model.SearchParameter = {}
 
+        # 原 C# L268-280: 从 Header 读取 ProvinceCode / ServerpartCodes / ServerpartShopIds
+        if not search_model.SearchParameter.get("PROVINCE_CODE"):
+            search_model.SearchParameter["PROVINCE_CODE"] = get_int_header(request, "ProvinceCode")
+        if not search_model.SearchParameter.get("SERVERPART_CODE"):
+            sc = request.headers.get("ServerpartCodes") or request.headers.get("serverpartcodes") or ""
+            if sc:
+                search_model.SearchParameter["SERVERPART_CODE"] = sc
+        if not search_model.SearchParameter.get("SERVERPARTSHOP_IDS"):
+            si = request.headers.get("ServerpartShopIds") or request.headers.get("serverpartshopids") or ""
+            if si:
+                search_model.SearchParameter["SERVERPARTSHOP_IDS"] = si
         total_count, shop_list = serverpartshop_service.get_serverpartshop_list(db, search_model)
 
         json_list = JsonListData.create(

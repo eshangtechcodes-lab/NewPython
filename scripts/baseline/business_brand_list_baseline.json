@@ -1,0 +1,151 @@
+﻿{
+    "Result_Code":  100,
+    "Result_Desc":  "查询成功",
+    "Result_Data":  {
+                        "PageIndex":  1,
+                        "PageSize":  4,
+                        "TotalCount":  4,
+                        "List":  [
+                                     {
+                                         "BRAND_ID":  985,
+                                         "BRAND_PID":  -1,
+                                         "BRAND_INDEX":  8,
+                                         "BRAND_NAME":  "馋游记小吃",
+                                         "BRAND_CATEGORY":  1000,
+                                         "BRAND_INDUSTRY":  235,
+                                         "BUSINESSTRADE_NAME":  null,
+                                         "BRAND_TYPE":  1000,
+                                         "BRAND_INTRO":  "https://user.eshangtech.com/UploadImageDir/PictureManage/10292/2021_09_28_20_13_27_2324.png",
+                                         "BRAND_STATE":  1,
+                                         "WECHATAPPSIGN_ID":  985,
+                                         "WECHATAPPSIGN_NAME":  null,
+                                         "WECHATAPP_APPID":  null,
+                                         "OWNERUNIT_ID":  249,
+                                         "OWNERUNIT_NAME":  "安徽交控驿达服务开发集团有限公司",
+                                         "PROVINCE_CODE":  340000,
+                                         "STAFF_ID":  1828,
+                                         "STAFF_NAME":  "王杰",
+                                         "OPERATE_DATE":  "2021-07-14T15:51:16",
+                                         "BRAND_DESC":  null,
+                                         "MANAGE_TYPE":  null,
+                                         "COMMISSION_RATIO":  null,
+                                         "SPREGIONTYPE_IDS":  null,
+                                         "SERVERPART_IDS":  null,
+                                         "MerchantID":  null,
+                                         "MerchantID_Encrypt":  null,
+                                         "MerchantName":  null,
+                                         "ServerpartList":  [
+                                                                {
+                                                                    "label":  "寒亭",
+                                                                    "value":  "518"
+                                                                }
+                                                            ]
+                                     },
+                                     {
+                                         "BRAND_ID":  1029,
+                                         "BRAND_PID":  -1,
+                                         "BRAND_INDEX":  9,
+                                         "BRAND_NAME":  "石小沫",
+                                         "BRAND_CATEGORY":  1000,
+                                         "BRAND_INDUSTRY":  233,
+                                         "BUSINESSTRADE_NAME":  null,
+                                         "BRAND_TYPE":  1000,
+                                         "BRAND_INTRO":  "https://user.eshangtech.com/UploadImageDir/PictureManage/10292/2021_09_29_15_07_31_4551.png",
+                                         "BRAND_STATE":  1,
+                                         "WECHATAPPSIGN_ID":  1029,
+                                         "WECHATAPPSIGN_NAME":  null,
+                                         "WECHATAPP_APPID":  null,
+                                         "OWNERUNIT_ID":  249,
+                                         "OWNERUNIT_NAME":  "安徽交控驿达服务开发集团有限公司",
+                                         "PROVINCE_CODE":  340000,
+                                         "STAFF_ID":  1342,
+                                         "STAFF_NAME":  "系统管理员",
+                                         "OPERATE_DATE":  "2021-09-29T15:09:21",
+                                         "BRAND_DESC":  null,
+                                         "MANAGE_TYPE":  null,
+                                         "COMMISSION_RATIO":  null,
+                                         "SPREGIONTYPE_IDS":  null,
+                                         "SERVERPART_IDS":  null,
+                                         "MerchantID":  null,
+                                         "MerchantID_Encrypt":  null,
+                                         "MerchantName":  null,
+                                         "ServerpartList":  [
+                                                                {
+                                                                    "label":  "官塘",
+                                                                    "value":  "433"
+                                                                }
+                                                            ]
+                                     },
+                                     {
+                                         "BRAND_ID":  1860,
+                                         "BRAND_PID":  -1,
+                                         "BRAND_INDEX":  1,
+                                         "BRAND_NAME":  "小吃",
+                                         "BRAND_CATEGORY":  1000,
+                                         "BRAND_INDUSTRY":  243,
+                                         "BUSINESSTRADE_NAME":  null,
+                                         "BRAND_TYPE":  1000,
+                                         "BRAND_INTRO":  null,
+                                         "BRAND_STATE":  1,
+                                         "WECHATAPPSIGN_ID":  1860,
+                                         "WECHATAPPSIGN_NAME":  null,
+                                         "WECHATAPP_APPID":  null,
+                                         "OWNERUNIT_ID":  249,
+                                         "OWNERUNIT_NAME":  "安徽交控驿达服务开发集团有限公司",
+                                         "PROVINCE_CODE":  340000,
+                                         "STAFF_ID":  4021,
+                                         "STAFF_NAME":  "毛文青",
+                                         "OPERATE_DATE":  "2026-02-10T09:07:32",
+                                         "BRAND_DESC":  null,
+                                         "MANAGE_TYPE":  null,
+                                         "COMMISSION_RATIO":  null,
+                                         "SPREGIONTYPE_IDS":  null,
+                                         "SERVERPART_IDS":  null,
+                                         "MerchantID":  null,
+                                         "MerchantID_Encrypt":  null,
+                                         "MerchantName":  null,
+                                         "ServerpartList":  [
+                                                                {
+                                                                    "label":  "仓镇",
+                                                                    "value":  "511"
+                                                                }
+                                                            ]
+                                     },
+                                     {
+                                         "BRAND_ID":  2299,
+                                         "BRAND_PID":  -1,
+                                         "BRAND_INDEX":  1,
+                                         "BRAND_NAME":  "自营餐厅（李先生面馆）",
+                                         "BRAND_CATEGORY":  1000,
+                                         "BRAND_INDUSTRY":  229,
+                                         "BUSINESSTRADE_NAME":  null,
+                                         "BRAND_TYPE":  1000,
+                                         "BRAND_INTRO":  "https://api.eshangtech.com/EShangApiMain/UploadImageDir/BRAND/202405301534339512_2021_09_27_15_10_22_6221.png",
+                                         "BRAND_STATE":  1,
+                                         "WECHATAPPSIGN_ID":  2299,
+                                         "WECHATAPPSIGN_NAME":  null,
+                                         "WECHATAPP_APPID":  null,
+                                         "OWNERUNIT_ID":  249,
+                                         "OWNERUNIT_NAME":  "安徽交控驿达服务开发集团有限公司",
+                                         "PROVINCE_CODE":  340000,
+                                         "STAFF_ID":  3451,
+                                         "STAFF_NAME":  "章训",
+                                         "OPERATE_DATE":  "2024-05-30T15:34:38",
+                                         "BRAND_DESC":  null,
+                                         "MANAGE_TYPE":  null,
+                                         "COMMISSION_RATIO":  null,
+                                         "SPREGIONTYPE_IDS":  null,
+                                         "SERVERPART_IDS":  null,
+                                         "MerchantID":  null,
+                                         "MerchantID_Encrypt":  null,
+                                         "MerchantName":  null,
+                                         "ServerpartList":  [
+                                                                {
+                                                                    "label":  "太湖",
+                                                                    "value":  "369"
+                                                                }
+                                                            ]
+                                     }
+                                 ]
+                    }
+}

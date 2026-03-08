@@ -9,7 +9,7 @@ Delete 为真删除（_SERVERPART.Delete()），非软删除
 from typing import Optional
 from loguru import logger
 from core.database import DatabaseHelper
-from models.common_model import SearchModel
+from models.common_model import SearchModel, SEARCH_PARAM_SKIP_FIELDS
 
 
 # 表名常量
@@ -23,14 +23,16 @@ def _build_where_sql(search_param: dict, query_type: int = 0) -> str:
     query_type: 0=模糊查询, 1=精确查询
     额外处理 SERVERPART_IDS 和 SERVERPART_CODES 字段（原 C# 中做了特殊处理）
     """
+    skip_fields = {
+        "SERVERPART_IDS", "SERVERPART_CODES",
+    } | SEARCH_PARAM_SKIP_FIELDS
     conditions = []
     for key, value in search_param.items():
+        if key in skip_fields:
+            continue
         if value is None:
             continue
         if isinstance(value, str) and value.strip() == "":
-            continue
-        # SERVERPART_IDS 和 SERVERPART_CODES 不走普通查询逻辑，单独处理
-        if key in ("SERVERPART_IDS", "SERVERPART_CODES"):
             continue
         if query_type == 0 and isinstance(value, str):
             conditions.append(f"{key} LIKE '%{value}%'")
@@ -136,3 +138,131 @@ def delete_serverpart(db: DatabaseHelper, serverpart_id: int) -> bool:
     sql = f"DELETE FROM {TABLE_NAME} WHERE {PRIMARY_KEY} = {serverpart_id}"
     db.execute_non_query(sql)
     return True
+
+
+def synchro_serverpart(db: DatabaseHelper, model: dict) -> tuple:
+    """
+    同步服务区数据（新增/更新）
+    对应原 ServerpartHelper.SynchroSERVERPART (L905-1013)
+
+    逻辑：
+    1. 有 SERVERPART_ID → 更新；无 → 新增
+    2. PROVINCE_CODE 仅新增时设置（已有不覆盖）
+    3. 如果有 SPREGIONTYPE_ID，同步 T_SPSTATICTYPE 片区关联
+    4. 子表同步 (RTSERVERPART / SERVERPARTINFO) 暂标记 TODO
+
+    返回: (成功标志, 更新后的 model)
+    """
+    from datetime import datetime
+
+    # 排除非数据库字段
+    exclude_fields = {
+        "RtServerPart", "ServerPartInfo",  # 子对象
+        "SPREGIONTYPE_ID",  # 在外层单独处理
+    } | SEARCH_PARAM_SKIP_FIELDS
+
+    serverpart_id = model.get("SERVERPART_ID")
+    if serverpart_id:
+        # 更新：先检查是否存在
+        check_sql = f"SELECT COUNT(*) FROM {TABLE_NAME} WHERE {PRIMARY_KEY} = {serverpart_id}"
+        count = db.execute_scalar(check_sql)
+        if count == 0:
+            return False, model
+
+        # 获取现有记录，检查 PROVINCE_CODE 是否已有值
+        existing = db.execute_query(
+            f"SELECT PROVINCE_CODE FROM {TABLE_NAME} WHERE {PRIMARY_KEY} = {serverpart_id}"
+        )
+        existing_province = existing[0].get("PROVINCE_CODE") if existing else None
+
+        # 构建 UPDATE 语句
+        set_parts = []
+        for key, value in model.items():
+            if key == PRIMARY_KEY or key in exclude_fields:
+                continue
+            # PROVINCE_CODE 已有不覆盖（原 C# L1033-1036）
+            if key == "PROVINCE_CODE" and existing_province is not None:
+                continue
+            if value is None:
+                set_parts.append(f"{key} = NULL")
+            elif isinstance(value, str):
+                set_parts.append(f"{key} = '{value}'")
+            else:
+                set_parts.append(f"{key} = {value}")
+
+        if set_parts:
+            update_sql = f"UPDATE {TABLE_NAME} SET {', '.join(set_parts)} WHERE {PRIMARY_KEY} = {serverpart_id}"
+            db.execute_non_query(update_sql)
+    else:
+        # 新增
+        cols = []
+        vals = []
+        for key, value in model.items():
+            if key == PRIMARY_KEY or key in exclude_fields:
+                continue
+            if value is None:
+                continue
+            cols.append(key)
+            if isinstance(value, str):
+                vals.append(f"'{value}'")
+            else:
+                vals.append(str(value))
+
+        # 尝试用序列，失败则用 MAX+1
+        try:
+            insert_sql = (
+                f"INSERT INTO {TABLE_NAME} ({PRIMARY_KEY}, {', '.join(cols)}) "
+                f"VALUES (SEQ_SERVERPART.NEXTVAL, {', '.join(vals)})"
+            )
+            db.execute_non_query(insert_sql)
+            new_id = db.execute_scalar("SELECT SEQ_SERVERPART.CURRVAL FROM DUAL")
+        except Exception:
+            max_id = db.execute_scalar(f"SELECT NVL(MAX({PRIMARY_KEY}), 0) + 1 FROM {TABLE_NAME}") or 1
+            insert_sql = (
+                f"INSERT INTO {TABLE_NAME} ({PRIMARY_KEY}, {', '.join(cols)}) "
+                f"VALUES ({max_id}, {', '.join(vals)})"
+            )
+            db.execute_non_query(insert_sql)
+            new_id = max_id
+
+        model["SERVERPART_ID"] = new_id
+        serverpart_id = new_id
+
+    # 同步 T_SPSTATICTYPE 片区关联（原 C# L966-991）
+    spregiontype_id = model.get("SPREGIONTYPE_ID")
+    if spregiontype_id is not None and serverpart_id:
+        sp_count = db.execute_scalar(
+            f"SELECT COUNT(*) FROM T_SPSTATICTYPE WHERE SERVERPART_ID = {serverpart_id}"
+        ) or 0
+        if sp_count == 0:
+            # 无关联记录，直接插入
+            try:
+                db.execute_non_query(
+                    f"INSERT INTO T_SPSTATICTYPE (SERVERPART_ID, SERVERPARTTYPE_ID) "
+                    f"VALUES ({serverpart_id}, {spregiontype_id})"
+                )
+            except Exception as e:
+                logger.warning(f"插入 SPSTATICTYPE 失败: {e}")
+        else:
+            # 有关联但无当前片区类型，先删旧的再插新的
+            same_count = db.execute_scalar(
+                f"SELECT COUNT(*) FROM T_SPSTATICTYPE WHERE SERVERPART_ID = {serverpart_id} "
+                f"AND SERVERPARTTYPE_ID = {spregiontype_id}"
+            ) or 0
+            if same_count == 0:
+                try:
+                    db.execute_non_query(
+                        f"DELETE FROM T_SPSTATICTYPE WHERE SERVERPART_ID = {serverpart_id}"
+                    )
+                    db.execute_non_query(
+                        f"INSERT INTO T_SPSTATICTYPE (SERVERPART_ID, SERVERPARTTYPE_ID) "
+                        f"VALUES ({serverpart_id}, {spregiontype_id})"
+                    )
+                except Exception as e:
+                    logger.warning(f"更新 SPSTATICTYPE 失败: {e}")
+
+    # TODO: 子表同步
+    # - RTSERVERPARTHelper.SynchroRTSERVERPART (原 L998)
+    # - SERVERPARTINFOHelper.SynchroSERVERPARTINFO (原 L1001-1009)
+
+    return True, model

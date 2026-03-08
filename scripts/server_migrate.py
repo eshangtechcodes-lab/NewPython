@@ -2,10 +2,13 @@
 """
 Oracle → 达梦数据迁移脚本
 在服务器上执行，利用 Oracle 本地连接完成表同步
+
 用法：
-  cd D:\Projects\Python
-  .venv\Scripts\pip install oracledb   （首次需安装）
-  .venv\Scripts\python migrate_ownerunit.py
+  全量迁移:    python scripts/server_migrate.py
+  指定表迁移:  python scripts/server_migrate.py T_SHOPROYALTY
+  多表迁移:    python scripts/server_migrate.py T_SHOPROYALTY T_BRAND
+  
+  注意：指定的表必须先添加到 MIGRATE_TABLES 列表中
 """
 import oracledb
 import dmPython
@@ -39,6 +42,52 @@ MIGRATE_TABLES = [
     {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_RTSERVERPARTSHOP", "sequence": "SEQ_RTSERVERPARTSHOP"},
     {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_SERVERPARTSHOP_LOG", "sequence": "SEQ_SERVERPARTSHOP_LOG"},
     {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_CASHWORKER", "sequence": "SEQ_CASHWORKER"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_COMMODITYTYPE", "sequence": "SEQ_COMMODITYTYPE"},
+    {"oracle_schema": "COOP_MERCHANT", "table": "T_USERDEFINEDTYPE", "sequence": "SEQ_USERDEFINEDTYPE"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_SERVERPARTCRT", "sequence": "SEQ_SERVERPARTCRT"},
+    # COMMODITY 在售商品相关
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_COMMODITY", "sequence": "SEQ_COMMODITY"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_RTCOMMODITYBUSINESS", "sequence": "SEQ_RTCOMMODITYBUSINESS"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_COMMODITY_BUSINESS", "sequence": "SEQ_COMMODITY_BUSINESS"},
+    # 字典相关
+    {"oracle_schema": "PLATFORM_DICTIONARY", "table": "T_FIELDENUM", "sequence": "SEQ_FIELDENUM"},
+    {"oracle_schema": "PLATFORM_DICTIONARY", "table": "T_FIELDEXPLAIN", "sequence": "SEQ_FIELDEXPLAIN"},
+    # 合同相关 - GetShopReceivables 接口依赖
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_SHOPROYALTY", "sequence": "SEQ_SHOPROYALTY"},
+    # 资产操作日志
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_PROPERTYASSETSLOG", "sequence": "SEQ_PROPERTYASSETSLOG"},
+    # 物业资产与商户对照
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_PROPERTYSHOP", "sequence": "SEQ_PROPERTYSHOP"},
+    # 服务区资产表
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_PROPERTYASSETS", "sequence": "SEQ_PROPERTYASSETS"},
+    # BasicConfigController 相关表
+    {"oracle_schema": "MOBILESERVICE_PLATFORM", "table": "T_AUTOTYPE", "sequence": "SEQ_AUTOTYPE"},
+    {"oracle_schema": "MOBILESERVICE_PLATFORM", "table": "T_OWNERSERVERPART", "sequence": "SEQ_OWNERSERVERPART"},
+    {"oracle_schema": "MOBILESERVICE_PLATFORM", "table": "T_OWNERSERVERPARTSHOP", "sequence": "SEQ_OWNERSERVERPARTSHOP"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_SPSTATICTYPE", "sequence": "SEQ_SPSTATICTYPE"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_SERVERPARTSHOPCRT", "sequence": "SEQ_SERVERPARTSHOPCRT"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_SERVERPARTTYPE", "sequence": "SEQ_SERVERPARTTYPE"},
+    # ContractController 相关表
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_ATTACHMENT", "sequence": "SEQ_ATTACHMENT"},
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_CONTRACT_SYN", "sequence": "SEQ_CONTRACT_SYN"},
+    # BusinessProjectController 相关表
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_SHOPROYALTYDETAIL", "sequence": "SEQ_SHOPROYALTYDETAIL"},
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_REVENUECONFIRM", "sequence": "SEQ_REVENUECONFIRM"},
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_RTPAYMENTRECORD", "sequence": "SEQ_RTPAYMENTRECORD"},
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_REMARKS", "sequence": "SEQ_REMARKS"},
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_BUSINESSPAYMENT", "sequence": "SEQ_BUSINESSPAYMENT"},
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_BUSINESSPROJECTSPLIT", "sequence": "SEQ_BUSINESSPROJECTSPLIT"},
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_BIZPSPLITMONTH", "sequence": "SEQ_BIZPSPLITMONTH"},
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_PROJECTWARNING", "sequence": "SEQ_PROJECTWARNING"},
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_PERIODWARNING", "sequence": "SEQ_PERIODWARNING"},
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_APPROVED", "sequence": "SEQ_APPROVED"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_SHOPEXPENSE", "sequence": "SEQ_SHOPEXPENSE"},
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_PROJECTSPLITMONTH", "sequence": "SEQ_PROJECTSPLITMONTH"},
+    # ExpensesController 相关表
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_EXPENSESPREPAID", "sequence": "SEQ_EXPENSESPREPAID"},
+    {"oracle_schema": "CONTRACT_STORAGE", "table": "T_EXPENSESSEPARATE", "sequence": "SEQ_EXPENSESSEPARATE"},
+    # MerchantsController 相关表
+    {"oracle_schema": "COOP_MERCHANT", "table": "T_COOPMERCHANTS_LINKER", "sequence": "SEQ_COOPMERCHANTS_LINKER"},
 ]
 
 # 运行配置
@@ -318,9 +367,30 @@ def migrate_table(oracle_conn, schema, table_name, sequence_name):
 
 
 def main():
+    import sys
+
     print("\n" + "=" * 60)
     print("  Oracle -> 达梦 数据迁移")
     print("=" * 60)
+
+    # 支持命令行参数指定表名（只迁移指定的表）
+    # 用法: python server_migrate.py T_SHOPROYALTY T_BRAND
+    #       不带参数则全量迁移所有表
+    target_tables = [t.upper() for t in sys.argv[1:]] if len(sys.argv) > 1 else []
+
+    if target_tables:
+        tables_to_migrate = [t for t in MIGRATE_TABLES if t["table"] in target_tables]
+        # 检查是否有未在列表中的表名
+        known = {t["table"] for t in tables_to_migrate}
+        unknown = [t for t in target_tables if t not in known]
+        if unknown:
+            print(f"\n  ⚠️ 以下表不在 MIGRATE_TABLES 列表中: {', '.join(unknown)}")
+            print(f"  请先将表添加到 MIGRATE_TABLES 列表中再执行")
+            return
+        print(f"\n  指定迁移 {len(tables_to_migrate)} 张表: {', '.join(target_tables)}")
+    else:
+        tables_to_migrate = MIGRATE_TABLES
+        print(f"\n  全量迁移 {len(tables_to_migrate)} 张表")
 
     print(f"\n初始化 Oracle Client: {ORACLE_CLIENT_PATH}")
     try:
@@ -334,7 +404,7 @@ def main():
     print("  Oracle 连接成功")
 
     results = []
-    for table_cfg in MIGRATE_TABLES:
+    for table_cfg in tables_to_migrate:
         success = migrate_table(
             oracle_conn,
             table_cfg["oracle_schema"],

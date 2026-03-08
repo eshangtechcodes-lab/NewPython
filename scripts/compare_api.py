@@ -8,7 +8,7 @@ import json
 import sys
 
 # 当前对比的接口
-ENDPOINT = "BaseInfo/GetRTSERVERPARTSHOPList"
+ENDPOINT = "BaseInfo/GetSERVERPARTCRTList"
 
 OLD_API = f"http://192.168.1.99:8900/EShangApiMain/{ENDPOINT}"
 NEW_API = f"http://localhost:8080/EShangApiMain/{ENDPOINT}"

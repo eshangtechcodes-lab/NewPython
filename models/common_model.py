@@ -6,6 +6,14 @@
 from typing import Any, Optional
 from pydantic import BaseModel
 
+# 全局排除字段：前端分页/UI 参数，非数据库字段
+# 原 C# 使用强类型 Model 反序列化时会自动忽略这些字段
+# Python 用 dict 接收 SearchParameter 不会过滤，需手动排除
+SEARCH_PARAM_SKIP_FIELDS = {
+    "current", "pageSize", "total", "size",  # 前端分页参数
+    "sorter", "filter", "order",              # 前端排序/筛选参数
+}
+
 
 class CommonModel(BaseModel):
     """

@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Optional
 from loguru import logger
 from core.database import DatabaseHelper
-from models.common_model import SearchModel
+from models.common_model import SearchModel, SEARCH_PARAM_SKIP_FIELDS
 
 
 # 表名常量
@@ -22,10 +22,18 @@ def _build_where_sql(search_param: dict, query_type: int = 0) -> str:
     """
     conditions = []
     for key, value in search_param.items():
+        if key in SEARCH_PARAM_SKIP_FIELDS:
+
+            continue
+
         if value is None:
+
             continue
+
         if isinstance(value, str) and value.strip() == "":
+
             continue
+
         if query_type == 0 and isinstance(value, str):
             conditions.append(f"{key} LIKE '%{value}%'")
         else:

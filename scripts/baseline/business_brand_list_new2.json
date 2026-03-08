@@ -1,0 +1,151 @@
+﻿{
+    "Result_Code":  100,
+    "Result_Desc":  "æ¥è¯¢æå",
+    "Result_Data":  {
+                        "PageIndex":  1,
+                        "PageSize":  4,
+                        "TotalCount":  4,
+                        "List":  [
+                                     {
+                                         "BRAND_ID":  1860,
+                                         "BRAND_PID":  -1,
+                                         "BRAND_INDEX":  1,
+                                         "BRAND_NAME":  "å°å",
+                                         "BRAND_CATEGORY":  1000,
+                                         "BRAND_INDUSTRY":  243,
+                                         "BUSINESSTRADE_NAME":  null,
+                                         "BRAND_TYPE":  1000,
+                                         "BRAND_INTRO":  null,
+                                         "BRAND_STATE":  1,
+                                         "WECHATAPPSIGN_ID":  1860,
+                                         "WECHATAPPSIGN_NAME":  null,
+                                         "WECHATAPP_APPID":  null,
+                                         "OWNERUNIT_ID":  249,
+                                         "OWNERUNIT_NAME":  "å®å¾½äº¤æ§é©¿è¾¾æå¡å¼åéå¢æéå\u0085¬å¸",
+                                         "PROVINCE_CODE":  340000,
+                                         "STAFF_ID":  4021,
+                                         "STAFF_NAME":  "æ¯æé",
+                                         "OPERATE_DATE":  "2026-02-10",
+                                         "BRAND_DESC":  null,
+                                         "MANAGE_TYPE":  2000,
+                                         "COMMISSION_RATIO":  "25%-28%",
+                                         "SPREGIONTYPE_IDS":  null,
+                                         "SERVERPART_IDS":  null,
+                                         "MerchantID":  null,
+                                         "MerchantID_Encrypt":  null,
+                                         "MerchantName":  null,
+                                         "ServerpartList":  [
+                                                                {
+                                                                    "label":  "ä»é",
+                                                                    "value":  "511"
+                                                                }
+                                                            ]
+                                     },
+                                     {
+                                         "BRAND_ID":  1029,
+                                         "BRAND_PID":  -1,
+                                         "BRAND_INDEX":  9,
+                                         "BRAND_NAME":  "ç³å°æ²«",
+                                         "BRAND_CATEGORY":  1000,
+                                         "BRAND_INDUSTRY":  233,
+                                         "BUSINESSTRADE_NAME":  null,
+                                         "BRAND_TYPE":  1000,
+                                         "BRAND_INTRO":  "https://user.eshangtech.com/UploadImageDir/PictureManage/10292/2021_09_29_15_07_31_4551.png",
+                                         "BRAND_STATE":  1,
+                                         "WECHATAPPSIGN_ID":  1029,
+                                         "WECHATAPPSIGN_NAME":  null,
+                                         "WECHATAPP_APPID":  null,
+                                         "OWNERUNIT_ID":  249,
+                                         "OWNERUNIT_NAME":  "å®å¾½äº¤æ§é©¿è¾¾æå¡å¼åéå¢æéå\u0085¬å¸",
+                                         "PROVINCE_CODE":  340000,
+                                         "STAFF_ID":  1342,
+                                         "STAFF_NAME":  "ç³»ç»ç®¡çå",
+                                         "OPERATE_DATE":  "2021-09-29",
+                                         "BRAND_DESC":  null,
+                                         "MANAGE_TYPE":  2000,
+                                         "COMMISSION_RATIO":  "25%-28%",
+                                         "SPREGIONTYPE_IDS":  null,
+                                         "SERVERPART_IDS":  null,
+                                         "MerchantID":  null,
+                                         "MerchantID_Encrypt":  null,
+                                         "MerchantName":  null,
+                                         "ServerpartList":  [
+                                                                {
+                                                                    "label":  "å®å¡",
+                                                                    "value":  "433"
+                                                                }
+                                                            ]
+                                     },
+                                     {
+                                         "BRAND_ID":  2299,
+                                         "BRAND_PID":  -1,
+                                         "BRAND_INDEX":  1,
+                                         "BRAND_NAME":  "èªè¥é¤å\u0085ï¼æå\u0085çé¢é¦ï¼",
+                                         "BRAND_CATEGORY":  1000,
+                                         "BRAND_INDUSTRY":  229,
+                                         "BUSINESSTRADE_NAME":  null,
+                                         "BRAND_TYPE":  1000,
+                                         "BRAND_INTRO":  "https://api.eshangtech.com/EShangApiMain/UploadImageDir/BRAND/202405301534339512_2021_09_27_15_10_22_6221.png",
+                                         "BRAND_STATE":  1,
+                                         "WECHATAPPSIGN_ID":  2299,
+                                         "WECHATAPPSIGN_NAME":  null,
+                                         "WECHATAPP_APPID":  null,
+                                         "OWNERUNIT_ID":  249,
+                                         "OWNERUNIT_NAME":  "å®å¾½äº¤æ§é©¿è¾¾æå¡å¼åéå¢æéå\u0085¬å¸",
+                                         "PROVINCE_CODE":  340000,
+                                         "STAFF_ID":  3451,
+                                         "STAFF_NAME":  "ç« è®­",
+                                         "OPERATE_DATE":  "2024-05-30",
+                                         "BRAND_DESC":  null,
+                                         "MANAGE_TYPE":  2000,
+                                         "COMMISSION_RATIO":  "23%-26%",
+                                         "SPREGIONTYPE_IDS":  null,
+                                         "SERVERPART_IDS":  null,
+                                         "MerchantID":  null,
+                                         "MerchantID_Encrypt":  null,
+                                         "MerchantName":  null,
+                                         "ServerpartList":  [
+                                                                {
+                                                                    "label":  "å¤ªæ¹",
+                                                                    "value":  "369"
+                                                                }
+                                                            ]
+                                     },
+                                     {
+                                         "BRAND_ID":  985,
+                                         "BRAND_PID":  -1,
+                                         "BRAND_INDEX":  8,
+                                         "BRAND_NAME":  "é¦æ¸¸è®°å°å",
+                                         "BRAND_CATEGORY":  1000,
+                                         "BRAND_INDUSTRY":  235,
+                                         "BUSINESSTRADE_NAME":  null,
+                                         "BRAND_TYPE":  1000,
+                                         "BRAND_INTRO":  "https://user.eshangtech.com/UploadImageDir/PictureManage/10292/2021_09_28_20_13_27_2324.png",
+                                         "BRAND_STATE":  1,
+                                         "WECHATAPPSIGN_ID":  985,
+                                         "WECHATAPPSIGN_NAME":  null,
+                                         "WECHATAPP_APPID":  null,
+                                         "OWNERUNIT_ID":  249,
+                                         "OWNERUNIT_NAME":  "å®å¾½äº¤æ§é©¿è¾¾æå¡å¼åéå¢æéå\u0085¬å¸",
+                                         "PROVINCE_CODE":  340000,
+                                         "STAFF_ID":  1828,
+                                         "STAFF_NAME":  "çæ°",
+                                         "OPERATE_DATE":  "2021-07-14",
+                                         "BRAND_DESC":  null,
+                                         "MANAGE_TYPE":  2000,
+                                         "COMMISSION_RATIO":  "25%-28%",
+                                         "SPREGIONTYPE_IDS":  null,
+                                         "SERVERPART_IDS":  null,
+                                         "MerchantID":  null,
+                                         "MerchantID_Encrypt":  null,
+                                         "MerchantName":  null,
+                                         "ServerpartList":  [
+                                                                {
+                                                                    "label":  "å¯äº­",
+                                                                    "value":  "518"
+                                                                }
+                                                            ]
+                                     }
+                                 ]
+                    }
+}

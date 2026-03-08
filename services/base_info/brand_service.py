@@ -9,7 +9,7 @@ from typing import Optional
 from datetime import datetime
 from loguru import logger
 from core.database import DatabaseHelper
-from models.common_model import SearchModel
+from models.common_model import SearchModel, SEARCH_PARAM_SKIP_FIELDS
 
 
 # 表名常量
@@ -35,12 +35,18 @@ def _build_where_sql(search_param: dict, query_type: int = 0,
         exclude_keys = set()
     conditions = []
     for key, value in search_param.items():
-        if key in exclude_keys:
+        if key in EXCLUDE_FIELDS or key in exclude_keys:
+
             continue
+
         if value is None:
+
             continue
+
         if isinstance(value, str) and value.strip() == "":
+
             continue
+
         if query_type == 0 and isinstance(value, str):
             conditions.append(f"{key} LIKE '%{value}%'")
         else:
@@ -650,17 +656,19 @@ def _enrich_brand_list(db: DatabaseHelper, rows: list[dict]) -> list[dict]:
                 shop_by_brand[bid] = []
             shop_by_brand[bid].append(s)
 
+    # 批量预加载经营业态（避免循环内逐条 SQL 导致 N+1 查询卡死）
+    trade_sql = "SELECT AUTOSTATISTICS_ID, AUTOSTATISTICS_NAME FROM T_AUTOSTATISTICS WHERE AUTOSTATISTICS_TYPE = 2000"
+    trade_rows = db.execute_query(trade_sql)
+    trade_map = {r.get("AUTOSTATISTICS_ID"): r.get("AUTOSTATISTICS_NAME") for r in trade_rows}
+
     # 遍历品牌，补充关联数据
     for brand in rows:
         brand_id = brand.get("BRAND_ID")
 
-        # 解析经营业态名称
+        # 解析经营业态名称（从预加载 map 查找）
         industry = brand.get("BRAND_INDUSTRY")
         if industry:
-            trade_sql = f"SELECT AUTOSTATISTICS_NAME FROM T_AUTOSTATISTICS WHERE AUTOSTATISTICS_ID = {industry}"
-            trade = db.execute_query(trade_sql)
-            if trade:
-                brand["BUSINESSTRADE_NAME"] = trade[0].get("AUTOSTATISTICS_NAME")
+            brand["BUSINESSTRADE_NAME"] = trade_map.get(industry, "")
 
         # 商户信息
         if brand_id in merchant_map:

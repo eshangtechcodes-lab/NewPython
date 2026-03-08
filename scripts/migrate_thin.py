@@ -23,7 +23,7 @@ DM_CONFIG = {
 
 # 要迁移的表（只写需要新迁移的表，已有的跳过）
 MIGRATE_TABLES = [
-    {"oracle_schema": "COOP_MERCHANT", "table": "T_OWNERUNIT", "sequence": "SEQ_OWNERUNIT"},
+    {"oracle_schema": "COOP_MERCHANT", "table": "T_COMMODITYTYPE", "sequence": "SEQ_COMMODITYTYPE"},
 ]
 
 

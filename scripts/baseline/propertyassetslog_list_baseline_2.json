@@ -1,0 +1,141 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "PageIndex": 1,
+    "PageSize": 10,
+    "TotalCount": 1672,
+    "List": [
+      {
+        "PROPERTYASSETSLOG_ID": 6,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-07-30T15:09:24",
+        "OPERATE_DESC": "资产类型",
+        "OPERATE_TYPE": "PROPERTYASSETS_TYPE",
+        "OPERATE_VALUE": "2000",
+        "OPERATE_NEWVALUE": "1000",
+        "OPERATE_ID": null,
+        "OPERATE_NAME": ""
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 7,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-07-30T15:09:24",
+        "OPERATE_DESC": "区域，面积",
+        "OPERATE_TYPE": "PROPERTYASSETS_REGION,PROPERTYASSETS_AREA",
+        "OPERATE_VALUE": "15,50",
+        "OPERATE_NEWVALUE": "15,60",
+        "OPERATE_ID": null,
+        "OPERATE_NAME": ""
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 8,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-07-30T15:09:24",
+        "OPERATE_DESC": "备注",
+        "OPERATE_TYPE": "PROPERTYASSETS_DESC",
+        "OPERATE_VALUE": "ces 1",
+        "OPERATE_NEWVALUE": "ces 2",
+        "OPERATE_ID": null,
+        "OPERATE_NAME": ""
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 36,
+        "TABLE_ID": 1,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-08-01T10:31:10",
+        "OPERATE_DESC": "",
+        "OPERATE_TYPE": "修改",
+        "OPERATE_VALUE": "{}",
+        "OPERATE_NEWVALUE": "{}",
+        "OPERATE_ID": 2785,
+        "OPERATE_NAME": "严琅杰"
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 81,
+        "TABLE_ID": 23,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-08-01T19:01:46",
+        "OPERATE_DESC": "资产名称:[米线混沌]改为[米线馄饨]，",
+        "OPERATE_TYPE": "修改",
+        "OPERATE_VALUE": "{\"PROPERTYASSETS_NAME\":\"米线混沌\"}",
+        "OPERATE_NEWVALUE": "{\"PROPERTYASSETS_NAME\":\"米线馄饨\"}",
+        "OPERATE_ID": 2785,
+        "OPERATE_NAME": "严琅杰"
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 92,
+        "TABLE_ID": 15,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-08-02T12:08:58",
+        "OPERATE_DESC": "状态:[有效]改为[无效]，",
+        "OPERATE_TYPE": "修改",
+        "OPERATE_VALUE": "{\"PROPERTYASSETS_STATE\":\"有效\"}",
+        "OPERATE_NEWVALUE": "{\"PROPERTYASSETS_STATE\":\"无效\"}",
+        "OPERATE_ID": 2785,
+        "OPERATE_NAME": "严琅杰"
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 97,
+        "TABLE_ID": 29,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-08-02T12:14:39",
+        "OPERATE_DESC": "新增:[Create]改为[]，",
+        "OPERATE_TYPE": "新增",
+        "OPERATE_VALUE": "{\"新增\":\"Create\"}",
+        "OPERATE_NEWVALUE": "{\"新增\":\"\"}",
+        "OPERATE_ID": 2785,
+        "OPERATE_NAME": "严琅杰"
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 101,
+        "TABLE_ID": 31,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-08-02T12:28:43",
+        "OPERATE_DESC": "状态:[有效]改为[无效]，",
+        "OPERATE_TYPE": "修改",
+        "OPERATE_VALUE": "{\"PROPERTYASSETS_STATE\":\"有效\"}",
+        "OPERATE_NEWVALUE": "{\"PROPERTYASSETS_STATE\":\"无效\"}",
+        "OPERATE_ID": 2785,
+        "OPERATE_NAME": "严琅杰"
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 102,
+        "TABLE_ID": 32,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-08-02T12:29:01",
+        "OPERATE_DESC": "新增:[Create]改为[]，",
+        "OPERATE_TYPE": "新增",
+        "OPERATE_VALUE": "{\"新增\":\"Create\"}",
+        "OPERATE_NEWVALUE": "{\"新增\":\"\"}",
+        "OPERATE_ID": 2785,
+        "OPERATE_NAME": "严琅杰"
+      },
+      {
+        "PROPERTYASSETSLOG_ID": 107,
+        "TABLE_ID": 19,
+        "TABLE_NAME": "T_PROPERTYASSETS",
+        "CHANGE_TYPE": 2,
+        "OPERATE_DATE": "2024-08-02T12:39:38",
+        "OPERATE_DESC": "资产名称:[鸡排]改为[鸡排111]，",
+        "OPERATE_TYPE": "修改",
+        "OPERATE_VALUE": "{\"PROPERTYASSETS_NAME\":\"鸡排\"}",
+        "OPERATE_NEWVALUE": "{\"PROPERTYASSETS_NAME\":\"鸡排111\"}",
+        "OPERATE_ID": 776,
+        "OPERATE_NAME": "安徽驿达管理员"
+      }
+    ]
+  }
+}
