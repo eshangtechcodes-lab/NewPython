@@ -2405,7 +2405,9 @@ async def get_revenue_report(
                 SUM(A."TICKET_COUNT") AS "TICKET_COUNT",
                 SUM(A."TOTAL_COUNT") AS "TOTAL_COUNT",
                 SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFF_AMOUNT",
-                SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT"
+                SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT",
+                SUM(A."REVENUE_AMOUNT_A") AS "REVENUE_AMOUNT_A",
+                SUM(A."REVENUE_AMOUNT_B") AS "REVENUE_AMOUNT_B"
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE {where_sql}
             GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
@@ -2424,13 +2426,9 @@ async def get_revenue_report(
         # 分别汇总正负差异
         diff_less = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows if float(r.get("DIFFERENT_AMOUNT") or 0) < 0), 2)
         diff_more = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows if float(r.get("DIFFERENT_AMOUNT") or 0) > 0), 2)
-        # N/S区域: 通过SPREGIONTYPE_NAME中的方位关键字判断
-        # C#中按SERVERPART_REGION(东南西北)分组，达梦没有这个字段
-        # 使用SPREGIONTYPE_NAME中"北区"/"南区"关键字近似
-        rev_amount_n = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows
-            if "北" in str(r.get("SPREGIONTYPE_NAME") or "")), 2)
-        rev_amount_s = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows
-            if "南" in str(r.get("SPREGIONTYPE_NAME") or "")), 2)
+        # 南北区：使用REVENUE_AMOUNT_A/B字段（C#逻辑）
+        rev_amount_s = round(sum(float(r.get("REVENUE_AMOUNT_A") or 0) for r in rows), 2)
+        rev_amount_n = round(sum(float(r.get("REVENUE_AMOUNT_B") or 0) for r in rows), 2)
 
         # 按片区分组
         from decimal import Decimal
@@ -2529,7 +2527,9 @@ async def get_revenue_report_detail(
         sql = f"""SELECT A."BUSINESS_TRADE", A."BUSINESS_TYPE",
                 SUM(A."REVENUE_AMOUNT") AS "REVENUE",
                 SUM(A."TICKET_COUNT") AS "TICKET",
-                SUM(A."TOTAL_COUNT") AS "TOTAL"
+                SUM(A."TOTAL_COUNT") AS "TOTAL",
+                SUM(A."REVENUE_AMOUNT_A") AS "REVENUE_A",
+                SUM(A."REVENUE_AMOUNT_B") AS "REVENUE_B"
             FROM "T_REVENUEDAILY" A
             WHERE A."REVENUEDAILY_STATE" = 1{where_sql}
             GROUP BY A."BUSINESS_TRADE", A."BUSINESS_TYPE"
@@ -2560,9 +2560,9 @@ async def get_revenue_report_detail(
                 "BusinessType_Revenue": rv,
             })
 
-        # 按经营模式分南北区域
-        south_rev = round(sum(safe_dec(r.get("REVENUE")) for r in rows if str(r.get("BUSINESS_TYPE")) == "1000"), 2)
-        north_rev = round(sum(safe_dec(r.get("REVENUE")) for r in rows if str(r.get("BUSINESS_TYPE")) != "1000"), 2)
+        # 按REVENUE_AMOUNT_A/B拆分南北区（C#逻辑）
+        south_rev = round(sum(safe_dec(r.get("REVENUE_A")) for r in rows), 2)
+        north_rev = round(sum(safe_dec(r.get("REVENUE_B")) for r in rows), 2)
 
         # 获取服务区名称
         sp_name_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {serverpartId}') or []
