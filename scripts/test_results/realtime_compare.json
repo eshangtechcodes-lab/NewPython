@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 16:35:05",
-  "elapsed": 54.3,
+  "time": "2026-03-08 16:44:53",
+  "elapsed": 39.4,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -65,13 +65,11 @@
     },
     {
       "route": "GET /Revenue/GetAccountReceivable",
-      "detail": "Code=100, 15处差异",
+      "detail": "Code=100, 3处差异",
       "diffs": [
-        ".Result_Data.CommissionList[0].name: 旧=业主自营 新=展销",
-        ".Result_Data.MerchantList.AcountList[0].name: 旧=业主自营 新=展销",
-        ".Result_Data.MerchantList.AcountList[0].value: 旧=0 新=0.0",
-        ".Result_Data.MerchantList.EntryList[0].name: 旧=业主自营 新=展销",
-        ".Result_Data.MerchantList.EntryList[0].value: 旧=0 新=0.0"
+        ".Result_Data.OwnerList.AcountList[1].value: 旧=768217.90 新=768217.9",
+        ".Result_Data.OwnerList.EntryList[2].value: 旧=4347244.30 新=4347244.3",
+        ".Result_Data.ProjectCountList[0].value: 旧=255 新=255.0"
       ]
     },
     {
@@ -107,13 +105,11 @@
     },
     {
       "route": "GET /Revenue/GetBusinessBrandLevel",
-      "detail": "Code=100, 6处差异",
+      "detail": "Code=100, 3处差异",
       "diffs": [
-        ".Result_Data.ColumnList: 列表长度不同 旧=3 新=53",
-        ".Result_Data.ColumnList[0].data: 新API缺少字段",
-        ".Result_Data.ColumnList[0].key: 新API多出字段",
-        ".Result_Data.ColumnList[0].name: 旧=低消费 新=北区361度",
-        ".Result_Data.ColumnList[0]: ...还有1条差异"
+        ".Result_Data.ColumnList[0].data: 列表长度不同 旧=5 新=6",
+        ".Result_Data.ColumnList[0].data[0]: 旧=94.77 新=95.04",
+        ".Result_Data.legend: 列表长度不同 旧=5 新=6"
       ]
     },
     {
@@ -125,13 +121,12 @@
     },
     {
       "route": "GET /Revenue/GetBusinessTradeLevel",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.ColumnList: 列表长度不同 旧=3 新=4",
-        ".Result_Data.ColumnList[0].data: 新API缺少字段",
-        ".Result_Data.ColumnList[0].name: 旧=低消费 新=1",
-        ".Result_Data.ColumnList[0].value: 类型不同 旧=list 新=str",
-        ".Result_Data.legend: 类型不同 旧=list 新=NoneType"
+        ".Result_Data.ColumnList[0].data: 列表长度不同 旧=5 新=3",
+        ".Result_Data.ColumnList[0].data[0]: 旧=86.92 新=84.24",
+        ".Result_Data.legend: 列表长度不同 旧=5 新=3",
+        ".Result_Data.legend[0]: 旧=中式快餐 新=餐饮主食"
       ]
     },
     {

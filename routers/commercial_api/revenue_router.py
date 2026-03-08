@@ -3074,11 +3074,12 @@ async def get_account_receivable(
         commission_list = []
 
         def fmt_val(v):
-            """C#的.ToString()格式: 0→'0', 1234.56→'1234.56'"""
+            """C# decimal.ToString()保留尾零到2位小数"""
             v = round(v, 2)
-            if v == int(v):
-                return str(int(v))
-            return str(v)
+            if v == 0:
+                return "0"
+            # 保留2位小数（含尾零），匹配C# decimal.ToString()
+            return f"{v:.2f}"
 
         for bt in bt_list:
             name = bt_names.get(bt, str(bt))
@@ -3092,7 +3093,7 @@ async def get_account_receivable(
             merchant_recv.append({"name": name, "value": fmt_val(sum_detail(2003, bt))})
             # ProjectCountList
             pc_val = max_detail(3001, bt)
-            proj_count_list.append({"name": name, "value": str(round(pc_val, 2))})
+            proj_count_list.append({"name": name, "value": str(int(pc_val))})
             # ProjectRatioList
             proj_ratio_list.append({"name": name, "value": str(round(pc_val / project_count * 100, 2) if project_count > 0 else 0)})
             # RevenueRatioList
