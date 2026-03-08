@@ -1298,15 +1298,51 @@ async def get_province_month_analysis(
         where_sql = " AND ".join(conditions)
 
         sql = f"""SELECT
+            "B"."SPREGIONTYPE_INDEX", "B"."SPREGIONTYPE_ID", "B"."SERVERPART_INDEX", "B"."SERVERPART_CODE",
             "B"."SPREGIONTYPE_NAME", "B"."SERVERPART_ID", "B"."SERVERPART_NAME",
             COUNT(DISTINCT "A"."STATISTICS_DATE") AS "DATE_COUNT",
             SUM("A"."SERVERPART_FLOW") AS "VEHICLE_COUNT",
             SUM("A"."SECTIONFLOW_NUM") AS "SECTIONFLOW_NUM"
         FROM "T_SECTIONFLOW" "A", "T_SERVERPART" "B"
         WHERE "A"."SERVERPART_ID" = "B"."SERVERPART_ID" AND {where_sql}
-        GROUP BY "B"."SPREGIONTYPE_NAME", "B"."SERVERPART_ID", "B"."SERVERPART_NAME"
+        GROUP BY "B"."SPREGIONTYPE_INDEX", "B"."SPREGIONTYPE_ID", "B"."SERVERPART_INDEX", "B"."SERVERPART_CODE",
+            "B"."SPREGIONTYPE_NAME", "B"."SERVERPART_ID", "B"."SERVERPART_NAME"
         """
         rows = db.execute_query(sql, params if params else None)
+
+        # 查营收数据 按SERVERPART_ID分组
+        rev_conditions = []
+        rev_params = []
+        rev_conditions.append('"A"."STATISTICS_DATE" >= ?')
+        rev_params.append(month_start)
+        rev_conditions.append('"A"."STATISTICS_DATE" <= ?')
+        rev_params.append(month_end)
+        if Serverpart_ID:
+            rev_conditions.append(f'"B"."SERVERPART_ID" = {Serverpart_ID}')
+        elif SPRegion_ID:
+            rev_conditions.append(f'"B"."SPREGIONTYPE_ID" IN ({SPRegion_ID})')
+        else:
+            # 省份过滤
+            pid_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
+            pid_rows = db.execute_query(pid_sql, {"pc": ProvinceCode or "340000"})
+            if pid_rows:
+                rev_conditions.append(f'"B"."PROVINCE_CODE" = {pid_rows[0]["FIELDENUM_ID"]}')
+        rev_where = " AND ".join(rev_conditions)
+        rev_sql = f"""SELECT "A"."SERVERPART_ID",
+                COUNT(DISTINCT "A"."STATISTICS_DATE") AS "DATE_COUNT",
+                SUM("A"."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+            FROM "T_REVENUEDAILY" "A", "T_SERVERPART" "B"
+            WHERE "A"."SERVERPART_ID" = "B"."SERVERPART_ID"
+                AND "A"."REVENUEDAILY_STATE" = 1 AND "B"."STATISTIC_TYPE" = 1000
+                AND "B"."SERVERPART_CODE" NOT IN ('S000','S092','S093','S094')
+                AND {rev_where}
+            GROUP BY "A"."SERVERPART_ID" """
+        rev_rows = db.execute_query(rev_sql, rev_params if rev_params else None) or []
+        rev_map = {}
+        for rr in rev_rows:
+            sp_id = rr.get("SERVERPART_ID")
+            rev_map[sp_id] = {"days": int(rr.get("DATE_COUNT") or 0), "rev": float(rr.get("REVENUE_AMOUNT") or 0)}
 
         if not rows:
             json_list = JsonListData.create(data_list=[], total=0, page_size=10)
@@ -1319,7 +1355,9 @@ async def get_province_month_analysis(
         from datetime import datetime
         now = datetime.now()
         # 如果是当月，用昨天的天数
-        if StatisticsMonth == now.strftime("%Y%m"):
+        if StatisticsMonth == (now - __import__('datetime').timedelta(days=1)).strftime("%Y%m"):
+            cur_days = (now - __import__('datetime').timedelta(days=1)).day
+        elif StatisticsMonth == now.strftime("%Y%m"):
             cur_days = (now.day - 1) if now.day > 1 else 1
         else:
             cur_days = calendar.monthrange(year, month)[1]
@@ -1341,10 +1379,21 @@ async def get_province_month_analysis(
             # 入区率 = 入区车流 / 断面流量 * 100
             entry_rate = round(total_vehicle * 100 / total_section, 2) if total_section > 0 else 0
 
+            # 营收数据
+            sp_id = r.get("SERVERPART_ID")
+            rev_info = rev_map.get(sp_id, {})
+            revenue_amount = rev_info.get("rev", 0.0)
+            rev_days = rev_info.get("days", 0)
+            avg_vehicle_amount = 0.0
+            if avg_vehicle > 0 and rev_days > 0:
+                avg_vehicle_amount = round(revenue_amount / rev_days / avg_vehicle, 2)
+
+            sp_region_id = r.get("SPREGIONTYPE_ID")
+
             model = {
                 "Statistics_Year": year,
                 "Statistics_Month": month,
-                "SPRegionType_Id": None,
+                "SPRegionType_Id": int(sp_region_id) if sp_region_id else None,
                 "SPRegionType_Name": r.get("SPREGIONTYPE_NAME"),
                 "Serverpart_ID": r.get("SERVERPART_ID"),
                 "Serverpart_Name": r.get("SERVERPART_NAME"),
@@ -1352,9 +1401,9 @@ async def get_province_month_analysis(
                 "MinVehicle_Count": None,
                 "SectionFlow_Count": total_section,
                 "Entry_Rate": entry_rate,
-                "RevenueAmount": 0.0,
+                "RevenueAmount": revenue_amount,
                 "ShopRevenueAmount": None,
-                "AvgVehicleAmount": 0.0,
+                "AvgVehicleAmount": avg_vehicle_amount,
                 "Stay_Times": None,
                 "RegionList": [],
             }
