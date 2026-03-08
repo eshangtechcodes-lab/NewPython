@@ -1940,7 +1940,7 @@ async def get_business_trade_level(
     ProvinceCode: Optional[str] = Query(None, description="省份编码"),
     StatisticsDate: Optional[str] = Query(None, description="统计日期"),
     ServerpartId: Optional[int] = Query(None, description="服务区内码"),
-    ShowWholeTrade: bool = Query(True, description="是否显示全部业态"),
+    ShowWholeTrade: bool = Query(False, description="是否显示全部业态"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取业态消费水平占比 (按C#逻辑重写)"""
@@ -2007,19 +2007,18 @@ async def get_business_trade_level(
                 tid = trade_parent_map[tid]
             return tid
 
-        # 按一级业态+消费等级分组
+        # 按具体业态+消费等级分组（C#不递归到一级,直接用具体业态）
         ptrade_total = defaultdict(float)
         ptrade_range = defaultdict(lambda: defaultdict(float))
         for r in rows:
             trade = str(r.get("BUSINESS_TRADE") or "")
             ar = int(safe_dec(r.get("AMOUNT_RANGE")))
             tc = safe_dec(r.get("AVGTICKET_COUNT"))
-            ptrade = get_parent_trade(trade) if trade else ""
-            ptrade_total[ptrade] += tc
-            ptrade_range[ptrade][ar] += tc
+            ptrade_total[trade] += tc
+            ptrade_range[trade][ar] += tc
 
         # 按客单量降序排序
-        show_count = 3  # 默认
+        show_count = 5  # C#默认 ShowTradeCount=5
         sorted_trades = sorted(
             [(t, v) for t, v in ptrade_total.items() if t and t in trade_name_map],
             key=lambda x: x[1], reverse=True
