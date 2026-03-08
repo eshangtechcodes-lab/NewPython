@@ -3290,14 +3290,16 @@ async def get_holiday_analysis(
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取节日营收数据对比分析"""
+    from datetime import datetime as dt
+    sd = dt.strptime(StatisticsDate.split(' ')[0], '%Y-%m-%d') if StatisticsDate and '-' in StatisticsDate else None
     _ckm = lambda: {"data": None, "key": None, "name": None, "value": None}
     _model = {
         "ServerpartId": None,
         "ServerpartName": None,
-        "curYear": int(curYear) if curYear else None,
+        "curYear": None,
         "compareYear": None,
         "HolidayType": holidayType if holidayType else None,
-        "curDate": None, "cyDate": None,
+        "curDate": f"{sd.year}/{sd.month}/{sd.day}" if StatisticsDate else None, "cyDate": None,
         "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
         "curYearAccount": _ckm(), "lYearAccount": _ckm(),
         "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
@@ -3305,10 +3307,10 @@ async def get_holiday_analysis(
         "curYearSelfAccount": _ckm(), "lYearSelfAccount": _ckm(),
         "curYearSCRevenue": _ckm(), "lYearSCRevenue": _ckm(),
         "curYearSCAccount": _ckm(), "lYearSCAccount": _ckm(),
-        "curYearSRRevenue": None, "lYearSRRevenue": _ckm(),
-        "curYearSRAccount": None, "lYearSRAccount": _ckm(),
+        "curYearSRRevenue": _ckm(), "lYearSRRevenue": _ckm(),
+        "curYearSRAccount": _ckm(), "lYearSRAccount": _ckm(),
         "curYearGRORevenue": _ckm(), "lYearGRORevenue": _ckm(),
-        "curYearGROAccount": None, "lYearGROAccount": _ckm(),
+        "curYearGROAccount": _ckm(), "lYearGROAccount": _ckm(),
         "curYearFCRevenue": _ckm(),
         "curYearCVSRevenue": _ckm(), "lYearCVSRevenue": _ckm(),
         "curYearCVSAccount": _ckm(), "lYearCVSAccount": _ckm(),
