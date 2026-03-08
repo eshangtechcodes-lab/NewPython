@@ -927,7 +927,7 @@ async def get_province_avg_bayonet_analysis(
     Statistics_Date: Optional[str] = Query(None, description="统计日期/月份"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取全省平均车流量分析（返回当日/上月/累计3条汇总数据）"""
+    """获取全省平均车流量分析（与C#的GetAvgBayonetAnalysis全省版一致）"""
     try:
         from datetime import datetime as dt
         from dateutil.relativedelta import relativedelta
@@ -944,65 +944,128 @@ async def get_province_avg_bayonet_analysis(
             try: return float(v) if v is not None else 0.0
             except: return 0.0
 
-        stat_date = dt.strptime(Statistics_Date, "%Y-%m-%d") if "-" in Statistics_Date else dt.strptime(Statistics_Date, "%Y%m%d")
-        stat_str = stat_date.strftime("%Y%m%d")
-        lm_date = stat_date - relativedelta(months=1)
-        lm_str = lm_date.strftime("%Y%m%d")
-        year_start = stat_date.replace(month=1, day=1).strftime("%Y%m%d")
+        is_month = len(Statistics_Date) == 6  # yyyyMM格式
+        if is_month:
+            cur_month = Statistics_Date
+            last_month = (dt.strptime(Statistics_Date + "01", "%Y%m%d") - relativedelta(months=1)).strftime("%Y%m")
+            last_year = (dt.strptime(Statistics_Date + "01", "%Y%m%d") - relativedelta(years=1)).strftime("%Y%m")
+        else:
+            stat_date = dt.strptime(Statistics_Date, "%Y-%m-%d") if "-" in Statistics_Date else dt.strptime(Statistics_Date, "%Y%m%d")
+            cur_month = stat_date.strftime("%Y%m%d")
+            last_month = (stat_date - relativedelta(months=1)).strftime("%Y%m")
+            last_year = (stat_date - relativedelta(years=1)).strftime("%Y%m")
 
-        def make_item(name, vc, entry_rate, stay, vc_growth=0.0, entry_growth=0.0, stay_growth=0.0, addup_vc=0, addup_sf=0):
-            return {
-                "Serverpart_ID": None, "Serverpart_Name": name, "Serverpart_Region": None,
-                "Vehicle_Count": int(vc), "Vehicle_GrowthRate": vc_growth,
-                "SectionFlow_Count": None, "Entry_Rate": entry_rate, "Entry_GrowthRate": entry_growth,
-                "Stay_Times": stay, "StayTimes_GrowthRate": stay_growth,
-                "Vehicle_AddUpCount": int(addup_vc), "SectionFlow_AddUpCount": int(addup_sf),
-                "EntryAddUp_Rate": None,
+        if is_month:
+            # 月度查询
+            months_in = f"{cur_month},{last_month},{last_year}"
+            flow_sql = f"""SELECT SUM("SECTIONFLOW_NUM") AS "SUM_SECTIONFLOW_NUM",
+                    SUM("SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0)) AS "SUM_SERVERPART_FLOW",
+                    SUBSTR("STATISTICS_DATE",1,6) AS "STATISTICS_DATE"
+                FROM "T_SECTIONFLOW"
+                WHERE "SERVERPART_ID" <> 0 AND SUBSTR("STATISTICS_DATE",1,6) IN ({months_in})
+                GROUP BY SUBSTR("STATISTICS_DATE",1,6)"""
+            avg_sql = f"""SELECT ROUND(AVG("SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0)),0) AS "SERVERPART_FLOW",
+                    ROUND(AVG("AVGENTRY_RATE"),2) AS "AVGENTRY_RATE",
+                    ROUND(AVG("AVGSTAY_TIMES"),2) AS "AVGSTAY_TIMES",
+                    SUBSTR("STATISTICS_DATE",1,6) AS "STATISTICS_DATE"
+                FROM "T_SECTIONFLOW"
+                WHERE "SERVERPART_ID" = 0 AND SUBSTR("STATISTICS_DATE",1,6) IN ({months_in})
+                GROUP BY SUBSTR("STATISTICS_DATE",1,6)"""
+        else:
+            # 日期查询：当月到该日 + 上月 + 去年同月
+            month_start = stat_date.strftime("%Y%m01")
+            lm_end = last_month + cur_month[6:8]  # 上月同日
+            ly_end = last_year + cur_month[6:8]    # 去年同月同日
+            flow_sql = f"""SELECT SUM("SECTIONFLOW_NUM") AS "SUM_SECTIONFLOW_NUM",
+                    SUM("SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0)) AS "SUM_SERVERPART_FLOW",
+                    '{cur_month}' AS "STATISTICS_DATE"
+                FROM "T_SECTIONFLOW"
+                WHERE "SERVERPART_ID" <> 0 AND "STATISTICS_DATE" BETWEEN {month_start} AND {cur_month}
+                UNION ALL
+                SELECT SUM("SECTIONFLOW_NUM") AS "SUM_SECTIONFLOW_NUM",
+                    SUM("SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0)) AS "SUM_SERVERPART_FLOW",
+                    SUBSTR("STATISTICS_DATE",1,6) AS "STATISTICS_DATE"
+                FROM "T_SECTIONFLOW"
+                WHERE "SERVERPART_ID" <> 0 AND "STATISTICS_DATE" BETWEEN {last_month}01 AND {lm_end}
+                GROUP BY SUBSTR("STATISTICS_DATE",1,6)
+                UNION ALL
+                SELECT SUM("SECTIONFLOW_NUM") AS "SUM_SECTIONFLOW_NUM",
+                    SUM("SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0)) AS "SUM_SERVERPART_FLOW",
+                    SUBSTR("STATISTICS_DATE",1,6) AS "STATISTICS_DATE"
+                FROM "T_SECTIONFLOW"
+                WHERE "SERVERPART_ID" <> 0 AND "STATISTICS_DATE" BETWEEN {last_year}01 AND {ly_end}
+                GROUP BY SUBSTR("STATISTICS_DATE",1,6)"""
+            avg_sql = f"""SELECT ROUND(AVG("SERVERPART_FLOW"),0) AS "SERVERPART_FLOW",
+                    ROUND(AVG("AVGENTRY_RATE"),2) AS "AVGENTRY_RATE",
+                    ROUND(AVG("AVGSTAY_TIMES"),2) AS "AVGSTAY_TIMES",
+                    '{cur_month}' AS "STATISTICS_DATE"
+                FROM "T_SECTIONFLOW"
+                WHERE "SERVERPART_ID" = 0 AND "STATISTICS_DATE" >= {month_start} AND "STATISTICS_DATE" <= {cur_month}
+                UNION ALL
+                SELECT ROUND(AVG("SERVERPART_FLOW"),0) AS "SERVERPART_FLOW",
+                    ROUND(AVG("AVGENTRY_RATE"),2) AS "AVGENTRY_RATE",
+                    ROUND(AVG("AVGSTAY_TIMES"),2) AS "AVGSTAY_TIMES",
+                    SUBSTR("STATISTICS_DATE",1,6) AS "STATISTICS_DATE"
+                FROM "T_SECTIONFLOW"
+                WHERE "SERVERPART_ID" = 0 AND SUBSTR("STATISTICS_DATE",1,6) IN ({last_month},{last_year})
+                GROUP BY SUBSTR("STATISTICS_DATE",1,6)"""
+
+        flow_rows = db.execute_query(flow_sql) or []
+        avg_rows = db.execute_query(avg_sql) or []
+
+        # 按STATISTICS_DATE降序排列
+        avg_rows.sort(key=lambda r: str(r.get("STATISTICS_DATE", "")), reverse=True)
+
+        # 构建flow的映射
+        flow_map = {}
+        for r in flow_rows:
+            sd = str(r.get("STATISTICS_DATE", ""))
+            flow_map[sd] = {
+                "sf": safe_f(r.get("SUM_SECTIONFLOW_NUM")),
+                "spf": safe_f(r.get("SUM_SERVERPART_FLOW"))
             }
 
-        # 当日全省汇总（T_SECTIONFLOW WHERE SERVERPART_ID = 0）
-        cur_sql = f'SELECT * FROM "T_SECTIONFLOW" WHERE "SERVERPART_ID" = 0 AND "STATISTICS_DATE" = {stat_str}'
-        cur_rows = db.execute_query(cur_sql) or []
-        # 当日无数据时，退而求其次查最近的可用日期
-        if not cur_rows or not cur_rows[0].get("SERVERPART_FLOW"):
-            fallback_sql = f'SELECT * FROM "T_SECTIONFLOW" WHERE "SERVERPART_ID" = 0 AND "STATISTICS_DATE" <= {stat_str} ORDER BY "STATISTICS_DATE" DESC LIMIT 1'
-            cur_rows = db.execute_query(fallback_sql) or []
-
-        # 上月同日
-        lm_sql = f'SELECT * FROM "T_SECTIONFLOW" WHERE "SERVERPART_ID" = 0 AND "STATISTICS_DATE" = {lm_str}'
-        lm_rows = db.execute_query(lm_sql) or []
-
-        # 年累计
-        addup_sql = f"""SELECT SUM("SERVERPART_FLOW") AS "ADDUP_VC", SUM("SECTIONFLOW_NUM") AS "ADDUP_SF"
-            FROM "T_SECTIONFLOW" WHERE "SERVERPART_ID" > 0
-                AND "SECTIONFLOW_STATUS" = 1 AND "STATISTICS_DATE" >= {year_start} AND "STATISTICS_DATE" <= {stat_str}"""
-        addup_rows = db.execute_query(addup_sql) or []
-        addup_vc = safe_f(addup_rows[0].get("ADDUP_VC")) if addup_rows else 0
-        addup_sf = safe_f(addup_rows[0].get("ADDUP_SF")) if addup_rows else 0
+        # 获取当月的平均入区率和停留时长（用于GrowthRate计算）
+        cur_avg = None
+        cur_flow = None
+        for r in avg_rows:
+            if str(r.get("STATISTICS_DATE", "")) == str(cur_month):
+                cur_avg = r
+                break
+        cur_entry = safe_f(cur_avg.get("AVGENTRY_RATE")) if cur_avg else 0
+        cur_stay = safe_f(cur_avg.get("AVGSTAY_TIMES")) if cur_avg else 0
+        cur_spf = flow_map.get(str(cur_month), {}).get("spf", 0)
 
         data_list = []
-        if cur_rows and cur_rows[0].get("SERVERPART_FLOW"):
-            cr = cur_rows[0]
-            cur_vc = safe_f(cr.get("SERVERPART_FLOW"))
-            cur_rate = safe_f(cr.get("AVGENTRY_RATE"))
-            cur_stay = safe_f(cr.get("AVGSTAY_TIMES"))
+        for r in avg_rows:
+            sd = str(r.get("STATISTICS_DATE", ""))
+            vc = safe_f(r.get("SERVERPART_FLOW"))
+            entry = safe_f(r.get("AVGENTRY_RATE"))
+            stay = safe_f(r.get("AVGSTAY_TIMES"))
+            addup_sf = int(flow_map.get(sd, {}).get("sf", 0))
+            addup_vc = int(flow_map.get(sd, {}).get("spf", 0))
 
-            # 上月对比
-            lm_vc = 0; lm_rate = 0; lm_stay = 0
-            if lm_rows and lm_rows[0].get("SERVERPART_FLOW"):
-                lr = lm_rows[0]
-                lm_vc = safe_f(lr.get("SERVERPART_FLOW"))
-                lm_rate = safe_f(lr.get("AVGENTRY_RATE"))
-                lm_stay = safe_f(lr.get("AVGSTAY_TIMES"))
+            # 增长率计算
+            vc_growth = round((cur_spf / addup_vc - 1) * 100, 2) if addup_vc else 0.0
+            entry_growth = round(cur_entry - entry, 2) if entry else 0.0
+            stay_growth = round((cur_stay / stay - 1) * 100, 2) if stay else 0.0
 
-            data_list.append(make_item("Current", cur_vc, cur_rate, cur_stay, addup_vc=addup_vc, addup_sf=addup_sf))
-            data_list.append(make_item("上月同期", lm_vc, lm_rate, lm_stay, addup_vc=addup_vc, addup_sf=addup_sf))
-            # 增长率
-            data_list.append(make_item("增长率",
-                round(cur_vc - lm_vc, 0) if lm_vc else 0,
-                round(cur_rate - lm_rate, 2) if lm_rate else 0,
-                round(cur_stay - lm_stay, 2) if lm_stay else 0,
-                addup_vc=addup_vc, addup_sf=addup_sf))
+            # 名称：根据日期判断
+            if sd == last_month:
+                name = "QOQ"
+            elif sd == last_year:
+                name = "YOY"
+            else:
+                name = "Current"
+
+            data_list.append({
+                "Serverpart_ID": None, "Serverpart_Name": name, "Serverpart_Region": None,
+                "Vehicle_Count": int(vc), "Vehicle_GrowthRate": vc_growth,
+                "SectionFlow_Count": None, "Entry_Rate": entry, "Entry_GrowthRate": entry_growth,
+                "Stay_Times": stay, "StayTimes_GrowthRate": stay_growth,
+                "Vehicle_AddUpCount": addup_vc, "SectionFlow_AddUpCount": addup_sf,
+                "EntryAddUp_Rate": None,
+            })
 
         json_list = JsonListData.create(data_list=data_list, total=len(data_list), page_size=10)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
