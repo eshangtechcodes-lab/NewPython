@@ -98,8 +98,10 @@ def _build_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, prov
     }
 
 
-def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, is_exclude):
-    """构建省份归属地分析模型（省份->城市嵌套）"""
+def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, is_exclude, prov_top=0):
+    """构建省份归属地分析模型（省份->城市嵌套）
+    prov_top: 显示省份数量。C#的ProvinceOAList传0，所以所有省份都归为"其他"
+    """
     # 省份聚合
     prov_map = {}
     for r in prov_rows:
@@ -107,26 +109,34 @@ def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_
         prov_map[pn] = prov_map.get(pn, 0) + float(r.get("VEHICLE_COUNT") or 0)
     prov_sorted = sorted(prov_map.items(), key=lambda x: x[1], reverse=True)
 
-    prov_list = []
-    for pn, pv in prov_sorted:
-        # 省内城市排名
-        p_cities = {}
-        for r in city_rows:
-            if r.get("PROVINCE_NAME") == pn:
-                cn = r.get("CITY_NAME") or ""
-                p_cities[cn] = p_cities.get(cn, 0) + float(r.get("VEHICLE_COUNT") or 0)
-        city_sorted = sorted(p_cities.items(), key=lambda x: x[1], reverse=True)[:city_top]
-        _cities = [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted]
-        if not _cities:
-            _cities = [{"name": None, "value": None}]
-        prov_list.append({
-            "name": pn,
-            "value": str(int(pv)),
-            "OwnerCityList": _cities,
-        })
-
     total_vc = sum(float(r.get("VEHICLE_COUNT") or 0) for r in prov_rows)
-    # 顶层城市列表(也像非省份模型一样聚合)
+    # 城市归属表的总数
+    city_total = sum(float(r.get("VEHICLE_COUNT") or 0) for r in city_rows)
+    # Vehicle_Count取city_total和prov总的最大值（与C#一致）
+    vehicle_count = int(max(total_vc, city_total))
+
+    prov_list = []
+    other_count = vehicle_count
+    if prov_top > 0:
+        # 正常展示省份明细
+        show_provs = prov_sorted[:prov_top]
+        for pn, pv in show_provs:
+            p_cities = {}
+            for r in city_rows:
+                if r.get("PROVINCE_NAME") == pn:
+                    cn = r.get("CITY_NAME") or ""
+                    p_cities[cn] = p_cities.get(cn, 0) + float(r.get("VEHICLE_COUNT") or 0)
+            city_sorted = sorted(p_cities.items(), key=lambda x: x[1], reverse=True)[:city_top]
+            _cities = [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted]
+            prov_list.append({"name": pn, "value": str(int(pv))})
+            other_count -= int(pv)
+    # 剩余归为"其他"
+    if other_count > 0:
+        prov_list.append({"name": "其他", "value": str(other_count)})
+
+    owner_province = [p["name"] for p in prov_list]
+
+    # 顶层城市列表
     city_map = {}
     for r in city_rows:
         cn = r.get("CITY_NAME") or ""
@@ -140,8 +150,8 @@ def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_
         "Serverpart_Name": sp_name,
         "Serverpart_Region": region,
         "OwnerCity": [c[0] for c in city_sorted_top],
-        "OwnerProvince": [p[0] for p in prov_sorted],
-        "Vehicle_Count": int(total_vc),
+        "OwnerProvince": owner_province,
+        "Vehicle_Count": vehicle_count,
         "OwnerProvinceList": prov_list,
         "OwnerCityList": top_city_list,
     }
