@@ -2162,18 +2162,18 @@ async def get_date_analysis(
 
             model = {
                 "STATISTICS_DATE": cur_date.strftime("%m-%d"),
-                "ThisYearTotalSECTIONFLOW_NUM": 0,
-                "ThisYearTotalSERVERPART_FLOW": 0,
-                "LastYearTotalSECTIONFLOW_NUM": 0,
-                "LastYearTotalSERVERPART_FLOW": 0,
-                "ThisYearSouthEastSECTIONFLOW_NUM": 0,
-                "ThisYearSouthEastSERVERPART_FLOW": 0,
-                "ThisYearNorthWestSECTIONFLOW_NUM": 0,
-                "ThisYearNorthWestSERVERPART_FLOW": 0,
-                "LastYearSouthEastSECTIONFLOW_NUM": 0,
-                "LastYearSouthEastSERVERPART_FLOW": 0,
-                "LastYearNorthWestSECTIONFLOW_NUM": 0,
-                "LastYearNorthWestSERVERPART_FLOW": 0,
+                "ThisYearTotalSECTIONFLOW_NUM": 0.0,
+                "ThisYearTotalSERVERPART_FLOW": 0.0,
+                "LastYearTotalSECTIONFLOW_NUM": 0.0,
+                "LastYearTotalSERVERPART_FLOW": 0.0,
+                "ThisYearSouthEastSECTIONFLOW_NUM": 0.0,
+                "ThisYearSouthEastSERVERPART_FLOW": 0.0,
+                "ThisYearNorthWestSECTIONFLOW_NUM": 0.0,
+                "ThisYearNorthWestSERVERPART_FLOW": 0.0,
+                "LastYearSouthEastSECTIONFLOW_NUM": 0.0,
+                "LastYearSouthEastSERVERPART_FLOW": 0.0,
+                "LastYearNorthWestSECTIONFLOW_NUM": 0.0,
+                "LastYearNorthWestSERVERPART_FLOW": 0.0,
                 "ThisYearTotalANALOG": 0.0,
                 "ThisYearSouthEastANALOG": 0.0,
                 "ThisYearNorthWestANALOG": 0.0,
@@ -2192,8 +2192,8 @@ async def get_date_analysis(
                 # 今年数据
                 r = flow_map.get((date_num, region))
                 if r:
-                    sf = r.get("SECTIONFLOW_NUM") or 0
-                    sp = r.get("SERVERPART_FLOW") or 0
+                    sf = float(r.get("SECTIONFLOW_NUM") or 0)
+                    sp = float(r.get("SERVERPART_FLOW") or 0)
                     analog = float(r.get("SERVERPART_FLOW_ANALOG") or 0)
                     model["ThisYearTotalSECTIONFLOW_NUM"] += sf
                     model["ThisYearTotalSERVERPART_FLOW"] += sp
@@ -2209,8 +2209,8 @@ async def get_date_analysis(
                 # 去年数据
                 r_ly = flow_map.get((ly_date_num, region))
                 if r_ly:
-                    sf = r_ly.get("SECTIONFLOW_NUM") or 0
-                    sp = r_ly.get("SERVERPART_FLOW") or 0
+                    sf = float(r_ly.get("SECTIONFLOW_NUM") or 0)
+                    sp = float(r_ly.get("SERVERPART_FLOW") or 0)
                     analog = float(r_ly.get("SERVERPART_FLOW_ANALOG") or 0)
                     model["LastYearTotalSECTIONFLOW_NUM"] += sf
                     model["LastYearTotalSERVERPART_FLOW"] += sp
