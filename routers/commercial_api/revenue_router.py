@@ -2212,6 +2212,7 @@ async def get_revenue_report(
 
         sql = f"""SELECT B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
                 B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
+                B."SERVERPART_REGION",
                 SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT",
                 SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAY_AMOUNT",
                 SUM(A."CASHPAY_AMOUNT") AS "CASHPAY_AMOUNT",
@@ -2223,7 +2224,8 @@ async def get_revenue_report(
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE {where_sql}
             GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX",
-                B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX"
+                B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
+                B."SERVERPART_REGION"
             ORDER BY B."SPREGIONTYPE_INDEX", B."SPREGIONTYPE_ID", B."SERVERPART_INDEX", B."SERVERPART_CODE" """
 
         rows = db.execute_query(sql, params)
@@ -2235,13 +2237,12 @@ async def get_revenue_report(
         total_ticket = sum(int(r.get("TICKET_COUNT") or 0) for r in rows)
         total_count = round(sum(float(r.get("TOTAL_COUNT") or 0) for r in rows), 2)
         total_off = round(sum(float(r.get("TOTALOFF_AMOUNT") or 0) for r in rows), 2)
-        total_diff = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows), 2)
-        # 注意: 达梦中可能没有DIFFERENT_AMOUNT_LESS_A等字段，暂用total_diff近似
-        diff_less = total_diff if total_diff < 0 else 0.0
-        diff_more = total_diff if total_diff > 0 else 0.0
-        # 注意: 达梦中可能没有REVENUE_AMOUNT_A/B字段
-        rev_amount_s = 0.0
-        rev_amount_n = 0.0
+        # 各差异分段
+        diff_less = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows if float(r.get("DIFFERENT_AMOUNT") or 0) < 0), 2)
+        diff_more = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows if float(r.get("DIFFERENT_AMOUNT") or 0) > 0), 2)
+        # 按区域分 N=北+西, S=东+南
+        rev_amount_n = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows if (r.get("SERVERPART_REGION") or "") in ("北", "西")), 2)
+        rev_amount_s = round(sum(float(r.get("REVENUE_AMOUNT") or 0) for r in rows if (r.get("SERVERPART_REGION") or "") in ("东", "南")), 2)
 
         # 按片区分组
         from decimal import Decimal
