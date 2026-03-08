@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 00:48:45",
-  "elapsed": 38.8,
+  "time": "2026-03-08 01:03:43",
+  "elapsed": 38.6,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -30,9 +30,9 @@
       "diffs": [
         ".Result_Data.List[0].CurRevenueAmount_A: 旧=37498.79 新=0.0",
         ".Result_Data.List[0].CurRevenueAmount_B: 旧=27376.93 新=0.0",
-        ".Result_Data.List[0].LastYearNorthWestANALOG: 类型不同 旧=float 新=NoneType",
+        ".Result_Data.List[0].LastYearNorthWestANALOG: 类型不同 旧=float 新=int",
         ".Result_Data.List[0]: ...还有26条差异",
-        ".Result_Data.OtherData[0].CurRevenueAmount: 旧=3264971.43 新=0.0"
+        ".Result_Data.OtherData[0].CurRevenueAmount: 旧=3264971.43 新=3197328.83"
       ]
     },
     {
@@ -59,10 +59,10 @@
       "route": "GET /BigData/GetProvinceVehicleTreeList",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].IsOther: 类型不同 旧=bool 新=int",
-        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].ServerPartId: 新API缺少字段",
-        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].ServerPartIds: 新API缺少字段",
-        ".Result_Data.List[0]: ...还有5条差异"
+        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].ServerPartName: 新API缺少字段",
+        ".Result_Data.List[0].children[0].node.SPRegionTypeList[0].ServerPartName: 新API缺少字段",
+        ".Result_Data.List[0].node.SPRegionTypeList[0].ProvinceName: 新API缺少字段",
+        ".Result_Data.List[0]: ...还有1条差异"
       ]
     },
     {
@@ -178,10 +178,10 @@
       "route": "GET /Revenue/GetHolidaySPRAnalysis",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].node.SPRegionTypeId: 类型不同 旧=int 新=NoneType",
-        ".Result_Data.List[0].node.curYearAccount: 新API缺少字段",
-        ".Result_Data.List[0].node.curYearBayonet: 新API缺少字段",
-        ".Result_Data.List[0]: ...还有10条差异"
+        ".Result_Data.List[0].node.curYearAccount: 类型不同 旧=dict 新=NoneType",
+        ".Result_Data.List[0].node.curYearBayonet: 类型不同 旧=dict 新=NoneType",
+        ".Result_Data.List[0].node.curYearRevenue.data: 旧=57178915.78 新=57178915.77999997",
+        ".Result_Data.List[0]: ...还有9条差异"
       ]
     },
     {

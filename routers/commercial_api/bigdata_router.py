@@ -2165,12 +2165,12 @@ async def get_date_analysis(
                 "LastYearSouthEastSERVERPART_FLOW": 0,
                 "LastYearNorthWestSECTIONFLOW_NUM": 0,
                 "LastYearNorthWestSERVERPART_FLOW": 0,
-                "ThisYearTotalANALOG": 0,
-                "ThisYearSouthEastANALOG": 0,
-                "ThisYearNorthWestANALOG": 0,
-                "LastYearTotalANALOG": 0,
-                "LastYearSouthEastANALOG": 0,
-                "LastYearNorthWestANALOG": 0,
+                "ThisYearTotalANALOG": 0.0,
+                "ThisYearSouthEastANALOG": 0.0,
+                "ThisYearNorthWestANALOG": 0.0,
+                "LastYearTotalANALOG": 0.0,
+                "LastYearSouthEastANALOG": 0.0,
+                "LastYearNorthWestANALOG": 0.0,
                 "CurRevenueAmount": rev_map.get(date_num, 0.0),
                 "CurRevenueAmount_A": 0.0,
                 "CurRevenueAmount_B": 0.0,
@@ -2185,7 +2185,7 @@ async def get_date_analysis(
                 if r:
                     sf = r.get("SECTIONFLOW_NUM") or 0
                     sp = r.get("SERVERPART_FLOW") or 0
-                    analog = r.get("SERVERPART_FLOW_ANALOG") or 0
+                    analog = float(r.get("SERVERPART_FLOW_ANALOG") or 0)
                     model["ThisYearTotalSECTIONFLOW_NUM"] += sf
                     model["ThisYearTotalSERVERPART_FLOW"] += sp
                     model["ThisYearTotalANALOG"] += analog
@@ -2202,7 +2202,7 @@ async def get_date_analysis(
                 if r_ly:
                     sf = r_ly.get("SECTIONFLOW_NUM") or 0
                     sp = r_ly.get("SERVERPART_FLOW") or 0
-                    analog = r_ly.get("SERVERPART_FLOW_ANALOG") or 0
+                    analog = float(r_ly.get("SERVERPART_FLOW_ANALOG") or 0)
                     model["LastYearTotalSECTIONFLOW_NUM"] += sf
                     model["LastYearTotalSERVERPART_FLOW"] += sp
                     model["LastYearTotalANALOG"] += analog
