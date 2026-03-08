@@ -3324,47 +3324,284 @@ async def get_last_sync_date_time(db: DatabaseHelper = Depends(get_db)):
 
 
 # ===== 节日分析 =====
+
+def _get_holiday_dates(db, holiday_type, cur_year, compare_year):
+    """获取节日日期范围（与C# CommonHelper.GetHoliday一致）"""
+    from datetime import datetime as dt
+    import calendar
+    cur_year = int(cur_year)
+    compare_year = int(compare_year)
+    
+    # 暑期固定时间
+    if holiday_type == 6:
+        return (dt(cur_year, 7, 1), dt(cur_year, 8, 31),
+                dt(compare_year, 7, 1), dt(compare_year, 8, 31))
+    
+    # 从T_HOLIDAY表查节日日期
+    holiday_names = {1: "元旦", 2: "春运", 3: "清明节", 4: "劳动节", 5: "端午节", 7: "中秋节", 8: "国庆节"}
+    h_name = holiday_names.get(holiday_type)
+    if not h_name:
+        return None
+    
+    sql = f"""SELECT "HOLIDAY_DESC", MIN("HOLIDAY_DATE") AS "MIN_DATE", MAX("HOLIDAY_DATE") AS "MAX_DATE"
+        FROM "T_HOLIDAY"
+        WHERE "HOLIDAY_DESC" IN ('{cur_year}年{h_name}','{compare_year}年{h_name}')
+        GROUP BY "HOLIDAY_DESC" """
+    rows = db.execute_query(sql) or []
+    
+    ss, se, cs, ce = None, None, None, None
+    for r in rows:
+        desc = r.get("HOLIDAY_DESC", "")
+        min_d = r.get("MIN_DATE")
+        max_d = r.get("MAX_DATE")
+        if min_d and not isinstance(min_d, dt):
+            min_d = dt.strptime(str(min_d)[:10], "%Y-%m-%d")
+        if max_d and not isinstance(max_d, dt):
+            max_d = dt.strptime(str(max_d)[:10], "%Y-%m-%d")
+        if desc == f"{cur_year}年{h_name}":
+            ss, se = min_d, max_d
+        if desc == f"{compare_year}年{h_name}":
+            cs, ce = min_d, max_d
+    
+    if not ss or not cs:
+        return None
+    
+    # 春运以实际时间为准
+    if holiday_type == 2:
+        return (ss, se, cs, ce)
+    
+    from datetime import timedelta
+    # 元旦/清明/端午/中秋: 假期开始前一天至开始后三天
+    if holiday_type in (1, 3, 5, 7):
+        se = ss + timedelta(days=3)
+        ss = ss + timedelta(days=-1)
+        ce = cs + timedelta(days=3)
+        cs = cs + timedelta(days=-1)
+    # 五一: 假期开始前一天至假期结束后一天
+    elif holiday_type == 4:
+        se = se + timedelta(days=1)
+        ss = ss + timedelta(days=-1)
+        ce = ce + timedelta(days=1)
+        cs = cs + timedelta(days=-1)
+    # 国庆: 9/29-10/8 (2023特殊 9/27-10/6)
+    elif holiday_type == 8:
+        if cur_year == 2023:
+            ss, se = dt(cur_year, 9, 27), dt(cur_year, 10, 6)
+        else:
+            ss, se = dt(cur_year, 9, 29), dt(cur_year, 10, 8)
+        if compare_year == 2023:
+            cs, ce = dt(compare_year, 9, 27), dt(compare_year, 10, 6)
+        else:
+            cs, ce = dt(compare_year, 9, 29), dt(compare_year, 10, 8)
+    
+    return (ss, se, cs, ce)
+
+
+def _sum_compute(rows, filter_fn, field_cur, field_total):
+    """模拟C#的DataTable.Compute(SUM, filter) — 使用Decimal避免浮点精度问题"""
+    from decimal import Decimal
+    filtered = [r for r in rows if filter_fn(r)]
+    if not filtered:
+        # C#的Compute在无匹配行时返回DBNull → ToString()是空字符串
+        return "", ""
+    total = sum(Decimal(str(r.get(field_total) or 0)) for r in filtered)
+    cur = sum(Decimal(str(r.get(field_cur) or 0)) for r in filtered)
+    return str(total), str(cur)
+
+
 @router.get("/Revenue/GetHolidayAnalysis")
 async def get_holiday_analysis(
     pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
     curYear: Optional[str] = Query(None, description="本年年份"),
     compareYear: Optional[str] = Query(None, description="历年年份"),
-    holidayType: int = Query(0, description="节日类型"),
+    HolidayType: int = Query(0, alias="HolidayType", description="节日类型"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
     ServerpartId: Optional[str] = Query("", description="服务区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取节日营收数据对比分析"""
+    """获取节日营收数据对比分析（完整实现）"""
     from datetime import datetime as dt
-    sd = dt.strptime(StatisticsDate.split(' ')[0], '%Y-%m-%d') if StatisticsDate and '-' in StatisticsDate else None
     _ckm = lambda: {"data": None, "key": None, "name": None, "value": None}
-    _model = {
-        "ServerpartId": None,
-        "ServerpartName": None,
-        "curYear": None,
-        "compareYear": None,
-        "HolidayType": holidayType if holidayType else None,
-        "curDate": f"{sd.year}/{sd.month}/{sd.day}" if StatisticsDate else None, "cyDate": None,
-        "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
-        "curYearAccount": _ckm(), "lYearAccount": _ckm(),
-        "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
-        "curYearSelfRevenue": _ckm(), "lYearSelfRevenue": _ckm(),
-        "curYearSelfAccount": _ckm(), "lYearSelfAccount": _ckm(),
-        "curYearSCRevenue": _ckm(), "lYearSCRevenue": _ckm(),
-        "curYearSCAccount": _ckm(), "lYearSCAccount": _ckm(),
-        "curYearSRRevenue": _ckm(), "lYearSRRevenue": _ckm(),
-        "curYearSRAccount": _ckm(), "lYearSRAccount": _ckm(),
-        "curYearGRORevenue": _ckm(), "lYearGRORevenue": _ckm(),
-        "curYearGROAccount": _ckm(), "lYearGROAccount": _ckm(),
-        "curYearFCRevenue": _ckm(),
-        "curYearCVSRevenue": _ckm(), "lYearCVSRevenue": _ckm(),
-        "curYearCVSAccount": _ckm(), "lYearCVSAccount": _ckm(),
-        "curYearCoopRevenue": _ckm(), "lYearCoopRevenue": _ckm(),
-        "curYearCoopAccount": _ckm(), "lYearCoopAccount": _ckm(),
-        "curYearSelfCoopRevenue": _ckm(),
-        "curYearWJRevenue": _ckm(), "lYearWJRevenue": _ckm(),
-    }
-    return Result.success(data=_model, msg="查询成功")
+    
+    try:
+        sd = dt.strptime(StatisticsDate.split(' ')[0], '%Y-%m-%d') if StatisticsDate and '-' in StatisticsDate else None
+        if not sd:
+            return Result.success(data=None, msg="查询成功")
+        
+        # 1. 获取节日日期范围
+        dates = _get_holiday_dates(db, HolidayType, curYear, compareYear)
+        if not dates:
+            return Result.success(data=None, msg="查询成功")
+        
+        stat_start, stat_end, comp_start, comp_end = dates
+        
+        if sd < stat_start:
+            return Result.success(data=None, msg="查询成功")
+        if sd > stat_end:
+            sd = stat_end
+        
+        # 计算历年对应日期
+        cy_date = comp_start + (sd - stat_start)
+        
+        # 2. 构建查询条件
+        # 获取省份的FieldEnum_ID（与其他接口一致的方式）
+        fe_rows = db.execute_query(f"""SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+            WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE'
+            AND B."FIELDENUM_VALUE" = '{pushProvinceCode}'""") or []
+        field_enum_id = fe_rows[0]["FIELDENUM_ID"] if fe_rows else pushProvinceCode
+        
+        where_sql = f" AND A.\"PROVINCE_ID\" = {field_enum_id}"
+        table_name = "T_PROVINCEREVENUE"
+        state_name = "PROVINCEREVENUE_STATE"
+        
+        if ServerpartId:
+            table_name = "T_HOLIDAYREVENUE"
+            state_name = "HOLIDAYREVENUE_STATE"
+            sp_ids = "','".join(ServerpartId.split(","))
+            where_sql += f" AND A.\"SERVERPART_ID\" IN ('{sp_ids}')"
+        elif pushProvinceCode == "340000":
+            where_sql += ' AND A."BUSINESS_REGION" = 1'
+        
+        # 3. 查询营收数据 - 当年
+        ss_str = stat_start.strftime("%Y%m%d")
+        sd_str = sd.strftime("%Y%m%d")
+        rev_sql = f"""SELECT "BUSINESS_TYPE","SHOPTRADE","BUSINESS_REGION",
+                SUM(A."REVENUE_AMOUNT") AS "CASHPAY",
+                SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
+                SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "CASHPAY_CUR",
+                SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END) AS "ACCOUNT_AMOUNT_CUR"
+            FROM "{table_name}" A
+            WHERE A."{state_name}" = 1
+                AND A."STATISTICS_DATE" BETWEEN {ss_str} AND {sd_str}{where_sql}
+            GROUP BY "BUSINESS_TYPE","SHOPTRADE","BUSINESS_REGION" """
+        cur_rev = db.execute_query(rev_sql) or []
+        
+        # 4. 查询营收数据 - 历年
+        cs_str = comp_start.strftime("%Y%m%d")
+        cy_str = cy_date.strftime("%Y%m%d")
+        rev_sql2 = f"""SELECT "BUSINESS_TYPE","SHOPTRADE","BUSINESS_REGION",
+                SUM(A."REVENUE_AMOUNT") AS "CASHPAY",
+                SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
+                SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "CASHPAY_CUR",
+                SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END) AS "ACCOUNT_AMOUNT_CUR"
+            FROM "{table_name}" A
+            WHERE A."{state_name}" = 1
+                AND A."STATISTICS_DATE" BETWEEN {cs_str} AND {cy_str}{where_sql}
+            GROUP BY "BUSINESS_TYPE","SHOPTRADE","BUSINESS_REGION" """
+        cy_rev = db.execute_query(rev_sql2) or []
+        
+        # 辅助函数 — C#返回ToString()，空时返回空字符串
+        def mk(rows, filter_fn):
+            d, v = _sum_compute(rows, filter_fn, "CASHPAY_CUR", "CASHPAY")
+            return {"data": d, "key": None, "name": None, "value": v}
+        def mk_acc(rows, filter_fn):
+            d, v = _sum_compute(rows, filter_fn, "ACCOUNT_AMOUNT_CUR", "ACCOUNT_AMOUNT")
+            return {"data": d, "key": None, "name": None, "value": v}
+        
+        all_pass = lambda r: True
+        bt4000 = lambda r: str(r.get("BUSINESS_TYPE")) == "4000"
+        bt4000_st134 = lambda r: str(r.get("BUSINESS_TYPE")) == "4000" and str(r.get("SHOPTRADE")) in ("1","3","4")
+        bt4000_st13 = lambda r: str(r.get("BUSINESS_TYPE")) == "4000" and str(r.get("SHOPTRADE")) in ("1","3")
+        bt4000_st4 = lambda r: str(r.get("BUSINESS_TYPE")) == "4000" and str(r.get("SHOPTRADE")) == "4"
+        bt4000_st3 = lambda r: str(r.get("BUSINESS_TYPE")) == "4000" and str(r.get("SHOPTRADE")) == "3"
+        bt4000_st2 = lambda r: str(r.get("BUSINESS_TYPE")) == "4000" and str(r.get("SHOPTRADE")) == "2"
+        bt_lt4000 = lambda r: int(r.get("BUSINESS_TYPE") or 0) < 4000
+        bt3000 = lambda r: str(r.get("BUSINESS_TYPE")) == "3000"
+        br2 = lambda r: str(r.get("BUSINESS_REGION")) == "2"
+        
+        # 5. 构建结果
+        _model = {
+            "ServerpartId": None,
+            "ServerpartName": None,
+            "curYear": None,
+            "compareYear": None,
+            "HolidayType": None,  # C#的baseline返回null
+            "curDate": f"{sd.year}/{sd.month}/{sd.day}",
+            "cyDate": f"{cy_date.year}/{cy_date.month}/{cy_date.day}",
+            # 整体对客销售额
+            "curYearRevenue": mk(cur_rev, all_pass), "lYearRevenue": mk(cy_rev, all_pass),
+            # 自营对客销售额 (BUSINESS_TYPE=4000)
+            "curYearSelfRevenue": mk(cur_rev, bt4000), "lYearSelfRevenue": mk(cy_rev, bt4000),
+            # 自营餐饮客房及其他 (BUSINESS_TYPE=4000, SHOPTRADE in 1,3,4)
+            "curYearSCRevenue": mk(cur_rev, bt4000_st134), "lYearSCRevenue": mk(cy_rev, bt4000_st134),
+            "curYearSCAccount": mk_acc(cur_rev, bt4000_st134), "lYearSCAccount": mk_acc(cy_rev, bt4000_st134),
+            # 自营餐饮 (BUSINESS_TYPE=4000, SHOPTRADE in 1,3)
+            "curYearSRRevenue": mk(cur_rev, bt4000_st13), "lYearSRRevenue": mk(cy_rev, bt4000_st13),
+            "curYearSRAccount": mk_acc(cur_rev, bt4000_st13), "lYearSRAccount": mk_acc(cy_rev, bt4000_st13),
+            # 自营客房及其他 (BUSINESS_TYPE=4000, SHOPTRADE=4)
+            "curYearGRORevenue": mk(cur_rev, bt4000_st4), "lYearGRORevenue": mk(cy_rev, bt4000_st4),
+            "curYearGROAccount": mk_acc(cur_rev, bt4000_st4), "lYearGROAccount": mk_acc(cy_rev, bt4000_st4),
+            # 加盟餐饮 (BUSINESS_TYPE=4000, SHOPTRADE=3)
+            "curYearFCRevenue": mk(cur_rev, bt4000_st3),
+            # 自营便利店 (BUSINESS_TYPE=4000, SHOPTRADE=2)
+            "curYearCVSRevenue": mk(cur_rev, bt4000_st2), "lYearCVSRevenue": mk(cy_rev, bt4000_st2),
+            "curYearCVSAccount": mk_acc(cur_rev, bt4000_st2), "lYearCVSAccount": mk_acc(cy_rev, bt4000_st2),
+            # 商铺租赁 (BUSINESS_TYPE < 4000)
+            "curYearCoopRevenue": mk(cur_rev, bt_lt4000), "lYearCoopRevenue": mk(cy_rev, bt_lt4000),
+            "curYearCoopAccount": mk_acc(cur_rev, bt_lt4000), "lYearCoopAccount": mk_acc(cy_rev, bt_lt4000),
+            # 自营提成 (BUSINESS_TYPE=3000)
+            "curYearSelfCoopRevenue": mk(cur_rev, bt3000),
+            # 城市店 (BUSINESS_REGION=2)
+            "curYearWJRevenue": mk(cur_rev, br2), "lYearWJRevenue": mk(cy_rev, br2),
+        }
+        
+        # 6. 计算自营收入 = 便利店收入 + 餐饮客房收入
+        def add_kv(a, b):
+            from decimal import Decimal
+            av = Decimal(a.get("value") or "0")
+            bv = Decimal(b.get("value") or "0")
+            ad = Decimal(a.get("data") or "0")
+            bd = Decimal(b.get("data") or "0")
+            return {"data": str(ad + bd), "key": None, "name": None,
+                    "value": str(av + bv)}
+        
+        _model["curYearSelfAccount"] = add_kv(_model["curYearCVSAccount"], _model["curYearSCAccount"])
+        _model["lYearSelfAccount"] = add_kv(_model["lYearCVSAccount"], _model["lYearSCAccount"])
+        # 驿达入账 = 自营收入 + 商铺租赁收入
+        _model["curYearAccount"] = add_kv(_model["curYearSelfAccount"], _model["curYearCoopAccount"])
+        _model["lYearAccount"] = add_kv(_model["lYearSelfAccount"], _model["lYearCoopAccount"])
+        
+        # 7. 查询车流量
+        if ServerpartId:
+            bw_sql = f' AND A."SERVERPART_ID" IN ({ServerpartId})'
+        else:
+            bw_sql = f""" AND EXISTS (SELECT 1 FROM "T_SERVERPART" S
+                WHERE A."SERVERPART_ID" = S."SERVERPART_ID" AND S."PROVINCE_CODE" = {field_enum_id})"""
+        
+        bayonet_sql = f"""SELECT SUM(A."SERVERPART_FLOW") AS "SERVERPART_FLOW",
+                SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."SERVERPART_FLOW" ELSE 0 END) AS "SERVERPART_FLOW_CUR"
+            FROM "T_SECTIONFLOW" A
+            WHERE A."SECTIONFLOW_STATUS" = 1 AND A."SERVERPART_ID" > 0
+                AND A."STATISTICS_DATE" BETWEEN {ss_str} AND {sd_str}{bw_sql}"""
+        cur_bay = db.execute_query(bayonet_sql) or []
+        
+        bayonet_sql2 = f"""SELECT SUM(A."SERVERPART_FLOW" + NVL(A."SERVERPART_FLOW_ANALOG",0)) AS "SERVERPART_FLOW",
+                SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."SERVERPART_FLOW" + 
+                    NVL(A."SERVERPART_FLOW_ANALOG",0) ELSE 0 END) AS "SERVERPART_FLOW_CUR"
+            FROM "T_SECTIONFLOW" A
+            WHERE A."SECTIONFLOW_STATUS" = 1 AND A."SERVERPART_ID" > 0
+                AND A."STATISTICS_DATE" BETWEEN {cs_str} AND {cy_str}{bw_sql}"""
+        cy_bay = db.execute_query(bayonet_sql2) or []
+        
+        def bay_kv(rows):
+            if not rows or not rows[0]:
+                return _ckm()
+            r = rows[0]
+            flow = r.get("SERVERPART_FLOW")
+            flow_cur = r.get("SERVERPART_FLOW_CUR")
+            # C#中Compute("sum(xxx)","")即使为0也返回"0"
+            return {"data": str(int(float(flow))) if flow is not None else None,
+                    "key": None, "name": None,
+                    "value": str(int(float(flow_cur))) if flow_cur is not None else None}
+        
+        _model["curYearBayonet"] = bay_kv(cur_bay)
+        _model["lYearBayonet"] = bay_kv(cy_bay)
+        
+        return Result.success(data=_model, msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetHolidayAnalysis 查询失败: {ex}")
+        import traceback; traceback.print_exc()
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 @router.get("/Revenue/GetHolidayAnalysisBatch")
@@ -3377,52 +3614,57 @@ async def get_holiday_analysis_batch(
     ServerpartIds: Optional[str] = Query("", description="服务区内码集合"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取多个服务区节日营收数据对比分析（批量）"""
-    _ckm = lambda: {"data": None, "key": None, "name": None, "value": None}
-    # 查服务区名
-    sp_id = None
-    sp_name = None
-    if ServerpartIds:
-        sp_id = int(ServerpartIds.split(",")[0]) if ServerpartIds else None
-        if sp_id:
-            sp_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
-            sp_name = sp_rows[0].get("SERVERPART_NAME", "") if sp_rows else ""
-
-    # 转换curDate为C#的DateTime.ToString()格式(yyyy/M/d 无前导零)
-    _cur_date = None
-    if StatisticsDate:
-        try:
-            from datetime import datetime as _dt
-            _d = _dt.strptime(StatisticsDate, "%Y-%m-%d") if "-" in StatisticsDate else _dt.strptime(StatisticsDate, "%Y/%m/%d")
-            _cur_date = f"{_d.year}/{_d.month}/{_d.day}"
-        except:
-            _cur_date = StatisticsDate
-
-    _model = {
-        "ServerpartId": sp_id, "ServerpartName": sp_name,
-        "curYear": int(curYear) if curYear else None, "compareYear": int(compareYear) if compareYear else None,
-        "HolidayType": HolidayType, "curDate": _cur_date, "cyDate": None,
-        "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
-        "curYearAccount": _ckm(), "lYearAccount": _ckm(),
-        "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
-        "curYearSelfRevenue": _ckm(), "lYearSelfRevenue": _ckm(),
-        "curYearSelfAccount": _ckm(), "lYearSelfAccount": _ckm(),
-        "curYearSCRevenue": _ckm(), "lYearSCRevenue": _ckm(),
-        "curYearSCAccount": _ckm(), "lYearSCAccount": _ckm(),
-        "curYearSRRevenue": None, "lYearSRRevenue": _ckm(),
-        "curYearSRAccount": None, "lYearSRAccount": _ckm(),
-        "curYearGRORevenue": _ckm(), "lYearGRORevenue": _ckm(),
-        "curYearGROAccount": None, "lYearGROAccount": _ckm(),
-        "curYearFCRevenue": _ckm(),
-        "curYearCVSRevenue": _ckm(), "lYearCVSRevenue": _ckm(),
-        "curYearCVSAccount": _ckm(), "lYearCVSAccount": _ckm(),
-        "curYearCoopRevenue": _ckm(), "lYearCoopRevenue": _ckm(),
-        "curYearCoopAccount": _ckm(), "lYearCoopAccount": _ckm(),
-        "curYearSelfCoopRevenue": _ckm(),
-        "curYearWJRevenue": _ckm(), "lYearWJRevenue": _ckm(),
-    }
-    json_list = JsonListData.create(data_list=[_model], total=1)
-    return Result.success(data=json_list.model_dump(), msg="查询成功")
+    """获取多个服务区节日营收数据对比分析（批量）- 调用单个接口循环"""
+    try:
+        if not ServerpartIds:
+            return Result.fail(code=102, msg="服务区内码不能为空！")
+        
+        sp_list = [s.strip() for s in ServerpartIds.split(",") if s.strip()]
+        result_list = []
+        
+        for sp_id in sp_list:
+            # 调用单个HolidayAnalysis
+            res = await get_holiday_analysis(
+                pushProvinceCode=pushProvinceCode,
+                curYear=curYear,
+                compareYear=compareYear,
+                HolidayType=HolidayType,
+                StatisticsDate=StatisticsDate,
+                ServerpartId=sp_id,
+                db=db
+            )
+            # 解析结果
+            if hasattr(res, 'model_dump'):
+                res_dict = res.model_dump()
+            elif hasattr(res, 'body'):
+                import json as _json
+                res_dict = _json.loads(res.body)
+            elif isinstance(res, dict):
+                res_dict = res
+            else:
+                continue
+            
+            rd = res_dict.get("Result_Data")
+            if rd:
+                # 查询服务区名称
+                sp_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
+                sp_name = sp_rows[0].get("SERVERPART_NAME", "") if sp_rows else ""
+                rd["ServerpartId"] = int(sp_id) if sp_id.isdigit() else sp_id
+                rd["ServerpartName"] = sp_name
+                rd["curYear"] = int(curYear) if curYear else None
+                rd["compareYear"] = int(compareYear) if compareYear else None
+                rd["HolidayType"] = HolidayType
+                result_list.append(rd)
+        
+        if not result_list:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+        
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_index=1, page_size=len(result_list))
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetHolidayAnalysisBatch 查询失败: {ex}")
+        import traceback; traceback.print_exc()
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 # ===== 增幅分析 =====
