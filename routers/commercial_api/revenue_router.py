@@ -3399,14 +3399,24 @@ def _get_holiday_dates(db, holiday_type, cur_year, compare_year):
 
 def _sum_compute(rows, filter_fn, field_cur, field_total):
     """模拟C#的DataTable.Compute(SUM, filter) — 使用Decimal避免浮点精度问题"""
-    from decimal import Decimal
+    from decimal import Decimal, ROUND_HALF_UP
     filtered = [r for r in rows if filter_fn(r)]
     if not filtered:
         # C#的Compute在无匹配行时返回DBNull → ToString()是空字符串
         return "", ""
     total = sum(Decimal(str(r.get(field_total) or 0)) for r in filtered)
     cur = sum(Decimal(str(r.get(field_cur) or 0)) for r in filtered)
-    return str(total), str(cur)
+    # C#的Decimal.ToString()保留原始精度（至少2位小数）
+    def fmt(v):
+        s = str(v)
+        if '.' in s:
+            # 确保小数部分至少2位
+            integer, decimal = s.split('.')
+            if len(decimal) < 2:
+                decimal = decimal.ljust(2, '0')
+            return f"{integer}.{decimal}"
+        return s
+    return fmt(total), fmt(cur)
 
 
 @router.get("/Revenue/GetHolidayAnalysis")
@@ -3466,10 +3476,10 @@ async def get_holiday_analysis(
         ss_str = stat_start.strftime("%Y%m%d")
         sd_str = sd.strftime("%Y%m%d")
         rev_sql = f"""SELECT "BUSINESS_TYPE","SHOPTRADE","BUSINESS_REGION",
-                SUM(A."REVENUE_AMOUNT") AS "CASHPAY",
-                SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "CASHPAY_CUR",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END) AS "ACCOUNT_AMOUNT_CUR"
+                ROUND(SUM(A."REVENUE_AMOUNT"),2) AS "CASHPAY",
+                ROUND(SUM(A."ACCOUNT_AMOUNTNOTAX"),2) AS "ACCOUNT_AMOUNT",
+                ROUND(SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."REVENUE_AMOUNT" ELSE 0 END),2) AS "CASHPAY_CUR",
+                ROUND(SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END),2) AS "ACCOUNT_AMOUNT_CUR"
             FROM "{table_name}" A
             WHERE A."{state_name}" = 1
                 AND A."STATISTICS_DATE" BETWEEN {ss_str} AND {sd_str}{where_sql}
@@ -3480,10 +3490,10 @@ async def get_holiday_analysis(
         cs_str = comp_start.strftime("%Y%m%d")
         cy_str = cy_date.strftime("%Y%m%d")
         rev_sql2 = f"""SELECT "BUSINESS_TYPE","SHOPTRADE","BUSINESS_REGION",
-                SUM(A."REVENUE_AMOUNT") AS "CASHPAY",
-                SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "CASHPAY_CUR",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END) AS "ACCOUNT_AMOUNT_CUR"
+                ROUND(SUM(A."REVENUE_AMOUNT"),2) AS "CASHPAY",
+                ROUND(SUM(A."ACCOUNT_AMOUNTNOTAX"),2) AS "ACCOUNT_AMOUNT",
+                ROUND(SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."REVENUE_AMOUNT" ELSE 0 END),2) AS "CASHPAY_CUR",
+                ROUND(SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END),2) AS "ACCOUNT_AMOUNT_CUR"
             FROM "{table_name}" A
             WHERE A."{state_name}" = 1
                 AND A."STATISTICS_DATE" BETWEEN {cs_str} AND {cy_str}{where_sql}
@@ -3654,6 +3664,11 @@ async def get_holiday_analysis_batch(
                 rd["curYear"] = int(curYear) if curYear else None
                 rd["compareYear"] = int(compareYear) if compareYear else None
                 rd["HolidayType"] = HolidayType
+                # C# Batch版本不返回这些字段（初始化为null）
+                for null_key in ["curYearSRRevenue", "lYearSRRevenue", "curYearSRAccount",
+                                  "lYearSRAccount", "lYearGRORevenue", "curYearGROAccount", "lYearGROAccount"]:
+                    if null_key in rd:
+                        rd[null_key] = None
                 result_list.append(rd)
         
         if not result_list:
