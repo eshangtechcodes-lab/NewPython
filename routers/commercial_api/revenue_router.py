@@ -945,8 +945,13 @@ async def get_budget_expense_list_post(searchModel: dict = None, db: DatabaseHel
     """获取预算费用表列表（POST）"""
     try:
         if not searchModel:
-            # C# 在参数为空时返回空列表
-            json_list = JsonListData.create(data_list=[], total=0, page_index=0, page_size=0)
+            # C# 在参数为空时查询TotalCount但返回空列表
+            try:
+                count_rows = db.execute_query('SELECT COUNT(*) AS CNT FROM "T_BUDGETEXPENSE"')
+                total = count_rows[0]["CNT"] if count_rows else 0
+            except Exception:
+                total = 0
+            json_list = JsonListData.create(data_list=[], total=total, page_index=0, page_size=0)
             return Result.success(data=json_list.model_dump(), msg="查询成功")
         searchModel = searchModel or {}
         page_index = searchModel.get("PageIndex", 1) or 1
