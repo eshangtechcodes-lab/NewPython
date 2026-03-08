@@ -1,9 +1,9 @@
 {
-  "time": "2026-03-08 17:50:47",
-  "elapsed": 39.1,
+  "time": "2026-03-08 17:53:56",
+  "elapsed": 40.0,
   "stats": {
-    "PASS": 43,
-    "DIFF": 31,
+    "PASS": 45,
+    "DIFF": 29,
     "ERROR": 0
   },
   "diffs": [
@@ -92,13 +92,6 @@
       ]
     },
     {
-      "route": "POST /Revenue/GetBusinessRevenueList",
-      "detail": "Code=999, 1处差异",
-      "diffs": [
-        ".Result_Desc: 旧=查询失败未将对象引用设置到对象的实例。 新=解密失败请求数据中缺少 value 字段"
-      ]
-    },
-    {
       "route": "GET /Revenue/GetBusinessTradeLevel",
       "detail": "Code=100, 4处差异",
       "diffs": [
@@ -171,13 +164,6 @@
       "detail": "Code=100, 1处差异",
       "diffs": [
         ".Result_Data.List[3].value: 旧=1 新=0"
-      ]
-    },
-    {
-      "route": "POST /Revenue/GetMonthlyBusinessRevenue",
-      "detail": "Code=999, 1处差异",
-      "diffs": [
-        ".Result_Desc: 旧=查询失败未将对象引用设置到对象的实例。 新=解密失败请求数据中缺少 value 字段"
       ]
     },
     {

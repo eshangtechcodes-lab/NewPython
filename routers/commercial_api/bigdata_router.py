@@ -2241,7 +2241,7 @@ async def get_date_analysis(
             result_list.append(model)
             cur_date += timedelta(days=1)
 
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
         resp = json_list.model_dump()
         # OtherData汇总所有日期
         sum_keys = ["ThisYearTotalSECTIONFLOW_NUM", "ThisYearTotalSERVERPART_FLOW",
@@ -2257,9 +2257,15 @@ async def get_date_analysis(
                      "TotalDiffSECTIONFLOW_NUM", "TotalDiffSERVERPART_FLOW",
                      "SouthEastDiffSECTIONFLOW_NUM", "SouthEastDiffSERVERPART_FLOW",
                      "NorthWestDiffSECTIONFLOW_NUM", "NorthWestDiffSERVERPART_FLOW"]
+        # ANALOG字段在C#中OtherData不汇总（返回None）
+        analog_keys = {"ThisYearTotalANALOG", "ThisYearSouthEastANALOG", "ThisYearNorthWestANALOG",
+                        "LastYearTotalANALOG", "LastYearSouthEastANALOG", "LastYearNorthWestANALOG"}
         _oth = {"STATISTICS_DATE": None}
         for k in sum_keys:
-            _oth[k] = sum(m.get(k, 0) or 0 for m in result_list)
+            if k in analog_keys:
+                _oth[k] = None
+            else:
+                _oth[k] = sum(float(m.get(k, 0) or 0) for m in result_list)
         resp["OtherData"] = [_oth]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:

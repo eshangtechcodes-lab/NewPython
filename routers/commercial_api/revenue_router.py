@@ -3298,7 +3298,7 @@ async def get_holiday_analysis(
         "curYear": int(curYear) if curYear else None,
         "compareYear": int(compareYear) if compareYear else None,
         "HolidayType": holidayType if holidayType else None,
-        "curDate": StatisticsDate or None, "cyDate": None,
+        "curDate": None, "cyDate": None,
         "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
         "curYearAccount": _ckm(), "lYearAccount": _ckm(),
         "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
@@ -3342,10 +3342,20 @@ async def get_holiday_analysis_batch(
             sp_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
             sp_name = sp_rows[0].get("SERVERPART_NAME", "") if sp_rows else ""
 
+    # 转换curDate为C#的DateTime.ToString()格式(yyyy/M/d 无前导零)
+    _cur_date = None
+    if StatisticsDate:
+        try:
+            from datetime import datetime as _dt
+            _d = _dt.strptime(StatisticsDate, "%Y-%m-%d") if "-" in StatisticsDate else _dt.strptime(StatisticsDate, "%Y/%m/%d")
+            _cur_date = f"{_d.year}/{_d.month}/{_d.day}"
+        except:
+            _cur_date = StatisticsDate
+
     _model = {
         "ServerpartId": sp_id, "ServerpartName": sp_name,
         "curYear": int(curYear) if curYear else None, "compareYear": int(compareYear) if compareYear else None,
-        "HolidayType": HolidayType, "curDate": StatisticsDate or None, "cyDate": None,
+        "HolidayType": HolidayType, "curDate": _cur_date, "cyDate": None,
         "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
         "curYearAccount": _ckm(), "lYearAccount": _ckm(),
         "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
