@@ -2712,7 +2712,7 @@ async def get_revenue_report_detail(
     SearchKeyValue: Optional[str] = Query("", description="模糊查询内容"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取服务区经营报表详情 (SQL平移完成)"""
+    """获取服务区经营报表详情 (C#逻辑完整平移)"""
     try:
         from datetime import datetime as dt
 
@@ -2726,72 +2726,132 @@ async def get_revenue_report_detail(
         start_str = dt.strptime(startTime.split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d') if startTime and '-' in startTime else startTime
         end_str = dt.strptime(endTime.split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d') if endTime and '-' in endTime else endTime
 
-        where_sql = f' AND A."SERVERPART_ID" = {serverpartId}'
+        where_sql = ''
         if start_str:
             where_sql += f' AND A."STATISTICS_DATE" >= {start_str}'
         if end_str:
             where_sql += f' AND A."STATISTICS_DATE" <= {end_str}'
 
-        sql = f"""SELECT A."BUSINESS_TRADE", A."BUSINESS_TYPE",
-                SUM(A."REVENUE_AMOUNT") AS "REVENUE",
-                SUM(A."TICKET_COUNT") AS "TICKET",
-                SUM(A."TOTAL_COUNT") AS "TOTAL",
-                SUM(A."REVENUE_AMOUNT_A") AS "REVENUE_A",
-                SUM(A."REVENUE_AMOUNT_B") AS "REVENUE_B"
-            FROM "T_REVENUEDAILY" A
-            WHERE A."REVENUEDAILY_STATE" = 1{where_sql}
-            GROUP BY A."BUSINESS_TRADE", A."BUSINESS_TYPE"
-            ORDER BY SUM(A."REVENUE_AMOUNT") DESC"""
+        # C# SQL: 按SHOPTRADE分组
+        sql = f"""SELECT B."SERVERPART_ID",B."SERVERPART_NAME",B."SERVERPART_CODE",B."SERVERPART_INDEX",
+                A."SHOPTRADE",
+                SUM(A."REVENUE_AMOUNT_A") AS "REVENUE_AMOUNT_A",SUM(A."REVENUE_AMOUNT_B") AS "REVENUE_AMOUNT_B",
+                SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT",
+                SUM(A."TICKET_COUNT") AS "TICKET_COUNT",SUM(A."TOTAL_COUNT") AS "TOTAL_COUNT",
+                SUM(A."OTHERPAY_AMOUNT_A") AS "OTHERPAY_AMOUNT_A",SUM(A."OTHERPAY_AMOUNT_B") AS "OTHERPAY_AMOUNT_B",
+                SUM(A."OTHERPAY_AMOUNT") AS "OTHERPAY_AMOUNT"
+            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
+            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
+                AND A."SERVERPART_ID" = {serverpartId}{where_sql}
+            GROUP BY B."SERVERPART_ID",B."SERVERPART_NAME",B."SERVERPART_CODE",B."SERVERPART_INDEX",A."SHOPTRADE" """
         rows = db.execute_query(sql) or []
+        if not rows:
+            return Result.success(data=None, msg="查询成功")
 
-        from decimal import Decimal
-        # 查询业态名称字典
-        trade_name_map = {}
-        try:
-            trade_sql = """SELECT "AUTOSTATISTICS_ID", "AUTOSTATISTICS_NAME" FROM "T_AUTOSTATISTICS" WHERE "AUTOSTATISTICS_TYPE" = 2000"""
-            trade_rows = db.execute_query(trade_sql) or []
-            for tr in trade_rows:
-                tid = str(tr.get("AUTOSTATISTICS_ID", ""))
-                trade_name_map[tid] = tr.get("AUTOSTATISTICS_NAME", "其他业态")
-        except Exception:
-            pass
+        # 查询该服务区所有门店
+        dt_shop = db.execute_query(
+            f'SELECT * FROM "T_SERVERPARTSHOP" WHERE "SERVERPART_ID" = {serverpartId} AND "ISVALID" = 1') or []
+
+        # 获取区域名称 (C# GetRegionName)
+        s_name = ""  # 南区/东区
+        n_name = ""  # 北区/西区
+        s_shops = [s for s in dt_shop if s.get("SHOPREGION") is not None and int(s.get("SHOPREGION", 99)) < 30]
+        n_shops = [s for s in dt_shop if s.get("SHOPREGION") is not None and int(s.get("SHOPREGION", 0)) >= 30]
+        if s_shops:
+            s_region = str(sorted(s_shops, key=lambda x: int(x.get("SHOPREGION", 0)))[0].get("SHOPREGION"))
+            fe = db.execute_query(
+                f"""SELECT B."FIELDENUM_NAME" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'SHOPREGION'
+                AND B."FIELDENUM_VALUE" = '{s_region}'""") or []
+            s_name = fe[0].get("FIELDENUM_NAME", "") if fe else ""
+        if n_shops:
+            n_region = str(sorted(n_shops, key=lambda x: int(x.get("SHOPREGION", 0)))[0].get("SHOPREGION"))
+            fe = db.execute_query(
+                f"""SELECT B."FIELDENUM_NAME" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'SHOPREGION'
+                AND B."FIELDENUM_VALUE" = '{n_region}'""") or []
+            n_name = fe[0].get("FIELDENUM_NAME", "") if fe else ""
+
+        # 查询品牌信息
+        dt_brand = db.execute_query(
+            f"""SELECT "BRAND_ID","BRAND_INTRO" FROM "T_BRAND"
+            WHERE "PROVINCE_CODE" = '{provinceCode}' AND "BRAND_CATEGORY" = 1000""") or []
+        brand_map = {}
+        for br in dt_brand:
+            bid = str(br.get("BRAND_ID", ""))
+            brand_map[bid] = br.get("BRAND_INTRO", "")
+
+        # 门店Map (按SHOPTRADE)
+        shop_by_trade = {}
+        for s in dt_shop:
+            st = str(s.get("SHOPTRADE", ""))
+            if st and st not in shop_by_trade:
+                # 取第一个匹配的（C# dtShop.Select("SHOPTRADE = '...'")[0]，按BUSINESS_STATE/SHOPREGION/ID排序）
+                shop_by_trade[st] = s
+
+        # 汇总
+        total_rev_a = sum(safe_dec(r.get("REVENUE_AMOUNT_A")) for r in rows)
+        total_rev_b = sum(safe_dec(r.get("REVENUE_AMOUNT_B")) for r in rows)
+        total_rev = sum(safe_dec(r.get("REVENUE_AMOUNT")) for r in rows)
+        sp_name = rows[0].get("SERVERPART_NAME", "") if rows else ""
+
+        # 四川省去掉大巴券和会员消费
+        if provinceCode == "510000":
+            total_rev_a -= sum(safe_dec(r.get("OTHERPAY_AMOUNT_A")) for r in rows)
+            total_rev_b -= sum(safe_dec(r.get("OTHERPAY_AMOUNT_B")) for r in rows)
+            total_rev -= sum(safe_dec(r.get("OTHERPAY_AMOUNT")) for r in rows)
 
         shop_list = []
-        total_rev = Decimal('0')
         for r in rows:
-            rv = safe_dec(r.get("REVENUE"))
-            total_rev += Decimal(str(rv))
-            trade_id = str(r.get("BUSINESS_TRADE", "") or "")
-            trade_name = trade_name_map.get(trade_id, "其他业态") if trade_id else "其他业态"
+            shoptrade = str(r.get("SHOPTRADE", "") or "")
+            shop_info = shop_by_trade.get(shoptrade, {})
+
+            # 门店名称 = SHOPSHORTNAME
+            biz_name = shop_info.get("SHOPSHORTNAME", "") or ""
+            # 上传类型 = TRANSFER_TYPE
+            upload_type = 0
+            try: upload_type = int(shop_info.get("TRANSFER_TYPE", 0) or 0)
+            except: pass
+            # 品牌Logo
+            biz_logo = ""
+            biz_brand = str(shop_info.get("BUSINESS_BRAND", "") or "")
+            if biz_brand and biz_brand in brand_map:
+                intro = brand_map[biz_brand]
+                if intro:
+                    biz_logo = intro
+                    if biz_logo.startswith("/"):
+                        biz_logo = "https://user.eshangtech.com" + biz_logo
+
+            rev_a = safe_dec(r.get("REVENUE_AMOUNT_A"))
+            rev_b = safe_dec(r.get("REVENUE_AMOUNT_B"))
+            biz_rev = safe_dec(r.get("REVENUE_AMOUNT"))
+
+            if provinceCode == "510000":
+                rev_a -= safe_dec(r.get("OTHERPAY_AMOUNT_A"))
+                rev_b -= safe_dec(r.get("OTHERPAY_AMOUNT_B"))
+                biz_rev -= safe_dec(r.get("OTHERPAY_AMOUNT"))
+
             shop_list.append({
-                "BusinessType_Name": trade_name,
-                "BusinessType_Revenue": rv,
+                "BusinessType_Name": biz_name,
+                "BusinessType_Revenue": biz_rev,
+                "BusinessType_Logo": biz_logo if biz_logo else None,
+                "Serverpart_S": s_name,
+                "Serverpart_RevenueS": rev_a,
+                "Serverpart_N": n_name,
+                "Serverpart_RevenueN": rev_b,
+                "Upload_Type": upload_type,
             })
 
-        # 按REVENUE_AMOUNT_A/B拆分南北区（C#逻辑）
-        south_rev = round(sum(safe_dec(r.get("REVENUE_A")) for r in rows), 2)
-        north_rev = round(sum(safe_dec(r.get("REVENUE_B")) for r in rows), 2)
-
-        # 获取服务区名称
-        sp_name_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {serverpartId}') or []
-        sp_name = sp_name_rows[0].get("SERVERPART_NAME", "") if sp_name_rows else ""
-
-        # 补充ShopList item的旧API字段
-        for s in shop_list:
-            s.setdefault("BusinessType_Logo", "")
-            s.setdefault("Serverpart_S", "南区")
-            s.setdefault("Serverpart_RevenueS", 0.0)
-            s.setdefault("Serverpart_N", "北区")
-            s.setdefault("Serverpart_RevenueN", 0.0)
-            s.setdefault("Upload_Type", 0)
+        # 按营收降序排序
+        shop_list.sort(key=lambda x: x.get("BusinessType_Revenue", 0), reverse=True)
 
         return Result.success(data={
             "Serverpart_Name": sp_name,
-            "Serverpart_Revenue": float(total_rev),
-            "Serverpart_S": "南区",
-            "Serverpart_RevenueS": south_rev,
-            "Serverpart_N": "北区",
-            "Serverpart_RevenueN": north_rev,
+            "Serverpart_Revenue": total_rev,
+            "Serverpart_S": s_name,
+            "Serverpart_RevenueS": total_rev_a,
+            "Serverpart_N": n_name,
+            "Serverpart_RevenueN": total_rev_b,
             "ShopList": shop_list,
         }, msg="查询成功")
     except Exception as ex:
