@@ -1631,7 +1631,16 @@ async def get_transaction_analysis(
                 avg_ticket_price = round(revenue_amount / ticket_count, 2)
 
         # 查月均数据
+        # 转换Province_Code到内码
+        province_id = None
+        if Province_Code:
+            pid_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
+            pid_rows = db.execute_query(pid_sql, {"pc": Province_Code})
+            province_id = pid_rows[0]["FIELDENUM_ID"] if pid_rows else None
+
         sp_filter = f'= {sp_id}' if sp_id else '> 0'
+        prov_where = f' AND A."PROVINCE_ID" = {province_id}' if province_id else ''
         month_sql = f"""SELECT
                 COUNT(DISTINCT CASE WHEN A."SERVERPART_ID" {sp_filter} THEN A."STATISTICS_DATE" END) AS "SP_DAYS",
                 SUM(CASE WHEN A."SERVERPART_ID" {sp_filter} THEN A."TICKET_COUNT" ELSE 0 END) AS "SP_TICKET",
@@ -1643,7 +1652,8 @@ async def get_transaction_analysis(
                 SUM(A."REVENUE_AMOUNT") AS "ALL_REVENUE"
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."TICKET_COUNT" > 0
-                AND A."REVENUEDAILY_STATE" = 1 AND B."STATISTIC_TYPE" = 1000
+                AND A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
+                AND B."SERVERPART_CODE" NOT IN ('S000','S092','S093','S094'){prov_where}
                 AND A."STATISTICS_DATE" >= {month_start} AND A."STATISTICS_DATE" <= {date_str}"""
         m_rows = db.execute_query(month_sql) or []
 
