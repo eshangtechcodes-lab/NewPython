@@ -1,9 +1,9 @@
 {
-  "time": "2026-03-08 19:06:31",
-  "elapsed": 39.7,
+  "time": "2026-03-08 19:20:20",
+  "elapsed": 39.8,
   "stats": {
-    "PASS": 46,
-    "DIFF": 28,
+    "PASS": 48,
+    "DIFF": 26,
     "ERROR": 0
   },
   "diffs": [
@@ -19,13 +19,13 @@
     },
     {
       "route": "GET /BigData/GetDateAnalysis",
-      "detail": "Code=100, 8处差异",
+      "detail": "Code=100, 6处差异",
       "diffs": [
-        ".Result_Data.List[0].CurRevenueAmount_A: 旧=37498.79 新=0.0",
-        ".Result_Data.List[0].CurRevenueAmount_B: 旧=27376.93 新=0.0",
         ".Result_Data.List[0].LyRevenueAmount: 旧=187636.01 新=187351.01",
-        ".Result_Data.List[0]: ...还有2条差异",
-        ".Result_Data.OtherData[0].CurRevenueAmount: 旧=3264971.43 新=3197328.83"
+        ".Result_Data.List[0].LyRevenueAmount_B: 旧=141240.76 新=140955.76",
+        ".Result_Data.OtherData[0].CurRevenueAmount: 旧=3264971.43 新=3197328.83",
+        ".Result_Data.OtherData[0].CurRevenueAmount_A: 旧=1041238.46 新=1045082.46",
+        ".Result_Data.OtherData[0].CurRevenueAmount_B: 旧=2223732.97 新=2152246.37"
       ]
     },
     {
@@ -184,14 +184,6 @@
       ]
     },
     {
-      "route": "GET /Revenue/GetRevenueReport",
-      "detail": "Code=100, 2处差异",
-      "diffs": [
-        ".Result_Data.Different_Price_Less: 旧=-10263.5 新=-8342.1",
-        ".Result_Data.Different_Price_More: 旧=5094.7 新=3173.3"
-      ]
-    },
-    {
       "route": "GET /Revenue/GetRevenueReportDetil",
       "detail": "Code=100, 5处差异",
       "diffs": [
@@ -241,16 +233,6 @@
         ".Result_Data.BusinessTypeList[0].data: 旧=54301323.49 新=0.00",
         ".Result_Data.BusinessTypeList[0].key: 类型不同 旧=str 新=NoneType",
         ".Result_Data.BusinessTypeList[0].name: 旧=自营 新=外包"
-      ]
-    },
-    {
-      "route": "GET /Revenue/GetTransactionAnalysis",
-      "detail": "Code=100, 4处差异",
-      "diffs": [
-        ".Result_Data.ProvinceAvgTicketPrice: 旧=26.94 新=25.71",
-        ".Result_Data.ProvinceRevenueAmount: 旧=5887533.52 新=7748488.45",
-        ".Result_Data.TicketProvinceCount: 旧=218571 新=301428",
-        ".Result_Data.TotalProvinceCount: 旧=610707.44 新=780218.81"
       ]
     },
     {
