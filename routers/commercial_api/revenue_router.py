@@ -3664,7 +3664,7 @@ async def get_serverpart_inc_analysis(
             return Result.fail(code=101, msg="查询失败，无数据返回！")
 
         h_name = holiday_names.get(HolidayType, "")
-        holiday_period = f"{curYear}年{h_name}时间为{date_no_pad(stats_start)} 0:00:00至{stat_date.strftime('%Y-%m-%d')}\r\n{compareYear}年{h_name}时间为{date_no_pad(compare_start)} 0:00:00至{compare_end.strftime('%Y-%m-%d')}"
+        holiday_period = f"{curYear}年{h_name}时间为{date_no_pad(stats_start)} 0:00:00至{stat_date.strftime('%Y-%m-%d')}\r\n{compareYear}年{h_name}时间为{date_no_pad(compare_start)} 0:00:00至{date_no_pad(compare_end)} 0:00:00"
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
         resp = json_list.model_dump()
