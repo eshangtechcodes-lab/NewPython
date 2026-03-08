@@ -5266,10 +5266,14 @@ async def get_holiday_spr_analysis(
             f = round(float(v), 2)
             return str(int(f))
 
-        def mk_kv(v, d):
+        def mk_kv(v, d, empty=False):
+            if empty:
+                return {"name": None, "value": "", "data": "", "key": None}
             return {"name": None, "value": fmt_dec(v), "data": fmt_dec(d), "key": None}
 
-        def mk_kv_int(v, d):
+        def mk_kv_int(v, d, empty=False):
+            if empty:
+                return {"name": None, "value": "", "data": "", "key": None}
             return {"name": None, "value": fmt_int(v), "data": fmt_int(d), "key": None}
 
         result_list = [{
@@ -5336,15 +5340,20 @@ async def get_holiday_spr_analysis(
                                  "lYearBayonet": mk_kv_int(cmb_info.get("flow_cur", 0), cmb_info.get("flow", 0))},
                         "children": [],
                     })
+            # 检查片区是否有数据
+            has_rev = any(v.get("region_id") == rid for v in cur_sp_map.values())
+            has_bay = any(v.get("region_id") == rid for v in cur_bay_map.values())
+            no_rev = not has_rev
+            no_bay = not has_bay
             result_list.append({
                 "node": {"SPRegionTypeId": int(rid) if rid.isdigit() else rid, "SPRegionTypeName": rname,
                          "ServerpartId": None, "ServerpartName": None,
-                         "curYearRevenue": mk_kv(r_cur_d, r_cur),
-                         "lYearRevenue": mk_kv(r_cmp_d, r_cmp),
-                         "curYearAccount": mk_kv(r_cur_acc_d, r_cur_acc),
-                         "lYearAccount": mk_kv(r_cmp_acc_d, r_cmp_acc),
-                         "curYearBayonet": mk_kv_int(r_cur_flow_d, r_cur_flow),
-                         "lYearBayonet": mk_kv_int(r_cmp_flow_d, r_cmp_flow)},
+                         "curYearRevenue": mk_kv(r_cur_d, r_cur, empty=no_rev),
+                         "lYearRevenue": mk_kv(r_cmp_d, r_cmp, empty=no_rev),
+                         "curYearAccount": mk_kv(r_cur_acc_d, r_cur_acc, empty=no_rev),
+                         "lYearAccount": mk_kv(r_cmp_acc_d, r_cmp_acc, empty=no_rev),
+                         "curYearBayonet": mk_kv_int(r_cur_flow_d, r_cur_flow, empty=no_bay),
+                         "lYearBayonet": mk_kv_int(r_cmp_flow_d, r_cmp_flow, empty=no_bay)},
                 "children": ch,
             })
 
