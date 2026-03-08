@@ -202,7 +202,7 @@ async def get_summary_revenue(
                     SUM(CASE WHEN A."DIFFERENT_AMOUNT" < 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_LESS",
                     SUM(CASE WHEN A."DIFFERENT_AMOUNT" > 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_MORE",
                     CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME",
-                    A."SHOPTRADE"
+                    A."SHOPTRADE", SUM(A."REVENUE_AMOUNT_YOY") AS "REVENUE_AMOUNT_YOY"
                   FROM "T_REVENUEDAILY" A
                     JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
                   WHERE A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
@@ -228,18 +228,8 @@ async def get_summary_revenue(
             try: return int(v) if v is not None else 0
             except: return 0
 
-        # 5. 查询RevenueYOY（去年同期）
-        ly_start = (start_date.replace(year=start_date.year - 1)).strftime("%Y%m%d")
-        ly_end = (end_date.replace(year=end_date.year - 1)).strftime("%Y%m%d")
-        yoy_sql = f"""SELECT SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
-                  FROM "T_REVENUEDAILY" A
-                    JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
-                  WHERE A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
-                    AND A."STATISTICS_DATE" BETWEEN {ly_start} AND {ly_end}
-                    AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999')
-                    {where_sql}"""
-        yoy_rows = db.execute_query(yoy_sql)
-        revenue_yoy = sf(yoy_rows[0].get("CASHPAY")) if yoy_rows and yoy_rows[0].get("CASHPAY") else 0.0
+        # 5. 直接从REVENUE_AMOUNT_YOY获取去年同期 (C# SUM(A.REVENUE_AMOUNT_YOY))
+        revenue_yoy = round(sum(sf(r.get("REVENUE_AMOUNT_YOY")) for r in rows), 2)
 
         # 6. 构造汇总
         total_cashpay = round(sum(sf(r.get("CASHPAY")) for r in rows), 2)
@@ -285,15 +275,10 @@ async def get_summary_revenue(
         for r in rows:
             bt_name = r.get("BUSINESS_TYPENAME") or "其他"
             bt_groups[bt_name]["cash"] += sf(r.get("CASHPAY"))
+            bt_groups[bt_name]["yoy"] += sf(r.get("REVENUE_AMOUNT_YOY"))
             sp_name = r.get("SPREGIONTYPE_NAME")
             if sp_name:
                 sp_groups[sp_name] += sf(r.get("CASHPAY"))
-
-        # 经营模式YOY需要分别查询（简化：按比例分配）
-        if revenue_yoy > 0 and total_cashpay > 0:
-            for name in bt_groups:
-                ratio = bt_groups[name]["cash"] / total_cashpay
-                bt_groups[name]["yoy"] = round(revenue_yoy * ratio, 2)
 
         business_type_list = []
         for name, vals in sorted(bt_groups.items(), key=lambda x: x[1]["cash"], reverse=True):
