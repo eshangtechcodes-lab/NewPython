@@ -74,7 +74,7 @@
       },
       "elapsed": 2.419,
       "error": null,
-      "time": "2026-03-08 21:34:13"
+      "time": "2026-03-08 21:42:58"
     },
     "POST:/Analysis/GetANALYSISINSList": {
       "key": "POST:/Analysis/GetANALYSISINSList",
@@ -312,7 +312,7 @@
       },
       "elapsed": 2.432,
       "error": null,
-      "time": "2026-03-08 21:34:13"
+      "time": "2026-03-08 21:42:58"
     },
     "POST:/Analysis/SolidTransactionAnalysis": {
       "key": "POST:/Analysis/SolidTransactionAnalysis",
@@ -2077,7 +2077,7 @@
       },
       "elapsed": 0.384,
       "error": null,
-      "time": "2026-03-08 21:34:14"
+      "time": "2026-03-08 21:42:58"
     },
     "GET:/Analysis/GetMapConfigByProvinceCode": {
       "key": "GET:/Analysis/GetMapConfigByProvinceCode",
@@ -2155,7 +2155,7 @@
       },
       "elapsed": 0.64,
       "error": null,
-      "time": "2026-03-08 21:34:14"
+      "time": "2026-03-08 21:42:58"
     },
     "GET:/BaseInfo/GetSPRegionList": {
       "key": "GET:/BaseInfo/GetSPRegionList",
@@ -2207,7 +2207,7 @@
       },
       "elapsed": 0.139,
       "error": null,
-      "time": "2026-03-08 21:34:14"
+      "time": "2026-03-08 21:42:58"
     },
     "GET:/BaseInfo/GetBusinessTradeList": {
       "key": "GET:/BaseInfo/GetBusinessTradeList",
@@ -2651,7 +2651,7 @@
       },
       "elapsed": 0.703,
       "error": null,
-      "time": "2026-03-08 21:34:14"
+      "time": "2026-03-08 21:42:58"
     },
     "POST:/BaseInfo/GetBusinessTradeList": {
       "key": "POST:/BaseInfo/GetBusinessTradeList",
@@ -2675,7 +2675,7 @@
       },
       "elapsed": 0.157,
       "error": null,
-      "time": "2026-03-08 21:34:14"
+      "time": "2026-03-08 21:42:59"
     },
     "GET:/BaseInfo/GetBrandAnalysis": {
       "key": "GET:/BaseInfo/GetBrandAnalysis",
@@ -3026,7 +3026,7 @@
       },
       "elapsed": 0.454,
       "error": null,
-      "time": "2026-03-08 21:34:15"
+      "time": "2026-03-08 21:42:59"
     },
     "GET:/BaseInfo/GetServerpartList": {
       "key": "GET:/BaseInfo/GetServerpartList",
@@ -3640,7 +3640,7 @@
       },
       "elapsed": 1.044,
       "error": null,
-      "time": "2026-03-08 21:34:15"
+      "time": "2026-03-08 21:42:59"
     },
     "GET:/Analysis/TranslateSentence": {
       "key": "GET:/Analysis/TranslateSentence",
@@ -11843,7 +11843,7 @@
       },
       "elapsed": 3.564,
       "error": null,
-      "time": "2026-03-08 21:34:16"
+      "time": "2026-03-08 21:43:00"
     },
     "GET:/BaseInfo/GetServerInfoTree": {
       "key": "GET:/BaseInfo/GetServerInfoTree",
@@ -11868,7 +11868,7 @@
       },
       "elapsed": 0.037,
       "error": null,
-      "time": "2026-03-08 21:34:16"
+      "time": "2026-03-08 21:43:00"
     },
     "POST:/BaseInfo/GetServerpartServiceSummary": {
       "key": "POST:/BaseInfo/GetServerpartServiceSummary",
@@ -11910,7 +11910,7 @@
       },
       "elapsed": 0.371,
       "error": null,
-      "time": "2026-03-08 21:34:17"
+      "time": "2026-03-08 21:43:00"
     },
     "GET:/BaseInfo/GetServerpartInfo": {
       "key": "GET:/BaseInfo/GetServerpartInfo",
@@ -12212,7 +12212,7 @@
       },
       "elapsed": 0.536,
       "error": null,
-      "time": "2026-03-08 21:34:17"
+      "time": "2026-03-08 21:43:01"
     },
     "POST:/BaseInfo/GetBrandStructureAnalysis": {
       "key": "POST:/BaseInfo/GetBrandStructureAnalysis",
@@ -12261,7 +12261,7 @@
       },
       "elapsed": 0.207,
       "error": null,
-      "time": "2026-03-08 21:34:17"
+      "time": "2026-03-08 21:43:01"
     },
     "GET:/Revenue/GetBayonetEntryList": {
       "key": "GET:/Revenue/GetBayonetEntryList",
@@ -12286,7 +12286,7 @@
       },
       "elapsed": 0.263,
       "error": null,
-      "time": "2026-03-08 21:34:17"
+      "time": "2026-03-08 21:43:01"
     },
     "GET:/Revenue/GetBayonetSTAList": {
       "key": "GET:/Revenue/GetBayonetSTAList",
@@ -12369,7 +12369,7 @@
       },
       "elapsed": 0.182,
       "error": null,
-      "time": "2026-03-08 21:34:17"
+      "time": "2026-03-08 21:43:01"
     },
     "GET:/Revenue/GetBayonetProvinceOAList": {
       "key": "GET:/Revenue/GetBayonetProvinceOAList",
@@ -12498,7 +12498,7 @@
       },
       "elapsed": 0.265,
       "error": null,
-      "time": "2026-03-08 21:34:18"
+      "time": "2026-03-08 21:43:01"
     },
     "GET:/Revenue/GetSPBayonetList": {
       "key": "GET:/Revenue/GetSPBayonetList",
@@ -12525,7 +12525,7 @@
       },
       "elapsed": 0.147,
       "error": null,
-      "time": "2026-03-08 21:34:18"
+      "time": "2026-03-08 21:43:01"
     },
     "GET:/Revenue/GetBayonetOAList": {
       "key": "GET:/Revenue/GetBayonetOAList",
@@ -12692,7 +12692,7 @@
       },
       "elapsed": 0.55,
       "error": null,
-      "time": "2026-03-08 21:34:18"
+      "time": "2026-03-08 21:43:02"
     },
     "GET:/Revenue/GetBayonetRankList": {
       "key": "GET:/Revenue/GetBayonetRankList",
@@ -12803,7 +12803,7 @@
       },
       "elapsed": 0.191,
       "error": null,
-      "time": "2026-03-08 21:34:18"
+      "time": "2026-03-08 21:43:02"
     },
     "GET:/Revenue/GetBayonetSTAnalysis": {
       "key": "GET:/Revenue/GetBayonetSTAnalysis",
@@ -12893,7 +12893,7 @@
       },
       "elapsed": 0.136,
       "error": null,
-      "time": "2026-03-08 21:34:18"
+      "time": "2026-03-08 21:43:02"
     },
     "GET:/BigData/GetProvinceMonthAnalysis": {
       "key": "GET:/BigData/GetProvinceMonthAnalysis",
@@ -12937,7 +12937,7 @@
       },
       "elapsed": 0.165,
       "error": null,
-      "time": "2026-03-08 21:34:19"
+      "time": "2026-03-08 21:43:02"
     },
     "GET:/BigData/GetMonthAnalysis": {
       "key": "GET:/BigData/GetMonthAnalysis",
@@ -13019,7 +13019,7 @@
       },
       "elapsed": 0.33,
       "error": null,
-      "time": "2026-03-08 21:34:19"
+      "time": "2026-03-08 21:43:03"
     },
     "GET:/BigData/GetBayonetWarning": {
       "key": "GET:/BigData/GetBayonetWarning",
@@ -13044,7 +13044,7 @@
       },
       "elapsed": 0.196,
       "error": null,
-      "time": "2026-03-08 21:34:19"
+      "time": "2026-03-08 21:43:03"
     },
     "GET:/BigData/GetHolidayBayonetWarning": {
       "key": "GET:/BigData/GetHolidayBayonetWarning",
@@ -13072,7 +13072,7 @@
       },
       "elapsed": 0.171,
       "error": null,
-      "time": "2026-03-08 21:34:19"
+      "time": "2026-03-08 21:43:03"
     },
     "GET:/BigData/GetBayonetGrowthAnalysis": {
       "key": "GET:/BigData/GetBayonetGrowthAnalysis",
@@ -13122,7 +13122,7 @@
       },
       "elapsed": 0.129,
       "error": null,
-      "time": "2026-03-08 21:34:19"
+      "time": "2026-03-08 21:43:03"
     },
     "GET:/BigData/GetBayonetCompare": {
       "key": "GET:/BigData/GetBayonetCompare",
@@ -13515,7 +13515,7 @@
       },
       "elapsed": 0.113,
       "error": null,
-      "time": "2026-03-08 21:34:19"
+      "time": "2026-03-08 21:43:03"
     },
     "GET:/BigData/GetBayonetOAAnalysis": {
       "key": "GET:/BigData/GetBayonetOAAnalysis",
@@ -13545,7 +13545,7 @@
       },
       "elapsed": 0.168,
       "error": null,
-      "time": "2026-03-08 21:34:19"
+      "time": "2026-03-08 21:43:03"
     },
     "GET:/BigData/GetHolidayCompare": {
       "key": "GET:/BigData/GetHolidayCompare",
@@ -14057,7 +14057,7 @@
       },
       "elapsed": 0.342,
       "error": null,
-      "time": "2026-03-08 21:34:20"
+      "time": "2026-03-08 21:43:03"
     },
     "GET:/BigData/GetDateAnalysis": {
       "key": "GET:/BigData/GetDateAnalysis",
@@ -15108,7 +15108,7 @@
       },
       "elapsed": 0.178,
       "error": null,
-      "time": "2026-03-08 21:34:20"
+      "time": "2026-03-08 21:43:04"
     },
     "POST:/BigData/GetRevenueTrendChart": {
       "key": "POST:/BigData/GetRevenueTrendChart",
@@ -15477,7 +15477,7 @@
       },
       "elapsed": 0.318,
       "error": null,
-      "time": "2026-03-08 21:34:20"
+      "time": "2026-03-08 21:43:04"
     },
     "POST:/BigData/GetCurBusyRank": {
       "key": "POST:/BigData/GetCurBusyRank",
@@ -15507,7 +15507,7 @@
       },
       "elapsed": 0.34,
       "error": null,
-      "time": "2026-03-08 21:34:20"
+      "time": "2026-03-08 21:43:04"
     },
     "POST:/BigData/GetEnergyRevenueInfo": {
       "key": "POST:/BigData/GetEnergyRevenueInfo",
@@ -15531,7 +15531,7 @@
       },
       "elapsed": 0.009,
       "error": null,
-      "time": "2026-03-08 21:34:20"
+      "time": "2026-03-08 21:43:04"
     },
     "GET:/BigData/GetProvinceVehicleTreeList": {
       "key": "GET:/BigData/GetProvinceVehicleTreeList",
@@ -24010,7 +24010,7 @@
       },
       "elapsed": 0.334,
       "error": null,
-      "time": "2026-03-08 21:34:20"
+      "time": "2026-03-08 21:43:04"
     },
     "GET:/BigData/GetBayonetOwnerAHTreeList": {
       "key": "GET:/BigData/GetBayonetOwnerAHTreeList",
@@ -33596,7 +33596,7 @@
       },
       "elapsed": 0.395,
       "error": null,
-      "time": "2026-03-08 21:34:21"
+      "time": "2026-03-08 21:43:04"
     },
     "GET:/BigData/GetProvinceVehicleDetail": {
       "key": "GET:/BigData/GetProvinceVehicleDetail",
@@ -33624,7 +33624,7 @@
       },
       "elapsed": 0.171,
       "error": null,
-      "time": "2026-03-08 21:34:21"
+      "time": "2026-03-08 21:43:05"
     },
     "POST:/Budget/GetBUDGETPROJECT_AHList": {
       "key": "POST:/Budget/GetBUDGETPROJECT_AHList",
@@ -33645,7 +33645,7 @@
       },
       "elapsed": 0.597,
       "error": null,
-      "time": "2026-03-08 21:34:21"
+      "time": "2026-03-08 21:43:05"
     },
     "GET:/Budget/GetBUDGETPROJECT_AHDetail": {
       "key": "GET:/Budget/GetBUDGETPROJECT_AHDetail",
@@ -33679,7 +33679,7 @@
       },
       "elapsed": 0.488,
       "error": null,
-      "time": "2026-03-08 21:34:21"
+      "time": "2026-03-08 21:43:05"
     },
     "GET:/Budget/GetBudgetMainShow": {
       "key": "GET:/Budget/GetBudgetMainShow",
@@ -33811,7 +33811,7 @@
       },
       "elapsed": 0.436,
       "error": null,
-      "time": "2026-03-08 21:34:21"
+      "time": "2026-03-08 21:43:05"
     },
     "GET:/BusinessProcess/GetBusinessProcessList": {
       "key": "GET:/BusinessProcess/GetBusinessProcessList",
@@ -33834,7 +33834,7 @@
       },
       "elapsed": 0.223,
       "error": null,
-      "time": "2026-03-08 21:34:21"
+      "time": "2026-03-08 21:43:05"
     },
     "GET:/Contract/GetContractAnalysis": {
       "key": "GET:/Contract/GetContractAnalysis",
@@ -33863,7 +33863,7 @@
       },
       "elapsed": 0.534,
       "error": null,
-      "time": "2026-03-08 21:34:21"
+      "time": "2026-03-08 21:43:05"
     },
     "GET:/Contract/GetMerchantAccountSplit": {
       "key": "GET:/Contract/GetMerchantAccountSplit",
@@ -34799,7 +34799,7 @@
       },
       "elapsed": 0.866,
       "error": null,
-      "time": "2026-03-08 21:34:22"
+      "time": "2026-03-08 21:43:06"
     },
     "GET:/Budget/GetBudgetProjectDetailList": {
       "key": "GET:/Budget/GetBudgetProjectDetailList",
@@ -38827,7 +38827,7 @@
       },
       "elapsed": 2.184,
       "error": null,
-      "time": "2026-03-08 21:34:24"
+      "time": "2026-03-08 21:43:07"
     },
     "GET:/Contract/GetMerchantAccountDetail": {
       "key": "GET:/Contract/GetMerchantAccountDetail",
@@ -38888,7 +38888,7 @@
       },
       "elapsed": 0.454,
       "error": null,
-      "time": "2026-03-08 21:34:24"
+      "time": "2026-03-08 21:43:08"
     },
     "GET:/Customer/GetCustomerRatio": {
       "key": "GET:/Customer/GetCustomerRatio",
@@ -38935,7 +38935,7 @@
       },
       "elapsed": 0.502,
       "error": null,
-      "time": "2026-03-08 21:34:24"
+      "time": "2026-03-08 21:43:08"
     },
     "GET:/Customer/GetCustomerAgeRatio": {
       "key": "GET:/Customer/GetCustomerAgeRatio",
@@ -38978,7 +38978,7 @@
       },
       "elapsed": 0.175,
       "error": null,
-      "time": "2026-03-08 21:34:24"
+      "time": "2026-03-08 21:43:08"
     },
     "GET:/Customer/GetCustomerGroupRatio": {
       "key": "GET:/Customer/GetCustomerGroupRatio",
@@ -39002,83 +39002,83 @@
               "name": "男性",
               "data": [
                 [
-                  25.0,
-                  20.0,
+                  24.0,
+                  19.0,
                   3.96
                 ],
                 [
-                  21.0,
-                  39.0,
+                  22.0,
+                  56.0,
                   1.16
                 ],
                 [
                   25.0,
-                  75.0,
+                  72.0,
                   0.52
                 ],
                 [
-                  21.0,
-                  100.0,
+                  24.0,
+                  101.0,
                   0.34
                 ],
                 [
-                  29.0,
-                  11.0,
+                  27.0,
+                  16.0,
                   23.18
                 ],
                 [
-                  32.0,
-                  38.0,
+                  28.0,
+                  43.0,
                   7.02
                 ],
                 [
-                  27.0,
-                  70.0,
+                  34.0,
+                  88.0,
                   2.89
                 ],
                 [
-                  34.0,
-                  104.0,
+                  29.0,
+                  93.0,
                   1.83
                 ],
                 [
-                  40.0,
-                  16.0,
+                  45.0,
+                  6.0,
                   8.98
                 ],
                 [
-                  43.0,
-                  32.0,
+                  44.0,
+                  59.0,
                   3.2
                 ],
                 [
-                  42.0,
-                  66.0,
+                  45.0,
+                  78.0,
                   1.48
                 ],
                 [
-                  45.0,
-                  110.0,
+                  37.0,
+                  115.0,
                   1.04
                 ],
                 [
                   54.0,
-                  23.0,
+                  11.0,
                   4.71
                 ],
                 [
-                  59.0,
-                  57.0,
+                  58.0,
+                  38.0,
                   1.75
                 ],
                 [
-                  50.0,
-                  87.0,
+                  59.0,
+                  67.0,
                   0.76
                 ],
                 [
-                  58.0,
-                  96.0,
+                  56.0,
+                  91.0,
                   0.59
                 ]
               ]
@@ -39087,83 +39087,83 @@
               "name": "女性",
               "data": [
                 [
-                  21.0,
-                  19.0,
+                  24.0,
+                  25.0,
                   2.63
                 ],
                 [
-                  20.0,
-                  44.0,
+                  21.0,
+                  47.0,
                   0.68
                 ],
                 [
-                  25.0,
-                  61.0,
+                  21.0,
+                  80.0,
                   0.28
                 ],
                 [
-                  23.0,
-                  102.0,
+                  25.0,
+                  93.0,
                   0.18
                 ],
                 [
                   30.0,
-                  7.0,
+                  21.0,
                   17.42
                 ],
                 [
-                  31.0,
-                  46.0,
+                  33.0,
+                  38.0,
                   4.48
                 ],
                 [
-                  35.0,
-                  75.0,
+                  27.0,
+                  88.0,
                   1.78
                 ],
                 [
                   28.0,
-                  111.0,
+                  95.0,
                   1.02
                 ],
                 [
-                  45.0,
+                  44.0,
                   11.0,
                   4.06
                 ],
                 [
-                  43.0,
                   45.0,
+                  41.0,
                   1.08
                 ],
                 [
-                  41.0,
-                  66.0,
+                  37.0,
+                  70.0,
                   0.47
                 ],
                 [
-                  43.0,
-                  109.0,
+                  37.0,
+                  96.0,
                   0.3
                 ],
                 [
-                  55.0,
-                  17.0,
+                  53.0,
+                  19.0,
                   1.45
                 ],
                 [
-                  55.0,
-                  37.0,
+                  51.0,
+                  45.0,
                   0.43
                 ],
                 [
                   53.0,
-                  72.0,
+                  75.0,
                   0.19
                 ],
                 [
-                  47.0,
-                  100.0,
+                  52.0,
+                  115.0,
                   0.12
                 ]
               ]
@@ -39173,7 +39173,7 @@
       },
       "elapsed": 0.144,
       "error": null,
-      "time": "2026-03-08 21:34:24"
+      "time": "2026-03-08 21:43:08"
     },
     "GET:/Customer/GetAnalysisDescList": {
       "key": "GET:/Customer/GetAnalysisDescList",
@@ -39205,7 +39205,7 @@
       },
       "elapsed": 0.195,
       "error": null,
-      "time": "2026-03-08 21:34:25"
+      "time": "2026-03-08 21:43:08"
     },
     "GET:/Customer/GetAnalysisDescDetail": {
       "key": "GET:/Customer/GetAnalysisDescDetail",
@@ -39230,7 +39230,7 @@
       },
       "elapsed": 0.197,
       "error": null,
-      "time": "2026-03-08 21:34:25"
+      "time": "2026-03-08 21:43:08"
     },
     "GET:/Debug/QuerySQL": {
       "key": "GET:/Debug/QuerySQL",
@@ -39674,7 +39674,7 @@
       },
       "elapsed": 0.511,
       "error": null,
-      "time": "2026-03-08 21:34:25"
+      "time": "2026-03-08 21:43:09"
     },
     "GET:/Examine/GetEXAMINEDetail": {
       "key": "GET:/Examine/GetEXAMINEDetail",
@@ -39721,7 +39721,7 @@
       },
       "elapsed": 0.139,
       "error": null,
-      "time": "2026-03-08 21:34:25"
+      "time": "2026-03-08 21:43:09"
     },
     "POST:/Examine/GetEXAMINEList": {
       "key": "POST:/Examine/GetEXAMINEList",
@@ -39742,7 +39742,7 @@
       },
       "elapsed": 0.815,
       "error": null,
-      "time": "2026-03-08 21:34:26"
+      "time": "2026-03-08 21:43:09"
     },
     "GET:/Examine/GetMEETINGDetail": {
       "key": "GET:/Examine/GetMEETINGDetail",
@@ -39786,7 +39786,7 @@
       },
       "elapsed": 0.152,
       "error": null,
-      "time": "2026-03-08 21:34:26"
+      "time": "2026-03-08 21:43:10"
     },
     "POST:/Examine/GetPATROLList": {
       "key": "POST:/Examine/GetPATROLList",
@@ -39807,7 +39807,7 @@
       },
       "elapsed": 12.565,
       "error": null,
-      "time": "2026-03-08 21:34:38"
+      "time": "2026-03-08 21:43:22"
     },
     "GET:/Examine/GetPATROLDetail": {
       "key": "GET:/Examine/GetPATROLDetail",
@@ -39852,7 +39852,7 @@
       },
       "elapsed": 0.138,
       "error": null,
-      "time": "2026-03-08 21:34:38"
+      "time": "2026-03-08 21:43:22"
     },
     "GET:/Examine/WeChat_GetExamineList": {
       "key": "GET:/Examine/WeChat_GetExamineList",
@@ -41039,7 +41039,7 @@
       },
       "elapsed": 0.211,
       "error": null,
-      "time": "2026-03-08 21:34:43"
+      "time": "2026-03-08 21:43:22"
     },
     "GET:/Examine/WeChat_GetExamineDetail": {
       "key": "GET:/Examine/WeChat_GetExamineDetail",
@@ -41062,7 +41062,7 @@
       },
       "elapsed": 0.2,
       "error": null,
-      "time": "2026-03-08 21:34:43"
+      "time": "2026-03-08 21:43:22"
     },
     "GET:/Examine/WeChat_GetPatrolList": {
       "key": "GET:/Examine/WeChat_GetPatrolList",
@@ -62534,7 +62534,7 @@
       },
       "elapsed": 0.775,
       "error": null,
-      "time": "2026-03-08 21:34:44"
+      "time": "2026-03-08 21:43:24"
     },
     "GET:/Examine/GetPatrolAnalysis": {
       "key": "GET:/Examine/GetPatrolAnalysis",
@@ -62583,7 +62583,7 @@
       },
       "elapsed": 0.18,
       "error": null,
-      "time": "2026-03-08 21:34:45"
+      "time": "2026-03-08 21:43:24"
     },
     "GET:/Examine/GetExamineResultList": {
       "key": "GET:/Examine/GetExamineResultList",
@@ -62611,7 +62611,7 @@
       },
       "elapsed": 0.175,
       "error": null,
-      "time": "2026-03-08 21:34:45"
+      "time": "2026-03-08 21:43:24"
     },
     "GET:/Examine/GetPatrolResultList": {
       "key": "GET:/Examine/GetPatrolResultList",
@@ -62638,7 +62638,7 @@
       },
       "elapsed": 0.182,
       "error": null,
-      "time": "2026-03-08 21:34:45"
+      "time": "2026-03-08 21:43:24"
     },
     "POST:/Examine/GetEvaluateResList": {
       "key": "POST:/Examine/GetEvaluateResList",
@@ -62679,7 +62679,7 @@
       },
       "elapsed": 0.426,
       "error": null,
-      "time": "2026-03-08 21:34:45"
+      "time": "2026-03-08 21:43:24"
     },
     "POST:/Examine/GetMEETINGList": {
       "key": "POST:/Examine/GetMEETINGList",
@@ -62700,7 +62700,7 @@
       },
       "elapsed": 19.307,
       "error": null,
-      "time": "2026-03-08 20:54:25"
+      "time": "2026-03-08 21:43:37"
     },
     "GET:/Revenue/GetSummaryRevenueMonth": {
       "key": "GET:/Revenue/GetSummaryRevenueMonth",
@@ -62795,7 +62795,7 @@
       },
       "elapsed": 0.258,
       "error": null,
-      "time": "2026-03-08 21:35:00"
+      "time": "2026-03-08 21:43:37"
     },
     "GET:/Revenue/GetSummaryRevenue": {
       "key": "GET:/Revenue/GetSummaryRevenue",
@@ -62897,7 +62897,7 @@
       },
       "elapsed": 0.769,
       "error": null,
-      "time": "2026-03-08 21:35:01"
+      "time": "2026-03-08 21:43:38"
     },
     "GET:/Revenue/GetWechatPushSalesList": {
       "key": "GET:/Revenue/GetWechatPushSalesList",
@@ -62922,7 +62922,7 @@
       },
       "elapsed": 0.279,
       "error": null,
-      "time": "2026-03-08 21:35:02"
+      "time": "2026-03-08 21:43:38"
     },
     "GET:/Revenue/GetUnUpLoadShops": {
       "key": "GET:/Revenue/GetUnUpLoadShops",
@@ -63138,7 +63138,7 @@
       },
       "elapsed": 0.167,
       "error": null,
-      "time": "2026-03-08 21:35:02"
+      "time": "2026-03-08 21:43:38"
     },
     "GET:/Revenue/GetServerpartEndAccountList": {
       "key": "GET:/Revenue/GetServerpartEndAccountList",
@@ -63165,7 +63165,7 @@
       },
       "elapsed": 0.167,
       "error": null,
-      "time": "2026-03-08 21:35:02"
+      "time": "2026-03-08 21:43:38"
     },
     "GET:/Revenue/GetShopEndAccountList": {
       "key": "GET:/Revenue/GetShopEndAccountList",
@@ -63201,7 +63201,7 @@
       },
       "elapsed": 0.133,
       "error": null,
-      "time": "2026-03-08 21:35:02"
+      "time": "2026-03-08 21:43:38"
     },
     "GET:/Revenue/GetServerpartBrand": {
       "key": "GET:/Revenue/GetServerpartBrand",
@@ -63227,7 +63227,7 @@
       },
       "elapsed": 0.433,
       "error": null,
-      "time": "2026-03-08 21:35:02"
+      "time": "2026-03-08 21:43:39"
     },
     "GET:/Revenue/GetBudgetExpenseList": {
       "key": "GET:/Revenue/GetBudgetExpenseList",
@@ -63252,7 +63252,7 @@
       },
       "elapsed": 0.163,
       "error": null,
-      "time": "2026-03-08 21:35:02"
+      "time": "2026-03-08 21:43:39"
     },
     "GET:/Revenue/GetRevenueBudget": {
       "key": "GET:/Revenue/GetRevenueBudget",
@@ -63296,7 +63296,7 @@
       },
       "elapsed": 0.473,
       "error": null,
-      "time": "2026-03-08 21:35:03"
+      "time": "2026-03-08 21:43:39"
     },
     "GET:/Revenue/GetProvinceRevenueBudget": {
       "key": "GET:/Revenue/GetProvinceRevenueBudget",
@@ -63354,7 +63354,7 @@
       },
       "elapsed": 0.427,
       "error": null,
-      "time": "2026-03-08 21:35:03"
+      "time": "2026-03-08 21:43:40"
     },
     "GET:/Revenue/GetMallDeliver": {
       "key": "GET:/Revenue/GetMallDeliver",
@@ -63384,7 +63384,7 @@
       },
       "elapsed": 0.183,
       "error": null,
-      "time": "2026-03-08 21:35:03"
+      "time": "2026-03-08 21:43:40"
     },
     "GET:/Revenue/GetTransactionTimeAnalysis": {
       "key": "GET:/Revenue/GetTransactionTimeAnalysis",
@@ -63450,7 +63450,7 @@
       },
       "elapsed": 0.559,
       "error": null,
-      "time": "2026-03-08 21:35:04"
+      "time": "2026-03-08 21:43:41"
     },
     "GET:/Revenue/GetTransactionConvert": {
       "key": "GET:/Revenue/GetTransactionConvert",
@@ -63581,7 +63581,7 @@
       },
       "elapsed": 0.418,
       "error": null,
-      "time": "2026-03-08 21:35:04"
+      "time": "2026-03-08 21:43:41"
     },
     "GET:/Revenue/GetBusinessTradeRevenue": {
       "key": "GET:/Revenue/GetBusinessTradeRevenue",
@@ -63690,7 +63690,7 @@
       },
       "elapsed": 0.496,
       "error": null,
-      "time": "2026-03-08 21:35:05"
+      "time": "2026-03-08 21:43:42"
     },
     "GET:/Revenue/GetBusinessTradeLevel": {
       "key": "GET:/Revenue/GetBusinessTradeLevel",
@@ -63763,7 +63763,7 @@
       },
       "elapsed": 0.566,
       "error": null,
-      "time": "2026-03-08 21:35:05"
+      "time": "2026-03-08 21:43:42"
     },
     "GET:/Revenue/GetBusinessBrandLevel": {
       "key": "GET:/Revenue/GetBusinessBrandLevel",
@@ -63836,7 +63836,7 @@
       },
       "elapsed": 0.298,
       "error": null,
-      "time": "2026-03-08 21:35:06"
+      "time": "2026-03-08 21:43:42"
     },
     "GET:/Revenue/GetRevenueTrend": {
       "key": "GET:/Revenue/GetRevenueTrend",
@@ -63863,7 +63863,7 @@
       },
       "elapsed": 0.322,
       "error": null,
-      "time": "2026-03-08 21:35:06"
+      "time": "2026-03-08 21:43:42"
     },
     "GET:/Revenue/GetRevenueReport": {
       "key": "GET:/Revenue/GetRevenueReport",
@@ -64907,7 +64907,7 @@
       },
       "elapsed": 0.397,
       "error": null,
-      "time": "2026-03-08 21:35:06"
+      "time": "2026-03-08 21:43:43"
     },
     "GET:/Revenue/GetSalableCommodity": {
       "key": "GET:/Revenue/GetSalableCommodity",
@@ -64975,7 +64975,7 @@
       },
       "elapsed": 0.065,
       "error": null,
-      "time": "2026-03-08 21:35:06"
+      "time": "2026-03-08 21:43:43"
     },
     "GET:/Revenue/GetRevenueReportDetil": {
       "key": "GET:/Revenue/GetRevenueReportDetil",
@@ -65155,7 +65155,7 @@
       },
       "elapsed": 0.458,
       "error": null,
-      "time": "2026-03-08 21:35:06"
+      "time": "2026-03-08 21:43:44"
     },
     "GET:/Revenue/GetSPRevenueRank": {
       "key": "GET:/Revenue/GetSPRevenueRank",
@@ -65182,7 +65182,7 @@
       },
       "elapsed": 0.31,
       "error": null,
-      "time": "2026-03-08 21:35:07"
+      "time": "2026-03-08 21:43:44"
     },
     "GET:/Revenue/GetRevenueYOY": {
       "key": "GET:/Revenue/GetRevenueYOY",
@@ -65578,7 +65578,7 @@
       },
       "elapsed": 0.296,
       "error": null,
-      "time": "2026-03-08 21:35:07"
+      "time": "2026-03-08 21:43:44"
     },
     "GET:/Revenue/GetHolidayCompare": {
       "key": "GET:/Revenue/GetHolidayCompare",
@@ -66093,7 +66093,7 @@
       },
       "elapsed": 0.363,
       "error": null,
-      "time": "2026-03-08 21:35:07"
+      "time": "2026-03-08 21:43:45"
     },
     "GET:/Revenue/GetAccountReceivable": {
       "key": "GET:/Revenue/GetAccountReceivable",
@@ -66304,7 +66304,7 @@
       },
       "elapsed": 0.181,
       "error": null,
-      "time": "2026-03-08 21:35:08"
+      "time": "2026-03-08 21:43:45"
     },
     "GET:/Revenue/GetCurRevenue": {
       "key": "GET:/Revenue/GetCurRevenue",
@@ -66334,7 +66334,7 @@
       },
       "elapsed": 0.257,
       "error": null,
-      "time": "2026-03-08 21:35:08"
+      "time": "2026-03-08 21:43:45"
     },
     "GET:/Revenue/GetShopCurRevenue": {
       "key": "GET:/Revenue/GetShopCurRevenue",
@@ -66368,7 +66368,7 @@
       },
       "elapsed": 0.165,
       "error": null,
-      "time": "2026-03-08 21:35:08"
+      "time": "2026-03-08 21:43:45"
     },
     "GET:/Revenue/GetHolidayAnalysis": {
       "key": "GET:/Revenue/GetHolidayAnalysis",
@@ -66603,7 +66603,7 @@
       },
       "elapsed": 0.507,
       "error": null,
-      "time": "2026-03-08 21:35:08"
+      "time": "2026-03-08 21:43:46"
     },
     "GET:/Revenue/GetHolidayAnalysisBatch": {
       "key": "GET:/Revenue/GetHolidayAnalysisBatch",
@@ -66810,7 +66810,7 @@
       },
       "elapsed": 0.495,
       "error": null,
-      "time": "2026-03-08 21:35:09"
+      "time": "2026-03-08 21:43:46"
     },
     "GET:/Revenue/GetServerpartINCAnalysis": {
       "key": "GET:/Revenue/GetServerpartINCAnalysis",
@@ -66896,7 +66896,7 @@
       },
       "elapsed": 0.446,
       "error": null,
-      "time": "2026-03-08 21:35:09"
+      "time": "2026-03-08 21:43:46"
     },
     "GET:/Revenue/GetShopINCAnalysis": {
       "key": "GET:/Revenue/GetShopINCAnalysis",
@@ -67177,7 +67177,7 @@
       },
       "elapsed": 0.341,
       "error": null,
-      "time": "2026-03-08 21:35:10"
+      "time": "2026-03-08 21:43:47"
     },
     "GET:/Revenue/GetMonthlySPINCAnalysis": {
       "key": "GET:/Revenue/GetMonthlySPINCAnalysis",
@@ -67253,7 +67253,7 @@
       },
       "elapsed": 0.332,
       "error": null,
-      "time": "2026-03-08 21:35:10"
+      "time": "2026-03-08 21:43:47"
     },
     "GET:/Revenue/GetHolidayRevenueRatio": {
       "key": "GET:/Revenue/GetHolidayRevenueRatio",
@@ -67369,7 +67369,7 @@
       },
       "elapsed": 0.025,
       "error": null,
-      "time": "2026-03-08 21:35:10"
+      "time": "2026-03-08 21:43:47"
     },
     "POST:/Revenue/GetBusinessRevenueList": {
       "key": "POST:/Revenue/GetBusinessRevenueList",
@@ -67428,7 +67428,7 @@
       },
       "elapsed": 0.191,
       "error": null,
-      "time": "2026-03-08 21:35:10"
+      "time": "2026-03-08 21:43:47"
     },
     "GET:/Revenue/GetRevenueCompare": {
       "key": "GET:/Revenue/GetRevenueCompare",
@@ -68212,7 +68212,7 @@
       },
       "elapsed": 0.398,
       "error": null,
-      "time": "2026-03-08 21:35:10"
+      "time": "2026-03-08 21:43:48"
     },
     "GET:/Revenue/GetCompanyRevenueReport": {
       "key": "GET:/Revenue/GetCompanyRevenueReport",
@@ -68806,7 +68806,7 @@
       },
       "elapsed": 0.85,
       "error": null,
-      "time": "2026-03-08 21:35:11"
+      "time": "2026-03-08 21:43:48"
     },
     "GET:/Revenue/GetHolidayDailyAnalysis": {
       "key": "GET:/Revenue/GetHolidayDailyAnalysis",
@@ -68927,7 +68927,7 @@
       },
       "elapsed": 0.42,
       "error": null,
-      "time": "2026-03-08 21:35:12"
+      "time": "2026-03-08 21:43:49"
     },
     "GET:/Revenue/GetHolidaySPRAnalysis": {
       "key": "GET:/Revenue/GetHolidaySPRAnalysis",
@@ -75666,7 +75666,7 @@
       },
       "elapsed": 0.772,
       "error": null,
-      "time": "2026-03-08 21:35:12"
+      "time": "2026-03-08 21:43:49"
     },
     "GET:/Revenue/GetMonthINCAnalysisSummary": {
       "key": "GET:/Revenue/GetMonthINCAnalysisSummary",
@@ -75715,7 +75715,7 @@
       },
       "elapsed": 0.165,
       "error": null,
-      "time": "2026-03-08 21:35:12"
+      "time": "2026-03-08 21:43:49"
     },
     "GET:/Revenue/GetMonthINCAnalysis": {
       "key": "GET:/Revenue/GetMonthINCAnalysis",
@@ -76935,7 +76935,7 @@
       },
       "elapsed": 0.762,
       "error": null,
-      "time": "2026-03-08 21:35:13"
+      "time": "2026-03-08 21:43:50"
     },
     "GET:/Revenue/GetShopSABFIList": {
       "key": "GET:/Revenue/GetShopSABFIList",
@@ -78672,7 +78672,7 @@
       },
       "elapsed": 1.105,
       "error": null,
-      "time": "2026-03-08 21:35:14"
+      "time": "2026-03-08 21:43:50"
     },
     "GET:/Revenue/GetShopMonthSABFIList": {
       "key": "GET:/Revenue/GetShopMonthSABFIList",
@@ -78780,7 +78780,7 @@
       },
       "elapsed": 0.213,
       "error": null,
-      "time": "2026-03-08 21:35:14"
+      "time": "2026-03-08 21:43:51"
     },
     "GET:/Revenue/StorageMonthINCAnalysis": {
       "key": "GET:/Revenue/StorageMonthINCAnalysis",
@@ -78800,8 +78800,8 @@
       },
       "elapsed": 3.209,
       "error": null,
-      "time": "2026-03-08 21:35:17"
+      "time": "2026-03-08 21:43:54"
     }
   },
-  "rebuild_time": "2026-03-08 21:35:17"
+  "rebuild_time": "2026-03-08 21:43:54"
 }
