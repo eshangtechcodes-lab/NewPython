@@ -134,8 +134,8 @@ def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_
         "Serverpart_ID": sp_id,
         "Serverpart_Name": sp_name,
         "Serverpart_Region": region,
-        "OwnerCity": None,
-        "OwnerProvince": prov_sorted[0][0] if prov_sorted else None,
+        "OwnerCity": [c[0] for c in city_sorted_top],
+        "OwnerProvince": [p[0] for p in prov_sorted],
         "Vehicle_Count": int(total_vc),
         "OwnerProvinceList": prov_list,
         "OwnerCityList": top_city_list,
@@ -455,7 +455,7 @@ async def get_bayonet_oa_list(
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
-        resp["OtherData"] = [sm, sm]
+        resp["OtherData"] = ["小型车", "中型车", "大型车"]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetOAList 查询失败: {ex}")
@@ -535,7 +535,7 @@ async def get_bayonet_province_oa_list(
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
-        resp["OtherData"] = [sm, sm]
+        resp["OtherData"] = ["小型车", "中型车", "大型车"]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetProvinceOAList 查询失败: {ex}")

@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 11:58:17",
-  "elapsed": 38.2,
+  "time": "2026-03-08 12:57:45",
+  "elapsed": 44.5,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -76,24 +76,23 @@
     },
     {
       "route": "GET /Revenue/GetBayonetOAList",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].OwnerCity: 类型不同 旧=list 新=str",
-        ".Result_Data.List[0].OwnerCityList: 列表长度不同 旧=6 新=10",
-        ".Result_Data.List[0].OwnerProvince: 类型不同 旧=list 新=str",
-        ".Result_Data.List[0]: ...还有2条差异",
-        ".Result_Data.OtherData: 类型不同 旧=list 新=NoneType"
+        ".Result_Data.List[0].OwnerProvince: 列表长度不同 旧=5 新=4",
+        ".Result_Data.List[0].OwnerProvinceList: 列表长度不同 旧=5 新=4",
+        ".Result_Data.List[0].Vehicle_Count: 旧=94122 新=80892",
+        ".Result_Data.OtherData[0]: 旧=小型车 新=202602"
       ]
     },
     {
       "route": "GET /Revenue/GetBayonetProvinceOAList",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 6处差异",
       "diffs": [
         ".Result_Data.List[0].OwnerCity: 类型不同 旧=list 新=NoneType",
-        ".Result_Data.List[0].OwnerCityList: 列表长度不同 旧=6 新=10",
         ".Result_Data.List[0].OwnerProvince: 类型不同 旧=list 新=str",
-        ".Result_Data.List[0]: ...还有5条差异",
-        ".Result_Data.OtherData: 类型不同 旧=list 新=NoneType"
+        ".Result_Data.List[0].OwnerProvinceList: 列表长度不同 旧=1 新=10",
+        ".Result_Data.List[0]: ...还有4条差异",
+        ".Result_Data.OtherData: 列表长度不同 旧=4 新=2"
       ]
     },
     {
