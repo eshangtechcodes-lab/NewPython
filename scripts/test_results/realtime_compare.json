@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 11:25:49",
-  "elapsed": 37.7,
+  "time": "2026-03-08 11:33:12",
+  "elapsed": 39.0,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -50,19 +50,17 @@
       "detail": "Code=100, 4处差异",
       "diffs": [
         ".Result_Data.List[0].AvgVehicleAmount: 旧=12.93 新=0.0",
-        ".Result_Data.List[0].MinVehicle_Count: 类型不同 旧=NoneType 新=int",
         ".Result_Data.List[0].RevenueAmount: 旧=1671572.32 新=0.0",
-        ".Result_Data.List[0]: ...还有2条差异"
+        ".Result_Data.List[0].SPRegionType_Id: 类型不同 旧=int 新=NoneType",
+        ".Result_Data.List[0]: ...还有1条差异"
       ]
     },
     {
       "route": "GET /BigData/GetProvinceVehicleTreeList",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 2处差异",
       "diffs": [
-        ".Result_Data.List[0].children[0].children[0].node.SPRegionTypeList[0].ServerPartName: 新API缺少字段",
-        ".Result_Data.List[0].children[0].node.SPRegionTypeList[0].ServerPartName: 新API缺少字段",
-        ".Result_Data.List[0].node.SPRegionTypeList[0].ProvinceName: 新API缺少字段",
-        ".Result_Data.List[0]: ...还有1条差异"
+        ".Result_Data.List[0].children[3].children[11].node.ProvinceOrCityName: 旧=平顶山 新=安阳",
+        ".Result_Data.List[0].children[3].children[11].node.SPRegionTypeList[0].CityName: 旧=平顶山 新=安阳"
       ]
     },
     {
