@@ -2091,7 +2091,10 @@ async def get_business_brand_level(
     ProvinceCode: Optional[str] = Query(None, description="省份编码"),
     StatisticsDate: Optional[str] = Query(None, description="统计日期"),
     ServerpartId: Optional[int] = Query(None, description="服务区内码"),
-    ShowWholeTrade: bool = Query(True, description="是否显示全部业态"),
+    ShowWholeBrand: bool = Query(True, description="是否显示全品牌"),
+    ShowBrandCount: Optional[str] = Query("5", description="显示品牌数量"),
+    SPRegionTypeID: Optional[str] = Query(None, description="片区ID"),
+    BusinessTradeIds: Optional[str] = Query(None, description="业态ID"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取品牌消费水平占比 (按C#逻辑重写)"""
@@ -2147,13 +2150,17 @@ async def get_business_brand_level(
             brand_total[brand] += tc
             brand_range[brand][ar] += tc
 
-        # 按客单量降序，取前ShowBrandCount个(默认5) + 可选全品牌
-        show_count = 5  # 默认值
+        # 按客单量降序
+        try:
+            brand_count = int(ShowBrandCount) if ShowBrandCount and ShowBrandCount.isdigit() else 5
+        except:
+            brand_count = 5
+        show_count = brand_count
         sorted_brands = sorted(
             [(b, t) for b, t in brand_total.items() if b],
             key=lambda x: x[1], reverse=True
         )
-        if ShowWholeTrade:
+        if ShowWholeBrand:
             # 显示全品牌时多一列
             show_count = min(show_count, len(sorted_brands)) + 1
         else:
@@ -2171,7 +2178,7 @@ async def get_business_brand_level(
 
         idx = 0
         for brand, total in sorted_brands:
-            if idx >= (show_count - 1 if ShowWholeTrade else show_count):
+            if idx >= (show_count - 1 if ShowWholeBrand else show_count):
                 break
             legend[idx] = brand
             # 低消费
@@ -2187,7 +2194,7 @@ async def get_business_brand_level(
             idx += 1
 
         # 无品牌的归为"其他品牌"
-        if idx < (show_count - 1 if ShowWholeTrade else show_count) and "" in brand_total:
+        if idx < (show_count - 1 if ShowWholeBrand else show_count) and "" in brand_total:
             legend[idx] = "其他品牌"
             total = brand_total[""]
             r1 = brand_range[""].get(1, 0)
@@ -2200,7 +2207,7 @@ async def get_business_brand_level(
             idx += 1
 
         # 全品牌汇总
-        if ShowWholeTrade:
+        if ShowWholeBrand:
             legend[show_count - 1] = "全品牌"
             all_total = sum(brand_total.values())
             if all_total > 0:
