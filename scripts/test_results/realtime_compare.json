@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 14:35:47",
-  "elapsed": 42.7,
+  "time": "2026-03-08 14:48:44",
+  "elapsed": 40.6,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -155,10 +155,10 @@
       "route": "GET /Revenue/GetHolidayAnalysis",
       "detail": "Code=100, 73处差异",
       "diffs": [
-        ".Result_Data.HolidayType: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.compareYear: 类型不同 旧=NoneType 新=str",
-        ".Result_Data.curDate: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.curYear: 类型不同 旧=NoneType 新=str",
+        ".Result_Data.ServerpartId: 类型不同 旧=NoneType 新=int",
+        ".Result_Data.compareYear: 类型不同 旧=NoneType 新=int",
+        ".Result_Data.curDate: 旧=2026/2/13 新=2026-02-13",
+        ".Result_Data.curYear: 类型不同 旧=NoneType 新=int",
         ".Result_Data.curYearAccount.data: 类型不同 旧=str 新=NoneType"
       ]
     },
@@ -166,10 +166,10 @@
       "route": "GET /Revenue/GetHolidayAnalysisBatch",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].compareYear: 类型不同 旧=int 新=str",
-        ".Result_Data.List[0].curDate: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.List[0].curYear: 类型不同 旧=int 新=str",
-        ".Result_Data.List[0]: ...还有62条差异"
+        ".Result_Data.List[0].curDate: 旧=2026/2/13 新=2026-02-13",
+        ".Result_Data.List[0].curYearAccount.data: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.List[0].curYearAccount.value: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.List[0]: ...还有60条差异"
       ]
     },
     {
