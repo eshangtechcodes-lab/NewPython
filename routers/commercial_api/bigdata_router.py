@@ -77,8 +77,13 @@ def _build_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, prov
     for r in prov_rows:
         pn = r.get("PROVINCE_NAME") or ""
         prov_map[pn] = prov_map.get(pn, 0) + float(r.get("VEHICLE_COUNT") or 0)
-    prov_sorted = sorted(prov_map.items(), key=lambda x: x[1], reverse=True)[:prov_top]
+    prov_sorted_all = sorted(prov_map.items(), key=lambda x: x[1], reverse=True)
+    prov_sorted = prov_sorted_all[:prov_top]
     prov_list = [{"name": p[0], "value": str(int(p[1]))} for p in prov_sorted]
+    # 追加"其他"汇总（C#逻辑：topN之外的省份归入"其他"）
+    if len(prov_sorted_all) > prov_top:
+        other_count = sum(p[1] for p in prov_sorted_all[prov_top:])
+        prov_list.append({"name": "其他", "value": str(int(other_count))})
 
     total_vc = sum(float(r.get("VEHICLE_COUNT") or 0) for r in city_rows)
     return {
@@ -86,7 +91,7 @@ def _build_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, prov
         "Serverpart_Name": sp_name,
         "Serverpart_Region": region,
         "OwnerCity": [c[0] for c in city_sorted],
-        "OwnerProvince": [p[0] for p in prov_sorted],
+        "OwnerProvince": [p[0] for p in prov_sorted] + (["其他"] if len(prov_sorted_all) > prov_top else []),
         "Vehicle_Count": int(total_vc),
         "OwnerCityList": city_list if city_list else [{"name": None, "value": None}],
         "OwnerProvinceList": prov_list,
