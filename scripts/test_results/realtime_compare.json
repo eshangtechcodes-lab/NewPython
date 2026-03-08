@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 12:57:45",
-  "elapsed": 44.5,
+  "time": "2026-03-08 14:35:47",
+  "elapsed": 42.7,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -76,23 +76,24 @@
     },
     {
       "route": "GET /Revenue/GetBayonetOAList",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 5处差异",
       "diffs": [
         ".Result_Data.List[0].OwnerProvince: 列表长度不同 旧=5 新=4",
         ".Result_Data.List[0].OwnerProvinceList: 列表长度不同 旧=5 新=4",
         ".Result_Data.List[0].Vehicle_Count: 旧=94122 新=80892",
-        ".Result_Data.OtherData[0]: 旧=小型车 新=202602"
+        ".Result_Data.OtherData: 列表长度不同 旧=2 新=3",
+        ".Result_Data.OtherData[1]: 旧=大型车 新=中型车"
       ]
     },
     {
       "route": "GET /Revenue/GetBayonetProvinceOAList",
       "detail": "Code=100, 6处差异",
       "diffs": [
-        ".Result_Data.List[0].OwnerCity: 类型不同 旧=list 新=NoneType",
-        ".Result_Data.List[0].OwnerProvince: 类型不同 旧=list 新=str",
+        ".Result_Data.List[0].OwnerProvince: 列表长度不同 旧=1 新=10",
+        ".Result_Data.List[0].OwnerProvince[0]: 旧=其他 新=安徽省",
         ".Result_Data.List[0].OwnerProvinceList: 列表长度不同 旧=1 新=10",
         ".Result_Data.List[0]: ...还有4条差异",
-        ".Result_Data.OtherData: 列表长度不同 旧=4 新=2"
+        ".Result_Data.OtherData: 列表长度不同 旧=4 新=3"
       ]
     },
     {
@@ -165,10 +166,10 @@
       "route": "GET /Revenue/GetHolidayAnalysisBatch",
       "detail": "Code=100, 4处差异",
       "diffs": [
-        ".Result_Data.List[0].HolidayType: 旧=2 新=0",
-        ".Result_Data.List[0].ServerpartId: 类型不同 旧=int 新=NoneType",
-        ".Result_Data.List[0].ServerpartName: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.List[0]: ...还有65条差异"
+        ".Result_Data.List[0].compareYear: 类型不同 旧=int 新=str",
+        ".Result_Data.List[0].curDate: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.List[0].curYear: 类型不同 旧=int 新=str",
+        ".Result_Data.List[0]: ...还有62条差异"
       ]
     },
     {
@@ -241,7 +242,7 @@
       "detail": "Code=100, 7处差异",
       "diffs": [
         ".Result_Data.Serverpart_RevenueN: 旧=2152246.37 新=1629643.37",
-        ".Result_Data.Serverpart_RevenueS: 旧=1045082.46 新=1567685.4600000002",
+        ".Result_Data.Serverpart_RevenueS: 旧=1045082.46 新=1567685.46",
         ".Result_Data.ShopList: 列表长度不同 旧=15 新=14",
         ".Result_Data.ShopList[0].BusinessType_Logo: 旧=https://user.eshangtech.com/UploadImageDir/Picture 新=",
         ".Result_Data.ShopList[0].BusinessType_Name: 旧=自营老乡鸡 新=中餐馆"
@@ -308,11 +309,10 @@
     },
     {
       "route": "GET /Revenue/GetTransactionAnalysis",
-      "detail": "Code=100, 5处差异",
+      "detail": "Code=100, 4处差异",
       "diffs": [
         ".Result_Data.ProvinceAvgTicketPrice: 旧=26.94 新=25.71",
         ".Result_Data.ProvinceRevenueAmount: 旧=5887533.52 新=7748488.45",
-        ".Result_Data.Serverpart_Name: 类型不同 旧=str 新=NoneType",
         ".Result_Data.TicketProvinceCount: 旧=218571 新=301428",
         ".Result_Data.TotalProvinceCount: 旧=610707.44 新=780218.81"
       ]

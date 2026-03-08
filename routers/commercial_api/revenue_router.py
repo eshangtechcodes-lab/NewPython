@@ -2990,9 +2990,12 @@ async def get_holiday_analysis(
     """获取节日营收数据对比分析"""
     _ckm = lambda: {"data": None, "key": None, "name": None, "value": None}
     _model = {
-        "ServerpartId": None, "ServerpartName": None,
-        "curYear": curYear, "compareYear": compareYear,
-        "HolidayType": holidayType, "curDate": None, "cyDate": None,
+        "ServerpartId": int(ServerpartId) if ServerpartId else None,
+        "ServerpartName": None,
+        "curYear": int(curYear) if curYear else None,
+        "compareYear": int(compareYear) if compareYear else None,
+        "HolidayType": holidayType if holidayType else None,
+        "curDate": StatisticsDate or None, "cyDate": None,
         "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
         "curYearAccount": _ckm(), "lYearAccount": _ckm(),
         "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
@@ -3038,8 +3041,8 @@ async def get_holiday_analysis_batch(
 
     _model = {
         "ServerpartId": sp_id, "ServerpartName": sp_name,
-        "curYear": curYear, "compareYear": compareYear,
-        "HolidayType": HolidayType, "curDate": None, "cyDate": None,
+        "curYear": int(curYear) if curYear else None, "compareYear": int(compareYear) if compareYear else None,
+        "HolidayType": HolidayType, "curDate": StatisticsDate or None, "cyDate": None,
         "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
         "curYearAccount": _ckm(), "lYearAccount": _ckm(),
         "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
