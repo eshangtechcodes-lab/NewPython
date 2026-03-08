@@ -1118,21 +1118,35 @@ async def get_month_analysis(
         elif SPRegionType_ID:
             where_sql += f' AND C."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
 
-        # 查断面+出区流量 按月
-        sf_sql = f"""SELECT SUBSTR(TO_CHAR(A."STATISTICS_DATE"),1,6) AS "STATISTICS_MONTH",
+        # 查断面+出区流量 按月+方位
+        sf_sql = f"""SELECT A."SERVERPART_REGION", SUBSTR(TO_CHAR(A."STATISTICS_DATE"),1,6) AS "STATISTICS_MONTH",
                 COUNT(DISTINCT A."STATISTICS_DATE") AS "DATE_COUNT",
-                SUM(A."SERVERPART_FLOW") AS "VEHICLE_COUNT",
+                SUM(A."SERVERPART_FLOW" + NVL(A."SERVERPART_FLOW_ANALOG",0)) AS "VEHICLE_COUNT",
                 SUM(A."SECTIONFLOW_NUM") AS "SECTIONFLOW_NUM"
             FROM "T_SECTIONFLOW" A, "T_SERVERPART" C
             WHERE A."SERVERPART_ID" = C."SERVERPART_ID"
+                AND A."SERVERPART_FLOW" + NVL(A."SERVERPART_FLOW_ANALOG",0) > 0
                 AND A."SECTIONFLOW_STATUS" = 1 AND A."SECTIONFLOW_NUM" > 0
                 AND A."STATISTICS_DATE" BETWEEN {start} AND {end}{where_sql}
-            GROUP BY SUBSTR(TO_CHAR(A."STATISTICS_DATE"),1,6)"""
+            GROUP BY A."SERVERPART_REGION", SUBSTR(TO_CHAR(A."STATISTICS_DATE"),1,6)"""
         sf_rows = db.execute_query(sf_sql) or []
+        # 按月汇总（所有方位合计）+ 按月+方位分组
         sf_map = {}
+        sf_region_map = {}  # key: (month, region)
         for r in sf_rows:
             m = str(r.get("STATISTICS_MONTH", "")).strip()
-            sf_map[m] = {"days": int(safe_f(r.get("DATE_COUNT"))), "vc": safe_f(r.get("VEHICLE_COUNT")), "sf": safe_f(r.get("SECTIONFLOW_NUM"))}
+            region = str(r.get("SERVERPART_REGION", "")).strip()
+            vc = safe_f(r.get("VEHICLE_COUNT"))
+            sf = safe_f(r.get("SECTIONFLOW_NUM"))
+            days = int(safe_f(r.get("DATE_COUNT")))
+            # 月汇总
+            if m not in sf_map:
+                sf_map[m] = {"days": 0, "vc": 0.0, "sf": 0.0}
+            sf_map[m]["days"] = max(sf_map[m]["days"], days)
+            sf_map[m]["vc"] += vc
+            sf_map[m]["sf"] += sf
+            # 月+方位
+            sf_region_map[(m, region)] = {"days": days, "vc": vc, "sf": sf}
 
         # 查小型车入区 按月
         mv_sql = f"""SELECT SUBSTR(TO_CHAR(A."STATISTICS_DATE"),1,6) AS "STATISTICS_MONTH",
@@ -1168,6 +1182,7 @@ async def get_month_analysis(
             m = str(r.get("STATISTICS_MONTH", "")).strip()
             rev_map[m] = {"days": int(safe_f(r.get("DATE_COUNT"))), "rev": safe_f(r.get("REVENUE_AMOUNT"))}
 
+        server_regions = ["东", "南", "西", "北"]
         result_list = []
         last_month_int = stat_date.year * 100 + stat_date.month
         cur = dt(stat_date.year, 1, 1)
@@ -1204,6 +1219,16 @@ async def get_month_analysis(
             if mv_total > 0 and rev_days > 0:
                 avg_vehicle_amount = round(rev_amount / rev_days / mv_vc, 2) if mv_vc > 0 else 0.0
 
+            # 构建方向车流的RegionList
+            region_list = []
+            for region in server_regions:
+                rkey = (m_key, region)
+                if rkey in sf_region_map:
+                    r_info = sf_region_map[rkey]
+                    r_days = r_info.get("days", 0)
+                    r_vc = int(r_info.get("vc", 0) / r_days * cur_days) if r_days > 0 else 0
+                    region_list.append({"name": region, "value": str(r_vc)})
+
             result_list.append({
                 "Statistics_Year": cur.year,
                 "Statistics_Month": cur.month,
@@ -1213,7 +1238,7 @@ async def get_month_analysis(
                 "RevenueAmount": rev_amount,
                 "AvgVehicleAmount": avg_vehicle_amount,
                 "MinVehicle_Count": min_vc_total,
-                "RegionList": [],
+                "RegionList": region_list,
             })
             if cur.month == 12:
                 cur = cur.replace(year=cur.year + 1, month=1)
