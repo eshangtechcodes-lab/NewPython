@@ -4811,7 +4811,8 @@ async def get_company_revenue_report(
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1{where_sql}
             GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SPREGIONTYPE_INDEX", B."STATISTICS_TYPE",
                 B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
-                A."SERVERPARTSHOP_ID", A."BUSINESS_TYPE", A."SHOPTRADE" """
+                A."SERVERPARTSHOP_ID", A."BUSINESS_TYPE", A."SHOPTRADE"
+            ORDER BY B."SPREGIONTYPE_INDEX", B."SERVERPART_INDEX", A."SERVERPARTSHOP_ID" """
         rows = db.execute_query(sql)
         if not rows or not any(r.get("SERVERPARTSHOP_ID") for r in rows):
             json_list = JsonListData.create(data_list=[], total=0)
@@ -5573,10 +5574,13 @@ async def get_holiday_spr_analysis(
         total_cmp_flow_d = round(sum(v["flow_cur"] for v in cmp_bay_map.values()), 2)
 
         def fmt_dec(v):
-            """金额格式: 保留2位小数（含尾零），0返回'0'"""
+            """金额格式: C# decimal.ToString()行为 - 保留必要小数位"""
             f = round(float(v), 2)
             if f == 0:
                 return "0"
+            # C# decimal.ToString() 对整数不加.00
+            if f == int(f):
+                return str(int(f))
             return f"{f:.2f}"
 
         def fmt_int(v):
@@ -5641,6 +5645,8 @@ async def get_holiday_spr_analysis(
             for sr in sp_rows:
                 if str(sr.get("SPREGIONTYPE_ID")) == rid:
                     sp_id = str(sr.get("SERVERPART_ID", ""))
+                    has_sp_rev = sp_id in cur_sp_map
+                    has_sp_bay = sp_id in cur_bay_map
                     cur_info = cur_sp_map.get(sp_id, {"rev": 0, "rev_cur": 0, "acc": 0, "acc_cur": 0})
                     cmp_info = cmp_sp_map.get(sp_id, {"rev": 0, "rev_cur": 0, "acc": 0, "acc_cur": 0})
                     cb_info = cur_bay_map.get(sp_id, {"flow": 0, "flow_cur": 0})
@@ -5650,12 +5656,12 @@ async def get_holiday_spr_analysis(
                                  "SPRegionTypeName": None,
                                  "ServerpartId": int(sp_id) if sp_id.isdigit() else sp_id,
                                  "ServerpartName": sr.get("SERVERPART_NAME", ""),
-                                 "curYearRevenue": mk_kv(cur_info.get("rev_cur", 0), cur_info.get("rev", 0)),
-                                 "lYearRevenue": mk_kv(cmp_info.get("rev_cur", 0), cmp_info.get("rev", 0)),
-                                 "curYearAccount": mk_kv(cur_info.get("acc_cur", 0), cur_info.get("acc", 0)),
-                                 "lYearAccount": mk_kv(cmp_info.get("acc_cur", 0), cmp_info.get("acc", 0)),
-                                 "curYearBayonet": mk_kv_int(cb_info.get("flow_cur", 0), cb_info.get("flow", 0)),
-                                 "lYearBayonet": mk_kv_int(cmb_info.get("flow_cur", 0), cmb_info.get("flow", 0))},
+                                 "curYearRevenue": mk_kv(cur_info.get("rev_cur", 0), cur_info.get("rev", 0), empty=not has_sp_rev),
+                                 "lYearRevenue": mk_kv(cmp_info.get("rev_cur", 0), cmp_info.get("rev", 0), empty=not has_sp_rev),
+                                 "curYearAccount": mk_kv(cur_info.get("acc_cur", 0), cur_info.get("acc", 0), empty=not has_sp_rev),
+                                 "lYearAccount": mk_kv(cmp_info.get("acc_cur", 0), cmp_info.get("acc", 0), empty=not has_sp_rev),
+                                 "curYearBayonet": mk_kv_int(cb_info.get("flow_cur", 0), cb_info.get("flow", 0), empty=not has_sp_bay),
+                                 "lYearBayonet": mk_kv_int(cmb_info.get("flow_cur", 0), cmb_info.get("flow", 0), empty=not has_sp_bay)},
                         "children": [],
                     })
             # 检查片区是否有数据
