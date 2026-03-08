@@ -2140,14 +2140,18 @@ async def get_date_analysis(
             key = (r.get("STATISTICS_DATE"), r.get("SERVERPART_REGION"))
             flow_map[key] = r
 
-        # 查询营收数据 (今年+去年)
-        rev_sql = f"""SELECT "STATISTICS_DATE", SUM("REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+        # 查询营收数据 (今年+去年)，含A/B拆分
+        rev_sql = f"""SELECT "STATISTICS_DATE", SUM("REVENUE_AMOUNT") AS "REVENUE_AMOUNT",
+                SUM("REVENUE_AMOUNT_A") AS "REVENUE_AMOUNT_A",
+                SUM("REVENUE_AMOUNT_B") AS "REVENUE_AMOUNT_B"
             FROM "T_REVENUEDAILY"
             WHERE "REVENUEDAILY_STATE" = 1 AND "SERVERPART_ID" = {Serverpart_ID}
                 AND "STATISTICS_DATE" >= {start_str} AND "STATISTICS_DATE" <= {end_str}
             GROUP BY "STATISTICS_DATE"
             UNION ALL
-            SELECT "STATISTICS_DATE", SUM("REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+            SELECT "STATISTICS_DATE", SUM("REVENUE_AMOUNT") AS "REVENUE_AMOUNT",
+                SUM("REVENUE_AMOUNT_A") AS "REVENUE_AMOUNT_A",
+                SUM("REVENUE_AMOUNT_B") AS "REVENUE_AMOUNT_B"
             FROM "T_REVENUEDAILY"
             WHERE "REVENUEDAILY_STATE" = 1 AND "SERVERPART_ID" = {Serverpart_ID}
                 AND "STATISTICS_DATE" >= {ly_start_str} AND "STATISTICS_DATE" <= {ly_end_str}
@@ -2156,7 +2160,11 @@ async def get_date_analysis(
         rev_map = {}
         for r in rev_rows:
             d = r.get("STATISTICS_DATE")
-            rev_map[d] = float(r.get("REVENUE_AMOUNT", 0) or 0)
+            rev_map[d] = {
+                "rev": float(r.get("REVENUE_AMOUNT", 0) or 0),
+                "rev_a": float(r.get("REVENUE_AMOUNT_A", 0) or 0),
+                "rev_b": float(r.get("REVENUE_AMOUNT_B", 0) or 0),
+            }
 
         # 遍历日期范围组装数据
         result_list = []
@@ -2164,6 +2172,9 @@ async def get_date_analysis(
         while cur_date <= end_dt:
             date_num = int(cur_date.strftime("%Y%m%d"))
             ly_date_num = int(cur_date.replace(year=cur_date.year - 1).strftime("%Y%m%d"))
+
+            cur_rev = rev_map.get(date_num, {})
+            ly_rev = rev_map.get(ly_date_num, {})
 
             model = {
                 "STATISTICS_DATE": cur_date.strftime("%m-%d"),
@@ -2185,12 +2196,12 @@ async def get_date_analysis(
                 "LastYearTotalANALOG": 0.0,
                 "LastYearSouthEastANALOG": 0.0,
                 "LastYearNorthWestANALOG": 0.0,
-                "CurRevenueAmount": rev_map.get(date_num, 0.0),
-                "CurRevenueAmount_A": 0.0,
-                "CurRevenueAmount_B": 0.0,
-                "LyRevenueAmount": rev_map.get(ly_date_num, 0.0),
-                "LyRevenueAmount_A": 0.0,
-                "LyRevenueAmount_B": 0.0,
+                "CurRevenueAmount": cur_rev.get("rev", 0.0),
+                "CurRevenueAmount_A": cur_rev.get("rev_a", 0.0),
+                "CurRevenueAmount_B": cur_rev.get("rev_b", 0.0),
+                "LyRevenueAmount": ly_rev.get("rev", 0.0),
+                "LyRevenueAmount_A": ly_rev.get("rev_a", 0.0),
+                "LyRevenueAmount_B": ly_rev.get("rev_b", 0.0),
             }
 
             for region in ['东', '南', '西', '北']:
@@ -2270,7 +2281,7 @@ async def get_date_analysis(
             if k in analog_keys:
                 _oth[k] = None
             else:
-                _oth[k] = sum(float(m.get(k, 0) or 0) for m in result_list)
+                _oth[k] = round(sum(float(m.get(k, 0) or 0) for m in result_list), 2)
         resp["OtherData"] = [_oth]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:

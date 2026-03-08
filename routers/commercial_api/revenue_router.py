@@ -2405,7 +2405,8 @@ async def get_revenue_report(
                 SUM(A."TICKET_COUNT") AS "TICKET_COUNT",
                 SUM(A."TOTAL_COUNT") AS "TOTAL_COUNT",
                 SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFF_AMOUNT",
-                SUM(A."DIFFERENT_AMOUNT") AS "DIFFERENT_AMOUNT",
+                SUM(NVL(A."DIFFERENT_AMOUNT_LESS_A",0) + NVL(A."DIFFERENT_AMOUNT_LESS_B",0)) AS "DIFFERENT_PRICE_LESS",
+                SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE",
                 SUM(A."REVENUE_AMOUNT_A") AS "REVENUE_AMOUNT_A",
                 SUM(A."REVENUE_AMOUNT_B") AS "REVENUE_AMOUNT_B"
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
@@ -2423,9 +2424,9 @@ async def get_revenue_report(
         total_ticket = sum(int(r.get("TICKET_COUNT") or 0) for r in rows)
         total_count = round(sum(float(r.get("TOTAL_COUNT") or 0) for r in rows), 2)
         total_off = round(sum(float(r.get("TOTALOFF_AMOUNT") or 0) for r in rows), 2)
-        # 分别汇总正负差异
-        diff_less = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows if float(r.get("DIFFERENT_AMOUNT") or 0) < 0), 2)
-        diff_more = round(sum(float(r.get("DIFFERENT_AMOUNT") or 0) for r in rows if float(r.get("DIFFERENT_AMOUNT") or 0) > 0), 2)
+        # 短款/长款：使用DIFFERENT_AMOUNT_LESS/MORE字段（C#逻辑）
+        diff_less = round(sum(float(r.get("DIFFERENT_PRICE_LESS") or 0) for r in rows), 2)
+        diff_more = round(sum(float(r.get("DIFFERENT_PRICE_MORE") or 0) for r in rows), 2)
         # 南北区：使用REVENUE_AMOUNT_A/B字段（C#逻辑）
         rev_amount_s = round(sum(float(r.get("REVENUE_AMOUNT_A") or 0) for r in rows), 2)
         rev_amount_n = round(sum(float(r.get("REVENUE_AMOUNT_B") or 0) for r in rows), 2)

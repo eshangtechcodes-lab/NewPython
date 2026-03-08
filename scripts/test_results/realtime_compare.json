@@ -1,9 +1,9 @@
 {
-  "time": "2026-03-08 18:11:24",
-  "elapsed": 41.1,
+  "time": "2026-03-08 19:06:31",
+  "elapsed": 39.7,
   "stats": {
-    "PASS": 45,
-    "DIFF": 29,
+    "PASS": 46,
+    "DIFF": 28,
     "ERROR": 0
   },
   "diffs": [
@@ -116,13 +116,13 @@
     },
     {
       "route": "GET /Revenue/GetHolidayAnalysis",
-      "detail": "Code=100, 73处差异",
+      "detail": "Code=100, 69处差异",
       "diffs": [
-        ".Result_Data.ServerpartId: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.compareYear: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.curDate: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.curYear: 类型不同 旧=NoneType 新=int",
-        ".Result_Data.curYearAccount.data: 类型不同 旧=str 新=NoneType"
+        ".Result_Data.curYearAccount.data: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.curYearAccount.value: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.curYearBayonet.data: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.curYearBayonet.value: 类型不同 旧=str 新=NoneType",
+        ".Result_Data.curYearCVSAccount.data: 类型不同 旧=str 新=NoneType"
       ]
     },
     {
@@ -132,7 +132,7 @@
         ".Result_Data.List[0].curYearAccount.data: 类型不同 旧=str 新=NoneType",
         ".Result_Data.List[0].curYearAccount.value: 类型不同 旧=str 新=NoneType",
         ".Result_Data.List[0].curYearBayonet.data: 类型不同 旧=str 新=NoneType",
-        ".Result_Data.List[0]: ...还有59条差异"
+        ".Result_Data.List[0]: ...还有56条差异"
       ]
     },
     {
@@ -185,34 +185,21 @@
     },
     {
       "route": "GET /Revenue/GetRevenueReport",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 2处差异",
       "diffs": [
         ".Result_Data.Different_Price_Less: 旧=-10263.5 新=-8342.1",
-        ".Result_Data.Different_Price_More: 旧=5094.7 新=3173.3",
-        ".Result_Data.Revenue_AmountN: 旧=56583401.36 新=10864526.36",
-        ".Result_Data.Revenue_AmountS: 旧=49422106.93 新=19162981.46"
+        ".Result_Data.Different_Price_More: 旧=5094.7 新=3173.3"
       ]
     },
     {
       "route": "GET /Revenue/GetRevenueReportDetil",
-      "detail": "Code=100, 7处差异",
+      "detail": "Code=100, 5处差异",
       "diffs": [
-        ".Result_Data.Serverpart_RevenueN: 旧=2152246.37 新=1629643.37",
-        ".Result_Data.Serverpart_RevenueS: 旧=1045082.46 新=1567685.46",
         ".Result_Data.ShopList: 列表长度不同 旧=15 新=14",
         ".Result_Data.ShopList[0].BusinessType_Logo: 旧=https://user.eshangtech.com/UploadImageDir/Picture 新=",
-        ".Result_Data.ShopList[0].BusinessType_Name: 旧=自营老乡鸡 新=中餐馆"
-      ]
-    },
-    {
-      "route": "GET /Revenue/GetRevenueYOY",
-      "detail": "Code=100, 6处差异",
-      "diffs": [
-        ".Result_Data.compareList[0].data: 旧=64875.72 新=38204.42",
-        ".Result_Data.compareList[0].value: 旧=64875.72 新=38204.42",
-        ".Result_Data.compareRevenue: 旧=3197328.83 新=1567685.46",
-        ".Result_Data.curList[0].data: 旧=64875.72 新=38204.42",
-        ".Result_Data.curList[0].value: 旧=64875.72 新=38204.42"
+        ".Result_Data.ShopList[0].BusinessType_Name: 旧=自营老乡鸡 新=中餐馆",
+        ".Result_Data.ShopList[0].Serverpart_RevenueN: 旧=532221.27 新=0.0",
+        ".Result_Data.ShopList[0]: ...还有2条差异"
       ]
     },
     {
