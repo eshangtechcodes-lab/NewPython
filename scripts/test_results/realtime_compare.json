@@ -1,9 +1,9 @@
 {
-  "time": "2026-03-08 19:40:41",
-  "elapsed": 40.6,
+  "time": "2026-03-08 19:50:18",
+  "elapsed": 40.4,
   "stats": {
-    "PASS": 48,
-    "DIFF": 26,
+    "PASS": 49,
+    "DIFF": 25,
     "ERROR": 0
   },
   "diffs": [
@@ -30,19 +30,11 @@
     },
     {
       "route": "GET /BigData/GetMonthAnalysis",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 3处差异",
       "diffs": [
         ".Result_Data.List[0].AvgVehicleAmount: 旧=14.01 新=13.05",
         ".Result_Data.List[0].RegionList[0].value: 旧=92163 新=92184",
-        ".Result_Data.List[0].RevenueAmount: 旧=1525756.51 新=2590304.35",
-        ".Result_Data.List[0]: ...还有1条差异"
-      ]
-    },
-    {
-      "route": "GET /BigData/GetProvinceMonthAnalysis",
-      "detail": "Code=100, 1处差异",
-      "diffs": [
-        ".Result_Data.List[0].ShopRevenueAmount: 类型不同 旧=float 新=NoneType"
+        ".Result_Data.List[0].RevenueAmount: 旧=1525756.51 新=2590304.35"
       ]
     },
     {
