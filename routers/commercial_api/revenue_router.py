@@ -2783,40 +2783,154 @@ async def get_account_receivable(
         if not StatisticsMonth:
             return Result.success(data=None, msg="查询成功")
 
-        where_sql = ""
-        if calcType == 1:
-            where_sql = f' AND A."STATISTICS_MONTH" = {StatisticsMonth}'
+        # 经营模式枚举映射
+        bt_names = {4000: "展销", 3000: "固定租金", 1000: "自营", 2000: "合作经营"}
+
+        # 1. 查 T_ACCOUNTRECDETAIL
+        sm = StatisticsStartMonth if StatisticsStartMonth else f"{StatisticsMonth[:4]}01"
+        if StatisticsDate and dt.strptime(StatisticsDate.split(" ")[0], "%Y-%m-%d").strftime("%Y%m") == StatisticsMonth:
+            # 统计月份截止本月，计算到结算日
+            date_sql = f' AND "STATISTICS_DATE" >= {sm}01 AND "STATISTICS_DATE" <= {dt.strptime(StatisticsDate.split(" ")[0], "%Y-%m-%d").strftime("%Y%m%d")}'
+            detail_sql = f'''SELECT * FROM "T_ACCOUNTRECDETAIL" 
+                WHERE "PROVINCE_ID" = 3544 AND "SERVERPART_ID" = 0 AND "DATE_TYPE" = 1 AND "ACCOUNTRECDETAIL_STATE" = 1{date_sql}'''
+            date_sql_rev = f' AND "STATISTICS_DATE" BETWEEN {sm}01 AND {StatisticsMonth}31'
         else:
-            sm = StatisticsStartMonth if StatisticsStartMonth else f"{StatisticsMonth[:4]}01"
-            where_sql = f' AND A."STATISTICS_MONTH" >= {sm} AND A."STATISTICS_MONTH" <= {StatisticsMonth}'
+            if calcType == 1:
+                date_sql = f' AND "STATISTICS_DATE" = {StatisticsMonth}'
+            else:
+                date_sql = f' AND "STATISTICS_DATE" >= {sm} AND "STATISTICS_DATE" <= {StatisticsMonth}'
+            detail_sql = f'''SELECT * FROM "T_ACCOUNTRECDETAIL" 
+                WHERE "PROVINCE_ID" = 3544 AND "SERVERPART_ID" = 0 AND "DATE_TYPE" = 2 AND "ACCOUNTRECDETAIL_STATE" = 1{date_sql}'''
+            date_sql_rev = f' AND "STATISTICS_DATE" BETWEEN {sm}01 AND {StatisticsMonth}31'
 
-        sql = f"""SELECT A."BUSINESS_TYPE",
-                SUM(A."REVENUE_AMOUNT") AS "REVENUE",
-                SUM(A."TICKET_COUNT") AS "TICKET"
-            FROM "T_REVENUEMONTHLY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-                AND A."REVENUEMONTHLY_STATE" = 1 AND B."STATISTIC_TYPE" = 1000{where_sql}
-            GROUP BY A."BUSINESS_TYPE" """
-        rows = db.execute_query(sql) or []
+        detail_rows = db.execute_query(detail_sql) or []
 
-        rev_list = []
-        total_rev = 0.0
-        for r in rows:
-            rv = safe_dec(r.get("REVENUE"))
-            total_rev += rv
-            rev_list.append({"name": str(r.get("BUSINESS_TYPE", "")), "value": str(rv)})
+        # 2. 查 T_PROVINCEREVENUE 获取业主营业收入
+        account_sql = f'''SELECT 
+                SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT", A."BUSINESS_TYPE",
+                SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
+                CASE WHEN A."BUSINESS_TYPE" = 4000 AND "SHOPTRADE" = 2 THEN 1 
+                    WHEN A."BUSINESS_TYPE" = 4000 AND "SHOPTRADE" <> 2 THEN 2 ELSE 3 END AS "SHOPTRADE" 
+            FROM "T_PROVINCEREVENUE" A 
+            WHERE A."PROVINCEREVENUE_STATE" = 1{date_sql_rev}
+            GROUP BY A."BUSINESS_TYPE", 
+                CASE WHEN A."BUSINESS_TYPE" = 4000 AND "SHOPTRADE" = 2 THEN 1 
+                    WHEN A."BUSINESS_TYPE" = 4000 AND "SHOPTRADE" <> 2 THEN 2 ELSE 3 END'''
+        account_rows = db.execute_query(account_sql) or []
+
+        # 3. 汇总detail数据
+        def sum_detail(stat_type, biz_type=None):
+            total = 0.0
+            for r in detail_rows:
+                st = int(safe_dec(r.get("STATISTICS_TYPE")))
+                bt = int(safe_dec(r.get("BUSINESS_TYPE")))
+                if st == stat_type:
+                    if biz_type is not None:
+                        if bt == biz_type:
+                            total += safe_dec(r.get("DATA_VALUE"))
+                    else:
+                        total += safe_dec(r.get("DATA_VALUE"))
+            return total
+
+        def sum_detail_lt(stat_type, biz_lt):
+            """SUM where BUSINESS_TYPE < biz_lt"""
+            total = 0.0
+            for r in detail_rows:
+                st = int(safe_dec(r.get("STATISTICS_TYPE")))
+                bt = int(safe_dec(r.get("BUSINESS_TYPE")))
+                if st == stat_type and bt < biz_lt:
+                    total += safe_dec(r.get("DATA_VALUE"))
+            return total
+
+        def max_detail(stat_type, biz_type=None):
+            vals = []
+            for r in detail_rows:
+                st = int(safe_dec(r.get("STATISTICS_TYPE")))
+                bt = int(safe_dec(r.get("BUSINESS_TYPE")))
+                if st == stat_type:
+                    if biz_type is not None:
+                        if bt == biz_type:
+                            vals.append(safe_dec(r.get("DATA_VALUE")))
+                    else:
+                        vals.append(safe_dec(r.get("DATA_VALUE")))
+            return max(vals) if vals else 0.0
+
+        def sum_account(biz_type):
+            total = 0.0
+            for r in account_rows:
+                bt = int(safe_dec(r.get("BUSINESS_TYPE")))
+                if bt == biz_type:
+                    total += safe_dec(r.get("ACCOUNT_AMOUNT"))
+            return total
+
+        owner_rev = sum_detail(1000)
+        merchant_rev = sum_detail(2000)
+        project_count = int(sum_detail(3001)) if sum_detail(3001) == 0 else int(max_detail(3001))
+        # 重新计算 project_count: 按 BUSINESS_TYPE 分组取 max 再求和
+        pc_map = {}
+        for r in detail_rows:
+            st = int(safe_dec(r.get("STATISTICS_TYPE")))
+            bt = int(safe_dec(r.get("BUSINESS_TYPE")))
+            if st == 3001:
+                dv = safe_dec(r.get("DATA_VALUE"))
+                pc_map[bt] = max(pc_map.get(bt, 0), dv)
+        project_count = int(sum(pc_map.values()))
+
+        # CommissionRatio = SUM(1004, BT<4000) / SUM(3003, BT<4000) * 100
+        s1004 = sum_detail_lt(1004, 4000)
+        s3003 = sum_detail_lt(3003, 4000)
+        commission_ratio = round(s1004 / s3003 * 100, 2) if s3003 > 0 else 0.0
+
+        # 4. 按经营模式遍历
+        bt_list = [4000, 3000, 1000, 2000]
+        owner_acount = []
+        owner_entry = []
+        owner_recv = []
+        merchant_acount = []
+        merchant_entry = []
+        merchant_recv = []
+        proj_count_list = []
+        proj_ratio_list = []
+        rev_ratio_list = []
+        commission_list = []
+
+        for bt in bt_list:
+            name = bt_names.get(bt, str(bt))
+            # OwnerList
+            owner_acount.append({"name": name, "value": str(round(sum_detail(1001, bt), 2))})
+            owner_entry.append({"name": name, "value": str(round(sum_account(bt), 2))})
+            owner_recv.append({"name": name, "value": str(round(sum_detail(1003, bt), 2))})
+            # MerchantList
+            merchant_acount.append({"name": name, "value": str(round(sum_detail(2001, bt), 2))})
+            merchant_entry.append({"name": name, "value": str(round(sum_detail(2002, bt), 2))})
+            merchant_recv.append({"name": name, "value": str(round(sum_detail(2003, bt), 2))})
+            # ProjectCountList
+            pc_val = max_detail(3001, bt)
+            proj_count_list.append({"name": name, "value": str(round(pc_val, 2))})
+            # ProjectRatioList
+            proj_ratio_list.append({"name": name, "value": str(round(pc_val / project_count * 100, 2) if project_count > 0 else 0)})
+            # RevenueRatioList
+            s3003_bt = sum_detail(3003, bt)
+            rev_ratio_list.append({"name": name, "value": str(round(s3003_bt / owner_rev * 100, 2) if owner_rev > 0 else 0)})
+            # CommissionList
+            if bt == 4000:
+                commission_list.append({"name": name, "value": "0"})
+            else:
+                s1004_bt = sum_detail(1004, bt)
+                s3003_bt2 = sum_detail(3003, bt)
+                commission_list.append({"name": name, "value": str(round(s1004_bt / s3003_bt2 * 100, 2) if s3003_bt2 > 0 else 0)})
 
         return Result.success(data={
-            "OwnerRevenue": total_rev,
-            "MerchantRevenue": 0.0,
-            "OwnerList": {"AcountList": None, "EntryList": None, "ReceivableList": None},
-            "MerchantList": {"AcountList": None, "EntryList": None, "ReceivableList": None},
-            "ProjectCount": 0,
-            "ProjectCountList": [],
-            "ProjectRatioList": [],
-            "RevenueRatioList": rev_list,
-            "CommissionRatio": 0.0,
-            "CommissionList": [],
+            "OwnerRevenue": round(owner_rev, 2),
+            "MerchantRevenue": round(merchant_rev, 2),
+            "OwnerList": {"AcountList": owner_acount, "EntryList": owner_entry, "ReceivableList": owner_recv},
+            "MerchantList": {"AcountList": merchant_acount, "EntryList": merchant_entry, "ReceivableList": merchant_recv},
+            "ProjectCount": project_count,
+            "ProjectCountList": proj_count_list,
+            "ProjectRatioList": proj_ratio_list,
+            "RevenueRatioList": rev_ratio_list,
+            "CommissionRatio": commission_ratio,
+            "CommissionList": commission_list,
         }, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAccountReceivable 查询失败: {ex}")
