@@ -1319,7 +1319,7 @@ async def get_province_month_analysis(
                 "Serverpart_ID": r.get("SERVERPART_ID"),
                 "Serverpart_Name": r.get("SERVERPART_NAME"),
                 "Vehicle_Count": total_vehicle,
-                "MinVehicle_Count": 0,
+                "MinVehicle_Count": None,
                 "SectionFlow_Count": total_section,
                 "Entry_Rate": entry_rate,
                 "RevenueAmount": 0.0,
@@ -2769,6 +2769,7 @@ async def get_province_vehicle_tree_list(
                     "IsOther": True if not city else False,
                     "ServerPartId": None,
                     "ServerPartIds": None,
+                    "ServerPartName": None,
                 })
             city_nodes.append({
                 "node": {
@@ -2806,6 +2807,7 @@ async def get_province_vehicle_tree_list(
                     "IsOther": False,
                     "ServerPartId": None,
                     "ServerPartIds": None,
+                    "ServerPartName": None,
                     "VehicleCount": rt_totals.get(rt_id, 0),
                 })
             province_nodes.append({
@@ -2832,10 +2834,12 @@ async def get_province_vehicle_tree_list(
                 "SPRegionTypeIndex": info["SPRegionTypeIndex"],
                 "SPRegionTypeId": info["SPRegionTypeId"],
                 "SPRegionTypeName": info["SPRegionTypeName"],
+                "ProvinceName": None,
                 "CityName": None,
                 "IsOther": False,
                 "ServerPartId": None,
                 "ServerPartIds": None,
+                "ServerPartName": None,
                 "VehicleCount": rt_all.get(rt_id, 0),
             })
 
