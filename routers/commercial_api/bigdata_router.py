@@ -1261,7 +1261,7 @@ async def get_month_analysis(
             item.setdefault("SPRegionType_Name", None)
             item.setdefault("Serverpart_ID", None)
             item.setdefault("Serverpart_Name", None)
-            item.setdefault("ShopRevenueAmount", None)
+            item.setdefault("ShopRevenueAmount", 0.0)
             item.setdefault("Stay_Times", None)
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
@@ -1412,7 +1412,7 @@ async def get_province_month_analysis(
                 "SectionFlow_Count": total_section,
                 "Entry_Rate": entry_rate,
                 "RevenueAmount": revenue_amount,
-                "ShopRevenueAmount": None,
+                "ShopRevenueAmount": 0.0,
                 "AvgVehicleAmount": avg_vehicle_amount,
                 "Stay_Times": None,
                 "RegionList": [],

@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 19:20:20",
-  "elapsed": 39.8,
+  "time": "2026-03-08 19:40:41",
+  "elapsed": 40.6,
   "stats": {
     "PASS": 48,
     "DIFF": 26,
@@ -33,19 +33,16 @@
       "detail": "Code=100, 4处差异",
       "diffs": [
         ".Result_Data.List[0].AvgVehicleAmount: 旧=14.01 新=13.05",
-        ".Result_Data.List[0].RegionList: 列表长度不同 旧=2 新=0",
+        ".Result_Data.List[0].RegionList[0].value: 旧=92163 新=92184",
         ".Result_Data.List[0].RevenueAmount: 旧=1525756.51 新=2590304.35",
         ".Result_Data.List[0]: ...还有1条差异"
       ]
     },
     {
       "route": "GET /BigData/GetProvinceMonthAnalysis",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 1处差异",
       "diffs": [
-        ".Result_Data.List[0].AvgVehicleAmount: 旧=12.93 新=0.0",
-        ".Result_Data.List[0].RevenueAmount: 旧=1671572.32 新=0.0",
-        ".Result_Data.List[0].SPRegionType_Id: 类型不同 旧=int 新=NoneType",
-        ".Result_Data.List[0]: ...还有1条差异"
+        ".Result_Data.List[0].ShopRevenueAmount: 类型不同 旧=float 新=NoneType"
       ]
     },
     {
@@ -66,12 +63,10 @@
     },
     {
       "route": "GET /Revenue/GetBayonetProvinceOAList",
-      "detail": "Code=100, 4处差异",
+      "detail": "Code=100, 2处差异",
       "diffs": [
-        ".Result_Data.List[0].OwnerProvince: 列表长度不同 旧=1 新=10",
-        ".Result_Data.List[0].OwnerProvince[0]: 旧=其他 新=安徽省",
-        ".Result_Data.List[0].OwnerProvinceList: 列表长度不同 旧=1 新=10",
-        ".Result_Data.List[0]: ...还有4条差异"
+        ".Result_Data.List[0].OwnerProvinceList[0].value: 旧=94122 新=81032",
+        ".Result_Data.List[0].Vehicle_Count: 旧=94122 新=81032"
       ]
     },
     {
@@ -226,7 +221,7 @@
     },
     {
       "route": "GET /Revenue/GetSummaryRevenueMonth",
-      "detail": "Code=100, 38处差异",
+      "detail": "Code=100, 16处差异",
       "diffs": [
         ".Result_Data.BusinessTradeList: 列表长度不同 旧=0 新=6",
         ".Result_Data.BusinessTypeList: 列表长度不同 旧=5 新=2",
