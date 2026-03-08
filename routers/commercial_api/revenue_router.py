@@ -1675,9 +1675,15 @@ async def get_transaction_analysis(
                 province_rev = round(safe_dec(mr.get("ALL_REVENUE")) / all_days, 2)
                 province_avg_price = round(province_rev / province_ticket, 2) if province_ticket > 0 else 0
 
+        # 查服务区名
+        sp_name = None
+        if sp_id:
+            sp_name_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
+            sp_name = sp_name_rows[0].get("SERVERPART_NAME", "") if sp_name_rows else ""
+
         result = {
             "Serverpart_ID": sp_id,
-            "Serverpart_Name": None,
+            "Serverpart_Name": sp_name or "",
             "SPRegionType_Name": None,
             "Statistics_Date": None,
             "TicketCount": ticket_count, "TotalCount": total_count,
@@ -2375,8 +2381,8 @@ async def get_revenue_report_detail(
             })
 
         # 按经营模式分南北区域
-        south_rev = sum(safe_dec(r.get("REVENUE")) for r in rows if str(r.get("BUSINESS_TYPE")) == "1000")
-        north_rev = sum(safe_dec(r.get("REVENUE")) for r in rows if str(r.get("BUSINESS_TYPE")) != "1000")
+        south_rev = round(sum(safe_dec(r.get("REVENUE")) for r in rows if str(r.get("BUSINESS_TYPE")) == "1000"), 2)
+        north_rev = round(sum(safe_dec(r.get("REVENUE")) for r in rows if str(r.get("BUSINESS_TYPE")) != "1000"), 2)
 
         # 获取服务区名称
         sp_name_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {serverpartId}') or []
@@ -3014,17 +3020,26 @@ async def get_holiday_analysis_batch(
     pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
     curYear: Optional[str] = Query(None, description="本年年份"),
     compareYear: Optional[str] = Query(None, description="历年年份"),
-    holidayType: int = Query(0, description="节日类型"),
+    HolidayType: int = Query(0, description="节日类型"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
     ServerpartIds: Optional[str] = Query("", description="服务区内码集合"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取多个服务区节日营收数据对比分析（批量）"""
     _ckm = lambda: {"data": None, "key": None, "name": None, "value": None}
+    # 查服务区名
+    sp_id = None
+    sp_name = None
+    if ServerpartIds:
+        sp_id = int(ServerpartIds.split(",")[0]) if ServerpartIds else None
+        if sp_id:
+            sp_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
+            sp_name = sp_rows[0].get("SERVERPART_NAME", "") if sp_rows else ""
+
     _model = {
-        "ServerpartId": None, "ServerpartName": None,
+        "ServerpartId": sp_id, "ServerpartName": sp_name,
         "curYear": curYear, "compareYear": compareYear,
-        "HolidayType": holidayType, "curDate": None, "cyDate": None,
+        "HolidayType": HolidayType, "curDate": None, "cyDate": None,
         "curYearRevenue": _ckm(), "lYearRevenue": _ckm(),
         "curYearAccount": _ckm(), "lYearAccount": _ckm(),
         "curYearBayonet": _ckm(), "lYearBayonet": _ckm(),
