@@ -2780,7 +2780,7 @@ async def get_revenue_yoy(
                 SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                AND B."STATISTIC_TYPE" = 1000 AND A."BUSINESS_TYPE" = 1000
+                AND B."STATISTIC_TYPE" = 1000
                 AND A."STATISTICS_DATE" >= {s_date.strftime('%Y%m%d')}
                 AND A."STATISTICS_DATE" <= {e_date.strftime('%Y%m%d')}{where_sql}
             GROUP BY A."STATISTICS_DATE" """
@@ -2797,7 +2797,7 @@ async def get_revenue_yoy(
                 SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                AND B."STATISTIC_TYPE" = 1000 AND A."BUSINESS_TYPE" = 1000
+                AND B."STATISTIC_TYPE" = 1000
                 AND A."STATISTICS_DATE" >= {cs_date.strftime('%Y%m%d')}
                 AND A."STATISTICS_DATE" <= {ce_date.strftime('%Y%m%d')}{where_sql}
             GROUP BY A."STATISTICS_DATE" """
