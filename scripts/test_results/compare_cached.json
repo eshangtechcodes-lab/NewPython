@@ -337,8 +337,8 @@
     "method": "POST",
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
-    "old": "C=100,T=36",
-    "new": "C=100,T=36",
+    "old": "C=100,T=47",
+    "new": "C=100,T=47",
     "result": "PASS"
   },
   {
@@ -514,6 +514,15 @@
   },
   {
     "idx": 58,
+    "method": "GET",
+    "route": "/Debug/QuerySQL",
+    "ctrl": "Debug",
+    "old": "HTTP404",
+    "new": "HTTP422",
+    "result": "SKIP"
+  },
+  {
+    "idx": 59,
     "method": "POST",
     "route": "/Examine/GetEXAMINEList",
     "ctrl": "Examine",
@@ -522,7 +531,7 @@
     "result": "PASS"
   },
   {
-    "idx": 59,
+    "idx": 60,
     "method": "GET",
     "route": "/Examine/GetEXAMINEDetail",
     "ctrl": "Examine",
@@ -531,16 +540,16 @@
     "result": "PASS"
   },
   {
-    "idx": 60,
+    "idx": 61,
     "method": "POST",
     "route": "/Examine/GetMEETINGList",
     "ctrl": "Examine",
-    "old": "C=999",
+    "old": "C=100,T=70994",
     "new": "C=100,T=70993",
     "result": "DIFF"
   },
   {
-    "idx": 61,
+    "idx": 62,
     "method": "GET",
     "route": "/Examine/GetMEETINGDetail",
     "ctrl": "Examine",
@@ -549,16 +558,16 @@
     "result": "PASS"
   },
   {
-    "idx": 62,
+    "idx": 63,
     "method": "POST",
     "route": "/Examine/GetPATROLList",
     "ctrl": "Examine",
-    "old": "C=999",
+    "old": "C=100,T=104608",
     "new": "C=100,T=104608",
-    "result": "DIFF"
+    "result": "PASS"
   },
   {
-    "idx": 63,
+    "idx": 64,
     "method": "GET",
     "route": "/Examine/GetPATROLDetail",
     "ctrl": "Examine",
@@ -567,7 +576,7 @@
     "result": "PASS"
   },
   {
-    "idx": 64,
+    "idx": 65,
     "method": "GET",
     "route": "/Examine/WeChat_GetExamineList",
     "ctrl": "Examine",
@@ -576,7 +585,7 @@
     "result": "PASS"
   },
   {
-    "idx": 65,
+    "idx": 66,
     "method": "GET",
     "route": "/Examine/WeChat_GetExamineDetail",
     "ctrl": "Examine",
@@ -585,7 +594,7 @@
     "result": "PASS"
   },
   {
-    "idx": 66,
+    "idx": 67,
     "method": "GET",
     "route": "/Examine/WeChat_GetPatrolList",
     "ctrl": "Examine",
@@ -594,7 +603,7 @@
     "result": "PASS"
   },
   {
-    "idx": 67,
+    "idx": 68,
     "method": "GET",
     "route": "/Examine/WeChat_GetMeetingList",
     "ctrl": "Examine",
@@ -603,7 +612,7 @@
     "result": "PASS"
   },
   {
-    "idx": 68,
+    "idx": 69,
     "method": "GET",
     "route": "/Examine/GetPatrolAnalysis",
     "ctrl": "Examine",
@@ -612,7 +621,7 @@
     "result": "PASS"
   },
   {
-    "idx": 69,
+    "idx": 70,
     "method": "GET",
     "route": "/Examine/GetExamineAnalysis",
     "ctrl": "Examine",
@@ -621,7 +630,7 @@
     "result": "PASS"
   },
   {
-    "idx": 70,
+    "idx": 71,
     "method": "GET",
     "route": "/Examine/GetExamineResultList",
     "ctrl": "Examine",
@@ -630,7 +639,7 @@
     "result": "PASS"
   },
   {
-    "idx": 71,
+    "idx": 72,
     "method": "GET",
     "route": "/Examine/GetPatrolResultList",
     "ctrl": "Examine",
@@ -639,7 +648,7 @@
     "result": "PASS"
   },
   {
-    "idx": 72,
+    "idx": 73,
     "method": "POST",
     "route": "/Examine/GetEvaluateResList",
     "ctrl": "Examine",
@@ -648,7 +657,7 @@
     "result": "PASS"
   },
   {
-    "idx": 73,
+    "idx": 74,
     "method": "GET",
     "route": "/Revenue/GetRevenuePushList",
     "ctrl": "Revenue",
@@ -657,7 +666,7 @@
     "result": "PASS"
   },
   {
-    "idx": 74,
+    "idx": 75,
     "method": "GET",
     "route": "/Revenue/GetSummaryRevenue",
     "ctrl": "Revenue",
@@ -666,7 +675,7 @@
     "result": "PASS"
   },
   {
-    "idx": 75,
+    "idx": 76,
     "method": "GET",
     "route": "/Revenue/GetSummaryRevenueMonth",
     "ctrl": "Revenue",
@@ -675,7 +684,7 @@
     "result": "PASS"
   },
   {
-    "idx": 76,
+    "idx": 77,
     "method": "GET",
     "route": "/Revenue/GetWechatPushSalesList",
     "ctrl": "Revenue",
@@ -684,7 +693,7 @@
     "result": "PASS"
   },
   {
-    "idx": 77,
+    "idx": 78,
     "method": "GET",
     "route": "/Revenue/GetUnUpLoadShops",
     "ctrl": "Revenue",
@@ -693,7 +702,7 @@
     "result": "PASS"
   },
   {
-    "idx": 78,
+    "idx": 79,
     "method": "GET",
     "route": "/Revenue/GetServerpartBrand",
     "ctrl": "Revenue",
@@ -702,7 +711,7 @@
     "result": "PASS"
   },
   {
-    "idx": 79,
+    "idx": 80,
     "method": "GET",
     "route": "/Revenue/GetServerpartEndAccountList",
     "ctrl": "Revenue",
@@ -711,7 +720,7 @@
     "result": "PASS"
   },
   {
-    "idx": 80,
+    "idx": 81,
     "method": "GET",
     "route": "/Revenue/GetShopEndAccountList",
     "ctrl": "Revenue",
@@ -720,7 +729,7 @@
     "result": "PASS"
   },
   {
-    "idx": 81,
+    "idx": 82,
     "method": "POST",
     "route": "/Revenue/GetBudgetExpenseList",
     "ctrl": "Revenue",
@@ -729,7 +738,7 @@
     "result": "PASS"
   },
   {
-    "idx": 82,
+    "idx": 83,
     "method": "GET",
     "route": "/Revenue/GetBudgetExpenseList",
     "ctrl": "Revenue",
@@ -738,7 +747,7 @@
     "result": "PASS"
   },
   {
-    "idx": 83,
+    "idx": 84,
     "method": "GET",
     "route": "/Revenue/GetRevenueBudget",
     "ctrl": "Revenue",
@@ -747,7 +756,7 @@
     "result": "PASS"
   },
   {
-    "idx": 84,
+    "idx": 85,
     "method": "GET",
     "route": "/Revenue/GetProvinceRevenueBudget",
     "ctrl": "Revenue",
@@ -756,7 +765,7 @@
     "result": "PASS"
   },
   {
-    "idx": 85,
+    "idx": 86,
     "method": "GET",
     "route": "/Revenue/GetMobileShare",
     "ctrl": "Revenue",
@@ -765,7 +774,7 @@
     "result": "PASS"
   },
   {
-    "idx": 86,
+    "idx": 87,
     "method": "GET",
     "route": "/Revenue/GetMallDeliver",
     "ctrl": "Revenue",
@@ -774,16 +783,16 @@
     "result": "PASS"
   },
   {
-    "idx": 87,
+    "idx": 88,
     "method": "GET",
     "route": "/Revenue/GetTransactionAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=0.0",
-    "new": "C=100",
+    "new": "C=100,T=0.0",
     "result": "PASS"
   },
   {
-    "idx": 88,
+    "idx": 89,
     "method": "GET",
     "route": "/Revenue/GetTransactionTimeAnalysis",
     "ctrl": "Revenue",
@@ -792,7 +801,7 @@
     "result": "PASS"
   },
   {
-    "idx": 89,
+    "idx": 90,
     "method": "GET",
     "route": "/Revenue/GetTransactionConvert",
     "ctrl": "Revenue",
@@ -801,7 +810,7 @@
     "result": "PASS"
   },
   {
-    "idx": 90,
+    "idx": 91,
     "method": "GET",
     "route": "/Revenue/GetBusinessTradeRevenue",
     "ctrl": "Revenue",
@@ -810,7 +819,7 @@
     "result": "PASS"
   },
   {
-    "idx": 91,
+    "idx": 92,
     "method": "GET",
     "route": "/Revenue/GetBusinessTradeLevel",
     "ctrl": "Revenue",
@@ -819,7 +828,7 @@
     "result": "PASS"
   },
   {
-    "idx": 92,
+    "idx": 93,
     "method": "GET",
     "route": "/Revenue/GetBusinessBrandLevel",
     "ctrl": "Revenue",
@@ -828,7 +837,7 @@
     "result": "PASS"
   },
   {
-    "idx": 93,
+    "idx": 94,
     "method": "GET",
     "route": "/Revenue/GetRevenueTrend",
     "ctrl": "Revenue",
@@ -837,7 +846,7 @@
     "result": "PASS"
   },
   {
-    "idx": 94,
+    "idx": 95,
     "method": "GET",
     "route": "/Revenue/GetRevenueReport",
     "ctrl": "Revenue",
@@ -846,7 +855,7 @@
     "result": "PASS"
   },
   {
-    "idx": 95,
+    "idx": 96,
     "method": "GET",
     "route": "/Revenue/GetRevenueReportDetil",
     "ctrl": "Revenue",
@@ -855,7 +864,7 @@
     "result": "PASS"
   },
   {
-    "idx": 96,
+    "idx": 97,
     "method": "GET",
     "route": "/Revenue/GetSalableCommodity",
     "ctrl": "Revenue",
@@ -864,7 +873,7 @@
     "result": "PASS"
   },
   {
-    "idx": 97,
+    "idx": 98,
     "method": "GET",
     "route": "/Revenue/GetSPRevenueRank",
     "ctrl": "Revenue",
@@ -873,7 +882,7 @@
     "result": "PASS"
   },
   {
-    "idx": 98,
+    "idx": 99,
     "method": "GET",
     "route": "/Revenue/GetRevenueYOY",
     "ctrl": "Revenue",
@@ -882,7 +891,7 @@
     "result": "PASS"
   },
   {
-    "idx": 99,
+    "idx": 100,
     "method": "GET",
     "route": "/Revenue/GetHolidayCompare",
     "ctrl": "Revenue",
@@ -891,7 +900,7 @@
     "result": "PASS"
   },
   {
-    "idx": 100,
+    "idx": 101,
     "method": "GET",
     "route": "/Revenue/GetAccountReceivable",
     "ctrl": "Revenue",
@@ -900,7 +909,7 @@
     "result": "PASS"
   },
   {
-    "idx": 101,
+    "idx": 102,
     "method": "GET",
     "route": "/Revenue/GetCurRevenue",
     "ctrl": "Revenue",
@@ -909,7 +918,7 @@
     "result": "PASS"
   },
   {
-    "idx": 102,
+    "idx": 103,
     "method": "GET",
     "route": "/Revenue/GetShopCurRevenue",
     "ctrl": "Revenue",
@@ -918,7 +927,7 @@
     "result": "PASS"
   },
   {
-    "idx": 103,
+    "idx": 104,
     "method": "GET",
     "route": "/Revenue/GetLastSyncDateTime",
     "ctrl": "Revenue",
@@ -927,7 +936,7 @@
     "result": "PASS"
   },
   {
-    "idx": 104,
+    "idx": 105,
     "method": "GET",
     "route": "/Revenue/GetHolidayAnalysis",
     "ctrl": "Revenue",
@@ -936,7 +945,7 @@
     "result": "PASS"
   },
   {
-    "idx": 105,
+    "idx": 106,
     "method": "GET",
     "route": "/Revenue/GetHolidayAnalysisBatch",
     "ctrl": "Revenue",
@@ -945,7 +954,7 @@
     "result": "PASS"
   },
   {
-    "idx": 106,
+    "idx": 107,
     "method": "GET",
     "route": "/Revenue/GetServerpartINCAnalysis",
     "ctrl": "Revenue",
@@ -954,7 +963,7 @@
     "result": "PASS"
   },
   {
-    "idx": 107,
+    "idx": 108,
     "method": "GET",
     "route": "/Revenue/GetShopINCAnalysis",
     "ctrl": "Revenue",
@@ -963,16 +972,16 @@
     "result": "PASS"
   },
   {
-    "idx": 108,
+    "idx": 109,
     "method": "GET",
     "route": "/Revenue/GetMonthlyBusinessAnalysis",
     "ctrl": "Revenue",
     "old": "C=100,T=6",
-    "new": "C=999",
-    "result": "DIFF"
+    "new": "C=100,T=6",
+    "result": "PASS"
   },
   {
-    "idx": 109,
+    "idx": 110,
     "method": "GET",
     "route": "/Revenue/GetMonthlySPINCAnalysis",
     "ctrl": "Revenue",
@@ -981,7 +990,7 @@
     "result": "PASS"
   },
   {
-    "idx": 110,
+    "idx": 111,
     "method": "GET",
     "route": "/Revenue/GetTransactionDetailList",
     "ctrl": "Revenue",
@@ -990,7 +999,7 @@
     "result": "PASS"
   },
   {
-    "idx": 111,
+    "idx": 112,
     "method": "GET",
     "route": "/Revenue/GetHolidayRevenueRatio",
     "ctrl": "Revenue",
@@ -999,7 +1008,7 @@
     "result": "PASS"
   },
   {
-    "idx": 112,
+    "idx": 113,
     "method": "POST",
     "route": "/Revenue/GetBusinessRevenueList",
     "ctrl": "Revenue",
@@ -1008,7 +1017,7 @@
     "result": "PASS"
   },
   {
-    "idx": 113,
+    "idx": 114,
     "method": "POST",
     "route": "/Revenue/GetMonthlyBusinessRevenue",
     "ctrl": "Revenue",
@@ -1017,7 +1026,7 @@
     "result": "PASS"
   },
   {
-    "idx": 114,
+    "idx": 115,
     "method": "GET",
     "route": "/Revenue/GetCompanyRevenueReport",
     "ctrl": "Revenue",
@@ -1026,7 +1035,7 @@
     "result": "PASS"
   },
   {
-    "idx": 115,
+    "idx": 116,
     "method": "GET",
     "route": "/Revenue/GetRevenueCompare",
     "ctrl": "Revenue",
@@ -1035,7 +1044,7 @@
     "result": "PASS"
   },
   {
-    "idx": 116,
+    "idx": 117,
     "method": "GET",
     "route": "/Revenue/GetHolidaySPRAnalysis",
     "ctrl": "Revenue",
@@ -1044,7 +1053,7 @@
     "result": "PASS"
   },
   {
-    "idx": 117,
+    "idx": 118,
     "method": "GET",
     "route": "/Revenue/GetHolidayDailyAnalysis",
     "ctrl": "Revenue",
@@ -1053,7 +1062,7 @@
     "result": "PASS"
   },
   {
-    "idx": 118,
+    "idx": 119,
     "method": "GET",
     "route": "/Revenue/GetMonthINCAnalysis",
     "ctrl": "Revenue",
@@ -1062,7 +1071,7 @@
     "result": "PASS"
   },
   {
-    "idx": 119,
+    "idx": 120,
     "method": "GET",
     "route": "/Revenue/GetMonthINCAnalysisSummary",
     "ctrl": "Revenue",
@@ -1071,7 +1080,7 @@
     "result": "PASS"
   },
   {
-    "idx": 120,
+    "idx": 121,
     "method": "GET",
     "route": "/Revenue/StorageMonthINCAnalysis",
     "ctrl": "Revenue",
@@ -1080,7 +1089,7 @@
     "result": "PASS"
   },
   {
-    "idx": 121,
+    "idx": 122,
     "method": "GET",
     "route": "/Revenue/GetShopSABFIList",
     "ctrl": "Revenue",
@@ -1089,7 +1098,7 @@
     "result": "PASS"
   },
   {
-    "idx": 122,
+    "idx": 123,
     "method": "GET",
     "route": "/Revenue/GetShopMonthSABFIList",
     "ctrl": "Revenue",
