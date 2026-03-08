@@ -455,7 +455,7 @@ async def get_bayonet_oa_list(
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
-        resp["OtherData"] = ["小型车", "中型车", "大型车"]
+        resp["OtherData"] = ["小型车", "大型车"]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetOAList 查询失败: {ex}")
@@ -535,7 +535,7 @@ async def get_bayonet_province_oa_list(
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
-        resp["OtherData"] = ["小型车", "中型车", "大型车"]
+        resp["OtherData"] = ["小型车", "大型车", None, None]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetProvinceOAList 查询失败: {ex}")
@@ -2071,8 +2071,8 @@ async def get_bayonet_oa_analysis(
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         resp = json_list.model_dump()
         resp["OtherData"] = [
-            StartMonth if StartMonth else "",
-            EndMonth if EndMonth else "",
+            str(start_month_val) if start_month_val else "",
+            str(end_month_val) if end_month_val else "",
         ]
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
