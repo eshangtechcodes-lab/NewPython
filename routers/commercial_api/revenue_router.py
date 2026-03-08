@@ -168,95 +168,104 @@ async def get_summary_revenue(
     ShowYearRevenue: bool = Query(False, description="是否显示年度营收额"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取营收推送汇总数据 (SQL平移完成)"""
+    """获取营收推送汇总数据"""
     try:
-        # 1. 调用底层的 GetRevenuePushList 获取明细 (此处直接代码复用或调用)
-        # 为保持一致，我们构造一个内部调用或逻辑复用
-        # 注意：C# 中 GetSummaryRevenue 调用了 GetRevenuePushList
-        
-        # 简化版：直接调用本文件定义的 get_revenue_push_list 的内部逻辑
-        # 由于 FastAPI 依赖注入，这里直接重用逻辑或再次计算
-        
-        # 这里为了演示和保证正确，我们直接在内部重写聚合逻辑，因为它与 GetRevenuePushList 略有不同（汇总层级）
-        
-        detail_res = await get_revenue_push_list(
-            pushProvinceCode=pushProvinceCode,
-            Statistics_Date=Statistics_Date,  # 汇总通常以结束日期为准
-            Serverpart_ID=Serverpart_ID,
-            SPRegionType_ID=SPRegionType_ID,
-            Revenue_Include=Revenue_Include,
-            db=db
-        )
-        
-        # detail_res 是 Result Pydantic对象
-        if hasattr(detail_res, 'model_dump'):
-            detail_dict = detail_res.model_dump()
-        elif hasattr(detail_res, 'body'):
-            import json as _json
-            detail_dict = _json.loads(detail_res.body)
-        elif isinstance(detail_res, dict):
-            detail_dict = detail_res
-        else:
-            detail_dict = {}
-        
-        if detail_dict.get("Result_Code") != 100:
-            return detail_res
-            
-        detail_list = detail_dict.get("Result_Data", {}).get("List", [])
-        
-        if not detail_list:
-            # 即使没有PushList数据也返回完整结构
+        from datetime import datetime, timedelta
+        from collections import defaultdict
+
+        # 1. 查省份ID
+        pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
+        pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
+        province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else pushProvinceCode
+
+        where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
+        if Serverpart_ID:
+            where_sql += f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        elif SPRegionType_ID:
+            where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
+
+        # 2. 日期范围
+        end_str = Statistics_Date.split(" ")[0] if Statistics_Date else datetime.now().strftime("%Y-%m-%d")
+        start_str = Statistics_StartDate.split(" ")[0] if Statistics_StartDate else end_str
+        end_date = datetime.strptime(end_str, "%Y-%m-%d")
+        start_date = datetime.strptime(start_str, "%Y-%m-%d")
+        sd_start = start_date.strftime("%Y%m%d")
+        sd_end = end_date.strftime("%Y%m%d")
+
+        # 3. 查询T_REVENUEDAILY（日期范围）
+        sql = f"""SELECT
+                    B."SPREGIONTYPE_NAME", B."SERVERPART_NAME", A."SERVERPART_ID",
+                    SUM(A."TICKET_COUNT") AS "TICKETCOUNT", SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
+                    SUM(A."REVENUE_AMOUNT") AS "CASHPAY", SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
+                    SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
+                    SUM(CASE WHEN A."DIFFERENT_AMOUNT" < 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_LESS",
+                    SUM(CASE WHEN A."DIFFERENT_AMOUNT" > 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_MORE",
+                    CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME",
+                    A."BUSINESS_TYPE", A."SHOPTRADE"
+                  FROM "T_REVENUEDAILY" A
+                    JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
+                  WHERE A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
+                    AND A."STATISTICS_DATE" BETWEEN {sd_start} AND {sd_end}
+                    AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999')
+                    {where_sql}
+                  GROUP BY B."SPREGIONTYPE_NAME", B."SERVERPART_NAME", A."SERVERPART_ID",
+                    A."BUSINESS_TYPE", A."SHOPTRADE" """
+        rows = db.execute_query(sql) or []
+
+        if not rows:
             return Result.success(data={
                 "RevenuePushModel": None, "GrowthRate": 0.0,
                 "MonthRevenueAmount": 0.0, "YearRevenueAmount": 0.0,
                 "BusinessTypeList": [], "BusinessTradeList": [], "SPRegionList": [],
             }, msg="查询成功")
 
-        # 2. 构造汇总模型
+        # 4. 辅助函数
+        def sf(v):
+            try: return float(v) if v is not None else 0.0
+            except: return 0.0
+        def si(v):
+            try: return int(v) if v is not None else 0
+            except: return 0
+
+        # 5. 构造汇总
+        total_cashpay = round(sum(sf(r.get("CASHPAY")) for r in rows), 2)
         summary_model = {
             "Serverpart_ID": Serverpart_ID,
-            "Serverpart_Name": detail_list[0]["Serverpart_Name"] if Serverpart_ID and detail_list else "",
-            "CashPay": round(sum(o["CashPay"] for o in detail_list), 2),
-            "TicketCount": sum(o["TicketCount"] for o in detail_list),
-            "TotalCount": round(sum(o["TotalCount"] for o in detail_list), 2),
-            "TotalOffAmount": round(sum(o["TotalOffAmount"] for o in detail_list), 2),
-            "MobilePayment": round(sum(o["MobilePayment"] for o in detail_list), 2),
-            "Different_Price_Less": round(sum(o["Different_Price_Less"] for o in detail_list), 2),
-            "Different_Price_More": round(sum(o["Different_Price_More"] for o in detail_list), 2),
-            "RevenueYOY": round(sum(o.get("RevenueYOY", 0) for o in detail_list), 2),
-            "Revenue_Upload": sum(o.get("Revenue_Upload", 0) for o in detail_list),
-            "TotalShopCount": len(detail_list) # 简化处理，原逻辑更复杂
+            "Serverpart_Name": rows[0].get("SERVERPART_NAME", "") if Serverpart_ID else "",
+            "CashPay": total_cashpay,
+            "TicketCount": sum(si(r.get("TICKETCOUNT")) for r in rows),
+            "TotalCount": round(sum(sf(r.get("TOTALCOUNT")) for r in rows), 2),
+            "TotalOffAmount": round(sum(sf(r.get("TOTALOFFAMOUNT")) for r in rows), 2),
+            "MobilePayment": round(sum(sf(r.get("MOBILEPAYMENT")) for r in rows), 2),
+            "Different_Price_Less": round(sum(sf(r.get("DIFFERENT_PRICE_LESS")) for r in rows), 2),
+            "Different_Price_More": round(sum(sf(r.get("DIFFERENT_PRICE_MORE")) for r in rows), 2),
+            "RevenueYOY": 0.0,
+            "Revenue_Upload": len(rows),
+            "TotalShopCount": len(rows),
         }
 
-        # 3. 统计经营模式分析
-        from collections import defaultdict
-        bt_groups = defaultdict(lambda: {"CashPay": 0.0, "RevenueYOY": 0.0})
-        sp_groups = defaultdict(float) # 用于 SPRegionList
-        raw_trade_groups = defaultdict(float) # 原始业态汇总
+        # 6. 统计经营模式分析 (BusinessTypeList)
+        bt_groups = defaultdict(float)
+        sp_groups = defaultdict(float)
 
-        for o in detail_list:
-            # 经营模式汇总
-            bt_name = o["Business_TypeName"]
-            bt_groups[bt_name]["CashPay"] += o["CashPay"]
-            bt_groups[bt_name]["RevenueYOY"] += o.get("RevenueYOY", 0)
-            # 区域汇总 (SPRegionList)
-            sp_name = o.get("SPRegionType_Name")
+        for r in rows:
+            bt_name = r.get("BUSINESS_TYPENAME") or "其他"
+            bt_groups[bt_name] += sf(r.get("CASHPAY"))
+            sp_name = r.get("SPREGIONTYPE_NAME")
             if sp_name:
-                sp_groups[sp_name] += o["CashPay"]
-            # 记录原始子业态汇总
-            trade_name = o.get("BusinessTrade_Name") or "其他"
-            raw_trade_groups[trade_name] += o["CashPay"]
-            
+                sp_groups[sp_name] += sf(r.get("CASHPAY"))
+
         business_type_list = []
-        for name, vals in sorted(bt_groups.items(), key=lambda x: x[1]["CashPay"], reverse=True):
+        for name, val in sorted(bt_groups.items(), key=lambda x: x[1], reverse=True):
             business_type_list.append({
                 "name": name,
-                "value": f"{vals['CashPay']:.2f}",
-                "data": f"{vals['RevenueYOY']:.2f}",
+                "value": f"{val:.2f}",
+                "data": "0.00",
                 "key": None
             })
 
-        # 4. 统计管理中心分析 (SPRegionList)
+        # 7. 统计管理中心分析 (SPRegionList)
         sp_region_list = []
         for name, val in sorted(sp_groups.items(), key=lambda x: x[1], reverse=True):
             sp_region_list.append({
@@ -264,20 +273,25 @@ async def get_summary_revenue(
                 "value": f"{val:.2f}"
             })
 
-        # 5. 统计经营业态分析 (BusinessTradeList) - 映射父级业态
-        # 获取父子映射字典
-        mapping_sql = """SELECT A.AUTOSTATISTICS_NAME AS CHILD, B.AUTOSTATISTICS_NAME AS PARENT 
-                         FROM T_AUTOSTATISTICS A, T_AUTOSTATISTICS B 
-                         WHERE A.AUTOSTATISTICS_PID = B.AUTOSTATISTICS_ID 
-                         AND B.AUTOSTATISTICS_PID = -1"""
-        mapping_rows = db.execute_query(mapping_sql)
-        trade_mapping = {r["CHILD"]: r["PARENT"] for r in mapping_rows}
-        
+        # 8. 统计经营业态分析 (BusinessTradeList) - 用SHOPTRADE映射
+        trade_sql = """SELECT "AUTOSTATISTICS_ID","AUTOSTATISTICS_PID","AUTOSTATISTICS_NAME"
+            FROM "T_AUTOSTATISTICS" WHERE "AUTOSTATISTICS_STATE" > 0"""
+        trade_rows = db.execute_query(trade_sql) or []
+        trade_map = {str(t["AUTOSTATISTICS_ID"]): t for t in trade_rows}
         parent_trade_groups = defaultdict(float)
-        for child_name, cash_pay in raw_trade_groups.items():
-            parent_name = trade_mapping.get(child_name, "其他")
-            parent_trade_groups[parent_name] += cash_pay
-            
+        for r in rows:
+            shop_trade = str(r.get("SHOPTRADE") or "0")
+            if shop_trade in trade_map:
+                t = trade_map[shop_trade]
+                pid = str(t.get("AUTOSTATISTICS_PID"))
+                if pid in trade_map:
+                    parent_name = trade_map[pid]["AUTOSTATISTICS_NAME"]
+                else:
+                    parent_name = t["AUTOSTATISTICS_NAME"]
+            else:
+                parent_name = "其他"
+            parent_trade_groups[parent_name] += sf(r.get("CASHPAY"))
+
         business_trade_list = []
         for name, val in sorted(parent_trade_groups.items(), key=lambda x: x[1], reverse=True):
             business_trade_list.append({
@@ -289,10 +303,10 @@ async def get_summary_revenue(
             "BusinessTradeList": business_trade_list,
             "BusinessTypeList": business_type_list,
             "GrowthRate": 0.0,
-            "MonthRevenueAmount": summary_model["CashPay"], # 简化处理，月累计后续补齐
+            "MonthRevenueAmount": total_cashpay,
             "RevenuePushModel": summary_model,
             "SPRegionList": sp_region_list,
-            "YearRevenueAmount": summary_model["CashPay"],
+            "YearRevenueAmount": total_cashpay,
         }, msg="查询成功")
 
     except Exception as ex:
