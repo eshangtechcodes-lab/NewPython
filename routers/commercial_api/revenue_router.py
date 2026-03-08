@@ -61,7 +61,6 @@ async def get_revenue_push_list(
         results = []
         if is_history:
             # 3.1 历史表 T_REVENUEDAILY 查询
-            # 补充 T_SERVERPARTSHOP 关联以获取详细信息
             sql = f"""SELECT 
                         B.SPREGIONTYPE_NAME, B.SERVERPART_NAME, A.SERVERPART_ID,
                         C.SHOPNAME, C.SHOPREGION AS SHOPREGIONNAME,
@@ -69,14 +68,14 @@ async def get_revenue_push_list(
                         SUM(A.TICKET_COUNT) AS TICKETCOUNT, SUM(A.TOTAL_COUNT) AS TOTALCOUNT,
                         SUM(A.REVENUE_AMOUNT) AS CASHPAY, SUM(A.MOBILEPAY_AMOUNT) AS MOBILEPAYMENT,
                         SUM(A.TOTALOFF_AMOUNT) AS TOTALOFFAMOUNT,
-                        SUM(NVL(A.DIFFERENT_AMOUNT_LESS_A,0) + NVL(A.DIFFERENT_AMOUNT_LESS_B,0)) AS DIFFERENT_PRICE_LESS,
-                        SUM(NVL(A.DIFFERENT_AMOUNT_MORE_A,0) + NVL(A.DIFFERENT_AMOUNT_MORE_B,0)) AS DIFFERENT_PRICE_MORE,
+                        SUM(CASE WHEN A.DIFFERENT_AMOUNT < 0 THEN A.DIFFERENT_AMOUNT ELSE 0 END) AS DIFFERENT_PRICE_LESS,
+                        SUM(CASE WHEN A.DIFFERENT_AMOUNT > 0 THEN A.DIFFERENT_AMOUNT ELSE 0 END) AS DIFFERENT_PRICE_MORE,
                         CASE WHEN A.BUSINESS_TYPE = 1000 THEN '自营' ELSE '外包' END AS BUSINESS_TYPENAME,
                         C.REVENUE_INCLUDE, 1 AS REVENUE_UPLOAD
                       FROM 
                         T_REVENUEDAILY A
                         JOIN T_SERVERPART B ON A.SERVERPART_ID = B.SERVERPART_ID
-                        LEFT JOIN T_SERVERPARTSHOP C ON A.SERVERPART_ID = C.SERVERPART_ID AND A.SHOPTRADE = C.SHOPTRADE
+                        LEFT JOIN T_SERVERPARTSHOP C ON A.SERVERPART_ID = C.SERVERPART_ID
                       WHERE 
                         A.REVENUEDAILY_STATE = 1 AND B.STATISTICS_TYPE = 1000 AND B.STATISTIC_TYPE = 1000
                         AND A.STATISTICS_DATE = '{st_date.strftime('%Y%m%d')}'
@@ -150,10 +149,6 @@ async def get_revenue_push_list(
 
         json_list = JsonListData.create(data_list=results, total=len(results))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-    except Exception as ex:
-        logger.error(f"GetRevenuePushList 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
 
     except Exception as ex:
         logger.error(f"GetRevenuePushList 失败: {ex}")
