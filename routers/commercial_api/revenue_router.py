@@ -4870,8 +4870,23 @@ async def get_holiday_spr_analysis(
         total_cur_flow_d = round(sum(v["flow_cur"] for v in cur_bay_map.values()), 2)
         total_cmp_flow_d = round(sum(v["flow_cur"] for v in cmp_bay_map.values()), 2)
 
+        def fmt_dec(v):
+            """金额格式: 保留2位小数（含尾零），0返回'0'"""
+            f = round(float(v), 2)
+            if f == 0:
+                return "0"
+            return f"{f:.2f}"
+
+        def fmt_int(v):
+            """车流量等整数格式"""
+            f = round(float(v), 2)
+            return str(int(f))
+
         def mk_kv(v, d):
-            return {"value": str(v), "data": str(d)}
+            return {"name": None, "value": fmt_dec(v), "data": fmt_dec(d), "key": None}
+
+        def mk_kv_int(v, d):
+            return {"name": None, "value": fmt_int(v), "data": fmt_int(d), "key": None}
 
         result_list = [{
             "node": {"SPRegionTypeId": 0, "SPRegionTypeName": "整体对客销售",
@@ -4880,8 +4895,8 @@ async def get_holiday_spr_analysis(
                      "lYearRevenue": mk_kv(total_cmp_d, total_cmp),
                      "curYearAccount": mk_kv(total_cur_acc_d, total_cur_acc),
                      "lYearAccount": mk_kv(total_cmp_acc_d, total_cmp_acc),
-                     "curYearBayonet": mk_kv(total_cur_flow_d, total_cur_flow),
-                     "lYearBayonet": mk_kv(total_cmp_flow_d, total_cmp_flow)},
+                     "curYearBayonet": mk_kv_int(total_cur_flow_d, total_cur_flow),
+                     "lYearBayonet": mk_kv_int(total_cmp_flow_d, total_cmp_flow)},
             "children": None,
         }]
 
@@ -4892,8 +4907,9 @@ async def get_holiday_spr_analysis(
         type_rows = db.execute_query(type_sql) or []
 
         # 获取all服务区信息
-        sp_sql = f"""SELECT "SERVERPART_ID", "SERVERPART_NAME", "SPREGIONTYPE_ID" FROM "T_SERVERPART"
-            WHERE "STATISTICS_TYPE" = 1000 AND "STATISTIC_TYPE" = 1000 AND "PROVINCE_CODE" = {province_id}"""
+        sp_sql = f"""SELECT "SERVERPART_ID", "SERVERPART_NAME", "SPREGIONTYPE_ID", "SERVERPART_INDEX", "SERVERPART_CODE" FROM "T_SERVERPART"
+            WHERE "STATISTICS_TYPE" = 1000 AND "STATISTIC_TYPE" = 1000 AND "PROVINCE_CODE" = {province_id}
+            ORDER BY "SERVERPART_INDEX", "SERVERPART_CODE" """
         sp_rows = db.execute_query(sp_sql) or []
 
         for tr in type_rows:
@@ -4924,15 +4940,16 @@ async def get_holiday_spr_analysis(
                     cb_info = cur_bay_map.get(sp_id, {"flow": 0, "flow_cur": 0})
                     cmb_info = cmp_bay_map.get(sp_id, {"flow": 0, "flow_cur": 0})
                     ch.append({
-                        "node": {"SPRegionTypeId": int(rid) if rid.isdigit() else rid,
+                        "node": {"SPRegionTypeId": None,
+                                 "SPRegionTypeName": None,
                                  "ServerpartId": int(sp_id) if sp_id.isdigit() else sp_id,
                                  "ServerpartName": sr.get("SERVERPART_NAME", ""),
                                  "curYearRevenue": mk_kv(cur_info.get("rev_cur", 0), cur_info.get("rev", 0)),
                                  "lYearRevenue": mk_kv(cmp_info.get("rev_cur", 0), cmp_info.get("rev", 0)),
                                  "curYearAccount": mk_kv(cur_info.get("acc_cur", 0), cur_info.get("acc", 0)),
                                  "lYearAccount": mk_kv(cmp_info.get("acc_cur", 0), cmp_info.get("acc", 0)),
-                                 "curYearBayonet": mk_kv(cb_info.get("flow_cur", 0), cb_info.get("flow", 0)),
-                                 "lYearBayonet": mk_kv(cmb_info.get("flow_cur", 0), cmb_info.get("flow", 0))},
+                                 "curYearBayonet": mk_kv_int(cb_info.get("flow_cur", 0), cb_info.get("flow", 0)),
+                                 "lYearBayonet": mk_kv_int(cmb_info.get("flow_cur", 0), cmb_info.get("flow", 0))},
                         "children": [],
                     })
             result_list.append({
@@ -4942,8 +4959,8 @@ async def get_holiday_spr_analysis(
                          "lYearRevenue": mk_kv(r_cmp_d, r_cmp),
                          "curYearAccount": mk_kv(r_cur_acc_d, r_cur_acc),
                          "lYearAccount": mk_kv(r_cmp_acc_d, r_cmp_acc),
-                         "curYearBayonet": mk_kv(r_cur_flow_d, r_cur_flow),
-                         "lYearBayonet": mk_kv(r_cmp_flow_d, r_cmp_flow)},
+                         "curYearBayonet": mk_kv_int(r_cur_flow_d, r_cur_flow),
+                         "lYearBayonet": mk_kv_int(r_cmp_flow_d, r_cmp_flow)},
                 "children": ch,
             })
 
