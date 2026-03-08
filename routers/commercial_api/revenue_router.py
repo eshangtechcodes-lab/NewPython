@@ -395,11 +395,36 @@ async def get_summary_revenue_month(
         # 5. 构筑响应模型
         month_revenue_model = {
             "CashPay": round(total_cash, 2),
-            "TicketCount": total_ticket,
-            "TotalCount": round(total_count, 2),
-            "TotalOffAmount": round(total_off, 2),
-            "MobilePayment": round(total_mobile, 2),
-            "Statistics_Date": f"{month_str[:4]}/{month_str[4:6]}"
+            "TicketCount": None,
+            "TotalCount": None,
+            "TotalOffAmount": None,
+            "MobilePayment": None,
+            "Statistics_Date": None,
+            # C#返回的额外字段（默认值）
+            "Serverpart_ID": None,
+            "Serverpart_Name": None,
+            "SPRegionType_Name": None,
+            "ShopName": None,
+            "ShopRegionName": None,
+            "BusinessType": None,
+            "Business_TypeName": None,
+            "BusinessTrade_Name": None,
+            "BusinessBrand_Name": None,
+            "Revenue_Include": None,
+            "Revenue_Upload": None,
+            "TotalShopCount": None,
+            "BudgetRevenue": None,
+            "Different_Price_Less": None,
+            "Different_Price_More": None,
+            "RevenueYOY": None,
+            "RevenueQOQ": None,
+            "YearRevenueAmount": None,
+            "YearRevenueYOY": None,
+            "CurAccountRoyalty": None,
+            "AccountRoyaltyQOQ": None,
+            "YearAccountRoyalty": None,
+            "YearAccountRoyaltyYOY": None,
+            "UnUpLoadShopList": None,
         }
 
         # 如果有 StatisticsDate，获取单日推送模型
