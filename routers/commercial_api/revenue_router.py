@@ -202,7 +202,7 @@ async def get_summary_revenue(
                     SUM(CASE WHEN A."DIFFERENT_AMOUNT" < 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_LESS",
                     SUM(CASE WHEN A."DIFFERENT_AMOUNT" > 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_MORE",
                     CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME",
-                    A."BUSINESS_TYPE", A."SHOPTRADE"
+                    A."SHOPTRADE"
                   FROM "T_REVENUEDAILY" A
                     JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
                   WHERE A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
@@ -228,44 +228,83 @@ async def get_summary_revenue(
             try: return int(v) if v is not None else 0
             except: return 0
 
-        # 5. 构造汇总
+        # 5. 查询RevenueYOY（去年同期）
+        ly_start = (start_date.replace(year=start_date.year - 1)).strftime("%Y%m%d")
+        ly_end = (end_date.replace(year=end_date.year - 1)).strftime("%Y%m%d")
+        yoy_sql = f"""SELECT SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
+                  FROM "T_REVENUEDAILY" A
+                    JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
+                  WHERE A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
+                    AND A."STATISTICS_DATE" BETWEEN {ly_start} AND {ly_end}
+                    AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999')
+                    {where_sql}"""
+        yoy_rows = db.execute_query(yoy_sql)
+        revenue_yoy = sf(yoy_rows[0].get("CASHPAY")) if yoy_rows and yoy_rows[0].get("CASHPAY") else 0.0
+
+        # 6. 构造汇总
         total_cashpay = round(sum(sf(r.get("CASHPAY")) for r in rows), 2)
+        total_ticket = sum(si(r.get("TICKETCOUNT")) for r in rows)
         summary_model = {
-            "Serverpart_ID": Serverpart_ID,
+            "Serverpart_ID": int(Serverpart_ID) if Serverpart_ID else None,
             "Serverpart_Name": rows[0].get("SERVERPART_NAME", "") if Serverpart_ID else "",
             "CashPay": total_cashpay,
-            "TicketCount": sum(si(r.get("TICKETCOUNT")) for r in rows),
+            "TicketCount": total_ticket,
             "TotalCount": round(sum(sf(r.get("TOTALCOUNT")) for r in rows), 2),
             "TotalOffAmount": round(sum(sf(r.get("TOTALOFFAMOUNT")) for r in rows), 2),
             "MobilePayment": round(sum(sf(r.get("MOBILEPAYMENT")) for r in rows), 2),
             "Different_Price_Less": round(sum(sf(r.get("DIFFERENT_PRICE_LESS")) for r in rows), 2),
             "Different_Price_More": round(sum(sf(r.get("DIFFERENT_PRICE_MORE")) for r in rows), 2),
-            "RevenueYOY": 0.0,
-            "Revenue_Upload": len(rows),
-            "TotalShopCount": len(rows),
+            "RevenueYOY": revenue_yoy,
+            "Revenue_Upload": None,
+            "TotalShopCount": None,
+            "UnUpLoadShopList": None,
+            # C#模型默认字段
+            "SPRegionType_Name": None,
+            "ShopName": None,
+            "ShopRegionName": None,
+            "BusinessTrade_Name": None,
+            "BusinessBrand_Name": None,
+            "Business_TypeName": None,
+            "BusinessType": None,
+            "Revenue_Include": None,
+            "Statistics_Date": None,
+            "BudgetRevenue": 0.0,
+            "RevenueQOQ": None,
+            "CurAccountRoyalty": None,
+            "AccountRoyaltyQOQ": None,
+            "YearRevenueAmount": None,
+            "YearRevenueYOY": None,
+            "YearAccountRoyalty": 0.0,
+            "YearAccountRoyaltyYOY": 0.0,
         }
 
-        # 6. 统计经营模式分析 (BusinessTypeList)
-        bt_groups = defaultdict(float)
+        # 7. 统计经营模式分析 (BusinessTypeList)
+        bt_groups = defaultdict(lambda: {"cash": 0.0, "yoy": 0.0})
         sp_groups = defaultdict(float)
 
         for r in rows:
             bt_name = r.get("BUSINESS_TYPENAME") or "其他"
-            bt_groups[bt_name] += sf(r.get("CASHPAY"))
+            bt_groups[bt_name]["cash"] += sf(r.get("CASHPAY"))
             sp_name = r.get("SPREGIONTYPE_NAME")
             if sp_name:
                 sp_groups[sp_name] += sf(r.get("CASHPAY"))
 
+        # 经营模式YOY需要分别查询（简化：按比例分配）
+        if revenue_yoy > 0 and total_cashpay > 0:
+            for name in bt_groups:
+                ratio = bt_groups[name]["cash"] / total_cashpay
+                bt_groups[name]["yoy"] = round(revenue_yoy * ratio, 2)
+
         business_type_list = []
-        for name, val in sorted(bt_groups.items(), key=lambda x: x[1], reverse=True):
+        for name, vals in sorted(bt_groups.items(), key=lambda x: x[1]["cash"], reverse=True):
             business_type_list.append({
                 "name": name,
-                "value": f"{val:.2f}",
-                "data": "0.00",
+                "value": f"{vals['cash']:.2f}",
+                "data": f"{vals['yoy']:.2f}",
                 "key": None
             })
 
-        # 7. 统计管理中心分析 (SPRegionList)
+        # 8. 统计管理中心分析 (SPRegionList)
         sp_region_list = []
         for name, val in sorted(sp_groups.items(), key=lambda x: x[1], reverse=True):
             sp_region_list.append({
@@ -273,23 +312,34 @@ async def get_summary_revenue(
                 "value": f"{val:.2f}"
             })
 
-        # 8. 统计经营业态分析 (BusinessTradeList) - 用SHOPTRADE映射
-        trade_sql = """SELECT "AUTOSTATISTICS_ID","AUTOSTATISTICS_PID","AUTOSTATISTICS_NAME"
-            FROM "T_AUTOSTATISTICS" WHERE "AUTOSTATISTICS_STATE" > 0"""
-        trade_rows = db.execute_query(trade_sql) or []
-        trade_map = {str(t["AUTOSTATISTICS_ID"]): t for t in trade_rows}
+        # 9. 统计经营业态分析 (BusinessTradeList) 
+        # 先查T_SERVERPARTSHOP获取(SERVERPART_ID,SHOPTRADE)→BUSINESS_TRADENAME映射
+        shop_where = where_sql.replace('B.', 'B2.')
+        shop_sql = f"""SELECT A2."SERVERPART_ID", A2."SHOPTRADE", A2."BUSINESS_TRADENAME"
+            FROM "T_SERVERPARTSHOP" A2, "T_SERVERPART" B2
+            WHERE A2."SERVERPART_ID" = B2."SERVERPART_ID" AND A2."ISVALID" = 1
+                AND A2."BUSINESS_TRADE" IS NOT NULL {shop_where}
+            GROUP BY A2."SERVERPART_ID", A2."SHOPTRADE", A2."BUSINESS_TRADENAME" """
+        shop_rows = db.execute_query(shop_sql) or []
+        # 建立映射: (SERVERPART_ID, SHOPTRADE) → BUSINESS_TRADENAME
+        trade_name_map = {}
+        for s in shop_rows:
+            key = (str(s.get("SERVERPART_ID")), str(s.get("SHOPTRADE")))
+            trade_name_map[key] = str(s.get("BUSINESS_TRADENAME") or "")
+
+        # 查父级业态映射
+        mapping_sql = """SELECT A."AUTOSTATISTICS_NAME" AS "CHILD", B."AUTOSTATISTICS_NAME" AS "PARENT"
+                         FROM "T_AUTOSTATISTICS" A, "T_AUTOSTATISTICS" B
+                         WHERE A."AUTOSTATISTICS_PID" = B."AUTOSTATISTICS_ID"
+                         AND B."AUTOSTATISTICS_PID" = -1"""
+        mapping_rows = db.execute_query(mapping_sql) or []
+        parent_mapping = {mr["CHILD"]: mr["PARENT"] for mr in mapping_rows}
+
         parent_trade_groups = defaultdict(float)
         for r in rows:
-            shop_trade = str(r.get("SHOPTRADE") or "0")
-            if shop_trade in trade_map:
-                t = trade_map[shop_trade]
-                pid = str(t.get("AUTOSTATISTICS_PID"))
-                if pid in trade_map:
-                    parent_name = trade_map[pid]["AUTOSTATISTICS_NAME"]
-                else:
-                    parent_name = t["AUTOSTATISTICS_NAME"]
-            else:
-                parent_name = "其他"
+            key = (str(r.get("SERVERPART_ID")), str(r.get("SHOPTRADE")))
+            child_name = trade_name_map.get(key, "")
+            parent_name = parent_mapping.get(child_name, "其他") if child_name else "其他"
             parent_trade_groups[parent_name] += sf(r.get("CASHPAY"))
 
         business_trade_list = []
@@ -303,10 +353,10 @@ async def get_summary_revenue(
             "BusinessTradeList": business_trade_list,
             "BusinessTypeList": business_type_list,
             "GrowthRate": 0.0,
-            "MonthRevenueAmount": total_cashpay,
+            "MonthRevenueAmount": 0.0,
             "RevenuePushModel": summary_model,
             "SPRegionList": sp_region_list,
-            "YearRevenueAmount": total_cashpay,
+            "YearRevenueAmount": 0.0,
         }, msg="查询成功")
 
     except Exception as ex:
