@@ -2784,7 +2784,7 @@ async def get_account_receivable(
             return Result.success(data=None, msg="查询成功")
 
         # 经营模式枚举映射
-        bt_names = {4000: "展销", 3000: "固定租金", 1000: "自营", 2000: "合作经营"}
+        bt_names = {4000: "业主自营", 3000: "自营提成", 1000: "合作分成", 2000: "固定租金"}
 
         # 1. 查 T_ACCOUNTRECDETAIL
         sm = StatisticsStartMonth if StatisticsStartMonth else f"{StatisticsMonth[:4]}01"
@@ -2894,16 +2894,23 @@ async def get_account_receivable(
         rev_ratio_list = []
         commission_list = []
 
+        def fmt_val(v):
+            """C#的.ToString()格式: 0→'0', 1234.56→'1234.56'"""
+            v = round(v, 2)
+            if v == int(v):
+                return str(int(v))
+            return str(v)
+
         for bt in bt_list:
             name = bt_names.get(bt, str(bt))
             # OwnerList
-            owner_acount.append({"name": name, "value": str(round(sum_detail(1001, bt), 2))})
-            owner_entry.append({"name": name, "value": str(round(sum_account(bt), 2))})
-            owner_recv.append({"name": name, "value": str(round(sum_detail(1003, bt), 2))})
+            owner_acount.append({"name": name, "value": fmt_val(sum_detail(1001, bt))})
+            owner_entry.append({"name": name, "value": fmt_val(sum_account(bt))})
+            owner_recv.append({"name": name, "value": fmt_val(sum_detail(1003, bt))})
             # MerchantList
-            merchant_acount.append({"name": name, "value": str(round(sum_detail(2001, bt), 2))})
-            merchant_entry.append({"name": name, "value": str(round(sum_detail(2002, bt), 2))})
-            merchant_recv.append({"name": name, "value": str(round(sum_detail(2003, bt), 2))})
+            merchant_acount.append({"name": name, "value": fmt_val(sum_detail(2001, bt))})
+            merchant_entry.append({"name": name, "value": fmt_val(sum_detail(2002, bt))})
+            merchant_recv.append({"name": name, "value": fmt_val(sum_detail(2003, bt))})
             # ProjectCountList
             pc_val = max_detail(3001, bt)
             proj_count_list.append({"name": name, "value": str(round(pc_val, 2))})

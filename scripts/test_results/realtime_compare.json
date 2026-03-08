@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 15:06:21",
-  "elapsed": 39.2,
+  "time": "2026-03-08 16:35:05",
+  "elapsed": 54.3,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -65,13 +65,13 @@
     },
     {
       "route": "GET /Revenue/GetAccountReceivable",
-      "detail": "Code=100, 16处差异",
+      "detail": "Code=100, 15处差异",
       "diffs": [
-        ".Result_Data.CommissionList: 列表长度不同 旧=4 新=0",
-        ".Result_Data.CommissionRatio: 旧=17.07 新=0.0",
-        ".Result_Data.MerchantList.AcountList: 类型不同 旧=list 新=NoneType",
-        ".Result_Data.MerchantList.EntryList: 类型不同 旧=list 新=NoneType",
-        ".Result_Data.MerchantList.ReceivableList: 类型不同 旧=list 新=NoneType"
+        ".Result_Data.CommissionList[0].name: 旧=业主自营 新=展销",
+        ".Result_Data.MerchantList.AcountList[0].name: 旧=业主自营 新=展销",
+        ".Result_Data.MerchantList.AcountList[0].value: 旧=0 新=0.0",
+        ".Result_Data.MerchantList.EntryList[0].name: 旧=业主自营 新=展销",
+        ".Result_Data.MerchantList.EntryList[0].value: 旧=0 新=0.0"
       ]
     },
     {
