@@ -5574,13 +5574,10 @@ async def get_holiday_spr_analysis(
         total_cmp_flow_d = round(sum(v["flow_cur"] for v in cmp_bay_map.values()), 2)
 
         def fmt_dec(v):
-            """金额格式: C# decimal.ToString()行为 - 保留必要小数位"""
+            """金额格式: 保留2位小数（含尾零），0返回'0'"""
             f = round(float(v), 2)
             if f == 0:
                 return "0"
-            # C# decimal.ToString() 对整数不加.00
-            if f == int(f):
-                return str(int(f))
             return f"{f:.2f}"
 
         def fmt_int(v):
