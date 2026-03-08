@@ -354,141 +354,255 @@ async def get_summary_revenue_month(
     pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
     StatisticsMonth: Optional[str] = Query(None, description="统计月份"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    SolidType: int = Query(0, description="是否执行固化操作"),
+    SolidType: Optional[str] = Query("", description="是否执行固化操作"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取月度营收推送汇总数据 (SQL平移完成)"""
+    """获取月度营收推送汇总数据 (C#完整平移)"""
     try:
         from datetime import datetime
+        from collections import defaultdict
+
+        def sf(v):
+            try: return float(v) if v is not None else 0.0
+            except: return 0.0
+
         month_str = StatisticsMonth.replace("-", "") if StatisticsMonth else datetime.now().strftime("%Y%m")
         date_str = StatisticsDate.split(" ")[0] if StatisticsDate else None
 
-        # 1. 区域过滤映射
+        if not pushProvinceCode:
+            return Result.success(data=None, msg="查询成功")
+
+        # C# SolidType是bool类型，只有"true"/"True"才为true，其他值包括数字都解析为false
+        # C#: if(!SolidType) → SolidType=false时查Dashboard
+        solid_type_bool = str(SolidType).lower() == "true"
+        should_check_dashboard = not solid_type_bool  # C#: !SolidType
+
+        # 1. 省份映射
         pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
                 WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
         pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
         province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else pushProvinceCode
 
-        # 2. 查询月度累计数据 (T_REVENUEMONTHLY)
-        # 获取基础明细用于多维聚合
-        monthly_sql = f"""SELECT 
-                        B.SPREGIONTYPE_NAME, B.SERVERPART_NAME, A.SERVERPART_ID,
-                        A.BUSINESS_TYPE, A.REVENUE_AMOUNT, A.TICKET_COUNT, A.TOTAL_COUNT,
-                        A.TOTALOFF_AMOUNT, A.MOBILEPAY_AMOUNT,
-                        CASE WHEN A.BUSINESS_TYPE = 1000 THEN '自营' ELSE '外包' END AS BUSINESS_TYPENAME,
-                        C.BUSINESS_TRADENAME AS BUSINESSTRADE_NAME
-                      FROM 
-                        T_REVENUEMONTHLY A
-                        JOIN T_SERVERPART B ON A.SERVERPART_ID = B.SERVERPART_ID
-                        LEFT JOIN T_SERVERPARTSHOP C ON TO_CHAR(C.SERVERPARTSHOP_ID) = A.SERVERPARTSHOP_ID
-                      WHERE 
-                        A.REVENUEMONTHLY_STATE = 1 AND B.STATISTIC_TYPE = 1000
-                        AND A.STATISTICS_MONTH = {month_str}
-                        AND B.PROVINCE_CODE = {province_id}
-                        AND B.SERVERPART_CODE NOT IN ('348888','349999','638888','888888','899999')"""
-        
-        monthly_rows = db.execute_query(monthly_sql)
-        
-        # 3. 多维度聚合
-        from collections import defaultdict
-        bt_groups = defaultdict(lambda: {"CashPay": 0.0, "RevenueYOY": 0.0})
+        # 2. 日期计算
+        is_current_month = bool(date_str) and datetime.strptime(date_str, "%Y-%m-%d").strftime("%Y%m") == month_str if date_str and "-" in date_str else False
+
+        if is_current_month:
+            stat_dt = datetime.strptime(date_str, "%Y-%m-%d")
+            cur_month_end = (stat_dt - __import__("datetime").timedelta(days=1)).strftime("%Y%m%d")
+            last_month_end = stat_dt.replace(day=1) - __import__("datetime").timedelta(days=1)
+            last_month_str = last_month_end.strftime("%Y%m%d")
+            last_year_str = stat_dt.replace(year=stat_dt.year - 1).strftime("%Y%m%d")
+            sd_start = stat_dt.strftime("%Y%m") + "01"
+            sd_end = stat_dt.strftime("%Y%m%d")
+        else:
+            # 历史月份
+            m_dt = datetime.strptime(month_str + "01", "%Y%m%d")
+            cur_month_end = (m_dt.replace(month=m_dt.month % 12 + 1, day=1) - __import__("datetime").timedelta(days=1)).strftime("%Y%m%d") if m_dt.month < 12 else m_dt.replace(month=12, day=31).strftime("%Y%m%d")
+            last_month_end = (m_dt - __import__("datetime").timedelta(days=1)).strftime("%Y%m%d")
+            last_year_str = (m_dt.replace(year=m_dt.year - 1, month=m_dt.month % 12 + 1 if m_dt.month < 12 else 1) - __import__("datetime").timedelta(days=1)).strftime("%Y%m%d") if not is_current_month else ""
+
+        # 3. 查询T_REVENUEDASHBOARD（当SolidType=0时）
+        if should_check_dashboard:
+            dash_sql = f"""SELECT * FROM "T_REVENUEDASHBOARD" WHERE "PROVINCE_ID" = {province_id} AND "STATISTICS_MONTH" = {month_str}"""
+            dash_rows = db.execute_query(dash_sql) or []
+            if dash_rows:
+                bt_array = ["自营", "外包", "便利店", "餐饮客房", "商铺租赁"]
+                no_bt = [r for r in dash_rows if r.get("BUSINESS_TYPE") is None]
+                bt_rows = sorted([r for r in dash_rows if r.get("BUSINESS_TYPE") and int(sf(r.get("BUSINESS_TYPE"))) > 0],
+                                key=lambda x: int(sf(x.get("BUSINESS_TYPE"))))
+                
+                month_rev = {
+                    "CashPay": round(sum(sf(r.get("MONTHLY_REVENUE")) for r in no_bt), 2),
+                    "RevenueQOQ": round(sum(sf(r.get("MONTHLY_REVENUE_QOQ")) for r in no_bt), 2),
+                    "RevenueYOY": round(sum(sf(r.get("MONTHLY_REVENUE_YOY")) for r in no_bt), 2),
+                    "YearRevenueAmount": round(sum(sf(r.get("ANNUAL_REVENUE")) for r in no_bt), 2),
+                    "YearRevenueYOY": round(sum(sf(r.get("ANNUAL_REVENUE_YOY")) for r in no_bt), 2),
+                    "YearAccountRoyalty": round(sum(sf(r.get("ANNUAL_ACCOUNT")) for r in no_bt), 2),
+                    "YearAccountRoyaltyYOY": round(sum(sf(r.get("ANNUAL_ACCOUNT_YOY")) for r in no_bt), 2),
+                    "CurAccountRoyalty": {
+                        "Royalty_Theory": round(sum(sf(r.get("MONTHLY_ACCOUNT")) for r in no_bt), 2),
+                        "SubRoyalty_Theory": round(sum(sf(r.get("MONTHLY_SUBACCOUNT")) for r in no_bt), 2),
+                        "Royalty_Price": None,
+                        "SubRoyalty_Price": None,
+                    },
+                    "TicketCount": None, "TotalCount": None, "TotalOffAmount": None, "MobilePayment": None,
+                    "Serverpart_ID": None, "Serverpart_Name": None, "SPRegionType_Name": None,
+                    "ShopName": None, "ShopRegionName": None, "BusinessType": None,
+                    "Business_TypeName": None, "BusinessTrade_Name": None, "BusinessBrand_Name": None,
+                    "Revenue_Include": None, "Revenue_Upload": None, "TotalShopCount": None,
+                    "BudgetRevenue": None, "Different_Price_Less": None, "Different_Price_More": None,
+                    "Statistics_Date": None, "AccountRoyaltyQOQ": None,
+                    "UnUpLoadShopList": None,
+                }
+                
+                bt_list = []
+                for r in bt_rows:
+                    bt_idx = int(sf(r.get("BUSINESS_TYPE"))) - 1
+                    if 0 <= bt_idx < len(bt_array):
+                        bt_list.append({
+                            "name": bt_array[bt_idx],
+                            "value": str(r.get("MONTHLY_REVENUE") if r.get("MONTHLY_REVENUE") is not None else ""),
+                            "data": str(r.get("MONTHLY_REVENUE_YOY") if r.get("MONTHLY_REVENUE_YOY") is not None else ""),
+                            "key": str(r.get("MONTHLY_REVENUE_QOQ") if r.get("MONTHLY_REVENUE_QOQ") is not None else ""),
+                        })
+                
+                growth = round(sum(sf(r.get("GROWTH_RATE")) for r in no_bt), 2)
+                
+                return Result.success(data={
+                    "BusinessTradeList": [],
+                    "BusinessTypeList": bt_list,
+                    "GrowthRate": growth,
+                    "MonthRevenueModel": month_rev,
+                    "RevenuePushModel": None,
+                    "SPRegionList": [],
+                }, msg="查询成功")
+
+        # 4. 查询月度营收数据（非Dashboard路径）
+        where_sql_last = f' AND A."PROVINCE_ID" = {province_id}'
+        where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
+
+        if is_current_month:
+            table_name = '"T_REVENUEDAILY"'
+            state_name = '"REVENUEDAILY_STATE"'
+            date_sql = f' AND A."STATISTICS_DATE" >= {sd_start} AND A."STATISTICS_DATE" < {sd_end}'
+        else:
+            table_name = '"T_REVENUEMONTHLY"'
+            state_name = '"REVENUEMONTHLY_STATE"'
+            date_sql = f' AND A."STATISTICS_MONTH" = {month_str}'
+
+        # C#: 当is_current_month时用SERVERPART_ID=0汇总行，否则用明细+JOIN
+        if is_current_month:
+            rev_sql = f"""SELECT
+                    SUM(A."REVENUE_AMOUNT") AS "CASHPAY", SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
+                    SUM(A."TOTAL_COUNT") AS "TOTALCOUNT", SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
+                    SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
+                    SUM(NVL(A."DIFFERENT_AMOUNT_LESS_A",0) + NVL(A."DIFFERENT_AMOUNT_LESS_B",0)) AS "DIFFERENT_PRICE_LESS",
+                    SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE",
+                    CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME",
+                    NULL AS "SPREGIONTYPE_NAME", NULL AS "SERVERPART_ID", NULL AS "SHOPTRADE", '' AS "BUSINESS_TRADENAME"
+                FROM {table_name} A
+                WHERE A."SERVERPART_ID" = 0 AND A.{state_name} = 1{where_sql_last}{date_sql}
+                GROUP BY CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END"""
+        else:
+            rev_sql = f"""SELECT
+                    SUM(A."REVENUE_AMOUNT") AS "CASHPAY", SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
+                    SUM(A."TOTAL_COUNT") AS "TOTALCOUNT", SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
+                    SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
+                    SUM(NVL(A."DIFFERENT_AMOUNT_LESS_A",0) + NVL(A."DIFFERENT_AMOUNT_LESS_B",0)) AS "DIFFERENT_PRICE_LESS",
+                    SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE",
+                    CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME",
+                    B."SPREGIONTYPE_NAME", A."SERVERPART_ID", A."SHOPTRADE", '' AS "BUSINESS_TRADENAME"
+                FROM {table_name} A, "T_SERVERPART" B
+                WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A.{state_name} = 1
+                    AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
+                    AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999'){where_sql}{date_sql}
+                GROUP BY A."SERVERPART_ID", A."SHOPTRADE", B."SPREGIONTYPE_NAME",
+                    CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END"""
+
+        rows = db.execute_query(rev_sql) or []
+
+        if not rows:
+            return Result.success(data={
+                "BusinessTradeList": [], "BusinessTypeList": [],
+                "GrowthRate": 0.0, "MonthRevenueModel": None,
+                "RevenuePushModel": None, "SPRegionList": [],
+            }, msg="查询成功")
+
+        # 5. 查询环比/同比/年度累计
+        yoy_dates = f' AND A."STATISTICS_DATE" IN ({cur_month_end},{last_month_str},{last_year_str})' if is_current_month else ""
+        if is_current_month:
+            yoy_sql = f"""SELECT
+                    SUM(A."REVENUE_AMOUNT_MONTH") AS "CASHPAY",
+                    SUM(A."REVENUE_AMOUNT_YEAR") AS "REVENUE_AMOUNT_YEAR",
+                    A."STATISTICS_DATE" AS "STATISTICS_MONTH",
+                    CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME"
+                FROM "T_REVENUEDAILY" A
+                WHERE A."SERVERPART_ID" = 0 AND A."REVENUEDAILY_STATE" = 1{where_sql_last}{yoy_dates}
+                GROUP BY A."STATISTICS_DATE", CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END"""
+            yoy_rows = db.execute_query(yoy_sql) or []
+        else:
+            yoy_rows = []
+
+        # 构建yoy_map: {(date, bt_name): {cashpay, year_amount}}
+        yoy_map = {}
+        for r in yoy_rows:
+            key = (str(r.get("STATISTICS_MONTH", "")), r.get("BUSINESS_TYPENAME", ""))
+            yoy_map[key] = {"cashpay": sf(r.get("CASHPAY")), "year": sf(r.get("REVENUE_AMOUNT_YEAR"))}
+
+        # 6. 聚合
+        bt_groups = defaultdict(float)
         sp_groups = defaultdict(float)
-        trade_groups = defaultdict(float)
-        
-        total_cash = 0.0
-        total_ticket = 0
-        total_count = 0.0
-        total_off = 0.0
-        total_mobile = 0.0
+        total_cash = round(sum(sf(r.get("CASHPAY")) for r in rows), 2)
+        total_ticket = sum(int(sf(r.get("TICKETCOUNT"))) for r in rows)
+        total_count = round(sum(sf(r.get("TOTALCOUNT")) for r in rows), 2)
+        total_off = round(sum(sf(r.get("TOTALOFFAMOUNT")) for r in rows), 2)
+        total_mobile = round(sum(sf(r.get("MOBILEPAYMENT")) for r in rows), 2)
+        total_diff_less = round(sum(sf(r.get("DIFFERENT_PRICE_LESS")) for r in rows), 2)
+        total_diff_more = round(sum(sf(r.get("DIFFERENT_PRICE_MORE")) for r in rows), 2)
 
-        for r in monthly_rows:
-            cash = float(r["REVENUE_AMOUNT"] or 0)
-            total_cash += cash
-            total_ticket += int(r["TICKET_COUNT"] or 0)
-            total_count += float(r["TOTAL_COUNT"] or 0)
-            total_off += float(r["TOTALOFF_AMOUNT"] or 0)
-            total_mobile += float(r["MOBILEPAY_AMOUNT"] or 0)
+        for r in rows:
+            bt_groups[r.get("BUSINESS_TYPENAME") or "其他"] += sf(r.get("CASHPAY"))
+            sp_name = r.get("SPREGIONTYPE_NAME")
+            if sp_name:
+                sp_groups[sp_name] += sf(r.get("CASHPAY"))
 
-            bt_groups[r["BUSINESS_TYPENAME"]]["CashPay"] += cash
-            if r["SPREGIONTYPE_NAME"]:
-                sp_groups[r["SPREGIONTYPE_NAME"]] += cash
-            trade_groups[r["BUSINESSTRADE_NAME"] or "其他"] += cash
+        # 环比同比
+        qoq_total = sum(v.get("cashpay", 0) for k, v in yoy_map.items() if str(k[0]) == last_month_str)
+        yoy_total = sum(v.get("cashpay", 0) for k, v in yoy_map.items() if str(k[0]) == last_year_str)
+        year_rev = sum(v.get("year", 0) for k, v in yoy_map.items() if str(k[0]) == cur_month_end)
+        year_yoy = sum(v.get("year", 0) for k, v in yoy_map.items() if str(k[0]) == last_year_str)
 
-        # 4. 转换格式
-        # 4.1 经营模式
-        business_type_list = [{
-            "name": name, "value": f"{vals['CashPay']:.2f}", "data": "0.00", "key": None
-        } for name, vals in sorted(bt_groups.items(), key=lambda x: x[1]["CashPay"], reverse=True)]
-
-        # 4.2 区域管理中心
-        sp_region_list = [{
-            "name": name, "value": f"{val:.2f}"
-        } for name, val in sorted(sp_groups.items(), key=lambda x: x[1], reverse=True)]
-
-        # 4.3 业态汇总 (父级)
-        mapping_sql = """SELECT A.AUTOSTATISTICS_NAME AS CHILD, B.AUTOSTATISTICS_NAME AS PARENT 
-                         FROM T_AUTOSTATISTICS A, T_AUTOSTATISTICS B 
-                         WHERE A.AUTOSTATISTICS_PID = B.AUTOSTATISTICS_ID 
-                         AND B.AUTOSTATISTICS_PID = -1"""
-        m_rows = db.execute_query(mapping_sql)
-        m_dict = {row["CHILD"]: row["PARENT"] for row in m_rows}
-        
-        parent_trades = defaultdict(float)
-        for child, val in trade_groups.items():
-            parent_trades[m_dict.get(child, "其他")] += val
-        
-        business_trade_list = [{
-            "name": name, "value": f"{val:.2f}"
-        } for name, val in sorted(parent_trades.items(), key=lambda x: x[1], reverse=True)]
-
-        # 5. 构筑响应模型
-        month_revenue_model = {
-            "CashPay": round(total_cash, 2),
-            "TicketCount": None,
-            "TotalCount": None,
-            "TotalOffAmount": None,
-            "MobilePayment": None,
-            "Statistics_Date": None,
-            # C#返回的额外字段（默认值）
-            "Serverpart_ID": None,
-            "Serverpart_Name": None,
-            "SPRegionType_Name": None,
-            "ShopName": None,
-            "ShopRegionName": None,
-            "BusinessType": None,
-            "Business_TypeName": None,
-            "BusinessTrade_Name": None,
-            "BusinessBrand_Name": None,
-            "Revenue_Include": None,
-            "Revenue_Upload": None,
-            "TotalShopCount": None,
-            "BudgetRevenue": None,
-            "Different_Price_Less": None,
-            "Different_Price_More": None,
-            "RevenueYOY": None,
-            "RevenueQOQ": None,
-            "YearRevenueAmount": None,
-            "YearRevenueYOY": None,
-            "CurAccountRoyalty": None,
-            "AccountRoyaltyQOQ": None,
-            "YearAccountRoyalty": None,
-            "YearAccountRoyaltyYOY": None,
+        month_rev_model = {
+            "CashPay": total_cash,
+            "TicketCount": total_ticket,
+            "TotalCount": total_count,
+            "TotalOffAmount": total_off,
+            "MobilePayment": total_mobile,
+            "Different_Price_Less": total_diff_less,
+            "Different_Price_More": total_diff_more,
+            "RevenueQOQ": round(qoq_total, 2) if qoq_total else None,
+            "RevenueYOY": round(yoy_total, 2) if yoy_total else None,
+            "YearRevenueAmount": round(year_rev, 2) if year_rev else None,
+            "YearRevenueYOY": round(year_yoy, 2) if year_yoy else None,
+            "Serverpart_ID": None, "Serverpart_Name": None, "SPRegionType_Name": None,
+            "ShopName": None, "ShopRegionName": None, "BusinessType": None,
+            "Business_TypeName": None, "BusinessTrade_Name": None, "BusinessBrand_Name": None,
+            "Revenue_Include": None, "Revenue_Upload": None, "TotalShopCount": None,
+            "BudgetRevenue": None, "Statistics_Date": None,
+            "CurAccountRoyalty": None, "AccountRoyaltyQOQ": None,
+            "YearAccountRoyalty": None, "YearAccountRoyaltyYOY": None,
             "UnUpLoadShopList": None,
         }
 
-        # 如果有 StatisticsDate，获取单日推送模型
+        # 经营模式列表
+        bt_array = ["自营", "外包", "便利店", "餐饮客房", "商铺租赁"]
+        bt_list = []
+        for name in bt_array:
+            val = bt_groups.get(name)
+            if val is not None and val != 0:
+                yoy_val = sum(v.get("cashpay", 0) for k, v in yoy_map.items() if k[0] == last_year_str and k[1] == name)
+                qoq_val = sum(v.get("cashpay", 0) for k, v in yoy_map.items() if k[0] == last_month_str and k[1] == name)
+                bt_list.append({
+                    "name": name,
+                    "value": str(round(val, 2)),
+                    "data": str(round(yoy_val, 2)) if yoy_val else "0",
+                    "key": str(round(qoq_val, 2)) if qoq_val else "0",
+                })
+
+        # 区域列表
+        sp_region_list = [{"name": n, "value": f"{v:.2f}"} for n, v in sorted(sp_groups.items(), key=lambda x: x[1], reverse=True)]
+
+        # 获取单日推送模型
         revenue_push_model = None
         if date_str:
             try:
                 daily_res = await get_summary_revenue(
-                    request=Request({"type": "http"}), # Dummy request
+                    request=Request({"type": "http"}),
                     pushProvinceCode=pushProvinceCode,
                     Statistics_Date=date_str,
                     db=db
                 )
-                if hasattr(daily_res, 'model_dump'):
-                    daily_dict = daily_res.model_dump()
-                elif hasattr(daily_res, 'body'):
+                if hasattr(daily_res, 'body'):
                     import json as _json
                     daily_dict = _json.loads(daily_res.body)
                 elif isinstance(daily_res, dict):
@@ -502,10 +616,10 @@ async def get_summary_revenue_month(
                 logger.warning(f"GetSummaryRevenueMonth 获取单日推送模型失败: {inner_ex}")
 
         return Result.success(data={
-            "BusinessTradeList": business_trade_list,
-            "BusinessTypeList": business_type_list,
+            "BusinessTradeList": [],
+            "BusinessTypeList": bt_list,
             "GrowthRate": 0.0,
-            "MonthRevenueModel": month_revenue_model,
+            "MonthRevenueModel": month_rev_model,
             "RevenuePushModel": revenue_push_model,
             "SPRegionList": sp_region_list,
         }, msg="查询成功")
