@@ -1,6 +1,6 @@
 {
-  "time": "2026-03-08 01:03:43",
-  "elapsed": 38.6,
+  "time": "2026-03-08 11:21:24",
+  "elapsed": 56.7,
   "stats": {
     "PASS": 40,
     "DIFF": 34,
@@ -30,8 +30,8 @@
       "diffs": [
         ".Result_Data.List[0].CurRevenueAmount_A: 旧=37498.79 新=0.0",
         ".Result_Data.List[0].CurRevenueAmount_B: 旧=27376.93 新=0.0",
-        ".Result_Data.List[0].LastYearNorthWestANALOG: 类型不同 旧=float 新=int",
-        ".Result_Data.List[0]: ...还有26条差异",
+        ".Result_Data.List[0].LastYearNorthWestSECTIONFLOW_NUM: 类型不同 旧=float 新=int",
+        ".Result_Data.List[0]: ...还有20条差异",
         ".Result_Data.OtherData[0].CurRevenueAmount: 旧=3264971.43 新=3197328.83"
       ]
     },

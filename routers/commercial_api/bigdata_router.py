@@ -1186,9 +1186,18 @@ async def get_month_analysis(
 
             rev_amount = rev_info.get("rev", 0)
             rev_days = rev_info.get("days", 0)
-            avg_vehicle_amount = 0
-            if avg_vc > 0 and rev_days > 0:
-                avg_vehicle_amount = round(rev_amount / rev_days / avg_vc, 2)
+            # MinVehicle_Count: 小型车日均量 × 月天数
+            m_info = mv_map.get(m_key, {})
+            m_days = m_info.get("days", 0)
+            min_vc = int(m_info.get("min", 0) / m_days) if m_days > 0 else 0
+            min_vc_total = min_vc * cur_days
+
+            # AvgVehicleAmount: C# 用入区流量(out类型)计算
+            mv_vc = int(m_info.get("vc", 0) / m_days) if m_days > 0 else 0
+            mv_total = mv_vc * cur_days
+            avg_vehicle_amount = 0.0
+            if mv_total > 0 and rev_days > 0:
+                avg_vehicle_amount = round(rev_amount / rev_days / mv_vc, 2) if mv_vc > 0 else 0.0
 
             result_list.append({
                 "Statistics_Year": cur.year,
@@ -1198,6 +1207,8 @@ async def get_month_analysis(
                 "Entry_Rate": entry_rate,
                 "RevenueAmount": rev_amount,
                 "AvgVehicleAmount": avg_vehicle_amount,
+                "MinVehicle_Count": min_vc_total,
+                "RegionList": [],
             })
             if cur.month == 12:
                 cur = cur.replace(year=cur.year + 1, month=1)
@@ -1210,10 +1221,8 @@ async def get_month_analysis(
             item.setdefault("SPRegionType_Name", None)
             item.setdefault("Serverpart_ID", None)
             item.setdefault("Serverpart_Name", None)
-            item.setdefault("MinVehicle_Count", None)
             item.setdefault("ShopRevenueAmount", None)
             item.setdefault("Stay_Times", None)
-            item.setdefault("RegionList", None)
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
         resp = json_list.model_dump()
@@ -1310,14 +1319,14 @@ async def get_province_month_analysis(
                 "Serverpart_ID": r.get("SERVERPART_ID"),
                 "Serverpart_Name": r.get("SERVERPART_NAME"),
                 "Vehicle_Count": total_vehicle,
-                "MinVehicle_Count": None,
+                "MinVehicle_Count": 0,
                 "SectionFlow_Count": total_section,
                 "Entry_Rate": entry_rate,
-                "RevenueAmount": None,
+                "RevenueAmount": 0.0,
                 "ShopRevenueAmount": None,
-                "AvgVehicleAmount": None,
+                "AvgVehicleAmount": 0.0,
                 "Stay_Times": None,
-                "RegionList": None,
+                "RegionList": [],
             }
             result_list.append(model)
 
