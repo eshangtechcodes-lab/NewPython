@@ -33,6 +33,23 @@ def _build_in_condition(column: str, ids: list) -> str:
         return f'{column} = {ids[0]}'
     return f'{column} IN ({",".join(str(i) for i in ids)})'
 
+def _resolve_province_id(db, province_code: str):
+    """将行政区划码(如 340000)转换为 FIELDENUM_ID（T_SERVERPART.PROVINCE_CODE 存的是内码）
+    对齐 C# DictionaryHelper.GetFieldEnum("DIVISION_CODE", provinceCode)"""
+    if not province_code:
+        return None
+    try:
+        rows = db.execute_query(
+            """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID"
+                AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE'
+                AND B."FIELDENUM_VALUE" = ?""", [province_code])
+        if rows:
+            return rows[0]["FIELDENUM_ID"]
+    except Exception as e:
+        logger.warning(f"_resolve_province_id 转换失败: {e}")
+    return province_code
+
 router = APIRouter()
 
 
@@ -708,8 +725,9 @@ async def get_examine_analysis(
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
         elif provinceCode:
-            conditions.append("B.\"PROVINCE_CODE\" = ?")
-            params.append(provinceCode)
+            # 行政区划码→FIELDENUM_ID 转换（T_SERVERPART.PROVINCE_CODE 存的是内码）
+            province_id = _resolve_province_id(db, provinceCode)
+            conditions.append(f'B."PROVINCE_CODE" = {province_id}')
 
         if StartMonth:
             conditions.append(f"A.\"EXAMINE_DATE\" >= ?")
@@ -760,7 +778,7 @@ async def get_examine_result_list(
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取驿达看板-首页考核列表"""
+    """获取驿达看板-首页考核列表 — 对齐 C# 聚合结构（考核+嵌套明细列表）"""
     try:
         conditions = ["A.\"SERVERPART_ID\" = B.\"SERVERPART_ID\"", "A.\"EXAMINE_STATE\" = 1"]
         params = []
@@ -775,8 +793,9 @@ async def get_examine_result_list(
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
         elif provinceCode:
-            conditions.append("B.\"PROVINCE_CODE\" = ?")
-            params.append(provinceCode)
+            # 行政区划码→FIELDENUM_ID 转换（T_SERVERPART.PROVINCE_CODE 存的是内码）
+            province_id = _resolve_province_id(db, provinceCode)
+            conditions.append(f'B."PROVINCE_CODE" = {province_id}')
         if StartMonth:
             conditions.append(f"A.\"EXAMINE_DATE\" >= ?")
             params.append(f"{StartMonth}01000000")
@@ -785,20 +804,63 @@ async def get_examine_result_list(
             params.append(f"{EndMonth}32000000")
 
         where_sql = " WHERE " + " AND ".join(conditions)
-        sql = f"""SELECT A.*, C."EXAMINEDETAIL_ID", C."EXAMINE_POSITION", C."EXAMINE_CONTENT",
-            C."DEDUCTION_REASON", C."DEDUCTION_SCORE", C."EXAMINEDETAIL_DESC",
-            C."EXAMINEDETAIL_URL", C."EXAMINEDEAL_URL"
-        FROM "T_EXAMINE" A 
-        LEFT JOIN "T_EXAMINEDETAIL" C ON A."EXAMINE_ID" = C."EXAMINE_ID",
-        "T_SERVERPART" B
-        {where_sql}
-        ORDER BY A."EXAMINE_SCORE" DESC"""
+
+        # 对齐 C#：查考核主表 + 服务区信息（不 LEFT JOIN 明细表，按考核粒度返回）
+        sql = f"""SELECT A."EXAMINE_ID", A."EXAMINE_MQUARTER", A."EXAMINE_DESC",
+                A."EXAMINE_SCORE", A."EXAMINE_DATE",
+                A."SPREGIONTYPE_ID", A."SPREGIONTYPE_NAME",
+                A."SERVERPART_ID", A."SERVERPART_NAME",
+                B."SPREGIONTYPE_INDEX", B."SERVERPART_INDEX"
+            FROM "T_EXAMINE" A, "T_SERVERPART" B
+            {where_sql}
+            ORDER BY A."EXAMINE_SCORE" DESC"""
 
         rows = db.execute_query(sql, params)
-        for r in rows:
-            r["EXAMINE_DATE"] = _translate_datetime(r.get("EXAMINE_DATE"))
 
-        json_list = JsonListData.create(data_list=rows, total=len(rows))
+        # 批量查考核明细 T_EXAMINEDETAIL，按 EXAMINE_ID 分组
+        detail_map = {}
+        examine_ids = [r.get("EXAMINE_ID") for r in rows if r.get("EXAMINE_ID")]
+        if examine_ids:
+            ids_str = ",".join(str(eid) for eid in examine_ids)
+            detail_sql = f"""SELECT "EXAMINEDETAIL_ID", "EXAMINE_ID", "EXAMINE_POSITION",
+                    "EXAMINE_CONTENT", "DEDUCTION_REASON", "DEDUCTION_SCORE",
+                    "EXAMINEDETAIL_DESC", "EXAMINEDETAIL_URL", "EXAMINEDEAL_URL"
+                FROM "T_EXAMINEDETAIL" WHERE "EXAMINE_ID" IN ({ids_str})
+                ORDER BY "EXAMINEDETAIL_ID" """
+            detail_rows = db.execute_query(detail_sql) or []
+            for d in detail_rows:
+                eid = d.get("EXAMINE_ID")
+                if eid not in detail_map:
+                    detail_map[eid] = []
+                detail_map[eid].append({
+                    "EXAMINEDETAIL_ID": d.get("EXAMINEDETAIL_ID"),
+                    "EXAMINE_POSITION": d.get("EXAMINE_POSITION"),
+                    "EXAMINE_CONTENT": d.get("EXAMINE_CONTENT"),
+                    "DEDUCTION_REASON": d.get("DEDUCTION_REASON"),
+                    "DEDUCTION_SCORE": d.get("DEDUCTION_SCORE"),
+                    "EXAMINEDETAIL_DESC": d.get("EXAMINEDETAIL_DESC"),
+                    "EXAMINEDETAIL_URL": d.get("EXAMINEDETAIL_URL"),
+                    "EXAMINEDEAL_URL": d.get("EXAMINEDEAL_URL"),
+                })
+
+        # 组装结果 — 对齐 C# ExamineResultModel 字段结构
+        result_list = []
+        for r in rows:
+            eid = r.get("EXAMINE_ID")
+            result_list.append({
+                "SPREGIONTYPE_ID": r.get("SPREGIONTYPE_ID"),
+                "SPREGIONTYPE_NAME": r.get("SPREGIONTYPE_NAME"),
+                "SPREGIONTYPE_INDEX": r.get("SPREGIONTYPE_INDEX"),
+                "SERVERPART_ID": r.get("SERVERPART_ID"),
+                "SERVERPART_INDEX": r.get("SERVERPART_INDEX"),
+                "SERVERPART_NAME": r.get("SERVERPART_NAME"),
+                "SERVERPART_TAG": None,
+                "EXAMINE_MQUARTER": r.get("EXAMINE_MQUARTER"),
+                "EXAMINE_DESC": r.get("EXAMINE_DESC"),
+                "list": detail_map.get(eid, [])
+            })
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetExamineResultList 查询失败: {ex}")
