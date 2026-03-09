@@ -42,6 +42,10 @@ app.add_middleware(
     allow_headers=settings.CORS_ALLOW_HEADERS,
 )
 
+# 查询参数清洗中间件（兼容 C# ASP.NET 的空字符串参数行为）
+from middleware.query_cleanup import QueryParamCleanupMiddleware
+app.add_middleware(QueryParamCleanupMiddleware)
+
 # 全局异常处理
 app.add_exception_handler(Exception, global_exception_handler)
 
