@@ -216,10 +216,11 @@ async def get_merchant_account_split(
         if not rows:
             return Result.fail(code=101, msg="查询失败，无数据返回！")
 
-        # 汇总统计
-        total_project = sum(r.get("PROJECT_COUNT", 0) or 0 for r in rows)
-        total_sub_royalty_price = sum(float(r.get("SUBROYALTY_PRICE", 0) or 0) for r in rows)
-        total_sub_royalty_theory = sum(float(r.get("SUBROYALTY_THEORY", 0) or 0) for r in rows)
+        # 汇总统计（排除无效商户）
+        valid_rows = [r for r in rows if r.get("MERCHANTS_ID") and int(r.get("MERCHANTS_ID", 0) or 0) != 0]
+        total_project = sum(r.get("PROJECT_COUNT", 0) or 0 for r in valid_rows)
+        total_sub_royalty_price = sum(float(r.get("SUBROYALTY_PRICE", 0) or 0) for r in valid_rows)
+        total_sub_royalty_theory = sum(float(r.get("SUBROYALTY_THEORY", 0) or 0) for r in valid_rows)
 
         # 获取商户名称
         merchant_names = {}
@@ -233,10 +234,13 @@ async def get_merchant_account_split(
         merchant_list = []
         for r in rows:
             mid = r.get("MERCHANTS_ID")
+            # 过滤无效商户（MerchantId=0 或 null）
+            if not mid or int(mid) == 0:
+                continue
             sub_price = float(r.get("SUBROYALTY_PRICE", 0) or 0)
             sub_theory = float(r.get("SUBROYALTY_THEORY", 0) or 0)
             merchant_list.append({
-                "MerchantId": int(mid) if mid else 0,
+                "MerchantId": int(mid),
                 "MerchantName": merchant_names.get(mid, "") if mid else "",
                 "ProjectCount": int(r.get("PROJECT_COUNT", 0) or 0),
                 "SubRoyaltyPrice": round(sub_price, 2),
