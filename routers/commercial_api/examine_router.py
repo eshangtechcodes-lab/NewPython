@@ -778,7 +778,8 @@ async def get_examine_result_list(
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取驿达看板-首页考核列表 — 对齐 C# 聚合结构（考核+嵌套明细列表）"""
+    """获取驿达看板-首页考核列表 — 对齐 C# 三层嵌套聚合结构
+    顶层：按服务区聚合 → list：按区域分组(REGION_NAME) → SERVERPARTList：考核明细"""
     try:
         conditions = ["A.\"SERVERPART_ID\" = B.\"SERVERPART_ID\"", "A.\"EXAMINE_STATE\" = 1"]
         params = []
@@ -786,16 +787,20 @@ async def get_examine_result_list(
         if DataType is not None:
             conditions.append("A.\"EXAMINE_TYPE\" = ?")
             params.append(DataType)
+
+        # 多服务区 IN (...) 过滤
         _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
         if len(_sp_ids) == 1:
             conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
+        elif len(_sp_ids) > 1:
+            conditions.append(f'B."SERVERPART_ID" IN ({",".join(str(i) for i in _sp_ids)})')
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
         elif provinceCode:
-            # 行政区划码→FIELDENUM_ID 转换（T_SERVERPART.PROVINCE_CODE 存的是内码）
             province_id = _resolve_province_id(db, provinceCode)
             conditions.append(f'B."PROVINCE_CODE" = {province_id}')
+
         if StartMonth:
             conditions.append(f"A.\"EXAMINE_DATE\" >= ?")
             params.append(f"{StartMonth}01000000")
@@ -805,7 +810,7 @@ async def get_examine_result_list(
 
         where_sql = " WHERE " + " AND ".join(conditions)
 
-        # 对齐 C#：查考核主表 + 服务区信息（不 LEFT JOIN 明细表，按考核粒度返回）
+        # 查考核主表 + 服务区信息
         sql = f"""SELECT A."EXAMINE_ID", A."EXAMINE_MQUARTER", A."EXAMINE_DESC",
                 A."EXAMINE_SCORE", A."EXAMINE_DATE",
                 A."SPREGIONTYPE_ID", A."SPREGIONTYPE_NAME",
@@ -813,51 +818,97 @@ async def get_examine_result_list(
                 B."SPREGIONTYPE_INDEX", B."SERVERPART_INDEX"
             FROM "T_EXAMINE" A, "T_SERVERPART" B
             {where_sql}
-            ORDER BY A."EXAMINE_SCORE" DESC"""
+            ORDER BY B."SERVERPART_INDEX", A."EXAMINE_SCORE" DESC"""
 
         rows = db.execute_query(sql, params)
 
-        # 批量查考核明细 T_EXAMINEDETAIL，按 EXAMINE_ID 分组
+        # 批量查考核明细 T_EXAMINEDETAIL
         detail_map = {}
         examine_ids = [r.get("EXAMINE_ID") for r in rows if r.get("EXAMINE_ID")]
         if examine_ids:
             ids_str = ",".join(str(eid) for eid in examine_ids)
-            detail_sql = f"""SELECT "EXAMINEDETAIL_ID", "EXAMINE_ID", "EXAMINE_POSITION",
+            detail_rows = db.execute_query(
+                f"""SELECT "EXAMINEDETAIL_ID", "EXAMINE_ID", "EXAMINE_POSITION",
                     "EXAMINE_CONTENT", "DEDUCTION_REASON", "DEDUCTION_SCORE",
                     "EXAMINEDETAIL_DESC", "EXAMINEDETAIL_URL", "EXAMINEDEAL_URL"
                 FROM "T_EXAMINEDETAIL" WHERE "EXAMINE_ID" IN ({ids_str})
-                ORDER BY "EXAMINEDETAIL_ID" """
-            detail_rows = db.execute_query(detail_sql) or []
+                ORDER BY "EXAMINEDETAIL_ID" """) or []
             for d in detail_rows:
                 eid = d.get("EXAMINE_ID")
                 if eid not in detail_map:
                     detail_map[eid] = []
-                detail_map[eid].append({
-                    "EXAMINEDETAIL_ID": d.get("EXAMINEDETAIL_ID"),
-                    "EXAMINE_POSITION": d.get("EXAMINE_POSITION"),
-                    "EXAMINE_CONTENT": d.get("EXAMINE_CONTENT"),
-                    "DEDUCTION_REASON": d.get("DEDUCTION_REASON"),
-                    "DEDUCTION_SCORE": d.get("DEDUCTION_SCORE"),
-                    "EXAMINEDETAIL_DESC": d.get("EXAMINEDETAIL_DESC"),
-                    "EXAMINEDETAIL_URL": d.get("EXAMINEDETAIL_URL"),
-                    "EXAMINEDEAL_URL": d.get("EXAMINEDEAL_URL"),
+                detail_map[eid].append(d)
+
+        # ========== 三层聚合组装（对齐 C# 旧接口） ==========
+
+        # 第一步：按服务区 SERVERPART_ID 分组
+        from collections import OrderedDict
+        sp_groups = OrderedDict()
+        for r in rows:
+            sp_id = r.get("SERVERPART_ID")
+            if sp_id not in sp_groups:
+                sp_groups[sp_id] = {
+                    "info": r,       # 服务区+片区信息（取第一条）
+                    "examines": []   # 该服务区下的考核记录列表
+                }
+            sp_groups[sp_id]["examines"].append(r)
+
+        # 第二步：对每个服务区，按区域(EXAMINE_POSITION)分组考核明细
+        result_list = []
+        for sp_id, group in sp_groups.items():
+            info = group["info"]
+            examines = group["examines"]
+
+            # 收集该服务区所有考核的明细，按 EXAMINE_POSITION 分组
+            region_map = OrderedDict()
+            for exam in examines:
+                eid = exam.get("EXAMINE_ID")
+                details = detail_map.get(eid, [])
+                for d in details:
+                    pos = d.get("EXAMINE_POSITION", "")
+                    if pos not in region_map:
+                        region_map[pos] = {
+                            "score": 0.0,
+                            "details": []
+                        }
+                    score = d.get("DEDUCTION_SCORE")
+                    if score is not None:
+                        try:
+                            region_map[pos]["score"] += float(score)
+                        except (ValueError, TypeError):
+                            pass
+                    region_map[pos]["details"].append({
+                        "EXAMINEDETAIL_ID": d.get("EXAMINEDETAIL_ID"),
+                        "EXAMINE_POSITION": d.get("EXAMINE_POSITION"),
+                        "EXAMINE_CONTENT": d.get("EXAMINE_CONTENT"),
+                        "DEDUCTION_REASON": d.get("DEDUCTION_REASON"),
+                        "DEDUCTION_SCORE": d.get("DEDUCTION_SCORE"),
+                        "EXAMINEDETAIL_DESC": d.get("EXAMINEDETAIL_DESC"),
+                        "EXAMINEDETAIL_URL": d.get("EXAMINEDETAIL_URL"),
+                        "EXAMINEDEAL_URL": d.get("EXAMINEDEAL_URL"),
+                    })
+
+            # 组装 list（区域分组列表）
+            region_list = []
+            for region_name, rdata in region_map.items():
+                region_list.append({
+                    "REGION_NAME": region_name,
+                    "EXAMINE_SCORE": rdata["score"],
+                    "SERVERPARTList": rdata["details"]
                 })
 
-        # 组装结果 — 对齐 C# ExamineResultModel 字段结构
-        result_list = []
-        for r in rows:
-            eid = r.get("EXAMINE_ID")
+            # 顶层服务区对象
             result_list.append({
-                "SPREGIONTYPE_ID": r.get("SPREGIONTYPE_ID"),
-                "SPREGIONTYPE_NAME": r.get("SPREGIONTYPE_NAME"),
-                "SPREGIONTYPE_INDEX": r.get("SPREGIONTYPE_INDEX"),
-                "SERVERPART_ID": r.get("SERVERPART_ID"),
-                "SERVERPART_INDEX": r.get("SERVERPART_INDEX"),
-                "SERVERPART_NAME": r.get("SERVERPART_NAME"),
+                "SPREGIONTYPE_ID": info.get("SPREGIONTYPE_ID"),
+                "SPREGIONTYPE_NAME": info.get("SPREGIONTYPE_NAME"),
+                "SPREGIONTYPE_INDEX": info.get("SPREGIONTYPE_INDEX"),
+                "SERVERPART_ID": info.get("SERVERPART_ID"),
+                "SERVERPART_INDEX": info.get("SERVERPART_INDEX"),
+                "SERVERPART_NAME": info.get("SERVERPART_NAME"),
                 "SERVERPART_TAG": None,
-                "EXAMINE_MQUARTER": r.get("EXAMINE_MQUARTER"),
-                "EXAMINE_DESC": r.get("EXAMINE_DESC"),
-                "list": detail_map.get(eid, [])
+                "EXAMINE_MQUARTER": info.get("EXAMINE_MQUARTER"),
+                "EXAMINE_DESC": info.get("EXAMINE_DESC"),
+                "list": region_list
             })
 
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
