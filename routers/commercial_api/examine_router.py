@@ -13,6 +13,26 @@ from core.database import DatabaseHelper
 from models.base import Result, JsonListData
 from routers.deps import get_db
 
+def _parse_multi_ids(raw: str) -> list:
+    """解析逗号分隔的多值ID字符串，返回合法整数列表"""
+    if not raw:
+        return []
+    ids = []
+    for part in str(raw).split(","):
+        part = part.strip()
+        if part:
+            try:
+                ids.append(int(part))
+            except ValueError:
+                pass
+    return ids
+
+def _build_in_condition(column: str, ids: list) -> str:
+    """构建 IN 或 = 条件表达式"""
+    if len(ids) == 1:
+        return f'{column} = {ids[0]}'
+    return f'{column} IN ({",".join(str(i) for i in ids)})'
+
 router = APIRouter()
 
 
@@ -606,8 +626,9 @@ async def get_patrol_analysis(
         params = []
 
         if ServerpartId:
-            conditions.append("B.\"SERVERPART_ID\" = ?")
-            params.append(int(ServerpartId))
+            sp_ids = _parse_multi_ids(ServerpartId)
+            if sp_ids:
+                conditions.append(_build_in_condition('B."SERVERPART_ID"', sp_ids))
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -681,8 +702,9 @@ async def get_examine_analysis(
         params.append(DataType)
 
         if ServerpartId:
-            conditions.append("B.\"SERVERPART_ID\" = ?")
-            params.append(int(ServerpartId))
+            sp_ids = _parse_multi_ids(ServerpartId)
+            if sp_ids:
+                conditions.append(_build_in_condition('B."SERVERPART_ID"', sp_ids))
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -748,8 +770,9 @@ async def get_examine_result_list(
             conditions.append("A.\"EXAMINE_TYPE\" = ?")
             params.append(DataType)
         if ServerpartId:
-            conditions.append("B.\"SERVERPART_ID\" = ?")
-            params.append(int(ServerpartId))
+            sp_ids = _parse_multi_ids(ServerpartId)
+            if sp_ids:
+                conditions.append(_build_in_condition('B."SERVERPART_ID"', sp_ids))
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -805,8 +828,9 @@ async def get_patrol_result_list(
         params = []
 
         if ServerpartId:
-            conditions.append('B."SERVERPART_ID" = ?')
-            params.append(int(ServerpartId))
+            sp_ids = _parse_multi_ids(ServerpartId)
+            if sp_ids:
+                conditions.append(_build_in_condition('B."SERVERPART_ID"', sp_ids))
         elif SPRegionType_ID:
             conditions.append('B."SPREGIONTYPE_ID" = ?')
             params.append(int(SPRegionType_ID))
