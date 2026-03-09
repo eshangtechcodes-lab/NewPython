@@ -6752,10 +6752,19 @@ async def get_shop_sabfi_list(
                 reg_ticket += sp_ticket; reg_ticket_yoy += sp_ticket_yoy; reg_ticket_qoq += sp_ticket_qoq
                 reg_flow += sp_flow; reg_flow_yoy += sp_flow_yoy; reg_flow_qoq += sp_flow_qoq
 
-                # Profit 数据
+                # Profit 数据 — C# 行4355: 无 Profit 数据时自营门店 Profit=Revenue
                 pr = profit_map.get(sp_id, {})
-                sp_profit = safe_dec(pr.get("PROFIT_AMOUNT"))
-                sp_cost = safe_dec(pr.get("COST_AMOUNT"))
+                if pr.get("PROFIT_AMOUNT") is not None:
+                    sp_profit = safe_dec(pr.get("PROFIT_AMOUNT"))
+                    sp_cost = safe_dec(pr.get("COST_AMOUNT"))
+                else:
+                    # C# fallback: BusinessTradeType < 3 的门店 Profit=Revenue
+                    sp_profit = 0.0
+                    for r in sp_data["shops"]:
+                        btt = safe_dec(r.get("BUSINESS_TYPE", 0))
+                        if btt < 3:
+                            sp_profit += safe_dec(r.get("REVENUE_AMOUNT"))
+                    sp_cost = 0.0
                 sp_ca_cost = round(sp_cost / sp_ticket, 2) if sp_ticket and sp_cost else 0.0
 
                 # AvgTicket 中间值对齐 C# Round
@@ -6800,8 +6809,9 @@ async def get_shop_sabfi_list(
             total_ticket += reg_ticket; total_ticket_yoy += reg_ticket_yoy; total_ticket_qoq += reg_ticket_qoq
             total_flow += reg_flow; total_flow_yoy += reg_flow_yoy; total_flow_qoq += reg_flow_qoq
 
-            reg_profit = sum(safe_dec(profit_map.get(sid, {}).get("PROFIT_AMOUNT")) for sid in rg["serverparts"])
-            reg_cost = sum(safe_dec(profit_map.get(sid, {}).get("COST_AMOUNT")) for sid in rg["serverparts"])
+            # Profit 从 sp_node 累加（含 fallback）
+            reg_profit = sum(safe_dec(ch["node"].get("Profit_Amount")) for ch in sp_children)
+            reg_cost = sum(safe_dec(ch["node"].get("Cost_Amount")) for ch in sp_children)
 
             # 片区节点 — C# 聚合只填 curYearData + QOQData
             reg_node = {
@@ -6832,8 +6842,9 @@ async def get_shop_sabfi_list(
             }
             region_children.append({"node": reg_node, "children": sp_children})
 
-        total_profit = sum(safe_dec(profit_map.get(sid, {}).get("PROFIT_AMOUNT")) for sid in sp_groups)
-        total_cost = sum(safe_dec(profit_map.get(sid, {}).get("COST_AMOUNT")) for sid in sp_groups)
+        # 根节点 Profit 从片区节点累加
+        total_profit = sum(safe_dec(rch["node"].get("Profit_Amount")) for rch in region_children)
+        total_cost = sum(safe_dec(rch["node"].get("Cost_Amount")) for rch in region_children)
 
         # 根 "合计" 节点
         root_node = {
