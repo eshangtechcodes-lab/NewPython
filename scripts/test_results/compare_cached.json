@@ -337,8 +337,8 @@
     "method": "POST",
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
-    "old": "C=100,T=47",
-    "new": "C=100,T=47",
+    "old": "C=100,T=19",
+    "new": "C=100,T=19",
     "result": "PASS"
   },
   {
@@ -544,9 +544,9 @@
     "method": "POST",
     "route": "/Examine/GetMEETINGList",
     "ctrl": "Examine",
-    "old": "C=100,T=70994",
+    "old": "TIMEOUT",
     "new": "C=100,T=70993",
-    "result": "DIFF"
+    "result": "SKIP"
   },
   {
     "idx": 62,
