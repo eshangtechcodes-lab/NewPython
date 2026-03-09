@@ -6758,30 +6758,36 @@ async def get_shop_sabfi_list(
                 sp_cost = safe_dec(pr.get("COST_AMOUNT"))
                 sp_ca_cost = round(sp_cost / sp_ticket, 2) if sp_ticket and sp_cost else 0.0
 
-                # C# 聚合层只填 curYearData + QOQData，lYearData 保持 null
+                # AvgTicket 中间值对齐 C# Round
+                avg_cur = round(sp_rev / sp_ticket, 2) if sp_ticket else 0
+                avg_qoq = round(sp_rev_qoq / sp_ticket_qoq, 2) if sp_ticket_qoq else 0
+                avg_inc_qoq = round(avg_cur - avg_qoq, 2) if sp_ticket and sp_ticket_qoq else None
+                avg_rate_qoq = round(avg_inc_qoq / avg_qoq * 100, 2) if avg_inc_qoq is not None and avg_qoq else None
+
+                # BayonetINC_ORI：C# 只填 curYearData（车流原始值）
+                bayonet_ori = make_inc(sp_flow)
+
+                # TODO: ShopSABFIList 需从 T_PROFITCONTRIBUTE 表按经营项目(BUSINESSPROJECT_ID)分组构建
+                # 当前数据源不匹配（T_BUSINESSWARNING 按门店分，而 C# 按经营项目分）
+
                 sp_node = {
-                    "SABFI_Score": None, "ShopSABFIList": None,
+                    "SABFI_Score": 0.0, "ShopSABFIList": None,
                     "SPRegionTypeId": rg["id"], "SPRegionTypeName": rg["name"],
                     "ServerpartId": sp_id, "ServerpartName": sp_data["name"],
                     "RevenueINC": make_inc(sp_rev, None, None, None,
-                        sp_rev_qoq, sp_rev - sp_rev_qoq if sp_rev_qoq else None,
+                        round(sp_rev_qoq, 2), round(sp_rev - sp_rev_qoq, 2) if sp_rev_qoq else None,
                         round((sp_rev - sp_rev_qoq) / sp_rev_qoq * 100, 2) if sp_rev_qoq else None),
-                    "AccountINC": make_inc(sp_acct, 0.0, None, None,
-                        sp_acct_qoq, sp_acct - sp_acct_qoq if sp_acct_qoq else None,
+                    "AccountINC": make_inc(round(sp_acct, 2), 0.0, None, None,
+                        round(sp_acct_qoq, 2), round(sp_acct - sp_acct_qoq, 2) if sp_acct_qoq else None,
                         round((sp_acct - sp_acct_qoq) / sp_acct_qoq * 100, 2) if sp_acct_qoq else None),
-                    "BayonetINC": make_inc(sp_flow, 0.0, None, None,
+                    "BayonetINC": make_inc(sp_flow, None, None, None,
                         sp_flow_qoq, sp_flow - sp_flow_qoq if sp_flow_qoq else None,
                         round((sp_flow - sp_flow_qoq) / sp_flow_qoq * 100, 2) if sp_flow_qoq else None),
-                    "SectionFlowINC": None, "BayonetINC_ORI": None,
+                    "SectionFlowINC": None, "BayonetINC_ORI": bayonet_ori,
                     "TicketINC": make_inc(sp_ticket, None, None, None,
                         sp_ticket_qoq, sp_ticket - sp_ticket_qoq if sp_ticket_qoq else None,
                         round((sp_ticket - sp_ticket_qoq) / sp_ticket_qoq * 100, 2) if sp_ticket_qoq else None),
-                    "AvgTicketINC": make_inc(
-                        round(sp_rev / sp_ticket, 2) if sp_ticket else 0, None,
-                        None, None,
-                        round(sp_rev_qoq / sp_ticket_qoq, 2) if sp_ticket_qoq else None,
-                        round(sp_rev / sp_ticket - sp_rev_qoq / sp_ticket_qoq, 2) if sp_ticket and sp_ticket_qoq else None,
-                        round((sp_rev / sp_ticket - sp_rev_qoq / sp_ticket_qoq) / (sp_rev_qoq / sp_ticket_qoq) * 100, 2) if sp_ticket and sp_ticket_qoq and sp_rev_qoq else None),
+                    "AvgTicketINC": make_inc(avg_cur, None, None, None, avg_qoq, avg_inc_qoq, avg_rate_qoq),
                     "ShopINCList": None,
                     "Profit_Amount": sp_profit, "Cost_Amount": sp_cost,
                     "Ca_Cost": sp_ca_cost, "RankDiff": None,
@@ -6805,22 +6811,20 @@ async def get_shop_sabfi_list(
                 "RevenueINC": make_inc(reg_rev, None, None, None,
                     reg_rev_qoq, reg_rev - reg_rev_qoq if reg_rev_qoq else None,
                     round((reg_rev - reg_rev_qoq) / reg_rev_qoq * 100, 2) if reg_rev_qoq else None),
-                "AccountINC": make_inc(reg_acct, 0.0, None, None,
-                    reg_acct_qoq, reg_acct - reg_acct_qoq if reg_acct_qoq else None,
+                "AccountINC": make_inc(round(reg_acct, 2), None, None, None,
+                    round(reg_acct_qoq, 2), round(reg_acct - reg_acct_qoq, 2) if reg_acct_qoq else None,
                     round((reg_acct - reg_acct_qoq) / reg_acct_qoq * 100, 2) if reg_acct_qoq else None),
-                "BayonetINC": make_inc(reg_flow, 0.0, None, None,
+                "BayonetINC": make_inc(reg_flow, None, None, None,
                     reg_flow_qoq, reg_flow - reg_flow_qoq if reg_flow_qoq else None,
                     round((reg_flow - reg_flow_qoq) / reg_flow_qoq * 100, 2) if reg_flow_qoq else None),
                 "SectionFlowINC": None, "BayonetINC_ORI": None,
                 "TicketINC": make_inc(reg_ticket, None, None, None,
                     reg_ticket_qoq, reg_ticket - reg_ticket_qoq if reg_ticket_qoq else None,
                     round((reg_ticket - reg_ticket_qoq) / reg_ticket_qoq * 100, 2) if reg_ticket_qoq else None),
-                "AvgTicketINC": make_inc(
-                    round(reg_rev / reg_ticket, 2) if reg_ticket else 0, None,
-                    None, None,
-                    round(reg_rev_qoq / reg_ticket_qoq, 2) if reg_ticket_qoq else None,
-                    round(reg_rev / reg_ticket - reg_rev_qoq / reg_ticket_qoq, 2) if reg_ticket and reg_ticket_qoq else None,
-                    round((reg_rev / reg_ticket - reg_rev_qoq / reg_ticket_qoq) / (reg_rev_qoq / reg_ticket_qoq) * 100, 2) if reg_ticket and reg_ticket_qoq and reg_rev_qoq else None),
+                "AvgTicketINC": (lambda ac=round(reg_rev/reg_ticket,2) if reg_ticket else 0, aq=round(reg_rev_qoq/reg_ticket_qoq,2) if reg_ticket_qoq else 0:
+                    make_inc(ac, None, None, None, aq,
+                        round(ac - aq, 2) if reg_ticket and reg_ticket_qoq else None,
+                        round((ac - aq) / aq * 100, 2) if reg_ticket and reg_ticket_qoq and aq else None))(),
                 "ShopINCList": None,
                 "Profit_Amount": reg_profit, "Cost_Amount": reg_cost,
                 "Ca_Cost": round(reg_cost / reg_ticket, 2) if reg_ticket and reg_cost else 0.0,
@@ -6839,8 +6843,8 @@ async def get_shop_sabfi_list(
             "RevenueINC": make_inc(total_rev, None, None, None,
                 total_rev_qoq, total_rev - total_rev_qoq if total_rev_qoq else None,
                 round((total_rev - total_rev_qoq) / total_rev_qoq * 100, 2) if total_rev_qoq else None),
-            "AccountINC": make_inc(total_acct, 0.0, None, None,
-                total_acct_qoq, total_acct - total_acct_qoq if total_acct_qoq else None,
+            "AccountINC": make_inc(round(total_acct, 2), 0.0, None, None,
+                round(total_acct_qoq, 2), round(total_acct - total_acct_qoq, 2) if total_acct_qoq else None,
                 round((total_acct - total_acct_qoq) / total_acct_qoq * 100, 2) if total_acct_qoq else None),
             "BayonetINC": make_inc(total_flow, 0.0, None, None,
                 total_flow_qoq, total_flow - total_flow_qoq if total_flow_qoq else None,
@@ -6849,12 +6853,10 @@ async def get_shop_sabfi_list(
             "TicketINC": make_inc(total_ticket, None, None, None,
                 total_ticket_qoq, total_ticket - total_ticket_qoq if total_ticket_qoq else None,
                 round((total_ticket - total_ticket_qoq) / total_ticket_qoq * 100, 2) if total_ticket_qoq else None),
-            "AvgTicketINC": make_inc(
-                round(total_rev / total_ticket, 2) if total_ticket else 0, None,
-                None, None,
-                round(total_rev_qoq / total_ticket_qoq, 2) if total_ticket_qoq else None,
-                round(total_rev / total_ticket - total_rev_qoq / total_ticket_qoq, 2) if total_ticket and total_ticket_qoq else None,
-                round((total_rev / total_ticket - total_rev_qoq / total_ticket_qoq) / (total_rev_qoq / total_ticket_qoq) * 100, 2) if total_ticket and total_ticket_qoq and total_rev_qoq else None),
+            "AvgTicketINC": (lambda ac=round(total_rev/total_ticket,2) if total_ticket else 0, aq=round(total_rev_qoq/total_ticket_qoq,2) if total_ticket_qoq else 0:
+                make_inc(ac, None, None, None, aq,
+                    round(ac - aq, 2) if total_ticket and total_ticket_qoq else None,
+                    round((ac - aq) / aq * 100, 2) if total_ticket and total_ticket_qoq and aq else None))(),
             "ShopINCList": None,
             "Profit_Amount": total_profit, "Cost_Amount": total_cost,
             "Ca_Cost": round(total_cost / total_ticket, 2) if total_ticket and total_cost else 0.0,
