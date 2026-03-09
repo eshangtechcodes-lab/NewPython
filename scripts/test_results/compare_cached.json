@@ -248,8 +248,8 @@
     "route": "/BigData/GetMonthAnalysis",
     "ctrl": "BigData",
     "old": "C=100,T=2",
-    "new": "C=100,T=2",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 29,
@@ -257,8 +257,8 @@
     "route": "/BigData/GetProvinceMonthAnalysis",
     "ctrl": "BigData",
     "old": "C=100,T=1",
-    "new": "C=100,T=1",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 30,
@@ -293,8 +293,8 @@
     "route": "/BigData/GetBayonetCompare",
     "ctrl": "BigData",
     "old": "C=100",
-    "new": "C=100",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 34,
@@ -302,8 +302,8 @@
     "route": "/BigData/GetHolidayCompare",
     "ctrl": "BigData",
     "old": "C=100",
-    "new": "C=100",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 35,
@@ -311,8 +311,8 @@
     "route": "/BigData/GetBayonetOAAnalysis",
     "ctrl": "BigData",
     "old": "C=100,T=0",
-    "new": "C=100,T=0",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 36,
@@ -337,8 +337,8 @@
     "method": "POST",
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
-    "old": "C=100,T=36",
-    "new": "C=100,T=36",
+    "old": "C=100,T=38",
+    "new": "C=100,T=38",
     "result": "PASS"
   },
   {
@@ -383,8 +383,8 @@
     "route": "/Budget/GetBUDGETPROJECT_AHList",
     "ctrl": "Budget",
     "old": "C=100,T=255",
-    "new": "C=100,T=255",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 44,
@@ -527,8 +527,8 @@
     "route": "/Examine/GetEXAMINEList",
     "ctrl": "Examine",
     "old": "C=100,T=3695",
-    "new": "C=100,T=3695",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 60,
@@ -545,7 +545,7 @@
     "route": "/Examine/GetMEETINGList",
     "ctrl": "Examine",
     "old": "TIMEOUT",
-    "new": "C=100,T=70993",
+    "new": "C=999",
     "result": "SKIP"
   },
   {
@@ -562,9 +562,9 @@
     "method": "POST",
     "route": "/Examine/GetPATROLList",
     "ctrl": "Examine",
-    "old": "TIMEOUT",
-    "new": "C=100,T=104608",
-    "result": "SKIP"
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
   },
   {
     "idx": 64,
@@ -581,8 +581,8 @@
     "route": "/Examine/WeChat_GetExamineList",
     "ctrl": "Examine",
     "old": "C=100",
-    "new": "C=100,T=1",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 66,
@@ -608,8 +608,8 @@
     "route": "/Examine/WeChat_GetMeetingList",
     "ctrl": "Examine",
     "old": "C=100",
-    "new": "C=100,T=1",
-    "result": "PASS"
+    "new": "C=999",
+    "result": "DIFF"
   },
   {
     "idx": 69,
