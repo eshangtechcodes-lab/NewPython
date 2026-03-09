@@ -6261,8 +6261,10 @@ async def storage_month_inc_analysis(
 @router.get("/Revenue/GetShopSABFIList")
 async def get_shop_sabfi_list(
     pushProvinceCode: str = Query(..., description="省份编码"),
-    StatisticsMonth: str = Query(..., description="统计月份"),
-    ServerpartId: str = Query(..., description="服务区内码"),
+    StatisticsMonth: Optional[str] = Query(None, description="统计月份"),
+    statisticsStartMonth: Optional[str] = Query(None, description="统计开始月份（兼容前端）"),
+    statisticsEndMonth: Optional[str] = Query(None, description="统计结束月份（兼容前端）"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
     BusinessTradeType: Optional[str] = Query("", description="经营业态大类"),
     BusinessTrade: Optional[str] = Query("", description="经营业态"),
     accountType: int = Query(0, description="收入结算类型"),
@@ -6270,11 +6272,19 @@ async def get_shop_sabfi_list(
 ):
     """月度服务区门店商业适配指数 (SQL平移完成)"""
     try:
+        # 兼容前端：优先用 StatisticsMonth，否则用 statisticsStartMonth
+        stat_month = StatisticsMonth or statisticsStartMonth or statisticsEndMonth
+        if not stat_month:
+            json_list = JsonListData.create(data_list=[], total=0, page_size=10)
+            return Result.success(data=json_list.model_dump(), msg="查询成功")
+
         def safe_dec(v):
             try: return float(v) if v is not None else 0.0
             except: return 0.0
 
-        where_sql = f' AND A."SERVERPART_ID" = {ServerpartId}'
+        where_sql = ""
+        if ServerpartId:
+            where_sql += f' AND A."SERVERPART_ID" = {ServerpartId}'
         if BusinessTradeType:
             where_sql += f' AND A."BUSINESS_TYPE" IN ({BusinessTradeType})'
         if BusinessTrade:
@@ -6285,9 +6295,10 @@ async def get_shop_sabfi_list(
                 SUM(A."TICKET_COUNT") AS "TICKET"
             FROM "T_REVENUEMONTHLY" A
             WHERE A."REVENUEMONTHLY_STATE" = 1
-                AND A."STATISTICS_MONTH" = {StatisticsMonth}{where_sql}
+                AND A."STATISTICS_MONTH" = {stat_month}{where_sql}
             GROUP BY A."SHOPTRADE", A."BUSINESS_TYPE"
             ORDER BY A."SHOPTRADE" """
+
         rows = db.execute_query(sql) or []
 
         # 按经营模式分组构建 node/children 树形结构

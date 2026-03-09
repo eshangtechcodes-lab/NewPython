@@ -3094,7 +3094,7 @@ async def get_bayonet_owner_ah_tree_list(
 # ===== GetProvinceVehicleTreeList =====
 @router.get("/BigData/GetProvinceVehicleTreeList")
 async def get_province_vehicle_tree_list(
-    serverPartId: str = Query(..., description="服务区内码集合"),
+    serverPartId: Optional[str] = Query("", description="服务区内码集合"),
     statisticsStartMonth: int = Query(..., description="开始日期(yyyyMM)"),
     statisticsEndMonth: int = Query(..., description="结束日期(yyyyMM)"),
     rankNum: Optional[int] = Query(None, description="城市top排名"),
