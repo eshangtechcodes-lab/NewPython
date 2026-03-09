@@ -625,10 +625,10 @@ async def get_patrol_analysis(
         conditions = ["A.\"SERVERPART_ID\" = B.\"SERVERPART_ID\"", "A.\"PATROLDAILY_STATE\" = 1"]
         params = []
 
-        if ServerpartId:
-            sp_ids = _parse_multi_ids(ServerpartId)
-            if sp_ids:
-                conditions.append(_build_in_condition('B."SERVERPART_ID"', sp_ids))
+        # C# 参数是 int?，多值时模型绑定失败=null，走 elif 分支
+        _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
+        if len(_sp_ids) == 1:
+            conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -701,10 +701,9 @@ async def get_examine_analysis(
         conditions.append("A.\"EXAMINE_TYPE\" = ?")
         params.append(DataType)
 
-        if ServerpartId:
-            sp_ids = _parse_multi_ids(ServerpartId)
-            if sp_ids:
-                conditions.append(_build_in_condition('B."SERVERPART_ID"', sp_ids))
+        _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
+        if len(_sp_ids) == 1:
+            conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -769,10 +768,9 @@ async def get_examine_result_list(
         if DataType is not None:
             conditions.append("A.\"EXAMINE_TYPE\" = ?")
             params.append(DataType)
-        if ServerpartId:
-            sp_ids = _parse_multi_ids(ServerpartId)
-            if sp_ids:
-                conditions.append(_build_in_condition('B."SERVERPART_ID"', sp_ids))
+        _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
+        if len(_sp_ids) == 1:
+            conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -827,10 +825,9 @@ async def get_patrol_result_list(
         ]
         params = []
 
-        if ServerpartId:
-            sp_ids = _parse_multi_ids(ServerpartId)
-            if sp_ids:
-                conditions.append(_build_in_condition('B."SERVERPART_ID"', sp_ids))
+        _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
+        if len(_sp_ids) == 1:
+            conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
         elif SPRegionType_ID:
             conditions.append('B."SPREGIONTYPE_ID" = ?')
             params.append(int(SPRegionType_ID))
