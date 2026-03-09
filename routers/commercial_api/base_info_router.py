@@ -139,8 +139,8 @@ async def get_business_trade_list_post(
         if searchModel is None:
             searchModel = {}
 
-        page_index = searchModel.get("PageIndex", 1) or 1
-        page_size = searchModel.get("PageSize", 10) or 10
+        page_index = int(searchModel.get("PageIndex", 0) or 0)
+        page_size = int(searchModel.get("PageSize", 0) or 0)
         sort_str = searchModel.get("SortStr", "")
 
         sql = """
@@ -212,19 +212,80 @@ async def get_brand_analysis(
     TODO: 实现完整 BrandAnalysisHelper.GetBrandAnalysis 逻辑
     """
     try:
-        # 原 C# 返回结构: BrandAnalysisModel { BrandTag, ShopBrandList }
-        # 暂返回空结构
-        logger.warning(f"GetBrandAnalysis 复杂查询暂未完整实现")
-        _shop_brand = {
-            "Brand_Id": None, "Brand_Name": None, "BrandType_Name": None, "Brand_ICO": None,
-            "ServerpartShop_Id": None, "Bussiness_Time": None, "Bussiness_Name": None, "Bussiness_State": None,
-            "CurRevenue": None, "Revenue_Amount": None,
-            "BrandTrade": None, "BrandTradeName": None, "BrandTradeType": None,
-            "BrandProject": None, "BrandProjectName": None,
-            "Business_Trade": None, "Business_TradeICO": None, "Business_TradeId": None,
-            "ShopEndaccountList": None,
-        }
-        data = {"BrandTag": "", "ShopBrandList": [_shop_brand]}
+        def safe_dec(v):
+            try: return float(v) if v is not None else 0.0
+            except: return 0.0
+        def safe_int(v):
+            try: return int(v) if v is not None else 0
+            except: return 0
+
+        # 构建 WHERE 条件
+        where_sql = ""
+        if Serverpart_ID:
+            where_sql += f' AND A."SERVERPART_ID" IN ({Serverpart_ID})'
+        elif ProvinceCode:
+            fe_rows = db.execute_query(f"""SELECT "FIELDENUM_ID" FROM "T_FIELDENUM"
+                WHERE "FIELD_NAME" = 'DIVISION_CODE' AND "FIELDENUM_VALUE" = '{ProvinceCode}'""") or []
+            if fe_rows:
+                where_sql += f' AND A."PROVINCE_CODE" = {fe_rows[0].get("FIELDENUM_ID")}'
+        if BusinessTradeIds:
+            where_sql += f' AND A."BUSINESS_TRADE" IN ({BusinessTradeIds})'
+        if BrandType:
+            where_sql += f' AND B."BRAND_TYPE" IN ({BrandType})'
+
+        # 查询门店品牌数据
+        show_all = "" if ShowAllShop else ' AND A."BUSINESS_STATE" = 1000'
+        sql = f"""SELECT A."SERVERPARTSHOP_ID", A."SERVERPART_ID", A."SHOPSHORTNAME",
+                A."BUSINESS_STATE", A."BUSINESS_BRAND", A."BUSINESS_TRADE",
+                A."BUSINESS_DATE", B."BRAND_NAME", B."BRAND_TYPE", B."BRAND_INTRO"
+            FROM "T_SERVERPARTSHOP" A
+            LEFT JOIN "T_BRAND" B ON A."BUSINESS_BRAND" = B."BRAND_ID"
+            WHERE A."ISVALID" = 1{where_sql}{show_all}
+            ORDER BY A."SERVERPART_ID", A."BUSINESS_TRADE" """
+        rows = db.execute_query(sql) or []
+
+        # 构造品牌标签列表 (BrandTag: List[CommonModel])
+        brand_tag_set = {}
+        for r in rows:
+            bt = r.get("BRAND_TYPE")
+            if bt is not None:
+                brand_tag_set[str(bt)] = True
+        # 查品牌类型枚举 (通过 T_FIELDEXPLAIN JOIN T_FIELDENUM)
+        brand_tag = []
+        type_name_map = {}
+        try:
+            enum_rows = db.execute_query("""SELECT E."FIELDENUM_VALUE", E."FIELDENUM_NAME" FROM "T_FIELDENUM" E
+                JOIN "T_FIELDEXPLAIN" F ON E."FIELDEXPLAIN_ID" = F."FIELDEXPLAIN_ID"
+                WHERE F."FIELDEXPLAIN_FIELD" = 'BRAND_TYPE' ORDER BY E."FIELDENUM_VALUE" """)
+            for er in (enum_rows or []):
+                ev = str(er.get("FIELDENUM_VALUE", ""))
+                type_name_map[ev] = er.get("FIELDENUM_NAME", "")
+                if ev in brand_tag_set:
+                    brand_tag.append({"name": er.get("FIELDENUM_NAME", ""), "value": ev})
+        except:
+            pass
+
+        shop_brand_list = []
+        for r in rows:
+            bt = str(r.get("BRAND_TYPE", "") or "")
+            shop_brand_list.append({
+                "Brand_Id": safe_int(r.get("BUSINESS_BRAND")),
+                "Brand_Name": r.get("BRAND_NAME"),
+                "BrandType_Name": type_name_map.get(bt, ""),
+                "Brand_ICO": r.get("BRAND_INTRO"),
+                "ServerpartShop_Id": safe_int(r.get("SERVERPARTSHOP_ID")),
+                "Bussiness_Time": str(r.get("BUSINESS_DATE", "") or ""),
+                "Bussiness_Name": r.get("SHOPSHORTNAME"),
+                "Bussiness_State": safe_int(r.get("BUSINESS_STATE")),
+                "CurRevenue": None,
+                "Revenue_Amount": None,
+                "Business_Trade": safe_int(r.get("BUSINESS_TRADE")),
+                "Business_TradeICO": None,
+                "Business_TradeId": safe_int(r.get("BUSINESS_TRADE")),
+                "ShopEndaccountList": None,
+            })
+
+        data = {"BrandTag": brand_tag, "ShopBrandList": shop_brand_list}
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBrandAnalysis 查询失败: {ex}")
@@ -314,23 +375,89 @@ async def get_serverpart_list(
             start = (PageIndex - 1) * PageSize
             rows = rows[start:start + PageSize]
 
+        # 类型转换辅助
+        def to_bool(v):
+            if v is None: return False
+            try: return float(v) > 0
+            except: return False
+        def to_float(v):
+            if v is None: return None
+            try: return float(v)
+            except: return None
+
+        # 批量查询 T_RTSERVERPART 补充 ServerpartInfo
+        sp_ids = [str(r.get("SERVERPART_ID")) for r in rows if r.get("SERVERPART_ID")]
+        rt_map = {}
+        if sp_ids:
+            rt_rows = db.execute_query(f'SELECT * FROM "T_RTSERVERPART" WHERE "SERVERPART_ID" IN ({",".join(sp_ids)})')
+            for rt in (rt_rows or []):
+                rt_map[rt.get("SERVERPART_ID")] = rt
+
         # 每行补全C#模型中的额外字段
         for r in rows:
-            r.setdefault("ISCUR_SERVERPART", None)
-            r.setdefault("ImageLits", None)
+            r["ISCUR_SERVERPART"] = 0
+            r["ImageLits"] = []
             r.setdefault("LoadBearing_Id", None)
             r.setdefault("LoadBearing_State", None)
-            r.setdefault("SERVERPART_ADDRESS", None)
-            r.setdefault("SERVERPART_DISTANCE", None)
+            r["SERVERPART_DISTANCE"] = 0.0
             r.setdefault("STARTDATE", None)
             r.setdefault("RegionInfo", None)
-            r.setdefault("tmwWeatherModel", None)
-            r.setdefault("weatherModel", None)
-            if "ServerpartInfo" not in r:
+            r["tmwWeatherModel"] = None
+            r["weatherModel"] = None
+            # bool 类型字段
+            r["HASMOTHER"] = to_bool(r.get("HASMOTHER"))
+            r["HASPILOTLOUNGE"] = to_bool(r.get("HASPILOTLOUNGE"))
+            r["HASCHARGE"] = to_bool(r.get("HASCHARGE"))
+            r["HASGUESTROOM"] = to_bool(r.get("HASGUESTROOM"))
+            # 从 RT 表补充坐标和地址（精度更高）
+            rt = rt_map.get(r.get("SERVERPART_ID"))
+            if rt:
+                if rt.get("SERVERPART_X") is not None:
+                    r["SERVERPART_X"] = to_float(rt["SERVERPART_X"])
+                else:
+                    r["SERVERPART_X"] = to_float(r.get("SERVERPART_X"))
+                if rt.get("SERVERPART_Y") is not None:
+                    r["SERVERPART_Y"] = to_float(rt["SERVERPART_Y"])
+                else:
+                    r["SERVERPART_Y"] = to_float(r.get("SERVERPART_Y"))
+                r["SERVERPART_ADDRESS"] = rt.get("SERVERPART_ADDRESS", "")
+            else:
+                r["SERVERPART_X"] = to_float(r.get("SERVERPART_X"))
+                r["SERVERPART_Y"] = to_float(r.get("SERVERPART_Y"))
+                r.setdefault("SERVERPART_ADDRESS", None)
+            # 从 T_RTSERVERPART 填充 ServerpartInfo
+            rt = rt_map.get(r.get("SERVERPART_ID"))
+            if rt:
+                r["ServerpartInfo"] = {
+                    "SERVERPART_ID": r.get("SERVERPART_ID"),
+                    "RTSERVERPART_ID": rt.get("RTSERVERPART_ID"),
+                    "SERVERPART_ADDRESS": rt.get("SERVERPART_ADDRESS"),
+                    "SERVERPART_X": to_float(rt.get("SERVERPART_X")),
+                    "SERVERPART_Y": to_float(rt.get("SERVERPART_Y")),
+                    "SERVERPART_TEL": rt.get("SERVERPART_TEL"),
+                    "SERVERPART_AREA": to_float(rt.get("SERVERPART_AREA")),
+                    "SERVERPART_INFO": rt.get("SERVERPART_INFO"),
+                    "SERVERPART_TARGET": rt.get("SERVERPART_TARGET"),
+                    "STARTDATE": rt.get("STARTDATE"),
+                    "CENTERSTAKE_NUM": rt.get("CENTERSTAKE_NUM"),
+                    "EXPRESSWAY_NAME": rt.get("EXPRESSWAY_NAME"),
+                    "FLOORAREA": to_float(rt.get("FLOORAREA")),
+                    "BUSINESSAREA": to_float(rt.get("BUSINESSAREA")),
+                    "SHAREAREA": to_float(rt.get("SHAREAREA")),
+                    "BUSINESS_REGION": rt.get("BUSINESS_REGION"),
+                    "MANAGERCOMPANY": rt.get("MANAGERCOMPANY"),
+                    "OWNEDCOMPANY": rt.get("OWNEDCOMPANY"),
+                    "SELLERCOUNT": rt.get("SELLERCOUNT"),
+                    "TAXPAYER_IDENTIFYCODE": rt.get("TAXPAYER_IDENTIFYCODE"),
+                    "SEWAGEDISPOSAL_TYPE": rt.get("SEWAGEDISPOSAL_TYPE"),
+                    "WATERINTAKE_TYPE": rt.get("WATERINTAKE_TYPE"),
+                }
+            elif "ServerpartInfo" not in r:
                 r["ServerpartInfo"] = {
                     "SERVERPART_ID": r.get("SERVERPART_ID"),
                     "RTSERVERPART_ID": None, "SERVERPART_ADDRESS": None,
-                    "SERVERPART_X": r.get("SERVERPART_X"), "SERVERPART_Y": r.get("SERVERPART_Y"),
+                    "SERVERPART_X": to_float(r.get("SERVERPART_X")),
+                    "SERVERPART_Y": to_float(r.get("SERVERPART_Y")),
                     "SERVERPART_TEL": r.get("SERVERPART_TEL"),
                     "SERVERPART_AREA": None, "SERVERPART_INFO": None, "SERVERPART_TARGET": None,
                     "STARTDATE": None, "CENTERSTAKE_NUM": None, "EXPRESSWAY_NAME": None,
@@ -343,7 +470,7 @@ async def get_serverpart_list(
         json_list = JsonListData.create(data_list=rows, total=len(rows),
                                         page_index=PageIndex or 1, page_size=PageSize or len(rows))
         resp = json_list.model_dump()
-        resp["OtherData"] = None
+        resp["OtherData"] = []
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartList 查询失败: {ex}")
@@ -375,34 +502,59 @@ async def get_serverpart_info(
             return Result.fail(code=101, msg="查询失败，无数据返回！")
         sp = rows[0]
 
+        def to_float(v):
+            if v is None: return None
+            try: return float(v)
+            except: return None
+        def to_int(v):
+            if v is None: return None
+            try: return int(v)
+            except: return None
+
+        # 翻译 BUSINESSTYPE 枚举
+        bt_name_map = {}
+        try:
+            bt_rows = db.execute_query("""SELECT E."FIELDENUM_VALUE", E."FIELDENUM_NAME" FROM "T_FIELDENUM" E
+                JOIN "T_FIELDEXPLAIN" F ON E."FIELDEXPLAIN_ID" = F."FIELDEXPLAIN_ID"
+                WHERE F."FIELDEXPLAIN_FIELD" = 'BUSINESSTYPE' """)
+            for br in (bt_rows or []):
+                bt_name_map[str(br.get("FIELDENUM_VALUE", ""))] = br.get("FIELDENUM_NAME", "")
+        except:
+            pass
+
         result = {
-            "SERVERPART_ID": sp.get("SERVERPART_ID"),
+            "SERVERPART_ID": to_int(sp.get("SERVERPART_ID")),
             "SERVERPART_NAME": sp.get("SERVERPART_NAME", ""),
             "SERVERPART_TEL": sp.get("SERVERPART_TEL", ""),
             "SERVERPART_ADDRESS": sp.get("SERVERPART_ADDRESS", ""),
-            "SERVERPART_INDEX": sp.get("SERVERPART_INDEX"),
-            "PROVINCE_CODE": sp.get("PROVINCE_CODE"),
+            "SERVERPART_INDEX": to_int(sp.get("SERVERPART_INDEX")),
+            "PROVINCE_CODE": to_int(sp.get("PROVINCE_CODE")),
             "SERVERPART_CODE": sp.get("SERVERPART_CODE", ""),
-            "SERVERPART_TYPE": sp.get("SERVERPART_TYPE"),
-            "SPREGIONTYPE_ID": sp.get("SPREGIONTYPE_ID"),
+            "SERVERPART_TYPE": to_int(sp.get("SERVERPART_TYPE")),
+            "SPREGIONTYPE_ID": to_int(sp.get("SPREGIONTYPE_ID")),
             "SPREGIONTYPE_NAME": sp.get("SPREGIONTYPE_NAME", ""),
-            "SPREGIONTYPE_INDEX": sp.get("SPREGIONTYPE_INDEX"),
-            "STATISTICS_TYPE": str(sp.get("STATISTICS_TYPE", "")),
-            "OWNERUNIT_ID": sp.get("OWNERUNIT_ID"),
+            "SPREGIONTYPE_INDEX": to_int(sp.get("SPREGIONTYPE_INDEX")),
+            "STATISTICS_TYPE": str(sp.get("STATISTICS_TYPE", "") or ""),
+            "OWNERUNIT_ID": to_int(sp.get("OWNERUNIT_ID")),
             "OWNERUNIT_NAME": sp.get("OWNERUNIT_NAME", ""),
-            "SERVERPART_X": sp.get("SERVERPART_X"),
-            "SERVERPART_Y": sp.get("SERVERPART_Y"),
+            "SERVERPART_X": to_float(sp.get("SERVERPART_X")),
+            "SERVERPART_Y": to_float(sp.get("SERVERPART_Y")),
         }
 
         # 查询服务区扩展信息 T_RTSERVERPART
         rt_rows = db.execute_query("SELECT * FROM T_RTSERVERPART WHERE SERVERPART_ID = :id", {"id": ServerpartId})
         if rt_rows:
             rt = rt_rows[0]
+            # 转换数值类型
+            for k in ["SERVERPART_X", "SERVERPART_Y", "SERVERPART_AREA", "FLOORAREA", "BUSINESSAREA", "SHAREAREA"]:
+                rt[k] = to_float(rt.get(k))
+            for k in ["SERVERPART_ID", "RTSERVERPART_ID", "SELLERCOUNT"]:
+                rt[k] = to_int(rt.get(k))
             result["ServerpartInfo"] = rt
-            # 补充经纬度
-            if not result["SERVERPART_X"] and rt.get("SERVERPART_X"):
+            # 始终优先使用 T_RTSERVERPART 的坐标（精度更高）
+            if rt.get("SERVERPART_X") is not None:
                 result["SERVERPART_X"] = rt["SERVERPART_X"]
-            if not result["SERVERPART_Y"] and rt.get("SERVERPART_Y"):
+            if rt.get("SERVERPART_Y") is not None:
                 result["SERVERPART_Y"] = rt["SERVERPART_Y"]
 
         # 查询服务区设施信息 T_SERVERPARTINFO
@@ -412,18 +564,27 @@ async def get_serverpart_info(
             result["HASPILOTLOUNGE"] = any(float(r.get("HASPILOTLOUNGE", 0) or 0) > 0 for r in info_rows)
             result["HASCHARGE"] = any(float(r.get("LIVESTOCKPACKING", 0) or 0) > 0 for r in info_rows)
             result["HASGUESTROOM"] = any(float(r.get("POINTCONTROLCOUNT", 0) or 0) > 0 for r in info_rows)
+            # 转换数值类型并翻译 BUSINESSTYPE
+            for ri in info_rows:
+                for k in ["BUILDINGAREA", "FLOORAREA", "PARKINGAREA", "GREENSPACEAREA"]:
+                    ri[k] = to_float(ri.get(k))
+                for k in ["TOILETCOUNT", "SMALLPARKING", "PACKING", "TRUCKPACKING"]:
+                    ri[k] = to_int(ri.get(k))
+                bt_val = str(ri.get("BUSINESSTYPE", "") or "")
+                ri["BUSINESSTYPE"] = bt_name_map.get(bt_val, bt_val)
+                ri.setdefault("REPAIR_TIME", None)
             result["RegionInfo"] = info_rows
 
         # 补全C#模型字段
-        result.setdefault("ISCUR_SERVERPART", None)
-        result.setdefault("ImageLits", None)
+        result["ISCUR_SERVERPART"] = 0
+        result["ImageLits"] = []
         result.setdefault("LoadBearing_Id", None)
         result.setdefault("LoadBearing_State", None)
         result.setdefault("OPERATE_DATE", None)
-        result.setdefault("SERVERPART_DISTANCE", None)
+        result["SERVERPART_DISTANCE"] = 0.0
         result.setdefault("STARTDATE", None)
-        result.setdefault("tmwWeatherModel", None)
-        result.setdefault("weatherModel", None)
+        result["tmwWeatherModel"] = None
+        result["weatherModel"] = None
 
         # RegionInfo子项补全字段
         if "RegionInfo" in result and isinstance(result["RegionInfo"], list):
