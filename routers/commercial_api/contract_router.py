@@ -25,28 +25,127 @@ async def get_contract_analysis(
     db: DatabaseHelper = Depends(get_db)
 ):
     """
-    获取经营合同分析
-    原路由: [Route("Contract/GetContractAnalysis")] GET
-    原注释: 显示在驿达数智化小程序-经营画像：营收分析板块，显示当月经营合同相关数据
-    原 Helper: ContractAnalysisHelper.GetContractAnalysis
-    依赖表: CONTRACT_STORAGE.T_REGISTERCOMPACT, T_REGISTERCOMPACTSUB, T_PAYMENTCONFIRM,
-            HIGHWAY_STORAGE.T_SERVERPART
-    返回: ContractAnalysisModel（ContractProfitLoss/ShopCount/SalesPerSquareMeter/
-          ExpiredShopCount/ContractList/ContractCompletionDegree/ConvertRate）
+    获取经营合同分析 (对齐 C# ContractAnalysisHelper.GetContractAnalysis)
+    依赖表: T_REGISTERCOMPACT, T_REGISTERCOMPACTSUB, T_PAYMENTCONFIRM,
+            T_BUSINESSPROJECT, T_SHOPCOUNT, T_SERVERPART
     """
     try:
-        # TODO: 实现完整的合同分析逻辑（涉及3张跨schema表关联+聚合计算）
-        # 原始返回模型字段：
+        from datetime import datetime as dt
+
+        def safe_dec(v):
+            try: return float(v) if v is not None else 0.0
+            except: return 0.0
+        def safe_int(v):
+            try: return int(v) if v is not None else 0
+            except: return 0
+
+        # 默认统计日期
+        if not statisticsDate:
+            statisticsDate = dt.now().strftime("%Y-%m-%d")
+
+        # ========== 1. 构建 WHERE 子句 (对齐 C#) ==========
+        where_sql = ""
+        if Serverpart_ID:
+            where_sql = f" AND D.SERVERPART_ID IN ({Serverpart_ID})"
+        elif SPRegionType_ID:
+            where_sql = f" AND D.SERVERPART_ID IN ({SPRegionType_ID})"
+        elif provinceCode:
+            # 通过 FieldEnum 获取省份内码
+            fe_rows = db.execute_query(f"""SELECT "FIELDENUM_ID" FROM "T_FIELDENUM"
+                WHERE "FIELD_NAME" = 'DIVISION_CODE' AND "FIELDENUM_VALUE" = '{provinceCode}'""") or []
+            if fe_rows:
+                province_id = fe_rows[0].get("FIELDENUM_ID")
+                where_sql = f" AND D.PROVINCE_CODE = {province_id}"
+
+        # 拼接 EXISTS 子查询
+        exists_sql = ""
+        if where_sql:
+            exists_sql = f""" AND EXISTS (SELECT 1 FROM "T_RTREGISTERCOMPACT" C, "T_SERVERPART" D
+                WHERE A."REGISTERCOMPACT_ID" = C."REGISTERCOMPACT_ID"
+                AND C."SERVERPART_ID" = D."SERVERPART_ID"{where_sql})"""
+
+        # ========== 2. 查询签约合同 → ContractProfitLoss ==========
+        sql_contract = f"""SELECT SUM(A."COMPACT_AMOUNT") AS "TOTAL_AMOUNT"
+            FROM "T_REGISTERCOMPACT" A, "T_REGISTERCOMPACTSUB" B
+            WHERE A."REGISTERCOMPACT_ID" = B."REGISTERCOMPACT_ID"
+                AND A."COMPACT_STATE" = 1000{exists_sql}"""
+        contract_rows = db.execute_query(sql_contract) or []
+        contract_profit_loss = round(safe_dec(contract_rows[0].get("TOTAL_AMOUNT")) if contract_rows else 0, 2)
+
+        # ========== 3. 查询门店数量 → ShopCount ==========
+        shop_where = ""
+        if Serverpart_ID:
+            shop_where = f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        elif provinceCode:
+            fe_rows2 = db.execute_query(f"""SELECT "FIELDENUM_ID" FROM "T_FIELDENUM"
+                WHERE "FIELD_NAME" = 'DIVISION_CODE' AND "FIELDENUM_VALUE" = '{provinceCode}'""") or []
+            if fe_rows2:
+                shop_where = f' AND B."PROVINCE_CODE" = {fe_rows2[0].get("FIELDENUM_ID")}'
+
+        # 统计日期过滤
+        stat_date_str = dt.strptime(statisticsDate, "%Y-%m-%d").strftime("%Y%m%d") if "-" in statisticsDate else statisticsDate
+        stat_date_next = (dt.strptime(statisticsDate, "%Y-%m-%d") + __import__('datetime').timedelta(days=1)).strftime("%Y%m%d")
+        shop_where += f' AND A."OPERATE_DATE" >= {stat_date_str} AND A."OPERATE_DATE" < {stat_date_next}'
+
+        sql_shop = f"""SELECT SUM(A."SHOP_BUSINESSCOUNT") AS "SHOP_COUNT"
+            FROM "T_SHOPCOUNT" A, "T_SERVERPART" B
+            WHERE A."SERVERPART_ID" = B."SERVERPART_ID"{shop_where}"""
+        shop_rows = db.execute_query(sql_shop) or []
+        shop_count = safe_int(shop_rows[0].get("SHOP_COUNT")) if shop_rows else 0
+
+        # ========== 4. 查询欠款 → SalesPerSquareMeter ==========
+        sql_arrearage = f"""SELECT SUM(A."CURRENTBALANCE" / 10000) AS "TOTAL_BALANCE"
+            FROM "T_PAYMENTCONFIRM" A, "T_BUSINESSPROJECT" B
+            WHERE A."BUSINESSPROJECT_ID" = B."BUSINESSPROJECT_ID"
+                AND A."PAYMENTCONFIRM_VALID" = 1
+                AND A."MERCHANTS_ID" IS NOT NULL
+                AND A."ACCOUNT_TYPE" = 1000
+                AND A."CURRENTBALANCE" <> 0
+                AND B."PROJECT_VALID" > 0
+                AND A."ACCOUNT_DATE" <= {stat_date_str}{exists_sql}"""
+        arr_rows = db.execute_query(sql_arrearage) or []
+        sales_per_sqm = round(safe_dec(arr_rows[0].get("TOTAL_BALANCE")) if arr_rows else 0, 2)
+
+        # ========== 5. 查询到期合同 → ExpiredShopCount + ContractList ==========
+        stat_dt = dt.strptime(statisticsDate, "%Y-%m-%d") if "-" in statisticsDate else dt.strptime(statisticsDate, "%Y%m%d")
+        stat_short = stat_dt.strftime("%Y/%m/%d")
+
+        sql_expired = f"""SELECT
+                CASE WHEN "COMPACT_ENDDATE" < ADD_MONTHS(TRUNC(SYSDATE),1) THEN 1
+                    WHEN "COMPACT_ENDDATE" > ADD_MONTHS(TRUNC(SYSDATE),1) AND
+                        "COMPACT_ENDDATE" <= ADD_MONTHS(TRUNC(SYSDATE),3) THEN 2
+                    ELSE 3 END AS "EXPIRED_SITUATION",
+                A."REGISTERCOMPACT_ID", A."COMPACT_NAME",
+                TO_CHAR(A."COMPACT_ENDDATE", 'YYYY-MM-DD') AS "COMPACT_ENDDATE"
+            FROM "T_REGISTERCOMPACT" A
+            WHERE "COMPACT_STATE" = 1000
+                AND "COMPACT_ENDDATE" > TO_DATE('{stat_short}','YYYY/MM/DD')
+                AND "COMPACT_ENDDATE" <= ADD_MONTHS(TO_DATE('{stat_short}','YYYY/MM/DD'),6){exists_sql}"""
+        expired_rows = db.execute_query(sql_expired) or []
+
+        # 筛选 EXPIRED_SITUATION = 3 (3~6个月到期的)
+        expired_3 = [r for r in expired_rows if safe_int(r.get("EXPIRED_SITUATION")) == 3]
+        expired_shop_count = len(expired_3)
+        contract_list = []
+        if expired_3:
+            # 按到期日期排序
+            expired_3.sort(key=lambda x: x.get("COMPACT_ENDDATE", ""))
+            for r in expired_3:
+                contract_list.append({
+                    "name": r.get("COMPACT_NAME", ""),
+                    "value": str(r.get("COMPACT_ENDDATE", "")).split(" ")[0]
+                })
+
+        # ========== 6. 组装返回结构 ==========
         result_data = {
-            "ContractProfitLoss": 0,        # 合同总金额
-            "ShopCount": 0,                  # 在营门店数量
-            "SalesPerSquareMeter": 0,        # 欠款总金额（万元）
-            "ExpiredShopCount": 0,           # 半年内到期合同数量
-            "ContractList": [],              # 到期合同列表 [{name, value}]
-            "ContractCompletionDegree": 67.1,  # 合同完成度（原代码写死67.1）
-            "ConvertRate": 50.5,             # 转化率（原代码写死50.5）
+            "ContractProfitLoss": contract_profit_loss,
+            "ShopCount": shop_count,
+            "SalesPerSquareMeter": sales_per_sqm,
+            "ExpiredShopCount": expired_shop_count,
+            "ContractList": contract_list if contract_list else None,
+            "ContractCompletionDegree": 67.1,  # C# 写死
+            "ConvertRate": 50.5,               # C# 写死
         }
-        logger.warning(f"GetContractAnalysis 复杂查询暂未完整实现（需同步 CONTRACT_STORAGE 表）")
         return Result.success(data=result_data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetContractAnalysis 查询失败: {ex}")

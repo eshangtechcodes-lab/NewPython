@@ -853,9 +853,9 @@ async def get_patrol_result_list(
 @router.post("/Examine/GetEvaluateResList")
 async def get_evaluate_res_list(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
     """
-    获取考评考核数据
-    入参(AES加密)：ProvinceCode省份编码, RoleType考核对象(1经营商户/2供应商),
-                   StatisticsMonth统计月份, ServerpartId服务区内码
+    获取考评考核数据 (对齐 C# EvaluateHelper.GetEvaluateResList)
+    数据源: Redis (db=3, key={ProvinceCode}:evaluate:{RoleType}:{StatisticsMonth})
+    入参(AES加密): ProvinceCode, RoleType(1经营商户/2供应商), StatisticsMonth, ServerpartId
     """
     try:
         from core.aes_util import decrypt_post_data
@@ -864,11 +864,63 @@ async def get_evaluate_res_list(postData: dict = None, db: DatabaseHelper = Depe
         role_type = int(params.get("RoleType", 1))
         statistics_month = params.get("StatisticsMonth", "")
         serverpart_id = params.get("ServerpartId", "")
-        logger.info(f"GetEvaluateResList 解密参数: ProvinceCode={province_code}, RoleType={role_type}")
+        logger.info(f"GetEvaluateResList 解密参数: ProvinceCode={province_code}, RoleType={role_type}, "
+                     f"StatisticsMonth={statistics_month}, ServerpartId={serverpart_id}")
 
-        # TODO: 实现查询逻辑 - ESCG.EvaluateHelper.GetEvaluateResList
-        logger.warning("GetEvaluateResList 查询逻辑暂未实现")
-        json_list = JsonListData.create(data_list=[], total=0)
+        # 从 Redis 读取考评数据 (对齐 C# RedisHelper(3, RevenueRedisConfig))
+        evaluate_list = []
+        try:
+            import redis
+            import json as json_mod
+            # 读取 Redis 配置
+            redis_host = "127.0.0.1"
+            redis_port = 6379
+            try:
+                from core.config import settings
+                if hasattr(settings, 'REVENUE_REDIS_HOST'):
+                    redis_host = settings.REVENUE_REDIS_HOST
+                if hasattr(settings, 'REVENUE_REDIS_PORT'):
+                    redis_port = settings.REVENUE_REDIS_PORT
+            except Exception:
+                pass
+
+            r = redis.Redis(host=redis_host, port=redis_port, db=3, decode_responses=True)
+            table_name = f"{province_code}:evaluate:{role_type}:{statistics_month}"
+            list_len = r.llen(table_name)
+            if list_len > 0:
+                # 从 Redis List 中获取所有元素
+                raw_list = r.lrange(table_name, 0, -1)
+                for item in raw_list:
+                    try:
+                        obj = json_mod.loads(item) if isinstance(item, str) else item
+                        evaluate_list.append(obj)
+                    except Exception:
+                        continue
+
+                # 按 ServerpartId 过滤
+                if serverpart_id:
+                    sp_ids = [s.strip() for s in str(serverpart_id).split(",")]
+                    evaluate_list = [e for e in evaluate_list
+                                     if str(e.get("ServerpartId", "")) in sp_ids]
+
+                # 按 EvaluateScore 降序排序
+                if evaluate_list:
+                    evaluate_list.sort(
+                        key=lambda x: float(x.get("EvaluateScore", 0) or 0),
+                        reverse=True
+                    )
+        except Exception as redis_err:
+            logger.warning(f"GetEvaluateResList Redis 读取失败: {redis_err}，返回空列表")
+            evaluate_list = []
+
+        # 返回结构对齐 C# JsonList<EvaluateModel>
+        total = len(evaluate_list)
+        json_list = JsonListData.create(
+            data_list=evaluate_list,
+            total=total,
+            page_size=total if total > 0 else 10,
+            page_index=1
+        )
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetEvaluateResList AES解密失败: {ve}")
