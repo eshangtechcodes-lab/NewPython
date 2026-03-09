@@ -337,8 +337,8 @@
     "method": "POST",
     "route": "/BigData/GetRevenueTrendChart",
     "ctrl": "BigData",
-    "old": "C=100,T=30",
-    "new": "C=100,T=30",
+    "old": "C=100,T=31",
+    "new": "C=100,T=31",
     "result": "PASS"
   },
   {

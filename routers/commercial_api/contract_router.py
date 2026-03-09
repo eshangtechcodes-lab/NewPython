@@ -216,11 +216,10 @@ async def get_merchant_account_split(
         if not rows:
             return Result.fail(code=101, msg="查询失败，无数据返回！")
 
-        # 汇总统计（排除无效商户）
-        valid_rows = [r for r in rows if r.get("MERCHANTS_ID") and int(r.get("MERCHANTS_ID", 0) or 0) != 0]
-        total_project = sum(r.get("PROJECT_COUNT", 0) or 0 for r in valid_rows)
-        total_sub_royalty_price = sum(float(r.get("SUBROYALTY_PRICE", 0) or 0) for r in valid_rows)
-        total_sub_royalty_theory = sum(float(r.get("SUBROYALTY_THEORY", 0) or 0) for r in valid_rows)
+        # 汇总统计 — 对齐C#: Compute("sum(PROJECT_COUNT)", "") 包含所有行
+        total_project = sum(r.get("PROJECT_COUNT", 0) or 0 for r in rows)
+        total_sub_royalty_price = sum(float(r.get("SUBROYALTY_PRICE", 0) or 0) for r in rows)
+        total_sub_royalty_theory = sum(float(r.get("SUBROYALTY_THEORY", 0) or 0) for r in rows)
 
         # 获取商户名称
         merchant_names = {}

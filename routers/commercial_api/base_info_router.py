@@ -164,10 +164,15 @@ async def get_business_trade_list_post(
         rows = db.execute_query(sql)
         total_count = len(rows)
 
-        # 分页
-        if page_index > 0 and page_size > 0:
-            start = (page_index - 1) * page_size
+        # 分页 — 对齐 C# GetDataTableWithPageSize(dt, pageSize, pageIndex)
+        # C# 逻辑: for(i=0; i<pageSize; i++) { RN = pageSize*(pageIndex-1)+i; }
+        # pageSize=0 时循环不执行，返回空列表
+        if page_size > 0 and page_index > 0:
+            start = page_size * (page_index - 1)
             rows = rows[start:start + page_size]
+        else:
+            # pageSize=0 或 pageIndex=0: C# 返回空列表
+            rows = []
 
         # 字段映射
         trade_list = []

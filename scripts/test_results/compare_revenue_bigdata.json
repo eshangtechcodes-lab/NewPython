@@ -1,19 +1,13 @@
 {
-  "time": "2026-03-09 12:12:19",
-  "elapsed": 31.4,
+  "time": "2026-03-09 15:23:58",
+  "elapsed": 30.1,
   "stats": {
-    "PASS": 73,
-    "DIFF": 1,
+    "PASS": 74,
+    "DIFF": 0,
     "SKIP": 0,
     "FIELD_DIFF": 0
   },
-  "diffs": [
-    {
-      "method": "GET",
-      "route": "/Revenue/GetShopINCAnalysis",
-      "detail": "Code: 旧=101 新=100"
-    }
-  ],
+  "diffs": [],
   "field_diffs": [],
   "ignored_notes": [
     {
