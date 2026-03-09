@@ -176,8 +176,8 @@ async def get_merchant_account_split(
 # ===== 3. GetMerchantAccountDetail =====
 @router.get("/Contract/GetMerchantAccountDetail")
 async def get_merchant_account_detail(
-    MerchantId: Optional[int] = Query(None, description="经营商户内码"),
-    StatisticsMonth: Optional[str] = Query(None, description="统计结束月份，格式：yyyy-MM"),
+    MerchantId: int = Query(..., description="经营商户内码"),
+    StatisticsMonth: str = Query(..., description="统计结束月份，格式yyyyMM"),
     StatisticsStartMonth: Optional[str] = Query("", description="统计开始月份"),
     calcType: int = Query(1, description="计算方式：1=当月，2=累计"),
     CompactTypes: str = Query("340001", description="合同类型"),
@@ -188,15 +188,156 @@ async def get_merchant_account_detail(
 ):
     """
     获取经营商户应收拆分明细数据
-    原路由: [Route("Contract/GetMerchantAccountDetail")] GET
-    原 Helper: AccountHelper.GetMerchantAccountDetail
-    依赖表: CONTRACT_STORAGE 相关表
+    对齐 C# AccountHelper.GetMerchantAccountDetail
+    依赖表: T_MERCHANTSPLIT, T_COOPMERCHANTS, T_SERVERPARTSHOP, T_BRAND
     返回: MerchantAccountModel
     """
     try:
-        # TODO: 实现 AccountHelper.GetMerchantAccountDetail 逻辑
-        logger.warning(f"GetMerchantAccountDetail 暂未完整实现（需同步 CONTRACT_STORAGE 表）")
-        return Result.fail(code=101, msg="查询失败，无数据返回！")
+        def safe_dec(v):
+            try: return float(v) if v is not None else 0.0
+            except: return 0.0
+        def safe_int(v):
+            try: return int(v) if v is not None else 0
+            except: return 0
+
+        # 构建 WHERE 条件 (对齐 C#)
+        where_sql = f" AND MERCHANTS_ID = {MerchantId}"
+        if CompactTypes:
+            where_sql += f" AND COMPACT_TYPE IN ({CompactTypes})"
+        if BusinessTypes:
+            where_sql += f" AND BUSINESS_TYPE IN ({BusinessTypes})"
+        if SettlementMods:
+            where_sql += f" AND SETTLEMENT_MODES IN ({SettlementMods})"
+        if calcType == 1:
+            where_sql += f" AND STATISTICS_MONTH = {StatisticsMonth}"
+        else:
+            where_sql += f" AND STATISTICS_MONTH >= {StatisticsStartMonth} AND STATISTICS_MONTH <= {StatisticsMonth}"
+
+        # 查询 T_MERCHANTSPLIT 全部明细
+        sql = f"""SELECT * FROM "T_MERCHANTSPLIT"
+            WHERE "MERCHANTSPLIT_STATE" = 1{where_sql}"""
+        rows = db.execute_query(sql) or []
+
+        if not rows:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+        # 汇总商户级数据
+        total_sub_royalty_price = sum(safe_dec(r.get("SUBROYALTY_PRICE")) for r in rows)
+        total_sub_royalty_theory = sum(safe_dec(r.get("SUBROYALTY_THEORY")) for r in rows)
+        total_receivable = round(total_sub_royalty_price - total_sub_royalty_theory, 2)
+
+        # 查询商户名称
+        merchant_name = ""
+        m_rows = db.execute_query(f"""SELECT "COOPMERCHANTS_NAME" FROM "T_COOPMERCHANTS"
+            WHERE "COOPMERCHANTS_ID" = {MerchantId}""") or []
+        if m_rows:
+            merchant_name = m_rows[0].get("COOPMERCHANTS_NAME", "")
+
+        # 查询品牌信息（带省份过滤）
+        brand_rows = db.execute_query("""SELECT "BRAND_ID","BRAND_NAME","BRAND_INTRO"
+            FROM "T_BRAND" WHERE "PROVINCE_CODE" = 340000""") or []
+        brand_map = {}
+        for b in brand_rows:
+            bid = str(b.get("BRAND_ID", ""))
+            brand_map[bid] = {
+                "BrandId": safe_int(b.get("BRAND_ID")),
+                "BrandName": b.get("BRAND_NAME", ""),
+                "BrandICO": b.get("BRAND_INTRO", ""),
+            }
+
+        # 按 SERVERPART_ID 分组
+        from collections import defaultdict
+        sp_groups = defaultdict(list)
+        for r in rows:
+            sp_id = str(r.get("SERVERPART_ID", ""))
+            sp_groups[sp_id].append(r)
+
+        project_detail_list = []
+        for sp_id, sp_rows in sp_groups.items():
+            sp_name = sp_rows[0].get("SERVERPART_NAME", "")
+            sp_sub_price = sum(safe_dec(r.get("SUBROYALTY_PRICE")) for r in sp_rows)
+            sp_sub_theory = sum(safe_dec(r.get("SUBROYALTY_THEORY")) for r in sp_rows)
+            sp_receivable = round(sp_sub_price - sp_sub_theory, 2)
+
+            # 遍历每个项目，构建 BrandAccountList
+            brand_account_list = []
+            for dr in sp_rows:
+                brand_model = {
+                    "BusinessType": safe_int(dr.get("BUSINESS_TYPE")),
+                    "SettlementMods": safe_int(dr.get("SETTLEMENT_MODES")),
+                    "SubRoyaltyPrice": safe_dec(dr.get("SUBROYALTY_PRICE")),
+                    "SubRoyaltyTheory": safe_dec(dr.get("SUBROYALTY_THEORY")),
+                    "ReceivableAmount": round(safe_dec(dr.get("SUBROYALTY_PRICE")) - safe_dec(dr.get("SUBROYALTY_THEORY")), 2),
+                    "BrandId": None,
+                    "BrandName": None,
+                    "BrandICO": None,
+                }
+                # 查品牌信息（通过门店表中间跳转）
+                shop_id = str(dr.get("SERVERPARTSHOP_ID", ""))
+                if shop_id:
+                    shop_rows = db.execute_query(f"""SELECT "BUSINESS_BRAND","BRAND_NAME"
+                        FROM "T_SERVERPARTSHOP"
+                        WHERE "SERVERPARTSHOP_ID" IN ({shop_id}) AND "BUSINESS_BRAND" IS NOT NULL""") or []
+                    if shop_rows:
+                        b_id = str(shop_rows[0].get("BUSINESS_BRAND", ""))
+                        if b_id in brand_map:
+                            brand_model["BrandId"] = brand_map[b_id]["BrandId"]
+                            brand_model["BrandName"] = brand_map[b_id]["BrandName"]
+                            brand_model["BrandICO"] = brand_map[b_id]["BrandICO"]
+                            if brand_model["BrandICO"] and brand_model["BrandICO"].startswith("/"):
+                                brand_model["BrandICO"] = "http://yida.anhighway.cn" + brand_model["BrandICO"]
+                        else:
+                            brand_model["BrandId"] = safe_int(b_id)
+                            brand_model["BrandName"] = shop_rows[0].get("BRAND_NAME", "")
+
+                brand_account_list.append(brand_model)
+
+            # 对品牌列表排序
+            if SortStr:
+                sort_key = SortStr.split(" ")[0]
+                is_desc = SortStr.lower().endswith(" desc")
+                sort_fn = {
+                    "SubRoyaltyPrice": lambda x: x.get("SubRoyaltyPrice", 0),
+                    "SubRoyaltyTheory": lambda x: x.get("SubRoyaltyTheory", 0),
+                    "ReceivableAmount": lambda x: x.get("ReceivableAmount", 0),
+                }.get(sort_key, None)
+                if sort_fn:
+                    brand_account_list.sort(key=sort_fn, reverse=is_desc)
+
+            detail_model = {
+                "ServerpartId": sp_id,
+                "ServerpartName": sp_name,
+                "BrandCount": len(sp_rows),
+                "SubRoyaltyPrice": round(sp_sub_price, 2),
+                "SubRoyaltyTheory": round(sp_sub_theory, 2),
+                "ReceivableAmount": sp_receivable,
+                "BrandAccountList": brand_account_list,
+            }
+            project_detail_list.append(detail_model)
+
+        # 对服务区列表排序
+        if SortStr:
+            sort_key = SortStr.split(" ")[0]
+            is_desc = SortStr.lower().endswith(" desc")
+            sort_fn_map = {
+                "SubRoyaltyPrice": lambda x: x.get("SubRoyaltyPrice", 0),
+                "SubRoyaltyTheory": lambda x: x.get("SubRoyaltyTheory", 0),
+                "ReceivableAmount": lambda x: x.get("ReceivableAmount", 0),
+            }
+            sort_fn = sort_fn_map.get(sort_key, lambda x: x.get("ServerpartName", ""))
+            project_detail_list.sort(key=sort_fn, reverse=is_desc)
+
+        account_model = {
+            "MerchantId": MerchantId,
+            "MerchantName": merchant_name,
+            "ProjectCount": len(rows),
+            "SubRoyaltyPrice": round(total_sub_royalty_price, 2),
+            "SubRoyaltyTheory": round(total_sub_royalty_theory, 2),
+            "ReceivableAmount": total_receivable,
+            "ProjectDetailList": project_detail_list,
+        }
+
+        return Result.success(data=account_model, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMerchantAccountDetail 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")

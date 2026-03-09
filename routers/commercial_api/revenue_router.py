@@ -4214,63 +4214,337 @@ async def get_serverpart_inc_analysis(
 @router.get("/Revenue/GetShopINCAnalysis")
 async def get_shop_inc_analysis(
     calcType: int = Query(1, description="计算方式：1当日 2累计"),
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    curYear: Optional[str] = Query(None, description="本年年份"),
-    compareYear: Optional[str] = Query("", description="历年年份"),
-    serverpartId: Optional[str] = Query(None, description="服务区内码"),
-    StatisticsStartDate: Optional[str] = Query("", description="开始日期"),
-    StatisticsEndDate: Optional[str] = Query("", description="结束日期"),
+    pushProvinceCode: str = Query(..., description="省份编码"),
+    curYear: int = Query(..., description="本年年份"),
+    compareYear: int = Query(..., description="历年年份"),
+    HolidayType: int = Query(..., description="节日类型：1元旦 2春运 3清明 4五一 5端午 6暑期 7中秋 8国庆"),
+    ServerpartId: int = Query(..., description="服务区内码"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+    CurStartDate: Optional[str] = Query("", description="统计开始日期"),
     SortStr: Optional[str] = Query("", description="排序字段"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取门店营收增幅分析 (SQL平移完成)"""
+    """获取门店营收增幅分析 (对齐C# HolidayHelper.GetShopINCAnalysis)"""
     try:
-        from datetime import datetime as dt
+        from datetime import datetime as dt, timedelta
 
         def safe_dec(v):
             try: return float(v) if v is not None else 0.0
             except: return 0.0
 
-        if not serverpartId:
+        # 默认统计日期
+        if not StatisticsDate:
+            StatisticsDate = dt.now().strftime("%Y-%m-%d")
+
+        # 解析统计日期
+        if "-" in StatisticsDate:
+            stat_date = dt.strptime(StatisticsDate, "%Y-%m-%d")
+        else:
+            stat_date = dt.strptime(StatisticsDate, "%Y%m%d")
+
+        # ========== 1. 获取节日日期范围 (对齐 CommonHelper.GetHoliday) ==========
+        holiday_map = {1: "元旦", 2: "春运", 3: "清明节", 4: "劳动节", 5: "端午节", 6: "暑期", 7: "中秋节", 8: "国庆节"}
+        h_name = holiday_map.get(HolidayType, "")
+
+        if HolidayType == 6:
+            # 暑期固定
+            statistics_start = dt(curYear, 7, 1)
+            statistics_end = dt(curYear, 8, 31)
+            compare_start = dt(compareYear, 7, 1)
+            compare_end = dt(compareYear, 8, 31)
+        elif HolidayType == 0:
+            # 自定义日期范围
+            if not CurStartDate:
+                CurStartDate = StatisticsDate
+            statistics_start = dt.strptime(CurStartDate, "%Y-%m-%d") if "-" in CurStartDate else dt.strptime(CurStartDate, "%Y%m%d")
+            statistics_end = stat_date
+            compare_start = statistics_start.replace(year=statistics_start.year - 1)
+            compare_end = statistics_end.replace(year=statistics_end.year - 1)
+        else:
+            # 从 T_HOLIDAY 表查询节日日期
+            cur_desc = f"{curYear}年{h_name}"
+            cmp_desc = f"{compareYear}年{h_name}"
+            h_rows = db.execute_query(f"""SELECT "HOLIDAY_DATE","HOLIDAY_DESC" FROM "T_HOLIDAY"
+                WHERE "HOLIDAY_DESC" IN ('{cur_desc}','{cmp_desc}')""") or []
+            if not h_rows:
+                return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+            def to_dt(v):
+                if isinstance(v, dt): return v
+                if hasattr(v, 'year'): return dt(v.year, v.month, v.day)
+                if isinstance(v, str): return dt.strptime(v[:10], "%Y-%m-%d")
+                return v
+
+            cur_dates = [to_dt(r["HOLIDAY_DATE"]) for r in h_rows if r.get("HOLIDAY_DESC") == cur_desc and r.get("HOLIDAY_DATE")]
+            cmp_dates = [to_dt(r["HOLIDAY_DATE"]) for r in h_rows if r.get("HOLIDAY_DESC") == cmp_desc and r.get("HOLIDAY_DATE")]
+            if not cur_dates or not cmp_dates:
+                return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+            statistics_start = min(cur_dates)
+            statistics_end = max(cur_dates)
+            compare_start = min(cmp_dates)
+            compare_end = max(cmp_dates)
+
+            # 按节日类型调整日期范围 (对齐 C# switch)
+            if HolidayType in (1, 3, 5, 7):
+                # 元旦/清明/端午/中秋：开始前1天到开始后3天
+                statistics_end = statistics_start + timedelta(days=3)
+                statistics_start = statistics_start - timedelta(days=1)
+                compare_end = compare_start + timedelta(days=3)
+                compare_start = compare_start - timedelta(days=1)
+            elif HolidayType == 4:
+                # 五一：开始前1天到结束后1天
+                statistics_end = statistics_end + timedelta(days=1)
+                statistics_start = statistics_start - timedelta(days=1)
+                compare_end = compare_end + timedelta(days=1)
+                compare_start = compare_start - timedelta(days=1)
+            elif HolidayType == 8:
+                # 国庆
+                if curYear == 2023:
+                    statistics_start = dt(curYear, 9, 27)
+                    statistics_end = dt(curYear, 10, 6)
+                else:
+                    statistics_start = dt(curYear, 9, 29)
+                    statistics_end = dt(curYear, 10, 8)
+                if compareYear == 2023:
+                    compare_start = dt(compareYear, 9, 27)
+                    compare_end = dt(compareYear, 10, 6)
+                else:
+                    compare_start = dt(compareYear, 9, 29)
+                    compare_end = dt(compareYear, 10, 8)
+            # HolidayType == 2 (春运): 使用原始日期不调整
+
+        # 验证统计日期范围
+        if stat_date < statistics_start:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+        elif stat_date > statistics_end:
+            stat_date = statistics_end
+
+        # 处理 CurStartDate 与节日开始日期的偏移
+        if CurStartDate:
+            cur_start_dt = dt.strptime(CurStartDate, "%Y-%m-%d") if "-" in CurStartDate else dt.strptime(CurStartDate, "%Y%m%d")
+            if cur_start_dt > statistics_start:
+                offset_days = (cur_start_dt - statistics_start).days
+                compare_start = compare_start + timedelta(days=offset_days)
+                statistics_start = cur_start_dt
+
+        # ========== 2. 查询节日营收 (T_HOLIDAYREVENUE) ==========
+        where_rev = f' AND A."SERVERPART_ID" = \'{ServerpartId}\''
+
+        # 本年营收
+        if calcType == 1:
+            # 当日
+            cur_rev_start = stat_date.strftime("%Y%m%d")
+        else:
+            cur_rev_start = statistics_start.strftime("%Y%m%d")
+        cur_rev_end = stat_date.strftime("%Y%m%d")
+
+        sql_cur_rev = f"""SELECT A."SERVERPARTSHOP_ID", SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+            FROM "T_HOLIDAYREVENUE" A
+            WHERE A."HOLIDAYREVENUE_STATE" = 1
+                AND A."STATISTICS_DATE" BETWEEN {cur_rev_start} AND {cur_rev_end}{where_rev}
+            GROUP BY A."SERVERPARTSHOP_ID" """
+        dt_cur_rev = db.execute_query(sql_cur_rev) or []
+
+        # 历年营收
+        day_span = (stat_date - statistics_start).days
+        cy_date = compare_start + timedelta(days=day_span)
+        if calcType == 1:
+            cmp_rev_start = cy_date.strftime("%Y%m%d")
+        else:
+            cmp_rev_start = compare_start.strftime("%Y%m%d")
+        cmp_rev_end = cy_date.strftime("%Y%m%d")
+
+        sql_cmp_rev = f"""SELECT A."SERVERPARTSHOP_ID", SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+            FROM "T_HOLIDAYREVENUE" A
+            WHERE A."HOLIDAYREVENUE_STATE" = 1
+                AND A."STATISTICS_DATE" BETWEEN {cmp_rev_start} AND {cmp_rev_end}{where_rev}
+            GROUP BY A."SERVERPARTSHOP_ID" """
+        dt_cmp_rev = db.execute_query(sql_cmp_rev) or []
+
+        # ========== 关键判断：本年和历年营收都为空则返回 null/101 ==========
+        if not dt_cur_rev and not dt_cmp_rev:
             return Result.fail(code=101, msg="查询失败，无数据返回！")
 
-        where_sql = f' AND A."SERVERPART_ID" = {serverpartId}'
-        if StatisticsStartDate:
-            sd = dt.strptime(StatisticsStartDate, "%Y-%m-%d").strftime("%Y%m%d") if "-" in StatisticsStartDate else StatisticsStartDate
-            where_sql += f' AND A."STATISTICS_DATE" >= {sd}'
-        if StatisticsEndDate:
-            ed = dt.strptime(StatisticsEndDate, "%Y-%m-%d").strftime("%Y%m%d") if "-" in StatisticsEndDate else StatisticsEndDate
-            where_sql += f' AND A."STATISTICS_DATE" <= {ed}'
+        # 构建查找映射
+        cur_rev_map = {}
+        for r in dt_cur_rev:
+            sid = str(r.get("SERVERPARTSHOP_ID", ""))
+            cur_rev_map[sid] = safe_dec(r.get("REVENUE_AMOUNT"))
+        cmp_rev_map = {}
+        for r in dt_cmp_rev:
+            sid = str(r.get("SERVERPARTSHOP_ID", ""))
+            cmp_rev_map[sid] = safe_dec(r.get("REVENUE_AMOUNT"))
 
-        sql = f"""SELECT A."SHOPTRADE", A."BUSINESS_TYPE",
-                SUM(A."REVENUE_AMOUNT") AS "CUR_REVENUE",
-                SUM(A."TICKET_COUNT") AS "CUR_TICKET"
-            FROM "T_REVENUEDAILY" A
-            WHERE A."REVENUEDAILY_STATE" = 1{where_sql}
-            GROUP BY A."SHOPTRADE", A."BUSINESS_TYPE"
-            ORDER BY SUM(A."REVENUE_AMOUNT") DESC"""
-        rows = db.execute_query(sql) or []
+        # ========== 3. 查询车流 (T_SECTIONFLOW / T_BAYONETDAILY_AH) ==========
+        where_bay = f' AND A."SERVERPART_ID" = {ServerpartId}'
 
-        if not rows:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
+        # 本年车流
+        if calcType == 1:
+            sql_cur_bay = f"""SELECT A."SERVERPART_ID", SUM(A."SERVERPART_FLOW") AS "SERVERPART_FLOW"
+                FROM "T_SECTIONFLOW" A
+                WHERE A."SECTIONFLOW_STATUS" = 1 AND A."SERVERPART_ID" > 0
+                    AND A."STATISTICS_DATE" BETWEEN {stat_date.strftime('%Y%m%d')} AND {stat_date.strftime('%Y%m%d')}{where_bay}
+                GROUP BY A."SERVERPART_ID" """
+        elif stat_date.year == 2024 and stat_date > dt(2024, 1, 28) and HolidayType == 2:
+            sql_cur_bay = f"""SELECT A."SERVERPART_ID", SUM(A."SERVERPART_FLOW") AS "SERVERPART_FLOW"
+                FROM "T_SECTIONFLOW" A
+                WHERE A."SECTIONFLOW_STATUS" = 1 AND A."SERVERPART_ID" > 0
+                    AND A."STATISTICS_DATE" BETWEEN {(statistics_start + timedelta(days=3)).strftime('%Y%m%d')} AND {stat_date.strftime('%Y%m%d')}{where_bay}
+                GROUP BY A."SERVERPART_ID" """
+        else:
+            # 默认使用 T_BAYONETDAILY_AH
+            sql_cur_bay = f"""SELECT A."SERVERPART_ID", SUM(A."VEHICLE_COUNT") AS "SERVERPART_FLOW"
+                FROM "T_BAYONETDAILY_AH" A
+                WHERE A."INOUT_TYPE" = 1 AND A."SERVERPART_ID" > 0
+                    AND A."STATISTICS_DATE" BETWEEN {statistics_start.strftime('%Y%m%d')} AND {stat_date.strftime('%Y%m%d')}{where_bay}
+                GROUP BY A."SERVERPART_ID" """
+        dt_cur_bay = db.execute_query(sql_cur_bay) or []
 
-        data_list = []
-        for r in rows:
-            data_list.append({
-                "ShopTrade": r.get("SHOPTRADE", ""),
-                "BusinessType": r.get("BUSINESS_TYPE", ""),
-                "CurRevenue": safe_dec(r.get("CUR_REVENUE")),
-                "CurTicket": safe_dec(r.get("CUR_TICKET")),
-            })
-        sort_field = SortStr.lower() if SortStr else ""
-        if sort_field:
-            data_list.sort(key=lambda x: x.get("CurRevenue", 0), reverse=True)
+        # 历年车流
+        if calcType == 1:
+            sql_cmp_bay = f"""SELECT A."SERVERPART_ID", SUM(A."SERVERPART_FLOW") AS "SERVERPART_FLOW"
+                FROM "T_SECTIONFLOW" A
+                WHERE A."SECTIONFLOW_STATUS" = 1 AND A."SERVERPART_ID" > 0
+                    AND A."STATISTICS_DATE" BETWEEN {cy_date.strftime('%Y%m%d')} AND {cy_date.strftime('%Y%m%d')}{where_bay}
+                GROUP BY A."SERVERPART_ID" """
+        elif stat_date.year == 2024 and stat_date > dt(2024, 1, 28) and HolidayType == 2:
+            sql_cmp_bay = f"""SELECT A."SERVERPART_ID", SUM(A."SERVERPART_FLOW") AS "SERVERPART_FLOW"
+                FROM "T_SECTIONFLOW" A
+                WHERE A."SECTIONFLOW_STATUS" = 1 AND A."SERVERPART_ID" > 0
+                    AND A."STATISTICS_DATE" BETWEEN {(compare_start + timedelta(days=3)).strftime('%Y%m%d')} AND {cy_date.strftime('%Y%m%d')}{where_bay}
+                GROUP BY A."SERVERPART_ID" """
+        else:
+            sql_cmp_bay = f"""SELECT A."SERVERPART_ID", SUM(A."SERVERPART_FLOW") AS "SERVERPART_FLOW"
+                FROM "T_SECTIONFLOW" A
+                WHERE A."SECTIONFLOW_STATUS" = 1 AND A."SERVERPART_ID" > 0
+                    AND A."STATISTICS_DATE" BETWEEN {compare_start.strftime('%Y%m%d')} AND {cy_date.strftime('%Y%m%d')}{where_bay}
+                GROUP BY A."SERVERPART_ID" """
+        dt_cmp_bay = db.execute_query(sql_cmp_bay) or []
 
-        json_list = JsonListData.create(data_list=data_list, total=len(data_list), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        # ========== 4. 查服务区基本信息 ==========
+        sp_info = db.execute_query(f"""SELECT "SERVERPART_ID","SERVERPART_NAME","SPREGIONTYPE_ID","SPREGIONTYPE_NAME"
+            FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {ServerpartId}""") or []
+        sp_name = sp_info[0].get("SERVERPART_NAME", "") if sp_info else ""
+        sp_region_id = sp_info[0].get("SPREGIONTYPE_ID") if sp_info else None
+        sp_region_name = sp_info[0].get("SPREGIONTYPE_NAME", "") if sp_info else ""
+
+        # ========== 5. 构建服务区级增幅模型 ==========
+        def calc_inc(cur_val, cmp_val):
+            """计算增长值和增长率"""
+            result = {"curYearData": cur_val, "lYearData": cmp_val,
+                      "increaseData": None, "increaseRate": None}
+            if cur_val and cmp_val and cur_val != 0 and cmp_val != 0:
+                inc = cur_val - cmp_val
+                rate = round(inc / cmp_val * 100, 2)
+                result["increaseData"] = round(inc, 2)
+                result["increaseRate"] = rate
+            return result
+
+        # 服务区级营收汇总
+        total_cur_rev = sum(cur_rev_map.values())
+        total_cmp_rev = sum(cmp_rev_map.values())
+        # 车流汇总
+        total_cur_bay = sum(safe_dec(r.get("SERVERPART_FLOW")) for r in dt_cur_bay)
+        total_cmp_bay = sum(safe_dec(r.get("SERVERPART_FLOW")) for r in dt_cmp_bay)
+
+        revenue_inc = calc_inc(total_cur_rev, total_cmp_rev)
+        bayonet_inc = calc_inc(total_cur_bay, total_cmp_bay)
+        # 车流增长率超过1000没有可比性
+        if bayonet_inc.get("increaseRate") and bayonet_inc["increaseRate"] > 1000:
+            bayonet_inc["increaseData"] = None
+            bayonet_inc["increaseRate"] = None
+
+        # ========== 6. 查门店分组 (T_SERVERPARTSHOP) ==========
+        sql_shop = f"""SELECT "SERVERPARTSHOP_ID", "SHOPTRADE", "SHOPSHORTNAME", "BUSINESS_BRAND"
+            FROM "T_SERVERPARTSHOP"
+            WHERE "SERVERPART_ID" = {ServerpartId} AND "SHOPTRADE" IS NOT NULL"""
+        dt_shop = db.execute_query(sql_shop) or []
+
+        # 按 SHOPTRADE+SHOPSHORTNAME 分组（C: WM_CONCAT）
+        from collections import defaultdict
+        shop_groups = defaultdict(lambda: {"ids": [], "brand": None, "name": ""})
+        for s in dt_shop:
+            key = (str(s.get("SHOPTRADE", "")), str(s.get("SHOPSHORTNAME", "")))
+            shop_groups[key]["ids"].append(str(s.get("SERVERPARTSHOP_ID", "")))
+            shop_groups[key]["name"] = str(s.get("SHOPSHORTNAME", ""))
+            if s.get("BUSINESS_BRAND"):
+                shop_groups[key]["brand"] = s.get("BUSINESS_BRAND")
+
+        # ========== 7. 遍历门店，构建 ShopINCList ==========
+        inc_list = []
+        no_inc_list = []
+
+        for (trade, shop_name), info in shop_groups.items():
+            shop_ids = info["ids"]
+            cur_sum = sum(cur_rev_map.get(sid, 0) for sid in shop_ids)
+            cmp_sum = sum(cmp_rev_map.get(sid, 0) for sid in shop_ids)
+            has_shop = any(sid in cur_rev_map for sid in shop_ids) or any(sid in cmp_rev_map for sid in shop_ids)
+
+            if not has_shop:
+                continue
+
+            shop_model = {
+                "ServerpartId": ServerpartId,
+                "ServerpartName": sp_name,
+                "ServerpartShopId": ",".join(shop_ids),
+                "ServerpartShopName": info["name"],
+                "RevenueINC": {
+                    "curYearData": cur_sum if cur_sum else None,
+                    "lYearData": cmp_sum if cmp_sum else None,
+                    "increaseData": None,
+                    "increaseRate": None,
+                },
+                "Brand_Id": None,
+                "Brand_Name": None,
+                "Brand_ICO": None,
+                "CurTransaction": None,
+            }
+
+            if cur_sum and cur_sum != 0 and cmp_sum and cmp_sum != 0:
+                inc_data = round(cur_sum - cmp_sum, 2)
+                inc_rate = round(inc_data / cmp_sum * 100, 2)
+                shop_model["RevenueINC"]["increaseData"] = inc_data
+                shop_model["RevenueINC"]["increaseRate"] = inc_rate
+                inc_list.append(shop_model)
+            else:
+                no_inc_list.append(shop_model)
+
+        # 排序
+        if SortStr:
+            sort_lower = SortStr.lower()
+            is_desc = sort_lower.endswith(" desc")
+            sort_field = sort_lower.split(" ")[0]
+            field_map = {
+                "curyeardata": lambda x: x["RevenueINC"].get("curYearData") or 0,
+                "lyeardata": lambda x: x["RevenueINC"].get("lYearData") or 0,
+                "increasedata": lambda x: x["RevenueINC"].get("increaseData") or 0,
+                "increaserate": lambda x: x["RevenueINC"].get("increaseRate") or 0,
+            }
+            key_fn = field_map.get(sort_field, lambda x: 0)
+            inc_list.sort(key=key_fn, reverse=is_desc)
+
+        # 合并：有增幅的在前，无增幅的在后
+        all_shops = inc_list + no_inc_list
+
+        # ========== 8. 构建最终返回结构 (HolidayIncreaseModel) ==========
+        result_data = {
+            "SPRegionTypeId": sp_region_id,
+            "SPRegionTypeName": sp_region_name,
+            "ServerpartId": ServerpartId,
+            "ServerpartName": sp_name,
+            "RevenueINC": revenue_inc,
+            "AccountINC": {"curYearData": None, "lYearData": None, "increaseData": None, "increaseRate": None},
+            "BayonetINC": bayonet_inc,
+            "SectionFlowINC": None,
+            "ShopINCList": all_shops,
+        }
+
+        return Result.success(data=result_data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetShopINCAnalysis 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
+
 
 
 # ===== 月度经营 =====

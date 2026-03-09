@@ -1,0 +1,21 @@
+## Issue: /Contract/GetMerchantAccountDetail
+
+- Task ID: T4
+- Owner: Contract lead
+- API: /Contract/GetMerchantAccountDetail
+- Method: GET
+- Repro params: `MerchantId=-1104&StatisticsMonth=202602&StatisticsStartMonth=202602&calcType=1&CompactTypes=340001`
+- Old API result: `Result_Code=100`; top sample returns merchant summary plus `ProjectDetailList=21`
+- Python result: `Result_Code=101`; `Result_Data=null`
+- Observed diff: old C# returns detail data for a real merchant ID from `GetMerchantAccountSplit`, while current Python always falls back to placeholder no-data behavior
+- Old C# logic summary: route returns merchant receivable summary and project detail list for the selected merchant
+- Python current logic summary: current route is still a TODO placeholder and returns `101`
+- Dependency tables: `TBD` in old helper; current Python route has no SQL and cannot yet lock the final table list
+- Initial root cause: likely code placeholder
+- Final root cause: confirmed code placeholder; weak sample `MerchantId=1` hid the gap, but a split-derived merchant ID reproduces it consistently
+- Issue type: Code
+- Blocking: Yes
+- Remediation proposal: recover old helper/table flow, implement real detail query, and validate using a merchant ID produced by `GetMerchantAccountSplit`
+- Verification method: first call `/Contract/GetMerchantAccountSplit`, then reuse a returned `MerchantId` for old/new detail comparison
+- Status: Confirmed
+- Date: 2026-03-09

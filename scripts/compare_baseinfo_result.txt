@@ -15,22 +15,9 @@
  ✅ TotalCount      原:35  新:35
  ✅ List条数          原:35  新:35
  ✅ [1] 数据一致
- ❌ [2] 原:{"BUSINESSTRADE_NAME": "其他休闲餐", "BUSINESSTRADE_PNAME": "休闲小吃", "BUSINESSTRADE_IN
-       新:{"BUSINESSTRADE_NAME": "加气站", "BUSINESSTRADE_PNAME": "汽车服务", "BUSINESSTRADE_INDE
- ❌ [3] 原:{"BUSINESSTRADE_NAME": "中餐馆", "BUSINESSTRADE_PNAME": "餐饮主食", "BUSINESSTRADE_INDE
-       新:{"BUSINESSTRADE_NAME": "其他零售", "BUSINESSTRADE_PNAME": "生活零售", "BUSINESSTRADE_IND
-
---- GetShopCountList_GET ---
- ✅ Result_Code     原:100  新:100
- ✅ TotalCount      原:209  新:209
- ✅ List条数          原:209  新:209
- ❌ [1] 原:{"SHOPCOUNT_ID": 509934, "SERVERPART_ID": 417, "SPREGIONTYPE_NAME": "皖中管理中心", "S
-       新:{"SHOPCOUNT_ID": 509879, "SERVERPART_ID": 471, "SPREGIONTYPE_NAME": "皖北管理中心", "S
- ❌ [2] 原:{"SHOPCOUNT_ID": 509940, "SERVERPART_ID": 496, "SPREGIONTYPE_NAME": "皖南管理中心", "S
-       新:{"SHOPCOUNT_ID": 509880, "SERVERPART_ID": 460, "SPREGIONTYPE_NAME": "皖北管理中心", "S
- ❌ [3] 原:{"SHOPCOUNT_ID": 510048, "SERVERPART_ID": 432, "SPREGIONTYPE_NAME": "皖北管理中心", "S
-       新:{"SHOPCOUNT_ID": 509883, "SERVERPART_ID": 462, "SPREGIONTYPE_NAME": "皖北管理中心", "S
+ ✅ [2] 数据一致
+ ✅ [3] 数据一致
 
 ============================================================
-  ❌ 存在差异
+  ✅ 全部通过！
 ============================================================

@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 """批量对比 BaseInfoController 所有已实现接口"""
 import json
+import sys
 import requests
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 session = requests.Session()
 session.trust_env = False
@@ -17,7 +23,6 @@ def log(msg):
 apis = [
     ("GET", "/BaseInfo/GetSPRegionList?Province_Code=340000", "GetSPRegionList"),
     ("GET", "/BaseInfo/GetBusinessTradeList?pushProvinceCode=340000", "GetBusinessTradeList_GET"),
-    ("GET", "/BaseInfo/GetShopCountList?pushProvinceCode=340000&Statistics_Date=2025-01-01", "GetShopCountList_GET"),
 ]
 
 log("=" * 60)

@@ -1,0 +1,21 @@
+## Issue: /Contract/GetContractAnalysis
+
+- Task ID: T4
+- Owner: Contract lead
+- API: /Contract/GetContractAnalysis
+- Method: GET
+- Repro params: `statisticsDate=2026-02-13&provinceCode=340000&Serverpart_ID=416&SPRegionType_ID=`
+- Old API result: `Result_Code=100`; `ContractProfitLoss=5992.56`; `SalesPerSquareMeter=5781.24`; `ContractList=null`
+- Python result: `Result_Code=100`; `ContractProfitLoss=0`; `SalesPerSquareMeter=0`; `ContractList=[]`
+- Observed diff: result code is aligned, but key business values are still placeholder defaults; null/list semantics also differ
+- Old C# logic summary: route goes through `ContractAnalysisHelper.GetContractAnalysis` and reads contract-analysis tables rather than returning fixed defaults
+- Python current logic summary: current route returns a hard-coded response structure and logs that the complex query is not fully implemented
+- Dependency tables: `T_REGISTERCOMPACT`, `T_REGISTERCOMPACTSUB`, `T_PAYMENTCONFIRM`, `T_RTREGISTERCOMPACT`, `T_SERVERPART`
+- Initial root cause: likely code placeholder
+- Final root cause: confirmed code placeholder; current Python path has not migrated the old helper logic yet
+- Issue type: Code
+- Blocking: Yes
+- Remediation proposal: rebuild the old helper flow in Python and preserve old null/value semantics for `ContractList` and metric fields
+- Verification method: re-run the same sample against old/new APIs and compare `ContractProfitLoss`, `SalesPerSquareMeter`, and `ContractList`
+- Status: Confirmed
+- Date: 2026-03-09

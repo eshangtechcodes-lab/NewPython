@@ -105,14 +105,15 @@ async def get_business_trade_list_get(
             trade_list.append({
                 "BUSINESSTRADE_NAME": r.get("AUTOSTATISTICS_NAME"),
                 "BUSINESSTRADE_PNAME": r.get("AUTOSTATISTICS_PNAME"),
-                "BUSINESSTRADE_INDEX": r.get("AUTOSTATISTICS_INDEX"),
-                "BUSINESSTRADE_ICO": r.get("AUTOSTATISTICS_ICO"),
-                "BUSINESSTRADE_STATE": r.get("AUTOSTATISTICS_STATE"),
-                "OWNERUNIT_ID": r.get("OWNERUNIT_ID"),
-                "OWNERUNIT_NAME": r.get("OWNERUNIT_NAME"),
-                "PROVINCE_CODE": r.get("PROVINCE_CODE"),
-                "OPERATE_DATE": r.get("OPERATE_DATE"),
-                "BUSINESSTRADE_DESC": r.get("AUTOSTATISTICS_DESC"),
+                # C# GET helper only binds name and parent name for this route.
+                "BUSINESSTRADE_INDEX": None,
+                "BUSINESSTRADE_ICO": None,
+                "BUSINESSTRADE_STATE": None,
+                "OWNERUNIT_ID": None,
+                "OWNERUNIT_NAME": None,
+                "PROVINCE_CODE": None,
+                "OPERATE_DATE": None,
+                "BUSINESSTRADE_DESC": None,
             })
 
         json_list = JsonListData.create(data_list=trade_list, total=len(trade_list),

@@ -1,19 +1,24 @@
 {
-  "time": "2026-03-07 21:27:10",
-  "elapsed": 18.4,
+  "time": "2026-03-09 12:12:19",
+  "elapsed": 31.4,
   "stats": {
     "PASS": 73,
-    "DIFF": 0,
+    "DIFF": 1,
     "SKIP": 0,
-    "FIELD_DIFF": 1
+    "FIELD_DIFF": 0
   },
-  "diffs": [],
-  "field_diffs": [
+  "diffs": [
+    {
+      "method": "GET",
+      "route": "/Revenue/GetShopINCAnalysis",
+      "detail": "Code: 旧=101 新=100"
+    }
+  ],
+  "field_diffs": [],
+  "ignored_notes": [
     {
       "route": "POST /BigData/GetRevenueTrendChart",
-      "diffs": [
-        "TotalCount: 旧=32 新=42"
-      ]
+      "reason": "TotalCount depends on current half-hour window"
     }
   ]
 }

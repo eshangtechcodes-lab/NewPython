@@ -10,10 +10,18 @@ import time
 import os
 import sys
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 NEW = "http://127.0.0.1:8080/CommercialApi"
 HEADERS = {"ProvinceCode": "340000"}
 TIMEOUT = 30
 BASELINE_FILE = "scripts/test_results/baseline_cache.json"
+TIME_SENSITIVE_TOTALCOUNT_ROUTES = {
+    "/BigData/GetRevenueTrendChart",
+}
 
 # 禁用代理
 session = requests.Session()
@@ -40,7 +48,7 @@ def call_new(method, route, params):
         return -1, None, str(e)[:100]
 
 
-def compare_fields(old_data, new_data):
+def compare_fields(route, old_data, new_data):
     """对比两个响应的字段结构"""
     diffs = []
     
@@ -62,7 +70,12 @@ def compare_fields(old_data, new_data):
         # TotalCount 对比
         ot = ord_d.get("TotalCount")
         nt = nrd_d.get("TotalCount")
-        if ot is not None and nt is not None and ot != nt:
+        if (
+            ot is not None
+            and nt is not None
+            and ot != nt
+            and route not in TIME_SENSITIVE_TOTALCOUNT_ROUTES
+        ):
             diffs.append(f"TotalCount: 旧={ot} 新={nt}")
         
         # List/DataList 字段对比
@@ -129,6 +142,7 @@ def main():
     stats = {"PASS": 0, "DIFF": 0, "SKIP": 0, "FIELD_DIFF": 0}
     diff_list = []
     field_diff_list = []
+    ignored_notes = []
     
     start = time.time()
     
@@ -157,7 +171,7 @@ def main():
             
             if oc == nc:
                 # 深度对比字段
-                field_diffs = compare_fields(old_resp, nd)
+                field_diffs = compare_fields(route, old_resp, nd)
                 if field_diffs:
                     result = "FIELD_DIFF"
                     icon = "⚠️"
@@ -167,6 +181,14 @@ def main():
                     result = "PASS"
                     icon = "✅"
                     detail = f"Code={oc}"
+                    if route in TIME_SENSITIVE_TOTALCOUNT_ROUTES:
+                        detail += " (ignore time-sensitive TotalCount)"
+                        ignored_notes.append(
+                            {
+                                "route": f"{method} {route}",
+                                "reason": "TotalCount depends on current half-hour window",
+                            }
+                        )
             else:
                 result = "DIFF"
                 icon = "❌"
@@ -206,6 +228,7 @@ def main():
         "stats": stats,
         "diffs": diff_list,
         "field_diffs": field_diff_list,
+        "ignored_notes": ignored_notes,
     }
     with open("scripts/test_results/compare_revenue_bigdata.json", "w", encoding="utf-8") as f:
         json.dump(result_data, f, ensure_ascii=False, indent=2)
