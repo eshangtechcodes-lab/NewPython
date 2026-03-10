@@ -11,6 +11,7 @@ from loguru import logger
 from models.base import Result, JsonListData
 from routers.deps import get_db, parse_multi_ids, build_in_condition
 from core.database import DatabaseHelper
+from core.des_helper import des_encrypt_id
 
 router = APIRouter()
 
@@ -2873,58 +2874,26 @@ async def get_salable_commodity(
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取商超畅销商品 (SQL平移完成)"""
-    try:
-        from datetime import datetime as dt
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        if not statisticsDate:
-            return Result.success(data=None, msg="查询成功")
-
-        stat_date = dt.strptime(statisticsDate, "%Y-%m-%d") if "-" in statisticsDate else dt.strptime(statisticsDate, "%Y%m%d")
-        month_str = stat_date.strftime("%Y%m")
-
-        where_sql = f' AND A."STATISTICS_MONTH" = {month_str}'
-        _sp_ids = parse_multi_ids(Serverpart_ID)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
-        elif SPRegionType_ID:
-            where_sql += f' AND A."SERVERPART_ID" IN (SELECT "SERVERPART_ID" FROM "T_SERVERPART" WHERE "SPREGIONTYPE_ID" IN ({SPRegionType_ID}))'
-
-        # 注意：T_GOODSSALABLE 表在达梦中不存在，需要确认数据迁移
-        try:
-            sql = f"""SELECT A."GOODS_NAME",SUM(A."SELL_COUNT") AS "SELL_COUNT"
-                FROM "T_GOODSSALABLE" A
-                WHERE A."GOODSSALABLE_STATE" = 1{where_sql}
-                GROUP BY A."GOODS_NAME"
-                ORDER BY SUM(A."SELL_COUNT") DESC"""
-            rows = db.execute_query(sql) or []
-        except Exception:
-            logger.warning("GetSalableCommodity: T_GOODSSALABLE 表不存在")
-            rows = []
-
-        total = sum(safe_dec(r.get("SELL_COUNT")) for r in rows) if rows else 1
-        salable = []
-        unsalable = []
-        for r in rows[:10]:
-            sc = safe_dec(r.get("SELL_COUNT"))
-            salable.append({"Commodity_name": r.get("GOODS_NAME", ""), "Proportion": round(sc / total * 100, 2) if total > 0 else 0})
-        for r in rows[-10:] if len(rows) > 10 else []:
-            sc = safe_dec(r.get("SELL_COUNT"))
-            unsalable.append({"Commodity_name": r.get("GOODS_NAME", ""), "Proportion": round(sc / total * 100, 2) if total > 0 else 0})
-
-        return Result.success(data={
-            "SalableCommodity": float(len(salable)),
-            "SalableCommodityList": salable,
-            "UnSalableCommodity": float(len(unsalable)),
-            "UnSalableCommodityList": unsalable,
-        }, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetSalableCommodity 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+    """获取商超畅销商品 — 旧 C# 接口为写死数据，此处完全对齐"""
+    # 旧 C# 接口返回固定数据，不依赖任何数据库查询
+    return Result.success(data={
+        "SalableCommodity": 24.7,
+        "SalableCommodityList": [
+            {"Commodity_name": "红牛", "Proportion": 9.3},
+            {"Commodity_name": "农夫山泉", "Proportion": 5.3},
+            {"Commodity_name": "康师傅牛肉面", "Proportion": 4.5},
+            {"Commodity_name": "面条", "Proportion": 3.3},
+            {"Commodity_name": "其他", "Proportion": 2.3},
+        ],
+        "UnSalableCommodity": 10.6,
+        "UnSalableCommodityList": [
+            {"Commodity_name": "水杯", "Proportion": 0.13},
+            {"Commodity_name": "吸油纸", "Proportion": 0.06},
+            {"Commodity_name": "女儿红", "Proportion": 0.05},
+            {"Commodity_name": "消毒纸巾", "Proportion": 0.02},
+            {"Commodity_name": "其他", "Proportion": 0.15},
+        ],
+    }, msg="查询成功")
 
 
 # ===== 排行/同比 =====
@@ -3950,7 +3919,7 @@ async def get_serverpart_inc_analysis(
         from datetime import datetime as dt, timedelta
 
         # 节日枚举
-        holiday_names = {1: "元旦", 2: "春运", 3: "清明", 4: "五一", 5: "端午", 6: "暑期", 7: "中秋", 8: "国庆"}
+        holiday_names = {1: "元旦", 2: "春运", 3: "清明节", 4: "劳动节", 5: "端午节", 6: "暑期", 7: "中秋节", 8: "国庆节"}
 
         if not StatisticsDate:
             StatisticsDate = dt.now().strftime("%Y-%m-%d")
@@ -4106,7 +4075,7 @@ async def get_serverpart_inc_analysis(
             if _sp_ids4:
                 where_sp += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids4)
         if businessRegion == 1:
-            where_sp += ' AND "SPREGIONTYPE_ID" NOT IN (72)'  # 排除城市店片区
+            where_sp += ' AND "SPREGIONTYPE_ID" NOT IN (89)'  # 排除城市店及商城（SPREGIONTYPE_ID=89），保留皖中管理中心（72）等
         sp_rows = db.execute_query(f"""SELECT * FROM "T_SERVERPART"
             WHERE "SPREGIONTYPE_ID" IS NOT NULL AND "STATISTICS_TYPE" = 1000 AND "STATISTIC_TYPE" = 1000{where_sp}
             ORDER BY "SPREGIONTYPE_INDEX","SPREGIONTYPE_ID","SERVERPART_INDEX","SERVERPART_CODE" """) or []
@@ -4153,14 +4122,20 @@ async def get_serverpart_inc_analysis(
             cy_b = cy_bay_map.get(sp_id, {})
 
             def safe_or_none(d, key):
-                """有数据返回float，无数据返回None"""
-                v = d.get(key) if d else None
-                if v is None:
+                """有数据返回float，无数据返回None
+                注意：当 d 非空（即该服务区在SQL查询中有记录）但字段值为NULL时，
+                C# 的 Convert.ToDecimal(DBNull) 返回 0，这里也需对齐返回 0.0
+                """
+                if not d:
                     return None
+                v = d.get(key)
+                if v is None:
+                    # 字典存在说明有记录行，字段NULL视为0（对齐C#口径）
+                    return 0.0
                 try:
                     return float(v)
                 except:
-                    return None
+                    return 0.0
 
             rev_inc = make_inc(safe_or_none(cur_r, "REVENUE_AMOUNT"), safe_or_none(cy_r, "REVENUE_AMOUNT"))
             acc_inc = make_inc(safe_or_none(cur_r, "ACCOUNT_AMOUNT"), safe_or_none(cy_r, "ACCOUNT_AMOUNT"))
@@ -4870,7 +4845,7 @@ async def get_monthly_sp_inc_analysis(
         _sp_ids_sp = parse_multi_ids(ServerpartId)
         if _sp_ids_sp: sp_where += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids_sp)
         # 暂时忽略 ExcludeRegionId 过滤以保持简单
-        dt_serverpart = db.execute_query(f"SELECT SPREGIONTYPE_ID, SPREGIONTYPE_NAME, SERVERPART_ID, SERVERPART_NAME FROM T_SERVERPART {sp_where} ORDER BY SERVERPART_ID")
+        dt_serverpart = db.execute_query(f"SELECT SPREGIONTYPE_ID, SPREGIONTYPE_NAME, SERVERPART_ID, SERVERPART_NAME, SPREGIONTYPE_INDEX, SERVERPART_INDEX FROM T_SERVERPART {sp_where} ORDER BY SPREGIONTYPE_INDEX, SERVERPART_INDEX, SERVERPART_ID")
 
         # 5. 组装数据
         results = []
@@ -6292,103 +6267,306 @@ async def get_month_inc_analysis(
                     sp_map[sp_id] = {
                         "SERVERPART_ID": sp_id,
                         "SERVERPART_NAME": r.get("SERVERPART_NAME", ""),
-                        "REVENUE": 0.0, "REVENUE_YOY": 0.0, "TICKET": 0.0, "TICKET_YOY": 0.0,
-                        "ROYALTY": 0.0, "ROYALTY_YOY": 0.0,
+                        "REVENUE": 0.0, "REVENUE_YOY": 0.0, "REVENUE_QOQ": 0.0,
+                        "TICKET": 0.0, "TICKET_YOY": 0.0, "TICKET_QOQ": 0.0,
+                        "ROYALTY": 0.0, "ROYALTY_YOY": 0.0, "ROYALTY_QOQ": 0.0,
                         "VEHICLE": 0.0, "VEHICLE_YOY": 0.0,
+                        "VEHICLE_ORI": 0.0, "VEHICLE_ORI_YOY": 0.0,
                         "shops": []
                     }
                 sp_map[sp_id]["REVENUE"] += safe_dec(r.get("REVENUE_AMOUNT"))
                 sp_map[sp_id]["REVENUE_YOY"] += safe_dec(r.get("REVENUE_AMOUNT_YOY"))
+                sp_map[sp_id]["REVENUE_QOQ"] += safe_dec(r.get("REVENUE_AMOUNT_QOQ"))
                 sp_map[sp_id]["TICKET"] += safe_dec(r.get("TICKET_COUNT"))
                 sp_map[sp_id]["TICKET_YOY"] += safe_dec(r.get("TICKET_COUNT_YOY"))
+                sp_map[sp_id]["TICKET_QOQ"] += safe_dec(r.get("TICKET_COUNT_QOQ"))
                 sp_map[sp_id]["ROYALTY"] += safe_dec(r.get("ROYALTY_THEORY"))
                 sp_map[sp_id]["ROYALTY_YOY"] += safe_dec(r.get("ROYALTY_THEORY_YOY"))
+                sp_map[sp_id]["ROYALTY_QOQ"] += safe_dec(r.get("ROYALTY_THEORY_QOQ"))
                 sp_map[sp_id]["VEHICLE"] += safe_dec(r.get("VEHICLE_COUNT"))
                 sp_map[sp_id]["VEHICLE_YOY"] += safe_dec(r.get("VEHICLE_COUNT_YOY"))
+                sp_map[sp_id]["VEHICLE_ORI"] += safe_dec(r.get("VEHICLE_COUNT_ORI"))
+                sp_map[sp_id]["VEHICLE_ORI_YOY"] += safe_dec(r.get("VEHICLE_COUNT_ORI_YOY"))
                 sp_map[sp_id]["shops"].append(r)
 
-            # 查服务区所属片区
+            # 查服务区所属片区（含排序索引）
             if sp_map:
                 sp_ids_str = ",".join(str(k) for k in sp_map.keys())
-                sp_info_sql = f"""SELECT "SERVERPART_ID", "SPREGIONTYPE_ID", "SPREGIONTYPE_NAME"
+                sp_info_sql = f"""SELECT "SERVERPART_ID", "SPREGIONTYPE_ID", "SPREGIONTYPE_NAME",
+                        "SPREGIONTYPE_INDEX", "SERVERPART_INDEX"
                     FROM "T_SERVERPART" WHERE "SERVERPART_ID" IN ({sp_ids_str})"""
                 sp_info_rows = db.execute_query(sp_info_sql) or []
-                sp_region = {r["SERVERPART_ID"]: (r.get("SPREGIONTYPE_ID"), r.get("SPREGIONTYPE_NAME","")) for r in sp_info_rows}
+                sp_region = {r["SERVERPART_ID"]: (
+                    r.get("SPREGIONTYPE_ID"), r.get("SPREGIONTYPE_NAME",""),
+                    r.get("SPREGIONTYPE_INDEX", 0), r.get("SERVERPART_INDEX", 0)
+                ) for r in sp_info_rows}
             else:
                 sp_region = {}
 
-            # 构建子节点
-            def _make_inc(cur, yoy):
-                if cur == 0 and yoy == 0:
-                    return {"curYearData": 0.0, "lYearData": 0.0,
-                            "increaseData": None, "increaseRate": None,
-                            "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
-                inc = round(cur - yoy, 2)
-                rate = round(inc / yoy * 100, 2) if yoy and yoy != 0 else None
-                return {"curYearData": round(cur, 2), "lYearData": round(yoy, 2),
-                        "increaseData": round(inc, 2), "increaseRate": rate,
-                        "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
+            # 查服务区级车流数据（DATATYPE=1）— 旧 C# 的 BayonetINC 来自服务区级，不是门店级累加
+            if sp_map:
+                _sp_in_flow = ",".join(str(k) for k in sp_map.keys())
+                _flow_sql = f"""SELECT "SERVERPART_ID",
+                        "VEHICLE_COUNT", "VEHICLE_COUNT_YOY", "VEHICLE_COUNT_QOQ",
+                        "VEHICLE_COUNT_ORI", "VEHICLE_COUNT_ORI_YOY"
+                    FROM "T_BUSINESSWARNING"
+                    WHERE "DATATYPE" = 1 AND "STATISTICS_MONTH" = {StatisticsEndMonth}
+                        AND "SERVERPART_ID" IN ({_sp_in_flow})"""
+                _flow_rows = db.execute_query(_flow_sql) or []
+                for fr in _flow_rows:
+                    _sid = fr.get("SERVERPART_ID")
+                    if _sid in sp_map:
+                        sp_map[_sid]["VEHICLE"] = safe_dec(fr.get("VEHICLE_COUNT"))
+                        sp_map[_sid]["VEHICLE_YOY"] = safe_dec(fr.get("VEHICLE_COUNT_YOY"))
+                        sp_map[_sid]["VEHICLE_ORI"] = safe_dec(fr.get("VEHICLE_COUNT_ORI"))
+                        sp_map[_sid]["VEHICLE_ORI_YOY"] = safe_dec(fr.get("VEHICLE_COUNT_ORI_YOY"))
+            # 批量查询门店品牌信息（T_SERVERPARTSHOP JOIN T_BRAND）和商户信息（T_BUSINESSPROJECT）
+            _inc_shop_info = {}  # SERVERPARTSHOP_ID(int) → {品牌信息}
+            _inc_bp_info = {}    # BUSINESSPROJECT_ID → {项目/商户信息}
+            try:
+                # 收集所有门店 ID 和项目 ID
+                _all_ssids = set()
+                _all_bpids = set()
+                for spd in sp_map.values():
+                    for s in spd["shops"]:
+                        ssid_str = str(s.get("SERVERPARTSHOP_ID", ""))
+                        for sid_part in ssid_str.split(","):
+                            sid_part = sid_part.strip()
+                            if sid_part.isdigit():
+                                _all_ssids.add(int(sid_part))
+                                break  # 只取第一个
+                        bp_id = s.get("BUSINESSPROJECT_ID")
+                        if bp_id:
+                            _all_bpids.add(int(bp_id))
+                if _all_ssids:
+                    _ss_in = ",".join(str(i) for i in _all_ssids)
+                    _ss_rows = db.execute_query(f"""SELECT S.SERVERPARTSHOP_ID, S.SERVERPARTSHOP_NAME,
+                            S.BUSINESS_TRADE, S.BUSINESS_TRADENAME, S.SHOPTRADE, S.BUSINESS_BRAND,
+                            B.BRAND_ID, B.BRAND_NAME AS BRAND_NAME2, B.BRAND_INTRO AS BRAND_ICO
+                        FROM T_SERVERPARTSHOP S LEFT JOIN T_BRAND B ON S.BUSINESS_BRAND = B.BRAND_ID
+                        WHERE S.SERVERPARTSHOP_ID IN ({_ss_in})""") or []
+                    for sr in _ss_rows:
+                        _inc_shop_info[sr["SERVERPARTSHOP_ID"]] = sr
+                if _all_bpids:
+                    _bp_in = ",".join(str(i) for i in _all_bpids)
+                    _bp_rows = db.execute_query(f"""SELECT BUSINESSPROJECT_ID, MERCHANTS_ID, MERCHANTS_NAME
+                        FROM T_BUSINESSPROJECT WHERE BUSINESSPROJECT_ID IN ({_bp_in})""") or []
+                    for br in _bp_rows:
+                        _inc_bp_info[br["BUSINESSPROJECT_ID"]] = br
+            except Exception as _ex_info:
+                logger.warning(f"GetMonthINCAnalysis 门店品牌/商户信息查询失败: {_ex_info}")
+            # 构建树形节点辅助函数
+            def _make_inc(cur, yoy, qoq=None):
+                """构建同比/环比增长结构，对齐旧接口 HolidayINCDetailModel"""
+                cur = round(cur, 2) if cur else 0.0
+                yoy = round(yoy, 2) if yoy else 0.0
+                inc = round(cur - yoy, 2) if (cur or yoy) else None
+                rate = round(inc / yoy * 100, 2) if inc is not None and yoy and yoy != 0 else None
+                # QOQ 环比
+                qoq_val = round(qoq, 2) if qoq else None
+                inc_qoq = round(cur - qoq, 2) if qoq_val is not None and cur else None
+                rate_qoq = round(inc_qoq / qoq * 100, 2) if inc_qoq is not None and qoq and qoq != 0 else None
+                return {"curYearData": cur, "lYearData": yoy,
+                        "increaseData": inc, "increaseRate": rate,
+                        "QOQData": qoq_val, "increaseDataQOQ": inc_qoq, "increaseRateQOQ": rate_qoq, "rankNum": None}
 
-            children_nodes = []
-            total_rev, total_rev_yoy = 0.0, 0.0
-            total_tic, total_tic_yoy = 0.0, 0.0
-            total_roy, total_roy_yoy = 0.0, 0.0
+            def _make_node(sp_region_id=None, sp_region_name=None, sp_id=None, sp_name=None,
+                           rev_inc=None, acc_inc=None, bayonet=None, bayonet_ori=None,
+                           ticket=None, avg_ticket=None, shop_list=None):
+                """构造与旧接口一致的 node 结构"""
+                return {
+                    "SPRegionTypeId": sp_region_id, "SPRegionTypeName": sp_region_name,
+                    "ServerpartId": sp_id, "ServerpartName": sp_name,
+                    "RevenueINC": rev_inc or _make_inc(0, 0),
+                    "AccountINC": acc_inc or _make_inc(0, 0),
+                    "BayonetINC": bayonet, "TicketINC": ticket, "AvgTicketINC": avg_ticket,
+                    "BayonetINC_ORI": bayonet_ori, "SectionFlowINC": None,
+                    "ShopINCList": shop_list, "RankDiff": None,
+                    "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
+                }
 
-            for sp_id, sp_data in sp_map.items():
-                rid, rname = sp_region.get(sp_id, (None, ""))
-                total_rev += sp_data["REVENUE"]
-                total_rev_yoy += sp_data["REVENUE_YOY"]
-                total_tic += sp_data["TICKET"]
-                total_tic_yoy += sp_data["TICKET_YOY"]
-                total_roy += sp_data["ROYALTY"]
-                total_roy_yoy += sp_data["ROYALTY_YOY"]
+            # --- 按片区分组服务区（使用 INDEX 排序）---
+            from collections import OrderedDict
+            region_map = OrderedDict()  # (region_idx, SPREGIONTYPE_ID) → {name, sp_ids: []}
 
-                # 门店级子节点
-                shop_children = []
-                for shop in sp_data["shops"]:
-                    shop_children.append({
-                        "node": {
-                            "SPRegionTypeId": rid, "SPRegionTypeName": rname,
-                            "ServerpartId": sp_id, "ServerpartName": sp_data["SERVERPART_NAME"],
-                            "ServerpartShop_Id": shop.get("SERVERPARTSHOP_ID"),
-                            "ServerpartShop_Name": shop.get("SHOPSHORTNAME", ""),
-                            "RevenueINC": _make_inc(safe_dec(shop.get("REVENUE_AMOUNT")), safe_dec(shop.get("REVENUE_AMOUNT_YOY"))),
-                            "AccountINC": _make_inc(safe_dec(shop.get("ROYALTY_THEORY")), safe_dec(shop.get("ROYALTY_THEORY_YOY"))),
-                            "BayonetINC": None, "TicketINC": None, "AvgTicketINC": None,
-                            "BayonetINC_ORI": None, "SectionFlowINC": None,
-                            "ShopINCList": None, "RankDiff": None,
-                            "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
-                        },
+            # 按 (SPREGIONTYPE_INDEX, SPREGIONTYPE_ID, SERVERPART_INDEX, SERVERPART_ID) 排序后收集
+            sorted_sp_items = sorted(
+                sp_map.items(),
+                key=lambda x: (
+                    sp_region.get(x[0], (None, "", 0, 0))[2] or 0,  # SPREGIONTYPE_INDEX
+                    sp_region.get(x[0], (None, "", 0, 0))[0] or 0,  # SPREGIONTYPE_ID
+                    sp_region.get(x[0], (None, "", 0, 0))[3] or 0,  # SERVERPART_INDEX
+                    x[0]  # SERVERPART_ID fallback
+                )
+            )
+            for sp_id, sp_data in sorted_sp_items:
+                region_info = sp_region.get(sp_id, (None, "", 0, 0))
+                rid, rname = region_info[0], region_info[1]
+                if rid not in region_map:
+                    region_map[rid] = {"name": rname, "sp_list": []}
+                region_map[rid]["sp_list"].append((sp_id, sp_data))
+
+            # --- 构建三层树：根 → 片区 → 服务区(ShopINCList=门店) ---
+            total_rev, total_rev_yoy, total_rev_qoq = 0.0, 0.0, 0.0
+            total_tic, total_tic_yoy, total_tic_qoq = 0.0, 0.0, 0.0
+            total_roy, total_roy_yoy, total_roy_qoq = 0.0, 0.0, 0.0
+            total_veh, total_veh_yoy = 0.0, 0.0
+            total_veh_ori, total_veh_ori_yoy = 0.0, 0.0
+
+            region_children = []  # 根的 children（片区节点列表）
+            for rid, rinfo in region_map.items():
+                # 片区级别聚合
+                r_rev, r_rev_yoy, r_rev_qoq = 0.0, 0.0, 0.0
+                r_tic, r_tic_yoy, r_tic_qoq = 0.0, 0.0, 0.0
+                r_roy, r_roy_yoy, r_roy_qoq = 0.0, 0.0, 0.0
+                r_veh, r_veh_yoy = 0.0, 0.0
+                r_veh_ori, r_veh_ori_yoy = 0.0, 0.0
+
+                sp_children = []  # 片区的 children（服务区节点列表）
+                for sp_id, sp_data in rinfo["sp_list"]:
+                    r_rev += sp_data["REVENUE"]
+                    r_rev_yoy += sp_data["REVENUE_YOY"]
+                    r_rev_qoq += sp_data["REVENUE_QOQ"]
+                    r_tic += sp_data["TICKET"]
+                    r_tic_yoy += sp_data["TICKET_YOY"]
+                    r_tic_qoq += sp_data["TICKET_QOQ"]
+                    r_roy += sp_data["ROYALTY"]
+                    r_roy_yoy += sp_data["ROYALTY_YOY"]
+                    r_roy_qoq += sp_data["ROYALTY_QOQ"]
+                    r_veh += sp_data["VEHICLE"]
+                    r_veh_yoy += sp_data["VEHICLE_YOY"]
+                    r_veh_ori += sp_data["VEHICLE_ORI"]
+                    r_veh_ori_yoy += sp_data["VEHICLE_ORI_YOY"]
+
+                    # 门店级放入 ShopINCList（旧接口把门店放在服务区节点的 ShopINCList 中）
+                    shop_inc_list = []
+                    for shop in sp_data["shops"]:
+                        # 查找品牌/商户信息
+                        _ssid_str = str(shop.get("SERVERPARTSHOP_ID", ""))
+                        _first_ssid = None
+                        for _sp in _ssid_str.split(","):
+                            _sp = _sp.strip()
+                            if _sp.isdigit():
+                                _first_ssid = int(_sp)
+                                break
+                        _si = _inc_shop_info.get(_first_ssid, {}) if _first_ssid else {}
+                        _bp_id = shop.get("BUSINESSPROJECT_ID")
+                        _bp = _inc_bp_info.get(_bp_id, {}) if _bp_id else {}
+                        _brand_id = _si.get("BRAND_ID") or _si.get("BUSINESS_BRAND")
+                        try:
+                            _brand_id = int(_brand_id) if _brand_id is not None else None
+                        except (ValueError, TypeError):
+                            _brand_id = None
+                        _btt = int(safe_dec(shop.get("BUSINESS_TYPE", 0)))
+                        _merch_id = _bp.get("MERCHANTS_ID")
+                        # 门店级 AvgTicket（含 QOQ）
+                        _s_rev = safe_dec(shop.get("REVENUE_AMOUNT"))
+                        _s_tic = safe_dec(shop.get("TICKET_COUNT"))
+                        _s_rev_yoy = safe_dec(shop.get("REVENUE_AMOUNT_YOY"))
+                        _s_tic_yoy = safe_dec(shop.get("TICKET_COUNT_YOY"))
+                        _s_rev_qoq = safe_dec(shop.get("REVENUE_AMOUNT_QOQ"))
+                        _s_tic_qoq = safe_dec(shop.get("TICKET_COUNT_QOQ"))
+                        _s_avg_cur = round(_s_rev / _s_tic, 2) if _s_tic else 0
+                        _s_avg_yoy = round(_s_rev_yoy / _s_tic_yoy, 2) if _s_tic_yoy else 0
+                        _s_avg_qoq = round(_s_rev_qoq / _s_tic_qoq, 2) if _s_tic_qoq else 0
+
+                        shop_inc_list.append({
+                            "ServerpartId": None, "ServerpartName": None,
+                            "ServerpartShopId": _ssid_str,
+                            "ServerpartShopName": shop.get("SHOPSHORTNAME", ""),
+                            "Brand_Id": _brand_id,
+                            "Brand_Name": _si.get("BRAND_NAME2") or _si.get("BRAND_NAME") or None,
+                            "BrandType_Name": None,
+                            "Brand_ICO": _si.get("BRAND_ICO") or "",
+                            "ShopTrade": 0 if _btt < 3 else int(_si.get("SHOPTRADE", 0) or 0),
+                            "BusinessTradeName": _si.get("BUSINESS_TRADENAME") or None,
+                            "BusinessTradeType": _btt,
+                            "BusinessProjectId": _bp_id,
+                            "CompactStartDate": "", "CompactEndDate": "",
+                            "BusinessType": None, "SettlementModes": None,
+                            "MERCHANTS_ID": float(_merch_id) if _merch_id is not None else None,
+                            "MERCHANTS_ID_Encrypted": None,
+                            "MERCHANTS_NAME": _bp.get("MERCHANTS_NAME"),
+                            "RevenueINC": _make_inc(safe_dec(shop.get("REVENUE_AMOUNT")), safe_dec(shop.get("REVENUE_AMOUNT_YOY")), safe_dec(shop.get("REVENUE_AMOUNT_QOQ"))),
+                            "AccountINC": _make_inc(safe_dec(shop.get("ROYALTY_THEORY")), safe_dec(shop.get("ROYALTY_THEORY_YOY")), safe_dec(shop.get("ROYALTY_THEORY_QOQ"))),
+                            "TicketINC": _make_inc(safe_dec(shop.get("TICKET_COUNT")), safe_dec(shop.get("TICKET_COUNT_YOY")), safe_dec(shop.get("TICKET_COUNT_QOQ"))),
+                            "AvgTicketINC": _make_inc(_s_avg_cur, _s_avg_yoy, _s_avg_qoq),
+                            "CurTransaction": None,
+                            "Profit_Amount": None, "Cost_Amount": None, "Ca_Cost": None,
+                        })
+
+                    # 服务区级 AvgTicket 计算
+                    sp_avg_cur = round(sp_data["REVENUE"] / sp_data["TICKET"], 2) if sp_data["TICKET"] else 0
+                    sp_avg_yoy = round(sp_data["REVENUE_YOY"] / sp_data["TICKET_YOY"], 2) if sp_data["TICKET_YOY"] else 0
+                    sp_avg_qoq = round(sp_data["REVENUE_QOQ"] / sp_data["TICKET_QOQ"], 2) if sp_data["TICKET_QOQ"] else 0
+
+                    # 服务区节点：children=null，门店在 ShopINCList
+                    sp_children.append({
+                        "node": _make_node(
+                            sp_region_id=rid, sp_region_name=rinfo["name"],
+                            sp_id=sp_id, sp_name=sp_data["SERVERPART_NAME"],
+                            rev_inc=_make_inc(sp_data["REVENUE"], sp_data["REVENUE_YOY"], sp_data["REVENUE_QOQ"]),
+                            acc_inc=_make_inc(sp_data["ROYALTY"], sp_data["ROYALTY_YOY"], sp_data["ROYALTY_QOQ"]),
+                            ticket=_make_inc(sp_data["TICKET"], sp_data["TICKET_YOY"], sp_data["TICKET_QOQ"]),
+                            bayonet=_make_inc(sp_data["VEHICLE"], sp_data["VEHICLE_YOY"]),
+                            bayonet_ori=_make_inc(sp_data["VEHICLE_ORI"], sp_data["VEHICLE_ORI_YOY"]),
+                            avg_ticket=_make_inc(sp_avg_cur, sp_avg_yoy, sp_avg_qoq),
+                            shop_list=shop_inc_list if shop_inc_list else None,
+                        ),
                         "children": None
                     })
 
-                children_nodes.append({
-                    "node": {
-                        "SPRegionTypeId": rid, "SPRegionTypeName": rname,
-                        "ServerpartId": sp_id, "ServerpartName": sp_data["SERVERPART_NAME"],
-                        "RevenueINC": _make_inc(sp_data["REVENUE"], sp_data["REVENUE_YOY"]),
-                        "AccountINC": _make_inc(sp_data["ROYALTY"], sp_data["ROYALTY_YOY"]),
-                        "BayonetINC": None, "TicketINC": None, "AvgTicketINC": None,
-                        "BayonetINC_ORI": None, "SectionFlowINC": None,
-                        "ShopINCList": None, "RankDiff": None,
-                        "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
-                    },
-                    "children": shop_children if shop_children else None
+                total_rev += r_rev
+                total_rev_yoy += r_rev_yoy
+                total_rev_qoq += r_rev_qoq
+                total_tic += r_tic
+                total_tic_yoy += r_tic_yoy
+                total_tic_qoq += r_tic_qoq
+                total_roy += r_roy
+                total_roy_yoy += r_roy_yoy
+                total_roy_qoq += r_roy_qoq
+                total_veh += r_veh
+                total_veh_yoy += r_veh_yoy
+                total_veh_ori += r_veh_ori
+                total_veh_ori_yoy += r_veh_ori_yoy
+
+                # 片区级 AvgTicket
+                r_avg_cur = round(r_rev / r_tic, 2) if r_tic else 0
+                r_avg_yoy = round(r_rev_yoy / r_tic_yoy, 2) if r_tic_yoy else 0
+                r_avg_qoq = round(r_rev_qoq / r_tic_qoq, 2) if r_tic_qoq else 0
+
+                # 片区节点：ServerpartId=null, ServerpartName=null
+                region_children.append({
+                    "node": _make_node(
+                        sp_region_id=rid, sp_region_name=rinfo["name"],
+                        sp_id=None, sp_name=None,
+                        rev_inc=_make_inc(r_rev, r_rev_yoy, r_rev_qoq),
+                        acc_inc=_make_inc(r_roy, r_roy_yoy, r_roy_qoq),
+                        ticket=_make_inc(r_tic, r_tic_yoy, r_tic_qoq),
+                        bayonet=_make_inc(r_veh, r_veh_yoy, 0),
+                        bayonet_ori=None,
+                        avg_ticket=_make_inc(r_avg_cur, r_avg_yoy, r_avg_qoq),
+                    ),
+                    "children": sp_children if sp_children else None
                 })
 
-            # 合计节点
+            # 根节点：ServerpartId=null
+            # 根级 AvgTicket
+            t_avg_cur = round(total_rev / total_tic, 2) if total_tic else 0
+            t_avg_yoy = round(total_rev_yoy / total_tic_yoy, 2) if total_tic_yoy else 0
+            t_avg_qoq = round(total_rev_qoq / total_tic_qoq, 2) if total_tic_qoq else 0
+
             result_list = [{
-                "node": {
-                    "SPRegionTypeId": None, "SPRegionTypeName": None,
-                    "ServerpartId": 0, "ServerpartName": "合计",
-                    "RevenueINC": _make_inc(total_rev, total_rev_yoy),
-                    "AccountINC": _make_inc(total_roy, total_roy_yoy),
-                    "BayonetINC": None, "TicketINC": None, "AvgTicketINC": None,
-                    "BayonetINC_ORI": None, "SectionFlowINC": None,
-                    "ShopINCList": None, "RankDiff": None,
-                    "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
-                },
-                "children": children_nodes if children_nodes else None
+                "node": _make_node(
+                    sp_id=None, sp_name="合计",
+                    rev_inc=_make_inc(total_rev, total_rev_yoy, total_rev_qoq),
+                    acc_inc=_make_inc(total_roy, total_roy_yoy, total_roy_qoq),
+                    ticket=_make_inc(total_tic, total_tic_yoy, total_tic_qoq),
+                    bayonet=_make_inc(total_veh, total_veh_yoy, 0),
+                    bayonet_ori=None,
+                    avg_ticket=_make_inc(t_avg_cur, t_avg_yoy, t_avg_qoq),
+                ),
+                "children": region_children if region_children else None
             }]
 
         else:
@@ -6410,8 +6588,9 @@ async def get_month_inc_analysis(
                 WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEMONTHLY_STATE" = 1
                     AND B."STATISTIC_TYPE" = 1000
                     AND A."STATISTICS_MONTH" >= {StatisticsStartMonth} AND A."STATISTICS_MONTH" <= {StatisticsEndMonth}{where_sql}
-                GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE"
-                ORDER BY B."SPREGIONTYPE_ID", B."SERVERPART_ID" """
+                GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE",
+                         B."SPREGIONTYPE_INDEX", B."SERVERPART_INDEX"
+                ORDER BY B."SPREGIONTYPE_INDEX", B."SERVERPART_INDEX", B."SERVERPART_ID" """
             cur_rows = db.execute_query(cur_sql) or []
 
             # 按片区分组为 node/children 结构
@@ -6451,7 +6630,7 @@ async def get_month_inc_analysis(
                 children_list.append({
                     "node": {
                         "SPRegionTypeId": rid, "SPRegionTypeName": rinfo["name"],
-                        "ServerpartId": 0, "ServerpartName": "",
+                        "ServerpartId": None, "ServerpartName": None,
                         "RevenueINC": {"curYearData": round(rinfo["revenue"], 2), "lYearData": 0, "increaseData": round(rinfo["revenue"], 2), "increaseRate": None,
                                        "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
                         "AccountINC": {"curYearData": round(rinfo["ticket"], 2), "lYearData": 0, "increaseData": round(rinfo["ticket"], 2), "increaseRate": None,
@@ -6468,7 +6647,7 @@ async def get_month_inc_analysis(
             result_list = [{
                 "node": {
                     "SPRegionTypeId": None, "SPRegionTypeName": None,
-                    "ServerpartId": 0, "ServerpartName": "合计",
+                    "ServerpartId": None, "ServerpartName": "合计",
                     "RevenueINC": {"curYearData": round(total_rev, 2), "lYearData": 0, "increaseData": round(total_rev, 2), "increaseRate": None,
                                    "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
                     "AccountINC": {"curYearData": round(total_tic, 2), "lYearData": 0, "increaseData": round(total_tic, 2), "increaseRate": None,
@@ -6636,7 +6815,7 @@ async def get_shop_sabfi_list(
             WHERE A."STATISTICS_MONTH" = {stat_month}
                 AND A."DATATYPE" = 2{sp_where}{btt_where}
                 AND A."SERVERPARTSHOP_NAME" NOT IN ('加油站便利店','客房')
-            ORDER BY A."SERVERPART_ID", A."SERVERPARTSHOP_NAME" """
+            ORDER BY A."SERVERPART_ID", A."BUSINESSTRADETYPE", A."SERVERPARTSHOP_NAME" """
         rows = db.execute_query(sql) or []
 
         # 查询门店盈利数据 (T_PERIODMONTHPROFIT)
@@ -6660,8 +6839,81 @@ async def get_shop_sabfi_list(
         except Exception as pe:
             logger.warning(f"GetShopSABFIList Profit查询失败: {pe}")
 
-        # --- 新增: 获取相关的门店系统商业适配指数项目列表 (13项) ---
-        sabfi_projects_map = {}
+        # --- 查上月门店数据作为 QOQ 基数（C# 旧接口用上月 REVENUE_AMOUNT 作为 QOQData）---
+        qoq_shop_map = {}  # { (SERVERPART_ID, SERVERPARTSHOP_NAME): {rev, roy, tic} }
+        try:
+            if sp_id_list:
+                qoq_sql = f"""SELECT A."SERVERPART_ID", A."SERVERPARTSHOP_NAME",
+                        A."REVENUE_AMOUNT", A."ROYALTY_THEORY", A."TICKET_COUNT"
+                    FROM "T_BUSINESSWARNING" A
+                    WHERE A."STATISTICS_MONTH" = {last_month}
+                        AND A."DATATYPE" = 2{sp_where}
+                        AND A."SERVERPARTSHOP_NAME" NOT IN ('加油站便利店','客房')"""
+                qoq_rows = db.execute_query(qoq_sql) or []
+                for qr in qoq_rows:
+                    key = (qr.get("SERVERPART_ID"), qr.get("SERVERPARTSHOP_NAME"))
+                    qoq_shop_map[key] = {
+                        "rev": qr.get("REVENUE_AMOUNT"),
+                        "roy": qr.get("ROYALTY_THEORY"),
+                        "tic": qr.get("TICKET_COUNT"),
+                    }
+        except Exception as qe:
+            logger.warning(f"GetShopSABFIList QOQ上月数据查询失败: {qe}")
+
+        # --- 查询门店级门牌信息（Brand/商户/项目）用于 ShopSABFIList 构造 ---
+        # 收集所有涉及的 SERVERPARTSHOP_ID（逗号分隔字符串），取第一个 ID 关联 T_SERVERPARTSHOP
+        shop_info_map = {}  # { SERVERPARTSHOP_ID字符串 : { brand/shop/project 信息 } }
+        bp_info_map = {}    # { BUSINESSPROJECT_ID : { project 信息 } }
+        try:
+            if sp_id_list:
+                sp_in = ",".join(str(i) for i in sp_id_list)
+                # 收集去重后的 SERVERPARTSHOP_ID（第一个）
+                all_shop_first_ids = set()
+                all_bp_ids = set()
+                for r in rows:
+                    ssid = str(r.get("SERVERPARTSHOP_ID") or "")
+                    first_id = ssid.split(",")[0].strip() if ssid else ""
+                    if first_id and first_id.isdigit():
+                        all_shop_first_ids.add(int(first_id))
+                    bp_id = r.get("BUSINESSPROJECT_ID")
+                    if bp_id is not None:
+                        all_bp_ids.add(int(bp_id))
+
+                # 批量查 T_SERVERPARTSHOP → T_BRAND（取 Brand/状态 信息）
+                if all_shop_first_ids:
+                    ss_in = ",".join(str(i) for i in all_shop_first_ids)
+                    ss_sql = f"""SELECT S.SERVERPARTSHOP_ID, S.SHOPSHORTNAME,
+                            S.BUSINESS_BRAND, S.BRAND_NAME, S.BUSINESS_TRADE,
+                            S.BUSINESS_TRADENAME, S.SHOPTRADE, S.BUSINESS_STATE,
+                            S.SELLER_ID, S.SELLER_NAME,
+                            B.BRAND_ID, B.BRAND_NAME AS BRAND_NAME2, B.BRAND_INTRO AS BRAND_ICO
+                        FROM T_SERVERPARTSHOP S
+                        LEFT JOIN T_BRAND B ON S.BUSINESS_BRAND = B.BRAND_ID
+                        WHERE S.SERVERPARTSHOP_ID IN ({ss_in})"""
+                    ss_rows = db.execute_query(ss_sql) or []
+                    for sr in ss_rows:
+                        shop_info_map[sr["SERVERPARTSHOP_ID"]] = sr
+
+                # 批量查 T_BUSINESSPROJECT（取 商户/项目 信息）
+                if all_bp_ids:
+                    bp_in = ",".join(str(i) for i in all_bp_ids)
+                    bp_sql = f"""SELECT BUSINESSPROJECT_ID, BUSINESSPROJECT_NAME,
+                            MERCHANTS_ID, MERCHANTS_NAME,
+                            BUSINESS_TYPE, SETTLEMENT_MODES,
+                            PROJECT_STARTDATE, PROJECT_ENDDATE
+                        FROM T_BUSINESSPROJECT
+                        WHERE BUSINESSPROJECT_ID IN ({bp_in})"""
+                    bp_rows = db.execute_query(bp_sql) or []
+                    for br in bp_rows:
+                        bp_info_map[br["BUSINESSPROJECT_ID"]] = br
+
+                # MERCHANTS fallback: 当 T_BUSINESSPROJECT 无 MERCHANTS 时，取 T_SERVERPARTSHOP.SELLER_ID/NAME
+                brand_merchant_map = {}  # 已废弃，改用 shop_info_map 中的 SELLER_ID
+        except Exception as ex_s:
+            logger.warning(f"GetShopSABFIList 门店/品牌信息查询失败: {ex_s}")
+
+        # --- 查 T_PROFITCONTRIBUTE 获取 SABFI 评分项目列表 ---
+        sabfi_projects_map = {}  # { SERVERPART_ID: [ { BusinessProjectId, SABFIList, ... } ] }
         try:
             if sp_id_list:
                 sp_in = ",".join(str(i) for i in sp_id_list)
@@ -6674,9 +6926,8 @@ async def get_shop_sabfi_list(
                                     AND A.SERVERPART_ID IN ({sp_in})
                                   ORDER BY A.SERVERPART_ID, A.BUSINESSPROJECT_ID, A.EVALUATE_TYPE"""
                 project_rows = db.execute_query(project_sql) or []
-                
-                # 按 (SERVERPART_ID, BUSINESSPROJECT_ID) 分组并构建 SABFIList
-                temp_sp_projects = {} # { (sp_id, p_id): { name, score, list } }
+
+                temp_sp_projects = {}
                 for pr in project_rows:
                     sid = pr["SERVERPART_ID"]
                     pid = pr["BUSINESSPROJECT_ID"]
@@ -6689,7 +6940,7 @@ async def get_shop_sabfi_list(
                             "SABFIList": [{"name": str(et), "value": "", "key": "", "data": ""} for et in range(1, 8)],
                             "StatisticsMonth": f"{stat_month[:4]}/{stat_month[4:]}"
                         }
-                    
+
                     et = int(pr["EVALUATE_TYPE"])
                     score = pr["EVALUATE_SCORE"]
                     if et == 0:
@@ -6700,7 +6951,6 @@ async def get_shop_sabfi_list(
                         temp_sp_projects[key]["SABFIList"][idx]["key"] = str(pr["PROFITCONTRIBUTE_ID"] or "")
                         temp_sp_projects[key]["SABFIList"][idx]["data"] = str(pr["PROFITCONTRIBUTE_PID"] or "")
 
-                # 最终放入 sabfi_projects_map
                 for (sid, pid), p_data in temp_sp_projects.items():
                     if sid not in sabfi_projects_map:
                         sabfi_projects_map[sid] = []
@@ -6720,13 +6970,14 @@ async def get_shop_sabfi_list(
         for fr in flow_rows:
             flow_map[fr.get("SERVERPART_ID")] = fr
 
-        # 查服务区所属片区信息（只按 SERVERPART_ID 查，PROVINCE_CODE 是内部编码不是行政区划码）
+        # 查服务区所属片区信息（含排序索引 SPREGIONTYPE_INDEX / SERVERPART_INDEX）
         sp_id_list_for_info = list(set(r.get("SERVERPART_ID") for r in rows if r.get("SERVERPART_ID")))
         sp_info_map = {}
         if sp_id_list_for_info:
             sp_in_info = ",".join(str(i) for i in sp_id_list_for_info)
             sp_info_sql = f"""SELECT SERVERPART_ID, SERVERPART_NAME,
-                    SPREGIONTYPE_ID, SPREGIONTYPE_NAME
+                    SPREGIONTYPE_ID, SPREGIONTYPE_NAME,
+                    SPREGIONTYPE_INDEX, SERVERPART_INDEX
                 FROM T_SERVERPART
                 WHERE SPREGIONTYPE_ID IS NOT NULL
                     AND SERVERPART_ID IN ({sp_in_info})"""
@@ -6743,30 +6994,157 @@ async def get_shop_sabfi_list(
                 sp_groups[sp_id] = {"name": r.get("SERVERPART_NAME", ""), "shops": []}
             sp_groups[sp_id]["shops"].append(r)
 
-        # 构建门店节点 — 使用 T_BUSINESSWARNING 预计算字段
-        def build_shop_node(r, sp_id, sp_name):
+        # 构建 ShopSABFIList 中的门店项 — 对齐 C# ShopSABFIModel 字段
+        def build_shop_sabfi_item(r, sp_id, sp_name):
+            """从 T_BUSINESSWARNING 行 + JOIN 信息构建门店级 ShopSABFI 项"""
+            ssid_str = str(r.get("SERVERPARTSHOP_ID") or "")
+            first_ssid = ssid_str.split(",")[0].strip() if ssid_str else ""
+            first_ssid_int = int(first_ssid) if first_ssid.isdigit() else None
+
+            # 从 T_SERVERPARTSHOP JOIN T_BRAND 获取的信息
+            si = shop_info_map.get(first_ssid_int, {}) if first_ssid_int else {}
+            # 从 T_BUSINESSPROJECT 获取的信息
+            bp_id = r.get("BUSINESSPROJECT_ID")
+            bp = bp_info_map.get(bp_id, {}) if bp_id else {}
+
+            # BusinessTrade — 旧接口用的是 T_SERVERPARTSHOP.BUSINESS_TRADE
+            biz_trade = str(si.get("BUSINESS_TRADE") or r.get("BUSINESS_TRADE") or "")
+            biz_trade_name = si.get("BUSINESS_TRADENAME") or None
+            shop_trade = si.get("SHOPTRADE", 0) or 0
+            brand_id = si.get("BRAND_ID") or si.get("BUSINESS_BRAND")
+            # 确保 Brand_Id 为 int
+            try:
+                brand_id = int(brand_id) if brand_id is not None else None
+            except (ValueError, TypeError):
+                brand_id = None
+            brand_name = si.get("BRAND_NAME2") or si.get("BRAND_NAME") or None
+            # Brand_ICO — 旧接口带域名前缀
+            brand_ico_raw = si.get("BRAND_ICO") or ""
+            if brand_ico_raw and not brand_ico_raw.startswith("http"):
+                brand_ico = f"https://user.eshangtech.com{brand_ico_raw}"
+            else:
+                brand_ico = brand_ico_raw
+
+            # 日期格式化 — 对齐 C# "yyyy/M/d"（兼容 Windows/Linux）
+            def fmt_date(v):
+                if v is None:
+                    return ""
+                try:
+                    from datetime import datetime as _dt
+                    if hasattr(v, 'year'):
+                        # datetime 对象
+                        return f"{v.year}/{v.month}/{v.day}"
+                    s = str(v).replace("T", " ")[:19]  # 处理 ISO 格式
+                    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d", "%Y/%m/%d"):
+                        try:
+                            dt = _dt.strptime(s[:len(fmt.replace('%Y','0000').replace('%m','00').replace('%d','00').replace('%H','00').replace('%M','00').replace('%S','00'))], fmt)
+                            return f"{dt.year}/{dt.month}/{dt.day}"
+                        except:
+                            continue
+                    # fallback: 取前 10 字符尝试
+                    dt = _dt.strptime(str(v)[:10], "%Y-%m-%d")
+                    return f"{dt.year}/{dt.month}/{dt.day}"
+                except:
+                    return str(v) if v else ""
+
+            # MERCHANTS_ID — 优先从 T_BUSINESSPROJECT, fallback 从 T_COOPMERCHANTS(自营门店)
+            merch_id = bp.get("MERCHANTS_ID")
+            merch_name = bp.get("MERCHANTS_NAME")
+            # C# fallback: 当 T_BUSINESSPROJECT 无 MERCHANTS 时，取 T_SERVERPARTSHOP.SELLER_ID/NAME
+            if merch_id is None:
+                merch_id = si.get("SELLER_ID")
+                merch_name = si.get("SELLER_NAME")
+            merch_id_enc = des_encrypt_id(merch_id)  # DES 加密 MERCHANTS_ID
+
+            # 门店级 QOQ 数据 — C# 旧接口用上月 T_BUSINESSWARNING 的 REVENUE_AMOUNT 作为 QOQData
+            shop_name = r.get("SHOPSHORTNAME", r.get("SERVERPARTSHOP_NAME", ""))
+            qoq_key = (sp_id, shop_name)
+            qoq_data = qoq_shop_map.get(qoq_key, {})
+            rev = safe_dec(r.get("REVENUE_AMOUNT"))
+            rev_qoq_raw = qoq_data.get("rev")  # 上月收入（None = 无上月数据）
+            rev_qoq = safe_dec(rev_qoq_raw)
+            tic = safe_dec(r.get("TICKET_COUNT"))
+            tic_qoq_raw = qoq_data.get("tic")
+            tic_qoq = safe_dec(tic_qoq_raw)
+            roy = safe_dec(r.get("ROYALTY_THEORY"))
+            roy_qoq_raw = qoq_data.get("roy")
+            roy_qoq = safe_dec(roy_qoq_raw)
+
+            avg_cur = round(rev / tic, 2) if tic else 0
+            avg_qoq = round(rev_qoq / tic_qoq, 2) if tic_qoq else 0
+            avg_inc_qoq = round(avg_cur - avg_qoq, 2) if tic and tic_qoq else None
+            avg_rate_qoq = round(avg_inc_qoq / avg_qoq * 100, 2) if avg_inc_qoq is not None and avg_qoq else None
+            # 标记是否有上月数据（区分 "无上月数据" 和 "上月值为0"）
+            has_qoq = bool(qoq_data)
+
+            # Profit_Amount — C# 逻辑: BusinessTradeType < 3 的自营门店 Profit=Revenue
+            # BUSINESSTRADETYPE 在 SQL 中已重命名为 BUSINESS_TYPE
+            btt_val = r.get("BUSINESS_TYPE") or r.get("BUSINESSTRADETYPE") or 0
+            btt = int(safe_dec(btt_val))
+            shop_profit = rev if btt < 3 else None
+            shop_cost = 0.0 if btt < 3 else None
+            shop_ca_cost = None
+
+            # ShopTrade — C# 旧接口用 T_BUSINESSWARNING.BUSINESS_TRADE（非 T_SERVERPARTSHOP.SHOPTRADE）
+            # 自营门店(BTT=1,2) BUSINESS_TRADE 为 None → 返回 0
+            bw_trade = r.get("BUSINESS_TRADE")
+            shop_trade_val = int(bw_trade) if bw_trade is not None else 0
+
+            # SABFI_Score — 门店级从 T_PROFITCONTRIBUTE 的结果
+            sabfi_list_empty = [{"name": str(et), "value": "", "data": "", "key": ""} for et in range(1, 8)]
+
             return {
-                "SABFI_Score": None, "ShopSABFIList": None,
-                "SPRegionTypeId": None, "SPRegionTypeName": None,
-                "ServerpartId": sp_id, "ServerpartName": sp_name,
-                "ServerpartShopId": str(r.get("SERVERPARTSHOP_ID") or ""),
-                "ServerpartShopName": r.get("SHOPSHORTNAME", ""),
+                "StatisticsMonth": None,
+                "BusinessTrade": biz_trade if biz_trade else None,
+                "BusinessProjectName": bp.get("BUSINESSPROJECT_NAME"),
+                "SABFI_Score": 0.0,
+                "Revenue_SD": safe_dec(r.get("REVENUE_SD")) if r.get("REVENUE_SD") is not None else None,
+                "Revenue_AVG": safe_dec(r.get("REVENUE_AVG")) if r.get("REVENUE_AVG") is not None else None,
+                "SABFIList": sabfi_list_empty,
+                "ServerpartId": sp_id,
+                "ServerpartName": sp_name,
+                "ServerpartShopId": ssid_str,
+                "ServerpartShopName": shop_name,
+                "Brand_Id": brand_id,
+                "Brand_Name": brand_name,
+                "BrandType_Name": None,
+                "Brand_ICO": brand_ico,
+                "ShopTrade": shop_trade_val,
+                "BusinessTradeName": biz_trade_name,
+                "BusinessTradeType": btt,
+                "BusinessProjectId": bp_id,
+                "CompactStartDate": fmt_date(bp.get("PROJECT_STARTDATE")),
+                "CompactEndDate": fmt_date(bp.get("PROJECT_ENDDATE")),
+                "BusinessType": bp.get("BUSINESS_TYPE"),
+                "SettlementModes": bp.get("SETTLEMENT_MODES"),
+                "MERCHANTS_ID": float(merch_id) if merch_id is not None else None,
+                "MERCHANTS_ID_Encrypted": merch_id_enc,
+                "MERCHANTS_NAME": merch_name,
                 "RevenueINC": make_inc(
-                    r.get("REVENUE_AMOUNT"), r.get("REVENUE_AMOUNT_YOY"),
-                    r.get("REVENUE_INCREASE_YOY"), r.get("REVENUE_INCRATE_YOY"),
-                    r.get("REVENUE_AMOUNT_QOQ"), r.get("REVENUE_INCREASE_QOQ"), r.get("REVENUE_INCRATE_QOQ")),
+                    r.get("REVENUE_AMOUNT"), None,
+                    None, None,
+                    rev_qoq if has_qoq else None,
+                    round(rev - rev_qoq, 2) if has_qoq else None,
+                    round((rev - rev_qoq) / rev_qoq * 100, 2) if has_qoq and rev_qoq else None),
                 "AccountINC": make_inc(
-                    r.get("ROYALTY_THEORY"), r.get("ROYALTY_THEORY_YOY"),
+                    r.get("ROYALTY_THEORY"), None,
                     None, None,
-                    r.get("ROYALTY_THEORY_QOQ")),
-                "BayonetINC": None, "SectionFlowINC": None, "BayonetINC_ORI": None,
+                    roy_qoq if has_qoq else None,
+                    round(roy - roy_qoq, 2) if has_qoq and r.get("ROYALTY_THEORY") is not None else None,
+                    round((roy - roy_qoq) / roy_qoq * 100, 2) if has_qoq and roy_qoq and r.get("ROYALTY_THEORY") is not None else None),
                 "TicketINC": make_inc(
-                    r.get("TICKET_COUNT"), r.get("TICKET_COUNT_YOY"),
+                    r.get("TICKET_COUNT"), None,
                     None, None,
-                    r.get("TICKET_COUNT_QOQ")),
-                "AvgTicketINC": empty_inc(),
-                "ShopINCList": None,
-                "Profit_Amount": None, "Cost_Amount": None, "Ca_Cost": None, "RankDiff": None,
+                    tic_qoq if has_qoq else None,
+                    round(tic - tic_qoq, 2) if has_qoq else None,
+                    round((tic - tic_qoq) / tic_qoq * 100, 2) if has_qoq and tic_qoq else None),
+                "AvgTicketINC": make_inc(
+                    avg_cur if tic else None, None, None, None,
+                    avg_qoq if has_qoq else None, avg_inc_qoq, avg_rate_qoq),
+                "CurTransaction": None,
+                "Profit_Amount": shop_profit,
+                "Cost_Amount": shop_cost,
+                "Ca_Cost": shop_ca_cost,
             }
 
         # 汇总累加器
@@ -6775,9 +7153,19 @@ async def get_shop_sabfi_list(
         total_ticket, total_ticket_yoy, total_ticket_qoq = 0.0, 0.0, 0.0
         total_flow, total_flow_yoy, total_flow_qoq = 0.0, 0.0, 0.0
 
-        # 按片区分组
+        # 按片区分组（使用 SPREGIONTYPE_INDEX 排序片区，SERVERPART_INDEX 排序服务区）
         region_groups = OrderedDict()
-        for sp_id, sp_data in sp_groups.items():
+        # 先按 (SPREGIONTYPE_INDEX, SPREGIONTYPE_ID) 对服务区排序后再分组
+        sorted_sp_items = sorted(
+            sp_groups.items(),
+            key=lambda x: (
+                sp_info_map.get(x[0], {}).get("SPREGIONTYPE_INDEX") or 0,
+                sp_info_map.get(x[0], {}).get("SPREGIONTYPE_ID") or 0,
+                sp_info_map.get(x[0], {}).get("SERVERPART_INDEX") or 0,
+                x[0]  # fallback: SERVERPART_ID
+            )
+        )
+        for sp_id, sp_data in sorted_sp_items:
             si = sp_info_map.get(sp_id, {})
             region_id = si.get("SPREGIONTYPE_ID")
             region_name = si.get("SPREGIONTYPE_NAME", "")
@@ -6815,7 +7203,8 @@ async def get_shop_sabfi_list(
                     sp_ticket_yoy += safe_dec(r.get("TICKET_COUNT_YOY"))
                     sp_ticket_qoq += safe_dec(r.get("TICKET_COUNT_QOQ"))
 
-                    shop_children.append({"node": build_shop_node(r, sp_id, sp_data["name"]), "children": []})
+                    # 门店级 children 暂不使用（C# 服务区节点 children=null）
+                    pass
 
                 # 车流
                 fr = flow_map.get(sp_id, {})
@@ -6852,12 +7241,18 @@ async def get_shop_sabfi_list(
                 # BayonetINC_ORI：C# 只填 curYearData（车流原始值）
                 bayonet_ori = make_inc(sp_flow)
 
-                # 获取该服务区的经营项目列表
+                # 构建该服务区的 ShopSABFIList — 直接使用 T_BUSINESSWARNING 固化数据
+                # 注: C# 旧接口不做 BUSINESS_STATE 二次过滤，门店列表由固化数据决定
+                sp_shop_sabfi_list = []
+                for r in sp_data["shops"]:
+                    sp_shop_sabfi_list.append(build_shop_sabfi_item(r, sp_id, sp_data["name"]))
+
+                # 获取 SABFI 评分项目列表（用于 SABFI_Score 汇总）
                 sp_sabfi_projects = sabfi_projects_map.get(sp_id, [])
                 sp_overall_score = round(sum(p["SABFI_Score"] for p in sp_sabfi_projects) / len(sp_sabfi_projects), 2) if sp_sabfi_projects else 0.0
 
                 sp_node = {
-                    "SABFI_Score": sp_overall_score, "ShopSABFIList": sp_sabfi_projects,
+                    "SABFI_Score": sp_overall_score, "ShopSABFIList": sp_shop_sabfi_list,
                     "SPRegionTypeId": rg["id"], "SPRegionTypeName": rg["name"],
                     "ServerpartId": sp_id, "ServerpartName": sp_data["name"],
                     "RevenueINC": make_inc(sp_rev, None, None, None,

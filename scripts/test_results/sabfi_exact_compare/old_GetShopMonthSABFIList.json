@@ -1,0 +1,90 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "PageIndex": 1,
+    "PageSize": 10,
+    "TotalCount": 1,
+    "List": [
+      {
+        "StatisticsMonth": "2026/02",
+        "BusinessTrade": null,
+        "BusinessProjectName": null,
+        "SABFI_Score": 0.0,
+        "Revenue_SD": null,
+        "Revenue_AVG": null,
+        "SABFIList": [
+          {
+            "name": "1",
+            "value": "",
+            "data": "",
+            "key": ""
+          },
+          {
+            "name": "2",
+            "value": "",
+            "data": "",
+            "key": ""
+          },
+          {
+            "name": "3",
+            "value": "",
+            "data": "",
+            "key": ""
+          },
+          {
+            "name": "4",
+            "value": "",
+            "data": "",
+            "key": ""
+          },
+          {
+            "name": "5",
+            "value": "",
+            "data": "",
+            "key": ""
+          },
+          {
+            "name": "6",
+            "value": "",
+            "data": "",
+            "key": ""
+          },
+          {
+            "name": "7",
+            "value": "",
+            "data": "",
+            "key": ""
+          }
+        ],
+        "ServerpartId": null,
+        "ServerpartName": null,
+        "ServerpartShopId": null,
+        "ServerpartShopName": null,
+        "Brand_Id": null,
+        "Brand_Name": null,
+        "BrandType_Name": null,
+        "Brand_ICO": null,
+        "ShopTrade": 0,
+        "BusinessTradeName": null,
+        "BusinessTradeType": 0,
+        "BusinessProjectId": null,
+        "CompactStartDate": null,
+        "CompactEndDate": null,
+        "BusinessType": null,
+        "SettlementModes": null,
+        "MERCHANTS_ID": null,
+        "MERCHANTS_ID_Encrypted": null,
+        "MERCHANTS_NAME": null,
+        "RevenueINC": null,
+        "AccountINC": null,
+        "TicketINC": null,
+        "AvgTicketINC": null,
+        "CurTransaction": null,
+        "Profit_Amount": null,
+        "Cost_Amount": null,
+        "Ca_Cost": null
+      }
+    ]
+  }
+}

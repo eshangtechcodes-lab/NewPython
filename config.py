@@ -17,7 +17,7 @@ class Settings:
     DEBUG: bool = os.getenv("DEBUG", "True").lower() == "true"
 
     # === 达梦数据库配置 ===
-    DM_HOST: str = os.getenv("DM_HOST", "127.0.0.1")
+    DM_HOST: str = os.getenv("DM_HOST", "192.168.1.99")
     DM_PORT: int = int(os.getenv("DM_PORT", "5236"))
     DM_USER: str = os.getenv("DM_USER", "NEWPYTHON")
     DM_PASSWORD: str = os.getenv("DM_PASSWORD", "NewPython@2025")

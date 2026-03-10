@@ -216,9 +216,48 @@ async def get_meeting_list(searchModel: dict = None, db: DatabaseHelper = Depend
         page_rows = db.execute_query(data_sql, page_params)
 
         for r in page_rows:
-            r["MEETING_DATE"] = _translate_datetime(r.get("MEETING_DATE"))
-            if r.get("MEETING_OPERATEDATE"):
-                r["MEETING_OPERATEDATE"] = str(r["MEETING_OPERATEDATE"])
+            # MEETING_DATE: 数字格式 20250415095100 → C# 格式 "2025/04/15 09:51:00"
+            raw_date = r.get("MEETING_DATE")
+            if raw_date is not None:
+                s = str(raw_date).strip()
+                if len(s) >= 14:
+                    try:
+                        r["MEETING_DATE"] = f"{s[:4]}/{s[4:6]}/{s[6:8]} {s[8:10]}:{s[10:12]}:{s[12:14]}"
+                    except:
+                        r["MEETING_DATE"] = s
+                elif len(s) >= 8:
+                    r["MEETING_DATE"] = f"{s[:4]}/{s[4:6]}/{s[6:8]} 00:00:00"
+                else:
+                    r["MEETING_DATE"] = s
+            else:
+                r["MEETING_DATE"] = ""
+
+            # MEETING_OPERATEDATE: datetime → C# 不补零格式 "2025/4/16 2:30:40"
+            raw_op = r.get("MEETING_OPERATEDATE")
+            if raw_op is not None:
+                try:
+                    if isinstance(raw_op, datetime):
+                        dt_val = raw_op
+                    else:
+                        dt_val = datetime.strptime(str(raw_op)[:19], "%Y-%m-%d %H:%M:%S")
+                    # C# DateTime.ToString() 默认不补零：yyyy/M/d H:mm:ss
+                    r["MEETING_OPERATEDATE"] = f"{dt_val.year}/{dt_val.month}/{dt_val.day} {dt_val.hour}:{dt_val.minute:02d}:{dt_val.second:02d}"
+                except:
+                    r["MEETING_OPERATEDATE"] = str(raw_op)
+            else:
+                r["MEETING_OPERATEDATE"] = ""
+
+            # C# 模型的搜索参数占位字段（旧接口返回 null）
+            r["MEETING_IDS"] = None
+            r["SERVERPART_IDS"] = None
+            r["SPREGIONTYPE_IDS"] = None
+            r["MEETING_DATE_Start"] = None
+            r["MEETING_DATE_End"] = None
+
+            # null → 空字符串（对齐旧接口行为）
+            for nk in ("SERVERPART_REGION", "MEETING_DESC", "MEETING_STAFFNAME"):
+                if r.get(nk) is None:
+                    r[nk] = ""
 
         json_list = JsonListData.create(data_list=page_rows, total=total,
                                         page_index=page_index, page_size=page_size)

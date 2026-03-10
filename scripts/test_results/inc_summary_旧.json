@@ -1,0 +1,35 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "PageIndex": 1,
+    "PageSize": 10,
+    "TotalCount": 4,
+    "List": [
+      {
+        "name": "车流增加，服务区营收减少",
+        "value": "1",
+        "data": null,
+        "key": "1"
+      },
+      {
+        "name": "车流增加，门店的营收减少",
+        "value": "2",
+        "data": null,
+        "key": "2"
+      },
+      {
+        "name": "车流增加，营收增长不匹配",
+        "value": "2",
+        "data": null,
+        "key": "3"
+      },
+      {
+        "name": "车流减少，营收降低不匹配",
+        "value": "107",
+        "data": null,
+        "key": "4"
+      }
+    ]
+  }
+}

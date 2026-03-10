@@ -1,0 +1,10 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "SalableCommodity": 0,
+    "SalableCommodityList": [],
+    "UnSalableCommodity": 0,
+    "UnSalableCommodityList": []
+  }
+}
