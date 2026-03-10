@@ -33,6 +33,7 @@ class Settings:
     REDIS_PORT: int = int(os.getenv("REDIS_PORT", "6379"))
     REDIS_DB: int = int(os.getenv("REDIS_DB", "0"))
     REDIS_PASSWORD: str = os.getenv("REDIS_PASSWORD", "")
+    REDIS_REVENUE_TREND_DB: int = int(os.getenv("REDIS_REVENUE_TREND_DB", "1"))
 
     # === AES 加解密配置 ===
     AES_KEY: str = os.getenv("AES_KEY", "eshangapi2025key")  # 16字节密钥

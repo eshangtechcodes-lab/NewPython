@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, Query
 from typing import Optional
 from loguru import logger
 
+from config import settings
 from models.base import Result, JsonListData
 from routers.deps import get_db, parse_multi_ids, build_in_condition
 from core.database import DatabaseHelper
@@ -2526,9 +2527,24 @@ async def get_revenue_trend_chart(postData: dict = None, db: DatabaseHelper = De
 
         # 从 Redis 读取营收趋势数据
         import redis
-        redis_client = redis.Redis(host='127.0.0.1', port=6379, db=1, decode_responses=True)
         table_name = f"RevenueTrend:{dt.now().strftime('%Y%m%d')}"
-        all_data = redis_client.hgetall(table_name)
+        all_data = {}
+        try:
+            redis_client = redis.Redis(
+                host=settings.REDIS_HOST,
+                port=settings.REDIS_PORT,
+                db=settings.REDIS_REVENUE_TREND_DB,
+                password=settings.REDIS_PASSWORD or None,
+                decode_responses=True,
+                socket_connect_timeout=1,
+                socket_timeout=2,
+            )
+            all_data = redis_client.hgetall(table_name) or {}
+        except Exception as redis_ex:
+            logger.warning(
+                f"GetRevenueTrendChart Redis unavailable: "
+                f"{settings.REDIS_HOST}:{settings.REDIS_PORT}/db{settings.REDIS_REVENUE_TREND_DB} {redis_ex}"
+            )
 
         # 解析 Redis 数据
         import json as json_lib
@@ -3120,7 +3136,7 @@ async def get_province_vehicle_tree_list(
         where_sql = ""
         _sp_ids = parse_multi_ids(serverPartId)
         if _sp_ids:
-            where_sql = " AND " + build_in_condition("SERVERPART_ID", _sp_ids).replace('SERVERPART_ID', 'T."SERVERPART_ID"')
+            where_sql = " AND " + build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'T."SERVERPART_ID"')
 
         # 1. 查车辆归属地月度固化数据(按省份/城市/片区分组)
         sql = f"""SELECT T."PROVINCE_NAME", T."CITY_NAME", T1."SPREGIONTYPE_ID",
