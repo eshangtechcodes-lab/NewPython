@@ -6773,16 +6773,23 @@ async def get_shop_sabfi_list(
             except: return 0.0
 
         def make_inc(cur=None, yoy=None, inc=None, rate=None, qoq=None, inc_qoq=None, rate_qoq=None):
-            """构建 HolidayINCDetailModel — None 保持 None"""
+            """构建 HolidayINCDetailModel — None 保持 None, QOQ 增量 0→None"""
             def _v(x):
                 if x is None: return None
                 try: return float(x)
                 except: return 0.0
+            def _qv(x):
+                """QOQ 值: None 和 0 都视为 None（C# 旧接口行为）"""
+                if x is None: return None
+                try:
+                    val = float(x)
+                    return val if val != 0.0 else None
+                except: return None
             return {
                 "curYearData": _v(cur), "lYearData": _v(yoy),
                 "increaseData": _v(inc), "increaseRate": _v(rate),
-                "QOQData": _v(qoq), "increaseDataQOQ": _v(inc_qoq),
-                "increaseRateQOQ": _v(rate_qoq), "rankNum": None
+                "QOQData": _v(qoq), "increaseDataQOQ": _qv(inc_qoq),
+                "increaseRateQOQ": _qv(rate_qoq), "rankNum": None
             }
 
         def empty_inc():
@@ -7071,7 +7078,7 @@ async def get_shop_sabfi_list(
             roy_qoq = safe_dec(roy_qoq_raw)
 
             avg_cur = round(rev / tic, 2) if tic else 0
-            avg_qoq = round(rev_qoq / tic_qoq, 2) if tic_qoq else 0
+            avg_qoq = round(rev_qoq / tic_qoq, 2) if tic_qoq else None
             avg_inc_qoq = round(avg_cur - avg_qoq, 2) if tic and tic_qoq else None
             avg_rate_qoq = round(avg_inc_qoq / avg_qoq * 100, 2) if avg_inc_qoq is not None and avg_qoq else None
             # 标记是否有上月数据（区分 "无上月数据" 和 "上月值为0"）
@@ -7120,27 +7127,28 @@ async def get_shop_sabfi_list(
                 "MERCHANTS_ID": float(merch_id) if merch_id is not None else None,
                 "MERCHANTS_ID_Encrypted": merch_id_enc,
                 "MERCHANTS_NAME": merch_name,
+                # C# 规则: 原始值为 None 时，QOQData/增量也为 None
                 "RevenueINC": make_inc(
                     r.get("REVENUE_AMOUNT"), None,
                     None, None,
-                    rev_qoq if has_qoq else None,
-                    round(rev - rev_qoq, 2) if has_qoq else None,
-                    round((rev - rev_qoq) / rev_qoq * 100, 2) if has_qoq and rev_qoq else None),
+                    rev_qoq if has_qoq and rev_qoq_raw is not None else None,
+                    round(rev - rev_qoq, 2) if has_qoq and r.get("REVENUE_AMOUNT") is not None else None,
+                    round((rev - rev_qoq) / rev_qoq * 100, 2) if has_qoq and rev_qoq and r.get("REVENUE_AMOUNT") is not None else None),
                 "AccountINC": make_inc(
                     r.get("ROYALTY_THEORY"), None,
                     None, None,
-                    roy_qoq if has_qoq else None,
-                    round(roy - roy_qoq, 2) if has_qoq and r.get("ROYALTY_THEORY") is not None else None,
+                    roy_qoq if has_qoq and roy_qoq_raw is not None else None,
+                    round(roy - roy_qoq, 2) if has_qoq and r.get("ROYALTY_THEORY") is not None and roy_qoq_raw is not None else None,
                     round((roy - roy_qoq) / roy_qoq * 100, 2) if has_qoq and roy_qoq and r.get("ROYALTY_THEORY") is not None else None),
                 "TicketINC": make_inc(
                     r.get("TICKET_COUNT"), None,
                     None, None,
-                    tic_qoq if has_qoq else None,
-                    round(tic - tic_qoq, 2) if has_qoq else None,
-                    round((tic - tic_qoq) / tic_qoq * 100, 2) if has_qoq and tic_qoq else None),
+                    tic_qoq if has_qoq and tic_qoq_raw is not None else None,
+                    round(tic - tic_qoq, 2) if has_qoq and r.get("TICKET_COUNT") is not None else None,
+                    round((tic - tic_qoq) / tic_qoq * 100, 2) if has_qoq and tic_qoq and r.get("TICKET_COUNT") is not None else None),
                 "AvgTicketINC": make_inc(
                     avg_cur if tic else None, None, None, None,
-                    avg_qoq if has_qoq else None, avg_inc_qoq, avg_rate_qoq),
+                    avg_qoq if has_qoq and tic_qoq_raw is not None else None, avg_inc_qoq, avg_rate_qoq),
                 "CurTransaction": None,
                 "Profit_Amount": shop_profit,
                 "Cost_Amount": shop_cost,
