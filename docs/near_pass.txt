@@ -1,0 +1,90 @@
+
+BaseInfo/GetCOMMODITYTYPEList (1 diffs)
+  Result_Data.List[0].COMMODITYTYPE_INDEX: 类型不一致 (float vs int)，值为 9.0 vs 9
+
+BaseInfo/GetNestingOwnerUnitList (1 diffs)
+  Result_Data.List[0].node.DOWNLOAD_DATE: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+BaseInfo/GetPROPERTYASSETSLOGList (1 diffs)
+  Result_Data.List[0].OPERATE_NAME: 类型不一致 (str vs NoneType)，值为 '' vs None
+
+Contract/GetContractExpiredInfo (1 diffs)
+  Result_Data.Expired_HalfYearCount: 类型不一致 (float vs int)，值为 0.0 vs 0
+
+Contract/GetProjectYearlyArrearageList (1 diffs)
+  Result_Data.ProjectCompleteDetailList: 列表长度不一致 (5 vs 0)
+
+BaseInfo/BindingOwnerUnitTree (2 diffs)
+  Result_Data.List[0].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+  Result_Data.List[13].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+
+BaseInfo/GetAssetsRevenueAmount (2 diffs)
+  Result_Data.List: 列表长度不一致 (1 vs 0)
+  Result_Data.TotalCount: 值不一致 (1 vs 0)
+
+BaseInfo/GetServerpartShopList (2 diffs)
+  Result_Data.List: 列表长度不一致 (69 vs 0)
+  Result_Data.TotalCount: 值不一致 (69 vs 0)
+
+Contract/GetAttachmentList (2 diffs)
+  Result_Data.List[0].STAFF_ID: 类型不一致 (int vs NoneType)，值为 0 vs None
+  Result_Data.List[0].STAFF_NAME: 类型不一致 (str vs NoneType)，值为 '' vs None
+
+Merchants/GetCoopMerchantsDetail (2 diffs)
+  Result_Data.LINKER_MOBILEPHONE: 类型不一致 (NoneType vs str)，值为 None vs '0571-81991302'
+  Result_Data.LINKER_NAME: 类型不一致 (NoneType vs str)，值为 None vs '杨雅意'
+
+BaseInfo/GetBusinessBrandList (3 diffs)
+  Result_Data.List[0].COMMISSION_RATIO: 类型不一致 (NoneType vs str)，值为 None vs '18%-20%'
+  Result_Data.List[0].MANAGE_TYPE: 类型不一致 (NoneType vs int)，值为 None vs 2000
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2023-04-18T09:33:35' vs '2023-04-18T00:00:00')
+
+BaseInfo/GetBusinessTradeDetail (3 diffs)
+  Result_Data.AUTOSTATISTICS_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.AUTOSTATISTICS_VALUE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.INELASTIC_DEMAND: 类型不一致 (NoneType vs int)，值为 None vs 1
+
+BaseInfo/GetCOMMODITYTYPEDetail (3 diffs)
+  Result_Data.COMMODITYTYPE_EN: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COMMODITYTYPE_INDEX: 类型不一致 (float vs int)，值为 1.0 vs 1
+  Result_Data.STAFF_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+BaseInfo/GetNestingCOMMODITYTYPEList (3 diffs)
+  Result_Data.List: 列表长度不一致 (10 vs 0)
+  Result_Data.PageSize: 值不一致 (10 vs 0)
+  Result_Data.TotalCount: 值不一致 (10 vs 0)
+
+BaseInfo/GetNestingCOMMODITYTYPETree (3 diffs)
+  Result_Data.List: 列表长度不一致 (10 vs 0)
+  Result_Data.PageSize: 值不一致 (10 vs 0)
+  Result_Data.TotalCount: 值不一致 (10 vs 0)
+
+BusinessProject/GetMerchantsReceivables (3 diffs)
+  Result_Code: 值不一致 (200 vs 100)
+  Result_Data: 类型不一致 (NoneType vs dict)，值为 None vs {'COOPMERCHANTS_ID': None, 'COOPMERCHANTS_NAME': '', 'COOPMERCHANTS_TYPENAME': '', 'COOPMERCHANTS_NATURE': '', 'BANK_NAME': '', 'BANK_ACCOUNT': '', 'AC
+  Result_Desc: 值不一致 ('查询失败，请传入经营商户内码或门店内码集合！' vs '查询成功')
+
+BusinessProject/GetMerchantsReceivablesReport (3 diffs)
+  Result_Data.List: 列表长度不一致 (185 vs 0)
+  Result_Data.PageSize: 值不一致 (185 vs 999)
+  Result_Data.TotalCount: 值不一致 (185 vs 0)
+
+BusinessProject/GetPERIODWARNINGList (3 diffs)
+  Result_Code: 值不一致 (999 vs 100)
+  Result_Data: 类型不一致 (NoneType vs dict)，值为 None vs {'PageIndex': 0, 'PageSize': 0, 'TotalCount': 1993, 'List': [{'PERIODWARNING_ID': 472, 'WARNING_TYPE': 0, 'BUSINESSPROJECT_ID': 1284, 'BUSINESSPROJECT_
+  Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+
+BusinessProject/GetPROJECTSPLITMONTHList (3 diffs)
+  Result_Code: 值不一致 (999 vs 100)
+  Result_Data: 类型不一致 (NoneType vs dict)，值为 None vs {'PageIndex': 0, 'PageSize': 0, 'TotalCount': 10434, 'List': [{'PROJECTSPLITMONTH_ID': 1828, 'STATISTICS_MONTH': 202403, 'SHOPROYALTY_ID': 4259, 'REGIS
+  Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+
+BusinessProject/GetPaymentConfirmList (3 diffs)
+  <root>.Message: 新 API 多出该字段
+  Result_Code: 值不一致 (200 vs 999)
+  Result_Desc: 值不一致 ('查询失败，请传入经营商户内码或门店内码集合或经营项目内码！' vs '查询失败Result() takes no arguments')
+
+BusinessProject/GetSHOPROYALTYDETAILList (3 diffs)
+  Result_Code: 值不一致 (999 vs 100)
+  Result_Data: 类型不一致 (NoneType vs dict)，值为 None vs {'PageIndex': 0, 'PageSize': 0, 'TotalCount': 467, 'List': [{'SHOPROYALTYDETAIL_ID': 92, 'SHOPROYALTY_ID': 2894, 'REGISTERCOMPACT_ID': 215, 'BUSINESSPR
+  Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')

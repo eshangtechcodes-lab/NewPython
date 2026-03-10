@@ -70,7 +70,7 @@ async def get_shop_short_names(
         }
     except Exception as e:
         logger.error(f"GetShopShortNames 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -94,7 +94,7 @@ async def get_serverpart_shop_info(
         }
     except Exception as e:
         logger.error(f"GetServerpartShopInfo 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -138,7 +138,7 @@ async def get_serverpart_ddl(
         }
     except Exception as e:
         logger.error(f"GetServerpartDDL 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -186,7 +186,7 @@ async def get_serverpart_tree(
         }
     except Exception as e:
         logger.error(f"GetServerpartTree 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -244,7 +244,7 @@ async def get_sp_region_shop_tree(
         }
     except Exception as e:
         logger.error(f"GetSPRegionShopTree 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -289,7 +289,7 @@ async def get_serverpart_shop_ddl(
         }
     except Exception as e:
         logger.error(f"GetServerpartShopDDL 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -340,7 +340,7 @@ async def get_serverpart_shop_tree(
         }
     except Exception as e:
         logger.error(f"GetServerpartShopTree 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -375,7 +375,7 @@ async def get_nesting_ownerunit_list(
         }
     except Exception as e:
         logger.error(f"GetNestingOwnerUnitList 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -415,7 +415,7 @@ async def binding_ownerunit_ddl(
         }
     except Exception as e:
         logger.error(f"BindingOwnerUnitDDL 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -445,7 +445,7 @@ async def binding_ownerunit_tree(
         }
     except Exception as e:
         logger.error(f"BindingOwnerUnitTree 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -455,21 +455,18 @@ async def binding_ownerunit_tree(
 # =====================================
 @router.get("/BaseInfo/BindingMerchantTree")
 async def binding_merchant_tree(
-    MerchantPid: int = Query(-1, description="上级内码"),
+    MerchantPid: Optional[int] = Query(-1, description="上级内码"),
     ProvinceCode: Optional[int] = Query(None, description="省份编码"),
-    provincecode: Optional[str] = Header(None, alias="ProvinceCode"),
     db: DatabaseHelper = Depends(get_db)
 ):
     """获取经营商户树"""
     try:
-        province = ProvinceCode
-        if not province and provincecode:
-            try:
-                province = int(provincecode)
-            except Exception:
-                pass
+        # 原 C# Controller: 没有调用 GetIntHeader("ProvinceCode")，直接用 query 参数
+        # MerchantPid 为空时赋值 -1
+        if MerchantPid is None:
+            MerchantPid = -1
         # 原 C# Controller: BindingOwnerUnitTree(2000, MerchantPid, 1, ProvinceCode)
-        result = service.binding_ownerunit_tree(db, 2000, MerchantPid, 1, province)
+        result = service.binding_ownerunit_tree(db, 2000, MerchantPid, 1, ProvinceCode)
         return {
             "Result_Code": 100,
             "Result_Desc": "查询成功",
@@ -482,7 +479,7 @@ async def binding_merchant_tree(
         }
     except Exception as e:
         logger.error(f"BindingMerchantTree 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -522,7 +519,7 @@ async def get_business_brand_list(
         }
     except Exception as e:
         logger.error(f"GetBusinessBrandList 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 
@@ -545,7 +542,7 @@ async def modify_shop_state(
             return {"Result_Code": 200, "Result_Desc": "变更失败，数据更新失败！", "Result_Data": None}
     except Exception as e:
         logger.error(f"ModifyShopState 变更失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"变更失败{str(e)}", "Result_Data": None}
+        return Result.fail(msg=f"变更失败{str(e)}")
 
 
 # =====================================
@@ -579,7 +576,7 @@ async def get_shop_receivables(
         }
     except Exception as e:
         logger.error(f"GetShopReceivables 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -598,7 +595,7 @@ async def get_serverpart_ud_type_tree(
     """获取服务区自定义类别树"""
     try:
         # 原 C# : ProvinceCode = GetIntHeader("ProvinceCode", ProvinceCode)
-        ProvinceCode = get_int_header(request, "ProvinceCode", ProvinceCode)
+        ProvinceCode = get_int_header(request, "ProvinceCode", None)
 
         tree_list = service.get_serverpart_ud_type_tree(
             db, ServerpartId, ShopTrade or "", UserDefinedTypeState
@@ -615,7 +612,7 @@ async def get_serverpart_ud_type_tree(
         }
     except Exception as e:
         logger.error(f"GetServerpartUDTypeTree 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -639,7 +636,7 @@ async def get_serverpart_detail(
         }
     except Exception as e:
         logger.error(f"GetSERVERPARTDetail 查询失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"查询失败{str(e)}"}
+        return Result.fail(msg=f"查询失败{str(e)}")
 
 
 # =====================================
@@ -665,7 +662,7 @@ async def synchro_serverpart(
             return {"Result_Code": 200, "Result_Desc": "更新失败，数据不存在！"}
     except Exception as e:
         logger.error(f"SynchroSERVERPART 同步失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"同步失败{str(e)}"}
+        return Result.fail(msg=f"同步失败{str(e)}")
 
 
 # =====================================
@@ -692,7 +689,7 @@ async def solid_serverpart_weather(
             return {"Result_Code": 200, "Result_Desc": "更新失败，数据不存在！"}
     except Exception as e:
         logger.error(f"SolidServerpartWeather 同步失败: {e}")
-        return {"Result_Code": 999, "Result_Desc": f"同步失败{str(e)}"}
+        return Result.fail(msg=f"同步失败{str(e)}")
 
 
 # =====================================

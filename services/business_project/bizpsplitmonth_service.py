@@ -13,6 +13,7 @@ from typing import Optional
 from datetime import datetime
 from loguru import logger
 from core.database import DatabaseHelper
+from core.format_utils import format_row_dates
 from models.common_model import SearchModel
 
 
@@ -108,6 +109,9 @@ def get_bizpsplitmonth_list(db: DatabaseHelper, search_model: SearchModel) -> tu
     elif len(rows) > 10:
         rows = rows[:10]
 
+    # C# TranslateDateTime: int 日期→格式化字符串
+    for r in rows:
+        format_row_dates(r, DATE_FIELDS)
     return int(total_count), rows
 
 
@@ -116,6 +120,7 @@ def get_bizpsplitmonth_detail(db: DatabaseHelper, bsm_id: int) -> Optional[dict]
     rows = db.execute_query(f"SELECT * FROM {TABLE_NAME} WHERE {PRIMARY_KEY} = {bsm_id}")
     if not rows:
         return None
+    format_row_dates(rows[0], DATE_FIELDS)
     return rows[0]
 
 

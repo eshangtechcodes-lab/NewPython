@@ -166,13 +166,20 @@ def get_serverpart_shop_info(
 def _get_province_id_by_code(db: DatabaseHelper, province_code: str) -> Optional[int]:
     """
     将省份编码（如 340000）映射为 FIELDENUM_ID（T_SERVERPART.PROVINCE_CODE 的值）
-    查询路径: T_FIELDENUM(FIELDEXPLAIN_ID=154, VALUE=省份编码) -> FIELDENUM_ID
-    FIELDEXPLAIN_ID=154 对应 DIVISION_CODE
+    对应 C# DictionaryHelper.GetFieldEnum("DIVISION_CODE", ProvinceCode)
     """
-    sql = f"SELECT FIELDENUM_ID FROM T_FIELDENUM WHERE FIELDEXPLAIN_ID = 154 AND FIELDENUM_VALUE = '{province_code}'"
-    rows = db.execute_query(sql)
-    if rows:
-        return rows[0].get("FIELDENUM_ID")
+    if not province_code or str(province_code).strip() == "" or str(province_code).strip() == "0":
+        return None
+    province_code = str(province_code).strip()
+    try:
+        sql = f"""SELECT FIELDENUM_ID FROM T_FIELDENUM
+            WHERE FIELDEXPLAIN_ID = (SELECT FIELDEXPLAIN_ID FROM T_FIELDEXPLAIN WHERE FIELDEXPLAIN_FIELD = 'DIVISION_CODE')
+              AND FIELDENUM_VALUE = '{province_code}'"""
+        rows = db.execute_query(sql)
+        if rows:
+            return rows[0].get("FIELDENUM_ID")
+    except Exception as e:
+        logger.warning(f"获取省份内码失败: {e}")
     return None
 
 
@@ -192,6 +199,12 @@ def get_serverpart_ddl(
     返回: List[dict] 含 label(名称) 和 value(内码)
     """
     where_parts = []
+
+    # 统一转 str，防止 int 类型参数导致 strip() 报错
+    serverpart_codes = str(serverpart_codes) if serverpart_codes is not None else None
+    province_code = str(province_code) if province_code is not None else None
+    serverpart_type = str(serverpart_type) if serverpart_type is not None else None
+    statistics_type = str(statistics_type) if statistics_type is not None else None
 
     # 按服务区编码筛选
     if serverpart_codes and serverpart_codes.strip():
@@ -353,6 +366,7 @@ def get_serverpart_tree(
                     "type": 1,
                     "desc": str(sp.get("SHOP_COUNT", "")) if sp.get("SHOP_COUNT") is not None else None,
                     "ico": None,
+                    "children": None,
                 })
     else:
         # 不显示区域（原 Helper L550-553）
@@ -364,6 +378,7 @@ def get_serverpart_tree(
                 "type": 1,
                 "desc": str(sp.get("SHOP_COUNT", "")) if sp.get("SHOP_COUNT") is not None else None,
                 "ico": None,
+                "children": None,
             })
 
     return result
@@ -452,9 +467,12 @@ def get_nesting_ownerunit_list(
                 if ownerunit_name and ownerunit_name.strip():
                     if ownerunit_name not in name and not child_nodes:
                         continue
+                # DOWNLOAD_DATE：C# Model 默认 null，数据库空字符串需转为 None
+                if not row.get("DOWNLOAD_DATE"):
+                    row["DOWNLOAD_DATE"] = None
                 children.append({
                     "node": row,
-                    "children": child_nodes
+                    "children": child_nodes if child_nodes else None
                 })
         return children
 
@@ -463,7 +481,7 @@ def get_nesting_ownerunit_list(
 
 # =====================================
 # 7. BindingOwnerUnitDDL - 业主单位下拉框
-#    对应原 OwnerUnitHelper.BindingOwnerUnitDDL
+#    对应原 OwnerUnitHelper.BindingOwnerUnitDDL (L628-664)
 # =====================================
 def binding_ownerunit_ddl(
     db: DatabaseHelper,
@@ -472,71 +490,161 @@ def binding_ownerunit_ddl(
 ) -> list:
     """
     获取业主单位下拉框
-    data_type: 0=返回编码, 1=返回内码
-    返回: List[dict] 含 label 和 value
+    data_type: 0=返回 PROVINCE_BUSINESSCODE, 1=返回 OWNERUNIT_ID
+    返回: List[dict] 含 label, value, type
     """
-    where_parts = ["OWNERUNIT_STATE = 1", "OWNERUNIT_NATURE = 1000"]
+    # 原 C# SQL: WHERE OWNERUNIT_PID = -1 AND OWNERUNIT_NATURE = 1000 [AND PROVINCE_BUSINESSCODE = ...]
+    where_parts = ["OWNERUNIT_PID = -1", "OWNERUNIT_NATURE = 1000"]
 
     if province_code is not None:
-        where_parts.append(f"PROVINCE_CODE = {province_code}")
+        where_parts.append(f"PROVINCE_BUSINESSCODE = {province_code}")
 
     where_sql = " WHERE " + " AND ".join(where_parts)
-    value_field = "OWNERUNIT_ID"  # T_OWNERUNIT 表无 OWNERUNIT_CODE 列，统一用 OWNERUNIT_ID
 
-    sql = f"""SELECT OWNERUNIT_ID, OWNERUNIT_NAME
+    sql = f"""SELECT OWNERUNIT_ID, OWNERUNIT_NAME, PROVINCE_BUSINESSCODE, OWNERUNIT_ICO
         FROM T_OWNERUNIT{where_sql}
-        ORDER BY OWNERUNIT_INDEX, OWNERUNIT_ID"""
+        ORDER BY PROVINCE_BUSINESSCODE"""
 
     rows = db.execute_query(sql)
-    return [{"label": r.get("OWNERUNIT_NAME", ""),
-             "value": r.get(value_field),
-             "type": 1} for r in rows]
+    result = []
+    for r in rows:
+        if data_type == 0:
+            value = r.get("PROVINCE_BUSINESSCODE")
+        else:
+            value = r.get("OWNERUNIT_ID")
+        # C# TryParseToInt
+        try:
+            value = int(value) if value is not None else None
+        except (ValueError, TypeError):
+            value = None
+
+        item = {
+            "label": r.get("OWNERUNIT_NAME", ""),
+            "value": value,
+            "type": 1,
+        }
+        # 原 C# 拼接 Config.AppSettings.CoopMerchantUrls + ICO
+        ico = r.get("OWNERUNIT_ICO")
+        if ico and str(ico).strip():
+            item["ico"] = str(ico)
+        result.append(item)
+    return result
 
 
 # =====================================
 # 8. BindingOwnerUnitTree - 业主单位树
-#    对应原 OwnerUnitHelper.BindingOwnerUnitTree
+#    对应原 OwnerUnitHelper.BindingOwnerUnitTree (L668-803)
+#    签名: (nature, pid, data_type, province_code)
 # =====================================
 def binding_ownerunit_tree(
     db: DatabaseHelper,
+    ownerunit_nature: int = 1000,
+    ownerunit_pid: int = -1,
     data_type: int = 0,
-    ownerunit_pid: int = -1
+    province_code: Optional[int] = None
 ) -> list:
     """
     获取业主单位树
-    返回: List[dict] 嵌套树
+    ownerunit_nature: 1000=业主单位, 2000=经营商户
+    data_type: 0=返回 PROVINCE_BUSINESSCODE, 1=返回 OWNERUNIT_ID
+    province_code: 省份编码，非空时在树遍历阶段过滤
+    返回: List[dict] 嵌套树 (NestingModel<CommonTypeModel>)
     """
-    where_parts = ["OWNERUNIT_STATE = 1", "OWNERUNIT_NATURE = 1000"]
-    where_sql = " WHERE " + " AND ".join(where_parts)
-    value_field = "OWNERUNIT_ID"  # T_OWNERUNIT 表无 OWNERUNIT_CODE 列，统一用 OWNERUNIT_ID
+    # 原 C# 只按 OWNERUNIT_NATURE 过滤，不加 OWNERUNIT_STATE = 1
+    where_sql = ""
+    if ownerunit_nature is not None:
+        where_sql = f" WHERE OWNERUNIT_NATURE = {ownerunit_nature}"
 
-    sql = f"SELECT * FROM T_OWNERUNIT{where_sql} ORDER BY OWNERUNIT_INDEX, OWNERUNIT_ID"
+    sql = f"SELECT * FROM T_OWNERUNIT{where_sql}"
     all_rows = db.execute_query(sql)
 
+    # 构建 parent_id -> children 的索引，避免 O(n²) 遍历
+    children_map: dict = {}
+    for row in all_rows:
+        pid = row.get("OWNERUNIT_PID")
+        if pid is None:
+            pid = -1
+        pid = int(pid)
+        if pid not in children_map:
+            children_map[pid] = []
+        children_map[pid].append(row)
+
+    # 对每个分组按 OWNERUNIT_INDEX, OWNERUNIT_ID 排序
+    for pid_key in children_map:
+        children_map[pid_key].sort(
+            key=lambda r: (r.get("OWNERUNIT_INDEX") or 0, r.get("OWNERUNIT_ID") or 0)
+        )
+
+    def _build_node(row):
+        """构建一个 CommonTypeModel 节点"""
+        if data_type == 0:
+            value = row.get("PROVINCE_BUSINESSCODE")
+        else:
+            value = row.get("OWNERUNIT_ID")
+        # 确保 value 是 int 类型（原 C# TryParseToInt）
+        try:
+            value = int(value) if value is not None else None
+        except (ValueError, TypeError):
+            value = None
+
+        node = {
+            "label": row.get("OWNERUNIT_NAME", ""),
+            "value": value,
+            "type": 1,
+            "key": f"1-{value}",
+        }
+        # 原 C# 拼接 Config.AppSettings.CoopMerchantUrls + ICO
+        ico = row.get("OWNERUNIT_ICO")
+        if ico and str(ico).strip():
+            node["ico"] = str(ico)
+        return node
+
     def build_tree(parent_id):
-        children = []
-        for row in all_rows:
-            pid = row.get("OWNERUNIT_PID")
-            if pid is None:
-                pid = -1
-            if int(pid) == int(parent_id):
-                child_nodes = build_tree(row.get("OWNERUNIT_ID"))
-                node = {
-                    "label": row.get("OWNERUNIT_NAME", ""),
-                    "value": row.get(value_field),
-                    "type": 1,
-                    "key": f"1-{row.get('OWNERUNIT_ID')}"
-                }
-                item = {"node": node, "children": child_nodes}
-                children.append(item)
-        return children
+        """递归构建树，同时在遍历阶段做 ProvinceCode 过滤"""
+        result = []
+        rows = children_map.get(int(parent_id), [])
+        for row in rows:
+            ownerunit_id = row.get("OWNERUNIT_ID")
+            node = _build_node(row)
+            nesting = {"node": node}
+
+            # 递归查找子节点
+            if int(ownerunit_id) in children_map:
+                child_list = build_tree(ownerunit_id)
+                nesting["children"] = child_list
+            else:
+                # C# NestingModel 在未进入子集绑定分支时，children 保持列表默认值
+                # 但实际 C# 中不设 children 字段时，序列化为 null
+                # 保持和 BindingMerchantTree 一致，用 None
+                nesting["children"] = []
+
+            # 省份过滤逻辑 (原 C# L724-736)
+            if province_code is not None:
+                prov_biz = row.get("PROVINCE_BUSINESSCODE")
+                prov_code = row.get("PROVINCE_CODE")
+                try:
+                    prov_biz = int(prov_biz) if prov_biz is not None else None
+                except (ValueError, TypeError):
+                    prov_biz = None
+                try:
+                    prov_code = int(prov_code) if prov_code is not None else None
+                except (ValueError, TypeError):
+                    prov_code = None
+
+                has_children = nesting.get("children") and len(nesting["children"]) > 0
+                if prov_biz == province_code or prov_code == province_code or has_children:
+                    result.append(nesting)
+            else:
+                result.append(nesting)
+        return result
 
     return build_tree(ownerunit_pid)
 
 
 # =====================================
 # 9. BindingMerchantTree - 经营商户树
-#    对应原 OwnerUnitHelper.BindingOwnerUnitTree (nature=2000)
+#    原 C# Controller: BindingOwnerUnitTree(2000, MerchantPid, 1, ProvinceCode)
+#    直接委托 binding_ownerunit_tree
 # =====================================
 def binding_merchant_tree(
     db: DatabaseHelper,
@@ -544,37 +652,9 @@ def binding_merchant_tree(
     province_code: Optional[int] = None
 ) -> list:
     """
-    获取经营商户树（调用业主单位树，nature=2000）
-    返回: List[dict] 嵌套树
+    获取经营商户树（调用业主单位树，nature=2000, data_type=1）
     """
-    where_parts = ["OWNERUNIT_STATE = 1", "OWNERUNIT_NATURE = 2000"]
-    if province_code is not None:
-        where_parts.append(f"PROVINCE_CODE = {province_code}")
-
-    where_sql = " WHERE " + " AND ".join(where_parts)
-
-    sql = f"SELECT * FROM T_OWNERUNIT{where_sql} ORDER BY OWNERUNIT_INDEX, OWNERUNIT_ID"
-    all_rows = db.execute_query(sql)
-
-    def build_tree(parent_id):
-        children = []
-        for row in all_rows:
-            pid = row.get("OWNERUNIT_PID")
-            if pid is None:
-                pid = -1
-            if int(pid) == int(parent_id):
-                child_nodes = build_tree(row.get("OWNERUNIT_ID"))
-                node = {
-                    "label": row.get("OWNERUNIT_NAME", ""),
-                    "value": row.get("OWNERUNIT_ID"),
-                    "type": 1,
-                    "key": f"1-{row.get('OWNERUNIT_ID')}"
-                }
-                item = {"node": node, "children": child_nodes}
-                children.append(item)
-        return children
-
-    return build_tree(merchant_pid)
+    return binding_ownerunit_tree(db, 2000, merchant_pid, 1, province_code)
 
 
 # =====================================
@@ -929,27 +1009,6 @@ def get_serverpart_shop_tree(
     return list(sp_map.values())
 
 
-# =====================================
-# 辅助方法: 根据省份编码获取省份内码
-# =====================================
-def _get_province_id_by_code(db: DatabaseHelper, province_code: str) -> Optional[int]:
-    """
-    根据省份编码获取省份内码
-    对应原 ServerpartHelper.GetProvinceIdByCode
-    """
-    if not province_code or province_code.strip() == "0":
-        return None
-    try:
-        sql = f"""SELECT FIELDENUM_ID FROM T_FIELDENUM
-            WHERE FIELDEXPLAIN_ID = (SELECT FIELDEXPLAIN_ID FROM T_FIELDEXPLAIN WHERE FIELDEXPLAIN_NAME = 'DIVISION_CODE')
-              AND FIELDENUM_VALUE = '{province_code}'"""
-        rows = db.execute_query(sql)
-        if rows:
-            return rows[0].get("FIELDENUM_ID")
-    except Exception as e:
-        logger.warning(f"获取省份内码失败: {e}")
-    return None
-
 
 # =====================================
 # 辅助方法: 根据服务区编码获取服务区内码集合
@@ -1245,7 +1304,7 @@ def _ownerunit_row_to_model(row: dict) -> dict:
         "OPERATE_DATE": str(row.get("OPERATE_DATE") or ""),
         "OWNERUNIT_DESC": row.get("OWNERUNIT_DESC") or "",
         "ISSUPPORTPOINT": row.get("ISSUPPORTPOINT"),
-        "DOWNLOAD_DATE": str(row.get("DOWNLOAD_DATE") or ""),
+        "DOWNLOAD_DATE": row.get("DOWNLOAD_DATE") or None,
         "WECHATPUBLICSIGN_ID": row.get("WECHATPUBLICSIGN_ID"),
     }
 

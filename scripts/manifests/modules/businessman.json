@@ -1,0 +1,323 @@
+{
+  "name": "BusinessMan dynamic compare manifest",
+  "note": "BusinessMan 动态执行 manifest；仅保留 matched + 读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "BusinessMan"
+  ],
+  "endpoints": [
+    {
+      "name": "BusinessMan/GetCOMMODITY_TEMPDetail",
+      "endpoint": "BusinessMan/GetCOMMODITY_TEMPDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITY_TEMPId": 43
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessMan/GetCOMMODITY_TEMPList",
+      "endpoint": "BusinessMan/GetCOMMODITY_TEMPList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_TEMP_ID": 10459
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessMan/GetUserList",
+      "endpoint": "BusinessMan/GetUserList",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetBusinessManDetail",
+      "endpoint": "Merchants/GetBusinessManDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 123
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetBusinessManDetailDetail",
+      "endpoint": "Merchants/GetBusinessManDetailDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManDetailId": 19
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetBusinessManDetailList",
+      "endpoint": "Merchants/GetBusinessManDetailList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetBusinessManList",
+      "endpoint": "Merchants/GetBusinessManList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "OWNERUNIT_ID": 49
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCUSTOMTYPEDetail",
+      "endpoint": "Merchants/GetCUSTOMTYPEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CUSTOMTYPEId": 49
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCUSTOMTYPEList",
+      "endpoint": "Merchants/GetCUSTOMTYPEList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "CUSTOMTYPE_ID": 49
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCommodityDetail",
+      "endpoint": "Merchants/GetCommodityDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "Commodity_BusinessId": 12
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCommodityList",
+      "endpoint": "Merchants/GetCommodityList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_TYPE": "33"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCustomTypeDDL",
+      "endpoint": "Merchants/GetCustomTypeDDL",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 374
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetNestingCustomTypeLsit",
+      "endpoint": "Merchants/GetNestingCustomTypeLsit",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 374
+          }
+        }
+      ]
+    }
+  ]
+}

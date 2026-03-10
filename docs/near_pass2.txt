@@ -1,0 +1,34 @@
+
+## BaseInfo/BindingOwnerUnitTree (2 diffs | fail)
+  Result_Data.List[0].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+  Result_Data.List[13].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+
+## BaseInfo/GetAssetsRevenueAmount (2 diffs | fail)
+  Result_Data.List: 列表长度不一致 (1 vs 0)
+  Result_Data.TotalCount: 值不一致 (1 vs 0)
+
+## BaseInfo/GetBusinessBrandList (3 diffs | fail)
+  Result_Data.List[0].COMMISSION_RATIO: 类型不一致 (NoneType vs str)，值为 None vs '18%-20%'
+  Result_Data.List[0].MANAGE_TYPE: 类型不一致 (NoneType vs int)，值为 None vs 2000
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2023-04-18T09:33:35' vs '2023-04-18T00:00:00')
+
+## BaseInfo/GetBusinessTradeDetail (3 diffs | fail)
+  Result_Data.AUTOSTATISTICS_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.AUTOSTATISTICS_VALUE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.INELASTIC_DEMAND: 类型不一致 (NoneType vs int)，值为 None vs 1
+
+## BaseInfo/GetCOMMODITYTYPEDetail (3 diffs | fail)
+  Result_Data.COMMODITYTYPE_EN: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COMMODITYTYPE_INDEX: 类型不一致 (float vs int)，值为 1.0 vs 1
+  Result_Data.STAFF_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+## BaseInfo/GetCOMMODITYTYPEList (1 diffs | fail)
+  Result_Data.List[0].COMMODITYTYPE_INDEX: 类型不一致 (float vs int)，值为 9.0 vs 9
+
+## BaseInfo/GetServerpartShopList (2 diffs | fail)
+  Result_Data.List: 列表长度不一致 (69 vs 0)
+  Result_Data.TotalCount: 值不一致 (69 vs 0)
+
+## Merchants/GetCoopMerchantsDetail (2 diffs | fail)
+  Result_Data.LINKER_MOBILEPHONE: 类型不一致 (NoneType vs str)，值为 None vs '0571-81991302'
+  Result_Data.LINKER_NAME: 类型不一致 (NoneType vs str)，值为 None vs '杨雅意'

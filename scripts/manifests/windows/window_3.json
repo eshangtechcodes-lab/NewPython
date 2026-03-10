@@ -1,0 +1,1958 @@
+{
+  "name": "window_3 dynamic compare manifest",
+  "note": "批量中型模块 窗口并行测试 manifest；仅保留可执行读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "Audit",
+    "Analysis",
+    "BusinessMan",
+    "Supplier",
+    "Verification",
+    "Sales"
+  ],
+  "endpoints": [
+    {
+      "name": "Audit/GetABNORMALAUDITList",
+      "endpoint": "Audit/GetABNORMALAUDITList",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetAUDITTASKSDetail",
+      "endpoint": "Audit/GetAUDITTASKSDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AUDITTASKSId": 3675
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetAUDITTASKSList",
+      "endpoint": "Audit/GetAUDITTASKSList",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "AUDITTASKS_ID": 3675
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetAbnormalAuditDetail",
+      "endpoint": "Audit/GetAbnormalAuditDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AbnormalAuditId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetAbnormalRateReport",
+      "endpoint": "Audit/GetAbnormalRateReport",
+      "method": "GET",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-02"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetAuditDetils",
+      "endpoint": "Audit/GetAuditDetils",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetAuditList",
+      "endpoint": "Audit/GetAuditList",
+      "method": "GET",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": false,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetAuditTasksDetailList",
+      "endpoint": "Audit/GetAuditTasksDetailList",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetAuditTasksReport",
+      "endpoint": "Audit/GetAuditTasksReport",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetCHECKACCOUNTDetail",
+      "endpoint": "Audit/GetCHECKACCOUNTDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CHECKACCOUNTId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetCHECKACCOUNTList",
+      "endpoint": "Audit/GetCHECKACCOUNTList",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetCheckAccountReport",
+      "endpoint": "Audit/GetCheckAccountReport",
+      "method": "GET",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02",
+            "checkType": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetSpecialBehaviorReport",
+      "endpoint": "Audit/GetSpecialBehaviorReport",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetYSABNORMALITYDETAILList",
+      "endpoint": "Audit/GetYSABNORMALITYDETAILList",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "AbnormalityCode": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetYSABNORMALITYDetail",
+      "endpoint": "Audit/GetYSABNORMALITYDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AbnormalityCode": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetYSABNORMALITYList",
+      "endpoint": "Audit/GetYSABNORMALITYList",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit/GetYsabnormalityReport",
+      "endpoint": "Audit/GetYsabnormalityReport",
+      "method": "POST",
+      "meta": {
+        "module": "Audit",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Audit\\AuditController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part1.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetANALYSISINSDetail",
+      "endpoint": "Analysis/GetANALYSISINSDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ANALYSISINSId": 1805
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetANALYSISINSList",
+      "endpoint": "Analysis/GetANALYSISINSList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ANALYSISINS_ID": "1805"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetANALYSISRULEDetail",
+      "endpoint": "Analysis/GetANALYSISRULEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ANALYSISRULEId": 19
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetANALYSISRULEList",
+      "endpoint": "Analysis/GetANALYSISRULEList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ANALYSISRULE_ID": 19
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetASSETSPROFITSBusinessTreeList",
+      "endpoint": "Analysis/GetASSETSPROFITSBusinessTreeList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetASSETSPROFITSDateDetailList",
+      "endpoint": "Analysis/GetASSETSPROFITSDateDetailList",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "propertyAssetsId": 1,
+            "startDate": "202501",
+            "endDate": "202512",
+            "shopId": 9475
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetASSETSPROFITSDetail",
+      "endpoint": "Analysis/GetASSETSPROFITSDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ASSETSPROFITSId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetASSETSPROFITSList",
+      "endpoint": "Analysis/GetASSETSPROFITSList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetASSETSPROFITSTreeList",
+      "endpoint": "Analysis/GetASSETSPROFITSTreeList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetAssetsLossProfitList",
+      "endpoint": "Analysis/GetAssetsLossProfitList",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "propertyAssetsId": 1,
+            "startDate": "202501",
+            "endDate": "202512"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetINVESTMENTANALYSISDetail",
+      "endpoint": "Analysis/GetINVESTMENTANALYSISDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "INVESTMENTANALYSISId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetINVESTMENTANALYSISList",
+      "endpoint": "Analysis/GetINVESTMENTANALYSISList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetINVESTMENTDETAILDetail",
+      "endpoint": "Analysis/GetINVESTMENTDETAILDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "INVESTMENTDETAILId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetINVESTMENTDETAILList",
+      "endpoint": "Analysis/GetINVESTMENTDETAILList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetInvestmentReport",
+      "endpoint": "Analysis/GetInvestmentReport",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ContainHoliday": 0,
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetNestingIAReport",
+      "endpoint": "Analysis/GetNestingIAReport",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ContainHoliday": 0,
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPERIODMONTHPROFITDetail",
+      "endpoint": "Analysis/GetPERIODMONTHPROFITDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PERIODMONTHPROFITId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPERIODMONTHPROFITList",
+      "endpoint": "Analysis/GetPERIODMONTHPROFITList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PERIODMONTHPROFIT_ID": 651
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPREFERRED_RATINGDetail",
+      "endpoint": "Analysis/GetPREFERRED_RATINGDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPREFERRED_RATINGList",
+      "endpoint": "Analysis/GetPREFERRED_RATINGList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPROFITCONTRIBUTEDetail",
+      "endpoint": "Analysis/GetPROFITCONTRIBUTEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROFITCONTRIBUTEId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPROFITCONTRIBUTEList",
+      "endpoint": "Analysis/GetPROFITCONTRIBUTEList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPROMPTDetail",
+      "endpoint": "Analysis/GetPROMPTDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROMPTId": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPROMPTList",
+      "endpoint": "Analysis/GetPROMPTList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetPeriodMonthlyList",
+      "endpoint": "Analysis/GetPeriodMonthlyList",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsMonth": "202512",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetRevenueEstimateList",
+      "endpoint": "Analysis/GetRevenueEstimateList",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsMonth": "202512",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetSENTENCEDetail",
+      "endpoint": "Analysis/GetSENTENCEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SENTENCEId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetSENTENCEList",
+      "endpoint": "Analysis/GetSENTENCEList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SENTENCE_ID": 1
+            },
+            "PageIndex": 1,
+            "PageSize": 99
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetShopSABFIList",
+      "endpoint": "Analysis/GetShopSABFIList",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416,
+            "StatisticsMonth": "202511"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetVEHICLEAMOUNTDetail",
+      "endpoint": "Analysis/GetVEHICLEAMOUNTDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "VEHICLEAMOUNTId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis/GetVEHICLEAMOUNTList",
+      "endpoint": "Analysis/GetVEHICLEAMOUNTList",
+      "method": "POST",
+      "meta": {
+        "module": "Analysis",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Analysis\\AnalysisController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessMan/GetCOMMODITY_TEMPDetail",
+      "endpoint": "BusinessMan/GetCOMMODITY_TEMPDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITY_TEMPId": 43
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessMan/GetCOMMODITY_TEMPList",
+      "endpoint": "BusinessMan/GetCOMMODITY_TEMPList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_TEMP_ID": 10459
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessMan/GetUserList",
+      "endpoint": "BusinessMan/GetUserList",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetBusinessManDetail",
+      "endpoint": "Merchants/GetBusinessManDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 123
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetBusinessManDetailDetail",
+      "endpoint": "Merchants/GetBusinessManDetailDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManDetailId": 19
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetBusinessManDetailList",
+      "endpoint": "Merchants/GetBusinessManDetailList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetBusinessManList",
+      "endpoint": "Merchants/GetBusinessManList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "OWNERUNIT_ID": 49
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCUSTOMTYPEDetail",
+      "endpoint": "Merchants/GetCUSTOMTYPEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CUSTOMTYPEId": 49
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCUSTOMTYPEList",
+      "endpoint": "Merchants/GetCUSTOMTYPEList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "CUSTOMTYPE_ID": 49
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCommodityDetail",
+      "endpoint": "Merchants/GetCommodityDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "Commodity_BusinessId": 12
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCommodityList",
+      "endpoint": "Merchants/GetCommodityList",
+      "method": "POST",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_TYPE": "33"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCustomTypeDDL",
+      "endpoint": "Merchants/GetCustomTypeDDL",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 374
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetNestingCustomTypeLsit",
+      "endpoint": "Merchants/GetNestingCustomTypeLsit",
+      "method": "GET",
+      "meta": {
+        "module": "BusinessMan",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\BusinessManController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 374
+          }
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetQUALIFICATION_HISDetail",
+      "endpoint": "Supplier/GetQUALIFICATION_HISDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetQUALIFICATION_HISList",
+      "endpoint": "Supplier/GetQUALIFICATION_HISList",
+      "method": "POST",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetQualificationDetail",
+      "endpoint": "Supplier/GetQualificationDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetQualificationList",
+      "endpoint": "Supplier/GetQualificationList",
+      "method": "POST",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetSupplierDetail",
+      "endpoint": "Supplier/GetSupplierDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetSupplierList",
+      "endpoint": "Supplier/GetSupplierList",
+      "method": "POST",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetSupplierTreeList",
+      "endpoint": "Supplier/GetSupplierTreeList",
+      "method": "POST",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetCommoditySaleList",
+      "endpoint": "Verification/GetCommoditySaleList",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetDataVerificationList",
+      "endpoint": "Verification/GetDataVerificationList",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetENDACCOUNTModel",
+      "endpoint": "Verification/GetENDACCOUNTModel",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetEndAccountData",
+      "endpoint": "Verification/GetEndAccountData",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetEndaccountDetail",
+      "endpoint": "Verification/GetEndaccountDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": false,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetEndaccountHisList",
+      "endpoint": "Verification/GetEndaccountHisList",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": false,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetEndaccountList",
+      "endpoint": "Verification/GetEndaccountList",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": false,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetEndaccountSupplement",
+      "endpoint": "Verification/GetEndaccountSupplement",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetMobilePayDataList",
+      "endpoint": "Verification/GetMobilePayDataList",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetShopEndaccountSum",
+      "endpoint": "Verification/GetShopEndaccountSum",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RoleType": "1",
+            "ServerpartId": "416",
+            "ServerpartShopCode": "049001",
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verification/GetSuppEndaccountList",
+      "endpoint": "Verification/GetSuppEndaccountList",
+      "method": "GET",
+      "meta": {
+        "module": "Verification",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\VerificationController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCOMMODITYSALEDetail",
+      "endpoint": "Sales/GetCOMMODITYSALEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCOMMODITYSALEList",
+      "endpoint": "Sales/GetCOMMODITYSALEList",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCommoditySaleSummary",
+      "endpoint": "Sales/GetCommoditySaleSummary",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCommodityTypeHistory",
+      "endpoint": "Sales/GetCommodityTypeHistory",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCommodityTypeSummary",
+      "endpoint": "Sales/GetCommodityTypeSummary",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetEndaccountError",
+      "endpoint": "Sales/GetEndaccountError",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetEndaccountSaleInfo",
+      "endpoint": "Sales/GetEndaccountSaleInfo",
+      "method": "GET",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": false,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    }
+  ],
+  "report_path": "docs/window_3_dynamic_compare_report.md"
+}

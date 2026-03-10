@@ -1,0 +1,427 @@
+{
+  "name": "BigData dynamic compare manifest",
+  "note": "BigData 动态执行 manifest；仅保留 matched + 读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "BigData"
+  ],
+  "endpoints": [
+    {
+      "name": "BigData/GetBAYONETDAILY_AHDetail",
+      "endpoint": "BigData/GetBAYONETDAILY_AHDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetBAYONETDAILY_AHList",
+      "endpoint": "BigData/GetBAYONETDAILY_AHList",
+      "method": "POST",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BAYONETDAILY_ID": 385364
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetBAYONETDetail",
+      "endpoint": "BigData/GetBAYONETDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BAYONETId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetBAYONETList",
+      "endpoint": "BigData/GetBAYONETList",
+      "method": "POST",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetBAYONETWARNINGList",
+      "endpoint": "BigData/GetBAYONETWARNINGList",
+      "method": "POST",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BAYONETWARNING_ID": 1337641
+            },
+            "PageIndex": 1,
+            "PageSize": 99
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetBayonetOwnerAHList",
+      "endpoint": "BigData/GetBayonetOwnerAHList",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "vehicleType": "大型车",
+            "statisticsStartTime": "20241201",
+            "statisticsEndTime": "20241231"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetBayonetOwnerMonthAHList",
+      "endpoint": "BigData/GetBayonetOwnerMonthAHList",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "vehicleType": "大型车",
+            "searchKey": "SERVERPART_NAME",
+            "searchValue": "1",
+            "sortKey": "SERVERPART_NAME",
+            "sortStr": "asc",
+            "statisticsStartMonth": "202412",
+            "statisticsEndMonth": "202412"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetDailyBayonetAnalysis",
+      "endpoint": "BigData/GetDailyBayonetAnalysis",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SERVERPART_ID": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetSECTIONFLOWDetail",
+      "endpoint": "BigData/GetSECTIONFLOWDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SECTIONFLOWId": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetSECTIONFLOWList",
+      "endpoint": "BigData/GetSECTIONFLOWList",
+      "method": "POST",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetSECTIONFLOWMONTHDetail",
+      "endpoint": "BigData/GetSECTIONFLOWMONTHDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SECTIONFLOWMONTHId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetSECTIONFLOWMONTHList",
+      "endpoint": "BigData/GetSECTIONFLOWMONTHList",
+      "method": "POST",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetServerpartSectionFlow",
+      "endpoint": "BigData/GetServerpartSectionFlow",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SERVERPART_ID": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetTimeIntervalList",
+      "endpoint": "BigData/GetTimeIntervalList",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "statisticsType": 1,
+            "serverPartId": 416,
+            "statisticsMonth": "202512",
+            "vehicleType": "小型车",
+            "DataType": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "BigData/GetUreaMasterList",
+      "endpoint": "BigData/GetUreaMasterList",
+      "method": "POST",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\BigDataController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "OperateDate": "2025-12-31",
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customer/GetCUSTOMERGROUP_AMOUNTDetail",
+      "endpoint": "Customer/GetCUSTOMERGROUP_AMOUNTDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\CustomerController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CUSTOMERGROUP_AMOUNTId": 296
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customer/GetCUSTOMERGROUP_AMOUNTList",
+      "endpoint": "Customer/GetCUSTOMERGROUP_AMOUNTList",
+      "method": "POST",
+      "meta": {
+        "module": "BigData",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BigData\\CustomerController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\bigdata\\bigdata_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    }
+  ]
+}

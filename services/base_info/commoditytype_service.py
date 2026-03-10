@@ -69,13 +69,20 @@ def _process_row(row: dict) -> dict:
     # VARCHAR 字段转数值（原 C# TryParseToInt / TryParseToDecimal）
     # COMMODITYTYPE_VALID -> TryParseToShort, COMMODITYTYPE_PID -> TryParseToInt
     # COMMODITYTYPE_INDEX -> TryParseToInt, COMMODITYTYPE_CODE -> TryParseToDecimal
-    int_parse_fields = ["COMMODITYTYPE_VALID", "COMMODITYTYPE_PID", "COMMODITYTYPE_INDEX"]
+    int_parse_fields = ["COMMODITYTYPE_VALID", "COMMODITYTYPE_PID"]
     for field in int_parse_fields:
         if field in row and row[field] is not None:
             try:
                 row[field] = int(float(str(row[field])))
             except (ValueError, TypeError):
                 pass
+
+    # COMMODITYTYPE_INDEX -> C# Model 中是 decimal 类型，序列化为 float
+    if "COMMODITYTYPE_INDEX" in row and row["COMMODITYTYPE_INDEX"] is not None:
+        try:
+            row["COMMODITYTYPE_INDEX"] = float(str(row["COMMODITYTYPE_INDEX"]))
+        except (ValueError, TypeError):
+            pass
 
     # COMMODITYTYPE_CODE -> TryParseToDecimal（返回浮点数）
     if "COMMODITYTYPE_CODE" in row and row["COMMODITYTYPE_CODE"] is not None:
@@ -165,7 +172,15 @@ def get_commoditytype_detail(db: DatabaseHelper, commoditytype_id: int) -> Optio
     sql = f"SELECT * FROM {TABLE_NAME} WHERE {PRIMARY_KEY} = {commoditytype_id}"
     rows = db.execute_query(sql)
     if rows:
-        return _process_row(rows[0])
+        row = rows[0]
+        # 保存原始 null 值（C# Detail 中不对这些字段做 ToString() 转换）
+        null_fields = {k: row.get(k) for k in ["COMMODITYTYPE_EN", "STAFF_NAME"]}
+        _process_row(row)
+        # 恢复 C# Detail 中保持 null 的字段
+        for k, v in null_fields.items():
+            if v is None:
+                row[k] = None
+        return row
     return None
 
 

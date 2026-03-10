@@ -1,0 +1,77 @@
+{
+  "generated_at": "2026-03-10 13:03:06",
+  "manifest_source": "CLI",
+  "report_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\compare_result.md",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "module_scope": [],
+  "counts": {
+    "pass": 0,
+    "fail": 1,
+    "skip": 0,
+    "total": 1
+  },
+  "cases": [
+    {
+      "endpoint": "BaseInfo/GetServerpartTree",
+      "case_name": "default",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BaseInfo/GetServerpartTree | 新 API: http://localhost:8080/EShangApiMain/BaseInfo/GetServerpartTree"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 999"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 请求参数校验失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BaseInfo/GetServerpartTree”匹配的 HTTP 资源。' vs '请求参数校验失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    }
+  ]
+}

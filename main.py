@@ -5,12 +5,17 @@ EShangApi - FastAPI 应用入口
 """
 import sys
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from config import settings
-from middleware.error_handler import global_exception_handler
+from middleware.error_handler import (
+    global_exception_handler,
+    validation_exception_handler,
+    http_exception_handler
+)
 
 # 配置日志
 os.makedirs(settings.LOG_DIR, exist_ok=True)
@@ -42,8 +47,10 @@ app.add_middleware(
     allow_headers=settings.CORS_ALLOW_HEADERS,
 )
 
-# 全局异常处理
+# 全局异常处理 — PKG-RESP-CORE-01: 注册三种处理器，确保所有错误都返回 Result 格式
 app.add_exception_handler(Exception, global_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(HTTPException, http_exception_handler)
 
 # === 注册路由 ===
 # EShangApiMain - BaseInfo 路由（前缀 /EShangApiMain 与原 C# API 路径一致）
@@ -169,6 +176,48 @@ app.include_router(contractsyn_router, prefix="/EShangApiMain", tags=["合同信
 # MerchantsController 相关路由（经营商户/商户类型/联系人/品牌关联）
 from routers.eshang_api_main.merchants.merchants_router import router as merchants_router
 app.include_router(merchants_router, prefix="/EShangApiMain", tags=["商户管理 (MerchantsController)"])
+
+# FinanceController 相关路由（附件上传 CRUD）
+from routers.eshang_api_main.finance.fattachment_router import router as fattachment_router
+app.include_router(fattachment_router, prefix="/EShangApiMain", tags=["附件上传 (Finance ATTACHMENT)"])
+
+# FinanceController 散装接口路由（44 个报表/审批/固化接口）
+from routers.eshang_api_main.finance.finance_scattered_router import router as finance_scattered_router
+app.include_router(finance_scattered_router, prefix="/EShangApiMain", tags=["财务散装接口 (Finance Scattered)"])
+
+# InvoiceController 路由（BILL/BILLDETAIL CRUD + 散装接口）
+from routers.eshang_api_main.finance.invoice_router import router as invoice_router
+app.include_router(invoice_router, prefix="/EShangApiMain", tags=["票据管理 (InvoiceController)"])
+
+# BudgetProjectAHController 路由（预算项目/明细 CRUD + 报表接口）
+from routers.eshang_api_main.finance.budget_router import router as budget_router
+app.include_router(budget_router, prefix="/EShangApiMain", tags=["财务预算 (BudgetProjectAHController)"])
+
+# RevenueController 路由（营收数据 7组CRUD + 31散装报表）
+from routers.eshang_api_main.revenue.revenue_router import router as revenue_router
+app.include_router(revenue_router, prefix="/EShangApiMain", tags=["营收管理 (RevenueController)"])
+
+# BigData + Customer 路由（大数据车流 8组CRUD + 散装接口）
+from routers.eshang_api_main.bigdata.bigdata_router import router as bigdata_router
+app.include_router(bigdata_router, prefix="/EShangApiMain", tags=["大数据车流 (BigDataController)"])
+
+# Audit + MobilePay 路由
+from routers.eshang_api_main.batch_modules.batch_router_part1 import audit_router, mobilepay_router
+app.include_router(audit_router, prefix="/EShangApiMain", tags=["审核管理 (AuditController)"])
+app.include_router(mobilepay_router, prefix="/EShangApiMain", tags=["移动支付 (MobilePayController)"])
+
+# Analysis + BusinessMan + DataVerification + Picture 路由
+from routers.eshang_api_main.batch_modules.batch_router_part2 import (
+    analysis_router, businessman_router, verification_router, picture_router
+)
+app.include_router(analysis_router, prefix="/EShangApiMain", tags=["经营分析 (AnalysisController)"])
+app.include_router(businessman_router, prefix="/EShangApiMain", tags=["商家管理 (BusinessManController)"])
+app.include_router(verification_router, prefix="/EShangApiMain", tags=["数据核实 (VerificationController)"])
+app.include_router(picture_router, prefix="/EShangApiMain", tags=["图片管理 (PictureController)"])
+
+# ShopVideoController 路由（视频监控 16 接口）
+from routers.eshang_api_main.video.video_router import router as video_router
+app.include_router(video_router, prefix="/EShangApiMain", tags=["视频监控 (ShopVideoController)"])
 
 
 @app.get("/", tags=["系统"])

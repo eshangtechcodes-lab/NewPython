@@ -206,7 +206,7 @@ async def get_project_account_detail(
         if data:
             return Result.success(data=data, msg="查询成功")
         else:
-            return Result(Result_Code=200, Result_Desc="查询失败，无数据返回！")
+            return {"Result_Code": 200, "Result_Desc": "查询失败，无数据返回！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"GetProjectAccountDetail 失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -244,7 +244,7 @@ async def solid_account_warning_list(
         if success:
             return Result.success(msg="生成成功")
         else:
-            return Result(Result_Code=200, Result_Desc="生成失败！")
+            return {"Result_Code": 200, "Result_Desc": "生成失败！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"SolidAccountWarningList 失败: {ex}")
         return Result.fail(msg=f"生成失败{ex}")
@@ -261,7 +261,7 @@ async def solid_project_revenue(
         if success:
             return Result.success(msg="生成成功")
         else:
-            return Result(Result_Code=200, Result_Desc="生成失败！")
+            return {"Result_Code": 200, "Result_Desc": "生成失败！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"SolidProjectRevenue 失败: {ex}")
         return Result.fail(msg=f"生成失败{ex}")
@@ -275,7 +275,7 @@ async def solid_period_analysis(data: dict, db: DatabaseHelper = Depends(get_db)
         if success:
             return Result.success(msg="生成成功")
         else:
-            return Result(Result_Code=200, Result_Desc="生成失败！")
+            return {"Result_Code": 200, "Result_Desc": "生成失败！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"SolidPeriodAnalysis 失败: {ex}")
         return Result.fail(msg=f"生成失败{ex}")
@@ -315,7 +315,7 @@ async def reconfigure_profit(
         if success:
             return Result.success(msg="生成成功")
         else:
-            return Result(Result_Code=200, Result_Desc="生成失败！")
+            return {"Result_Code": 200, "Result_Desc": "生成失败！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"ReconfigureProfit 失败: {ex}")
         return Result.fail(msg=f"生成失败{ex}")

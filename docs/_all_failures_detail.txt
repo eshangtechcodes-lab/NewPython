@@ -1,0 +1,986 @@
+
+=== BaseInfo/BindingOwnerUnitTree (2 diffs) ===
+  Result_Data.List[0].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+  Result_Data.List[13].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+
+=== BaseInfo/GetAUTOSTATISTICSDetail (5 diffs) ===
+  Result_Data.INELASTIC_DEMAND: 新 API 缺少该字段
+  Result_Data.AUTOSTATISTICS_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.AUTOSTATISTICS_ICO: 值不一致 ('https://user.eshangtech.com/UploadImageDir/PictureManage/10260/2020_04_03_21_13_36_7765.png' vs 'https://eshang
+  Result_Data.AUTOSTATISTICS_VALUE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.STATISTICS_TYPE: 类型不一致 (NoneType vs int)，值为 None vs 0
+
+=== BaseInfo/GetAssetsRevenueAmount (2 diffs) ===
+  Result_Data.List: 列表长度不一致 (1 vs 0)
+  Result_Data.TotalCount: 值不一致 (1 vs 0)
+
+=== BaseInfo/GetBrandDetail (8 diffs) ===
+  Result_Data.BUSINESSTRADE_NAME: 新 API 缺少该字段
+  Result_Data.MerchantID: 新 API 缺少该字段
+  Result_Data.MerchantID_Encrypt: 新 API 缺少该字段
+  Result_Data.MerchantName: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.SPREGIONTYPE_IDS: 新 API 缺少该字段
+  Result_Data.BRAND_INDUSTRY: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.OPERATE_DATE: 值不一致 ('2020-04-15T21:34:06' vs '2020-04-15T00:00:00')
+
+=== BaseInfo/GetBrandList (14 diffs) ===
+  Result_Data.List[0].MerchantID_Encrypt: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SPREGIONTYPE_IDS: 新 API 缺少该字段
+  Result_Data.List[0].BRAND_INDUSTRY: 类型不一致 (int vs str)，值为 227 vs '227'
+  Result_Data.List[0].BUSINESSTRADE_NAME: 值不一致 ('西式快餐' vs '')
+  Result_Data.List[0].MerchantID: 值不一致 ('-1115' vs '-2096')
+  Result_Data.List[0].MerchantName: 值不一致 ('艾比克' vs '安徽艾芝餐饮管理有限责任公司')
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2023-04-17T17:27:15' vs '2023-04-17T00:00:00')
+  Result_Data.List[0].ServerpartList[1].label: 值不一致 ('釜山服务区' vs '四方湖服务区')
+  Result_Data.List[0].ServerpartList[1].value: 值不一致 ('495' vs '443')
+
+=== BaseInfo/GetBusinessBrandList (6 diffs) ===
+  Result_Data.List[0].BRAND_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.List[0].COMMISSION_RATIO: 类型不一致 (NoneType vs str)，值为 None vs '18%-20%'
+  Result_Data.List[0].MANAGE_TYPE: 类型不一致 (NoneType vs int)，值为 None vs 2000
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2023-04-18T09:33:35' vs '2023-04-18T00:00:00')
+  Result_Data.List[0].WECHATAPPSIGN_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.List[0].WECHATAPP_APPID: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+=== BaseInfo/GetBusinessTradeDetail (3 diffs) ===
+  Result_Data.AUTOSTATISTICS_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.AUTOSTATISTICS_VALUE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.INELASTIC_DEMAND: 类型不一致 (NoneType vs int)，值为 None vs 1
+
+=== BaseInfo/GetBusinessTradeEnum (7 diffs) ===
+  Result_Data.List[0].children[0].node.desc: 新 API 缺少该字段
+  Result_Data.List[0].children[1].node.desc: 新 API 缺少该字段
+  Result_Data.List[0].children[2].node.desc: 新 API 缺少该字段
+  Result_Data.List[0].children[3].node.desc: 新 API 缺少该字段
+  Result_Data.List[0].children[4].node.desc: 新 API 缺少该字段
+  Result_Data.List[0].children[5].node.desc: 新 API 缺少该字段
+  Result_Data.List[0].node.desc: 新 API 缺少该字段
+
+=== BaseInfo/GetBusinessTradeTree (25 diffs) ===
+  Result_Data.List[0].children[0].node.STATISTICS_TYPE: 值不一致 (35 vs 0)
+  Result_Data.List[0].children[1].node.STATISTICS_TYPE: 值不一致 (20 vs 0)
+  Result_Data.List[0].children[2].node.STATISTICS_TYPE: 值不一致 (11 vs 0)
+  Result_Data.List[0].children[3].node.STATISTICS_TYPE: 值不一致 (27 vs 0)
+  Result_Data.List[0].children[5].node.STATISTICS_TYPE: 值不一致 (2 vs 0)
+  Result_Data.List[0].node.STATISTICS_TYPE: 值不一致 (95 vs 0)
+  Result_Data.List[1].children[0].node.STATISTICS_TYPE: 值不一致 (66 vs 0)
+  Result_Data.List[1].children[1].node.STATISTICS_TYPE: 值不一致 (23 vs 0)
+  Result_Data.List[1].children[2].node.STATISTICS_TYPE: 值不一致 (3 vs 0)
+  Result_Data.List[1].children[3].node.STATISTICS_TYPE: 值不一致 (16 vs 0)
+
+=== BaseInfo/GetCASHWORKERDetail (6 diffs) ===
+  Result_Data.OPERATE_DATE_End: 新 API 缺少该字段
+  Result_Data.OPERATE_DATE_Start: 新 API 缺少该字段
+  Result_Data.SERVERPART_CODES: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.ServerPart_Name: 新 API 缺少该字段
+  Result_Data.OPERATE_DATE: 值不一致 ('2018/11/7 10:36:59' vs '2018-11-07T10:36:59')
+
+=== BaseInfo/GetCASHWORKERList (7 diffs) ===
+  Result_Data.List: 列表长度不一致 (1 vs 2)
+  Result_Data.List[0].OPERATE_DATE_End: 新 API 缺少该字段
+  Result_Data.List[0].OPERATE_DATE_Start: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_CODES: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2021/7/5 15:30:25' vs '2021-07-05T15:30:25')
+  Result_Data.TotalCount: 值不一致 (1 vs 2)
+
+=== BaseInfo/GetCOMMODITYDetail (24 diffs) ===
+  Result_Data.COMMODITY_BUSINESS_ID: 新 API 缺少该字段
+  Result_Data.HIGHWAYPROINST_ID: 新 API 缺少该字段
+  Result_Data.QUALIFICATIONList: 新 API 缺少该字段
+  Result_Data.QUALIFICATION_ID: 新 API 缺少该字段
+  Result_Data.SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPART_NAME: 新 API 缺少该字段
+  Result_Data.SHOPNAME: 新 API 缺少该字段
+  Result_Data.originCommodity: 新 API 缺少该字段
+  Result_Data.COMMODITY_ALLNAME: 新 API 多出该字段
+
+=== BaseInfo/GetCOMMODITYList (18 diffs) ===
+  Result_Data.List[0].HIGHWAYPROINST_ID: 新 API 缺少该字段
+  Result_Data.List[0].QUALIFICATIONList: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].originCommodity: 新 API 缺少该字段
+  Result_Data.List[0].COMMODITY_ALLNAME: 新 API 多出该字段
+  Result_Data.List[0].COMMODITY_BRAND: 新 API 多出该字段
+  Result_Data.List[0].COMMODITY_COUNT: 新 API 多出该字段
+  Result_Data.List[0].COMMODITY_CURRPRICE: 新 API 多出该字段
+  Result_Data.List[0].COMMODITY_FROZENCOUNT: 新 API 多出该字段
+
+=== BaseInfo/GetCOMMODITYTYPEDetail (2 diffs) ===
+  Result_Data.COMMODITYTYPE_EN: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.STAFF_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+=== BaseInfo/GetCombineBrandList (25 diffs) ===
+  Result_Data.List[0].BRAND_TYPENAME: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_TRADE: 新 API 缺少该字段
+  Result_Data.List[0].COMMISSION_RATIO: 新 API 缺少该字段
+  Result_Data.List[0].REVENUE_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].REVENUE_DAILYAMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].ROYALTY_PRICE: 新 API 缺少该字段
+  Result_Data.List[0].SETTLEMENT_MODES: 新 API 缺少该字段
+  Result_Data.List[0].WECHATAPP_APPID: 新 API 缺少该字段
+  Result_Data.List[0].BRAND_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2023-04-18T09:33:35' vs '2023-04-18T00:00:00')
+
+=== BaseInfo/GetNestingCOMMODITYTYPEList (3 diffs) ===
+  Result_Data.List: 列表长度不一致 (10 vs 0)
+  Result_Data.PageSize: 值不一致 (10 vs 0)
+  Result_Data.TotalCount: 值不一致 (10 vs 0)
+
+=== BaseInfo/GetNestingCOMMODITYTYPETree (3 diffs) ===
+  Result_Data.List: 列表长度不一致 (10 vs 0)
+  Result_Data.PageSize: 值不一致 (10 vs 0)
+  Result_Data.TotalCount: 值不一致 (10 vs 0)
+
+=== BaseInfo/GetOWNERUNITDetail (3 diffs) ===
+  Result_Data.OWNERUNIT_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.OWNERUNIT_EN: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.OWNERUNIT_ICO: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+=== BaseInfo/GetPROPERTYASSETSDetail (5 diffs) ===
+  Result_Data.PROPERTYASSETS_IDS: 新 API 缺少该字段
+  Result_Data.PROPERTYASSETS_TYPES: 新 API 缺少该字段
+  Result_Data.PropertyShop: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.PROPERTYASSETS_AREA: 类型不一致 (float vs int)，值为 289.0 vs 289
+
+=== BaseInfo/GetPROPERTYASSETSList (25 diffs) ===
+  Result_Data.List[0].BUSINESSPROJECT_ID: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESSPROJECT_NAME: 新 API 缺少该字段
+  Result_Data.List[0].COMPACT_NAME: 新 API 缺少该字段
+  Result_Data.List[0].PROJECT_ENDDATE: 新 API 缺少该字段
+  Result_Data.List[0].PROJECT_STARTDATE: 新 API 缺少该字段
+  Result_Data.List[0].PROJECT_VALID: 新 API 缺少该字段
+  Result_Data.List[0].PROPERTYASSETS_IDS: 新 API 缺少该字段
+  Result_Data.List[0].PROPERTYASSETS_TYPES: 新 API 缺少该字段
+  Result_Data.List[0].REGISTERCOMPACT_ID: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+
+=== BaseInfo/GetPROPERTYASSETSTreeList (25 diffs) ===
+  Result_Data.List[0].children[0].children: 列表长度不一致 (2 vs 9)
+  Result_Data.List[0].children[0].children[0].children: 新 API 缺少该字段
+  Result_Data.List[0].children[0].children[0].node.BUSINESSPROJECT_ID: 新 API 缺少该字段
+  Result_Data.List[0].children[0].children[0].node.BUSINESSPROJECT_NAME: 新 API 缺少该字段
+  Result_Data.List[0].children[0].children[0].node.BUSINESS_STATE: 新 API 缺少该字段
+  Result_Data.List[0].children[0].children[0].node.COMPACT_NAME: 新 API 缺少该字段
+  Result_Data.List[0].children[0].children[0].node.PROJECT_ENDDATE: 新 API 缺少该字段
+  Result_Data.List[0].children[0].children[0].node.PROJECT_STARTDATE: 新 API 缺少该字段
+  Result_Data.List[0].children[0].children[0].node.PROJECT_VALID: 新 API 缺少该字段
+  Result_Data.List[0].children[0].children[0].node.PROPERTYASSETS_IDS: 新 API 缺少该字段
+
+=== BaseInfo/GetPROPERTYSHOPDetail (24 diffs) ===
+  Result_Data.ENDDATE_End: 新 API 缺少该字段
+  Result_Data.ENDDATE_Start: 新 API 缺少该字段
+  Result_Data.PROPERTYASSETS_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.STARTDATE_End: 新 API 缺少该字段
+  Result_Data.STARTDATE_Start: 新 API 缺少该字段
+  Result_Data.ServerpartShop.BANK_ACCOUNT: 新 API 缺少该字段
+  Result_Data.ServerpartShop.BANK_NAME: 新 API 缺少该字段
+  Result_Data.ServerpartShop.PROVINCE_CODE: 新 API 缺少该字段
+
+=== BaseInfo/GetPROPERTYSHOPList (25 diffs) ===
+  Result_Data.List[0].ENDDATE_End: 新 API 缺少该字段
+  Result_Data.List[0].ENDDATE_Start: 新 API 缺少该字段
+  Result_Data.List[0].PROPERTYASSETS_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].STARTDATE_End: 新 API 缺少该字段
+  Result_Data.List[0].STARTDATE_Start: 新 API 缺少该字段
+  Result_Data.List[1].ENDDATE_End: 新 API 缺少该字段
+  Result_Data.List[1].ENDDATE_Start: 新 API 缺少该字段
+  Result_Data.List[1].PROPERTYASSETS_IDS: 新 API 缺少该字段
+
+=== BaseInfo/GetRTSERVERPARTSHOPDetail (5 diffs) ===
+  Result_Data.BUSINESS_TYPES: 新 API 缺少该字段
+  Result_Data.SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.BUSINESS_DATE: 值不一致 ('2019/3/28 0:00:00' vs '2019-03-28T00:00:00')
+  Result_Data.BUSINESS_ENDDATE: 值不一致 ('2022/8/18 0:00:00' vs '2022-08-18T00:00:00')
+  Result_Data.OPERATE_DATE: 值不一致 ('2022/8/31 14:38:39' vs '2022-08-31T14:38:39')
+
+=== BaseInfo/GetRTSERVERPARTSHOPList (4 diffs) ===
+  Result_Data.List[0].BUSINESS_TYPES: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_DATE: 值不一致 ('2020/4/12 0:00:00' vs '2020-04-12T00:00:00')
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2020/4/10 19:10:50' vs '2020-04-10T19:10:50')
+
+=== BaseInfo/GetSERVERPARTCRTDetail (10 diffs) ===
+  Result_Data.SERVERPART_CODES: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPART_INDEX: 新 API 缺少该字段
+  Result_Data.SERVERPART_NAME: 新 API 缺少该字段
+  Result_Data.SPREGIONTYPE_ID: 新 API 缺少该字段
+  Result_Data.SPREGIONTYPE_INDEX: 新 API 缺少该字段
+  Result_Data.SPREGIONTYPE_NAME: 新 API 缺少该字段
+  Result_Data.ACCOUNTTAX: 类型不一致 (float vs int)，值为 9.0 vs 9
+  Result_Data.PROPERTYTAX: 类型不一致 (float vs int)，值为 6.0 vs 6
+  Result_Data.STAYTAX: 类型不一致 (float vs int)，值为 9.0 vs 9
+
+=== BaseInfo/GetSERVERPARTCRTList (10 diffs) ===
+  Result_Data.List[0].SERVERPART_CODES: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_INDEX: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_NAME: 新 API 缺少该字段
+  Result_Data.List[0].SPREGIONTYPE_ID: 新 API 缺少该字段
+  Result_Data.List[0].SPREGIONTYPE_INDEX: 新 API 缺少该字段
+  Result_Data.List[0].SPREGIONTYPE_NAME: 新 API 缺少该字段
+  Result_Data.List[0].ACCOUNTTAX: 类型不一致 (float vs int)，值为 9.0 vs 9
+  Result_Data.List[0].PROPERTYTAX: 类型不一致 (float vs int)，值为 6.0 vs 6
+  Result_Data.List[0].STAYTAX: 类型不一致 (float vs int)，值为 9.0 vs 9
+
+=== BaseInfo/GetSERVERPARTCRTTreeList (25 diffs) ===
+  Result_Data.List[0].children[0].children: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.SERVERPART_CODES: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.SERVERPART_INDEX: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.ACCOUNTTAX: 类型不一致 (float vs int)，值为 9.0 vs 9
+  Result_Data.List[0].children[0].node.PROPERTYTAX: 类型不一致 (float vs int)，值为 6.0 vs 6
+  Result_Data.List[0].children[0].node.STAYTAX: 类型不一致 (float vs int)，值为 9.0 vs 9
+  Result_Data.List[0].node.ACCOUNTBODY_CODE: 新 API 缺少该字段
+  Result_Data.List[0].node.ACCOUNTBODY_NAME: 新 API 缺少该字段
+  Result_Data.List[0].node.ACCOUNTTAX: 新 API 缺少该字段
+
+=== BaseInfo/GetSERVERPARTDetail (25 diffs) ===
+  Result_Data.SERVERPART_CODES: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.DAYINCAR: 类型不一致 (float vs int)，值为 5518.0 vs 5518
+  Result_Data.FLOORAREA: 类型不一致 (float vs int)，值为 96313.0 vs 96313
+  Result_Data.HKBL: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.REGIONTYPE_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.RtServerPart.FLOORAREA: 类型不一致 (float vs int)，值为 96313.0 vs 96313
+  Result_Data.RtServerPart.SERVERPART_AREA: 类型不一致 (float vs int)，值为 13462.0 vs 13462
+  Result_Data.RtServerPart.SHAREAREA: 类型不一致 (float vs int)，值为 68538.0 vs 68538
+  Result_Data.SERVERPART_AREA: 类型不一致 (float vs int)，值为 13462.0 vs 13462
+
+=== BaseInfo/GetSERVERPARTList (10 diffs) ===
+  Result_Data.List[0].RtServerPart: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_CODES: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].ServerPartInfo: 新 API 缺少该字段
+  Result_Data.List[0].DAYINCAR: 类型不一致 (float vs int)，值为 5518.0 vs 5518
+  Result_Data.List[0].FLOORAREA: 类型不一致 (float vs int)，值为 96313.0 vs 96313
+  Result_Data.List[0].SERVERPART_AREA: 类型不一致 (float vs int)，值为 13462.0 vs 13462
+  Result_Data.List[0].SERVERPART_X: 类型不一致 (float vs int)，值为 116.893886 vs 117
+  Result_Data.List[0].SERVERPART_Y: 类型不一致 (float vs int)，值为 31.918931 vs 32
+  Result_Data.List[0].SHAREAREA: 类型不一致 (float vs int)，值为 68538.0 vs 68538
+
+=== BaseInfo/GetSERVERPARTSHOP_LOGList (25 diffs) ===
+  Result_Data.List[0].OPERATE_DATE_End: 新 API 缺少该字段
+  Result_Data.List[0].OPERATE_DATE_Start: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SHOPTRADES: 新 API 缺少该字段
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2021/6/25 18:40:01' vs '2021-06-25T18:40:01')
+  Result_Data.List[0].STAFF_ID: 类型不一致 (float vs int)，值为 910.0 vs 910
+  Result_Data.List[1].OPERATE_DATE_End: 新 API 缺少该字段
+  Result_Data.List[1].OPERATE_DATE_Start: 新 API 缺少该字段
+  Result_Data.List[1].SERVERPARTSHOP_IDS: 新 API 缺少该字段
+
+=== BaseInfo/GetSPRegionShopTree (25 diffs) ===
+  Result_Data.List[0].children[0].node.children[0].desc: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[0].ico: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[1].desc: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[1].ico: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[2].desc: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[2].ico: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[3].desc: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[3].ico: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[4].desc: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.children[4].ico: 新 API 缺少该字段
+
+=== BaseInfo/GetServerPartShopNewDetail (25 diffs) ===
+  Result_Data.RtServerPartShopList[1].BusinessEndDate: 值不一致 ('2022年7月21日' vs '2022年7月20日')
+  Result_Data.RtServerPartShopList[2].BusinessEndDate: 值不一致 ('2022年7月7日' vs '2022年7月6日')
+  Result_Data.RtServerPartShopList[3].BusinessEndDate: 值不一致 ('2022年7月6日' vs '2022年7月5日')
+  Result_Data.RtServerPartShopList[4].BusinessEndDate: 值不一致 ('2022年4月30日' vs '2022年4月29日')
+  Result_Data.RtServerPartShopList[5].BusinessEndDate: 值不一致 ('2022年4月28日' vs '2022年4月27日')
+  Result_Data.RtServerPartShopList[6].BusinessEndDate: 值不一致 ('2022年4月13日' vs '2022年4月12日')
+  Result_Data.RtServerPartShopList[7].OperateDate: 值不一致 ('2022/9/17 23:01:46' vs '2022/9/17 23:1:46')
+  Result_Data.RtServerPartShopList[8].BusinessEndDate: 值不一致 ('2022年9月15日' vs '2022年9月14日')
+  Result_Data.RtServerPartShopList[8].OperateDate: 值不一致 ('2022/9/16 20:46:02' vs '2022/9/16 20:46:2')
+  Result_Data.RtServerPartShopList[9].BusinessEndDate: 值不一致 ('2022年4月30日' vs '2022年4月29日')
+
+=== BaseInfo/GetServerPartShopNewList (25 diffs) ===
+  Result_Data.List: 列表长度不一致 (29 vs 38)
+  Result_Data.List[0].BUSINESS_BRAND: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_DATE: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_TRADE: 新 API 缺少该字段
+  Result_Data.List[0].BUS_STARTDATE: 新 API 缺少该字段
+  Result_Data.List[0].LINKMAN: 新 API 缺少该字段
+  Result_Data.List[0].LINKMAN_MOBILE: 新 API 缺少该字段
+  Result_Data.List[0].OPERATE_DATE: 新 API 缺少该字段
+  Result_Data.List[0].OWNERUNIT_ID: 新 API 缺少该字段
+  Result_Data.List[0].OWNERUNIT_NAME: 新 API 缺少该字段
+
+=== BaseInfo/GetServerpartShopDetail (14 diffs) ===
+  Result_Data.BANK_ACCOUNT: 新 API 缺少该字段
+  Result_Data.BANK_NAME: 新 API 缺少该字段
+  Result_Data.PROVINCE_CODE: 新 API 缺少该字段
+  Result_Data.SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.TAXPAYER_IDENTIFYCODE: 新 API 缺少该字段
+  Result_Data.COMMISSION_TYPE: 新 API 多出该字段
+  Result_Data.BUSINESSAREA: 类型不一致 (float vs int)，值为 9.0 vs 9
+  Result_Data.BUS_STARTDATE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.LINKMAN: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+=== BaseInfo/GetServerpartShopInfo (19 diffs) ===
+  Result_Data.Business_BrandIcon: 新 API 缺少该字段
+  Result_Data.Business_BrandName: 新 API 缺少该字段
+  Result_Data.Business_State: 新 API 缺少该字段
+  Result_Data.Business_TradeName: 新 API 缺少该字段
+  Result_Data.Business_Type: 新 API 缺少该字段
+  Result_Data.InSalesType: 新 API 缺少该字段
+  Result_Data.OwnerUnit_Id: 新 API 缺少该字段
+  Result_Data.OwnerUnit_Name: 新 API 缺少该字段
+  Result_Data.ServerpartShopId: 新 API 缺少该字段
+  Result_Data.ServerpartShop_Code: 新 API 缺少该字段
+
+=== BaseInfo/GetServerpartShopList (2 diffs) ===
+  Result_Data.List: 列表长度不一致 (69 vs 0)
+  Result_Data.TotalCount: 值不一致 (69 vs 0)
+
+=== BaseInfo/GetServerpartShopTree (25 diffs) ===
+  Result_Data.List[0].node.children[0].desc: 新 API 缺少该字段
+  Result_Data.List[0].node.children[0].ico: 新 API 缺少该字段
+  Result_Data.List[0].node.children[1].desc: 新 API 缺少该字段
+  Result_Data.List[0].node.children[1].ico: 新 API 缺少该字段
+  Result_Data.List[0].node.children[2].desc: 新 API 缺少该字段
+  Result_Data.List[0].node.children[2].ico: 新 API 缺少该字段
+  Result_Data.List[0].node.children[3].desc: 新 API 缺少该字段
+  Result_Data.List[0].node.children[3].ico: 新 API 缺少该字段
+  Result_Data.List[0].node.children[4].desc: 新 API 缺少该字段
+  Result_Data.List[0].node.children[4].ico: 新 API 缺少该字段
+
+=== BaseInfo/GetServerpartUDTypeTree (25 diffs) ===
+  Result_Data.List[0].children[0].children: 列表长度不一致 (99 vs 114)
+  Result_Data.List[0].children[0].children[0].node.key: 值不一致 ('2-9475' vs '2-1019')
+  Result_Data.List[0].children[0].children[0].node.label: 值不一致 ('【361度】衣服' vs '新桥服务区')
+  Result_Data.List[0].children[0].children[0].node.value: 值不一致 (9475 vs 1019)
+  Result_Data.List[0].children[0].children[1].node.key: 值不一致 ('2-9476' vs '2-1021')
+  Result_Data.List[0].children[0].children[1].node.label: 值不一致 ('【361度】裤子' vs '猫屎咖啡')
+  Result_Data.List[0].children[0].children[1].node.value: 值不一致 (9476 vs 1021)
+  Result_Data.List[0].children[0].children[2].node.key: 值不一致 ('2-9477' vs '2-1022')
+  Result_Data.List[0].children[0].children[2].node.label: 值不一致 ('【361度】鞋子' vs '精品咖啡')
+  Result_Data.List[0].children[0].children[2].node.value: 值不一致 (9477 vs 1022)
+
+=== BaseInfo/GetShopReceivables (25 diffs) ===
+  Result_Data.List[0].PROJECT_ENDDATE: 值不一致 ('2024/1/31' vs '2024-01-31T00:00:00')
+  Result_Data.List[0].PROJECT_STARTDATE: 值不一致 ('2021/2/1' vs '2021-02-01T00:00:00')
+  Result_Data.List[1].PROJECT_ENDDATE: 值不一致 ('2028/1/13' vs '2028-01-13T00:00:00')
+  Result_Data.List[1].PROJECT_STARTDATE: 值不一致 ('2025/1/14' vs '2025-01-14T00:00:00')
+  Result_Data.List[2].PROJECT_ENDDATE: 值不一致 ('2024/1/31' vs '2024-01-31T00:00:00')
+  Result_Data.List[2].PROJECT_STARTDATE: 值不一致 ('2021/2/1' vs '2021-02-01T00:00:00')
+  Result_Data.List[3].PROJECT_ENDDATE: 值不一致 ('2028/7/14' vs '2028-07-14T00:00:00')
+  Result_Data.List[3].PROJECT_STARTDATE: 值不一致 ('2025/7/15' vs '2025-07-15T00:00:00')
+  Result_Data.List[3].SERVERPARTSHOP_ID: 值不一致 ('7105,7104' vs '7104,7105')
+  Result_Data.List[4].BUSINESSPROJECT_ICO: 值不一致 ('https://user.eshangtech.com/UploadImageDir/PictureManage/10292/2021_02_03_15_57_42_9497.png' vs 'https
+
+=== BaseInfo/GetTradeBrandTree (25 diffs) ===
+  Result_Data.List[0].children[0].children: 类型不一致 (NoneType vs list)，值为 None vs []
+  Result_Data.List[0].children[0].node.BrandTreeList[0].Brand_ICO: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.BrandTreeList[0].Brand_ID: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.BrandTreeList[0].Brand_Name: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.BrandTreeList[0].Brand_Type: 新 API 缺少该字段
+  Result_Data.List[0].children[0].node.BrandTreeList[0].BRAND_ID: 新 API 多出该字段
+  Result_Data.List[0].children[0].node.BrandTreeList[0].BRAND_INTRO: 新 API 多出该字段
+  Result_Data.List[0].children[0].node.BrandTreeList[0].BRAND_NAME: 新 API 多出该字段
+  Result_Data.List[0].children[0].node.BrandTreeList[0].BRAND_STATE: 新 API 多出该字段
+  Result_Data.List[0].children[0].node.BrandTreeList[1].Brand_ICO: 新 API 缺少该字段
+
+=== BaseInfo/GetUSERDEFINEDTYPEDetail (25 diffs) ===
+  Result_Data.SERVERPARTCODES: 新 API 缺少该字段
+  Result_Data.ShopNames: 新 API 缺少该字段
+  Result_Data.GOODSTYPE: 新 API 多出该字段
+  Result_Data.MERCHANTS_ID: 新 API 多出该字段
+  Result_Data.MERCHANTS_NAME: 新 API 多出该字段
+  Result_Data.OWNERUNIT_ID: 新 API 多出该字段
+  Result_Data.OWNERUNIT_NAME: 新 API 多出该字段
+  Result_Data.PRESALE_ENDTIME: 新 API 多出该字段
+  Result_Data.PRESALE_STARTTIME: 新 API 多出该字段
+  Result_Data.PRESALE_TYPE: 新 API 多出该字段
+
+=== BaseInfo/GetUSERDEFINEDTYPEList (25 diffs) ===
+  Result_Data.List[0].SERVERPARTCODES: 新 API 缺少该字段
+  Result_Data.List[0].ShopNames: 新 API 缺少该字段
+  Result_Data.List[0].GOODSTYPE: 新 API 多出该字段
+  Result_Data.List[0].MERCHANTS_ID: 新 API 多出该字段
+  Result_Data.List[0].MERCHANTS_NAME: 新 API 多出该字段
+  Result_Data.List[0].OWNERUNIT_ID: 新 API 多出该字段
+  Result_Data.List[0].OWNERUNIT_NAME: 新 API 多出该字段
+  Result_Data.List[0].PRESALE_ENDTIME: 新 API 多出该字段
+  Result_Data.List[0].PRESALE_STARTTIME: 新 API 多出该字段
+  Result_Data.List[0].PRESALE_TYPE: 新 API 多出该字段
+
+=== Commodity/GetCOMMODITYDetail (25 diffs) ===
+  Result_Data.ADDTIME: 新 API 缺少该字段
+  Result_Data.BUSINESSAPPROVAL_ID: 新 API 缺少该字段
+  Result_Data.BUSINESSTYPE: 新 API 缺少该字段
+  Result_Data.CANSALE: 新 API 缺少该字段
+  Result_Data.COMMODITY_ALLNAME: 新 API 缺少该字段
+  Result_Data.COMMODITY_BARCODE: 新 API 缺少该字段
+  Result_Data.COMMODITY_BRAND: 新 API 缺少该字段
+  Result_Data.COMMODITY_CODE: 新 API 缺少该字段
+  Result_Data.COMMODITY_COUNT: 新 API 缺少该字段
+  Result_Data.COMMODITY_CURRPRICE: 新 API 缺少该字段
+
+=== Commodity/GetCOMMODITYList (25 diffs) ===
+  Result_Data.List[0].COMMODITY_CURRPRICE: 类型不一致 (float vs int)，值为 2.0 vs 2
+  Result_Data.List[0].COMMODITY_MEMBERPRICE: 类型不一致 (float vs int)，值为 3.0 vs 3
+  Result_Data.List[0].COMMODITY_PURCHASEPRICE: 类型不一致 (float vs int)，值为 1.0 vs 1
+  Result_Data.List[0].COMMODITY_RETAILPRICE: 类型不一致 (float vs int)，值为 2.0 vs 2
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2024/6/11 10:37:22' vs '2024-06-11T10:37:22')
+  Result_Data.List[1].COMMODITY_CURRPRICE: 类型不一致 (float vs int)，值为 1.0 vs 1
+  Result_Data.List[1].COMMODITY_PURCHASEPRICE: 类型不一致 (float vs int)，值为 1.0 vs 1
+  Result_Data.List[1].COMMODITY_RETAILPRICE: 类型不一致 (float vs int)，值为 1.0 vs 1
+  Result_Data.List[1].OPERATE_DATE: 值不一致 ('2021/4/6 17:58:24' vs '2021-04-06T17:58:24')
+  Result_Data.List[2].COMMODITY_CURRPRICE: 类型不一致 (float vs int)，值为 12.0 vs 12
+
+=== Commodity/GetCommodityList (25 diffs) ===
+  Result_Data.List[0].BUSINESSTYPE_NAME: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESSTYPE: 新 API 多出该字段
+  Result_Data.List[0].COMMODITY_RETAILPRICE: 类型不一致 (float vs int)，值为 2.0 vs 2
+  Result_Data.List[0].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2024/6/11 10:37:22' vs '2024-06-11T10:37:22')
+  Result_Data.List[1].BUSINESSTYPE_NAME: 新 API 缺少该字段
+  Result_Data.List[1].BUSINESSTYPE: 新 API 多出该字段
+  Result_Data.List[1].COMMODITY_RETAILPRICE: 类型不一致 (float vs int)，值为 1.0 vs 1
+  Result_Data.List[1].COMMODITY_TYPE: 值不一致 ('锅盔' vs '906')
+  Result_Data.List[1].OPERATE_DATE: 值不一致 ('2021/4/6 17:58:24' vs '2021-04-06T17:58:24')
+
+=== Merchants/GetCoopMerchantsDetail (11 diffs) ===
+  Result_Data.COOPMERCHANTS_ADDRESS: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_BRAND: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_DRAWER: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_LINKMAN: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_MOBILEPHONE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_TELEPHONE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_TYPE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.LINKER_MOBILEPHONE: 类型不一致 (NoneType vs str)，值为 None vs '0571-81991302'
+  Result_Data.LINKER_NAME: 类型不一致 (NoneType vs str)，值为 None vs '杨雅意'
+
+=== Merchants/GetCoopMerchantsLinkerDetail (6 diffs) ===
+  Result_Data.BANK_ACCOUNT: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.BANK_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_DRAWER: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_LINKER_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.LINKER_ADDRESS: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.LINKER_TELEPHONE: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+=== Merchants/GetCoopMerchantsList (2 diffs) ===
+  Result_Data.List[0].BrandList: 类型不一致 (NoneType vs list)，值为 None vs [{'label': '品牌小吃', 'value': 1350, 'ico': ''}, {'label': '小吃', 'value': 1860, 'ico':
+  Result_Data.List[0].COOPMERCHANTS_PID: 类型不一致 (int vs NoneType)，值为 0 vs None
+
+=== Merchants/GetCoopMerchantsTypeList (25 diffs) ===
+  Result_Data.List: 列表长度不一致 (2 vs 9)
+  Result_Data.List[0].INELASTIC_DEMAND: 新 API 缺少该字段
+  Result_Data.List[0].AUTOSTATISTICS_ID: 值不一致 (260 vs 203)
+  Result_Data.List[0].AUTOSTATISTICS_INDEX: 值不一致 (10 vs 1000)
+  Result_Data.List[0].AUTOSTATISTICS_VALUE: 值不一致 ('1000' vs '')
+  Result_Data.List[0].OPERATE_DATE: 值不一致 ('2021-12-16T10:27:35' vs '2020-02-07T17:04:29')
+  Result_Data.List[0].OWNERUNIT_ID: 值不一致 (249 vs 8)
+  Result_Data.List[0].OWNERUNIT_NAME: 值不一致 ('安徽交控驿达服务开发集团有限公司' vs '甘肃华运高速公路服务区管理有限公司')
+  Result_Data.List[0].PROVINCE_CODE: 值不一致 (340000 vs 620000)
+  Result_Data.List[0].STAFF_ID: 值不一致 (776 vs 1)
+
+=== Merchants/GetRTCoopMerchantsList (4 diffs) ===
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Merchants/GetRTCoopMerchantsList”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+=== Merchants/GetTradeBrandMerchantsList (3 diffs) ===
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+=== BusinessProject/GetAPPROVEDList (5 diffs) ===
+  Result_Data.List[0].APPROVED_DATE_End: 新 API 缺少该字段
+  Result_Data.List[0].APPROVED_DATE_Start: 新 API 缺少该字段
+  Result_Data.List[0].APPROVED_TYPES: 新 API 缺少该字段
+  Result_Data.List[0].TABLE_IDS: 新 API 缺少该字段
+  Result_Data.List[0].CONTRACTPROINST_ID: 新 API 多出该字段
+
+=== BusinessProject/GetAccountWarningList (25 diffs) ===
+  Result_Data.List[0].BUSINESS_ENDDATE: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_STARTDATE: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_TRADE: 新 API 缺少该字段
+  Result_Data.List[0].Brand_ICO: 新 API 缺少该字段
+  Result_Data.List[0].CA_COST: 新 API 缺少该字段
+  Result_Data.List[0].GUARANTEERATIO: 新 API 缺少该字段
+  Result_Data.List[0].MERCHANTS_ID_Encrypted: 新 API 缺少该字段
+  Result_Data.List[0].PROFIT_AVG: 新 API 缺少该字段
+  Result_Data.List[0].PROFIT_RATE: 新 API 缺少该字段
+  Result_Data.List[0].PROFIT_SD: 新 API 缺少该字段
+
+=== BusinessProject/GetAccountWarningListSummary (9 diffs) ===
+  Result_Data.List[1].value: 值不一致 (103 vs 158)
+  Result_Data.List[2].value: 值不一致 (5 vs 4)
+  Result_Data.List[3].value: 值不一致 (35 vs 50)
+  Result_Data.List[4].value: 值不一致 (8 vs 56)
+  Result_Data.List[5].value: 值不一致 (54 vs 48)
+  Result_Data.List[6].label: 值不一致 ('保底提成过高' vs '租金提成过高')
+  Result_Data.List[6].value: 值不一致 (119 vs 101)
+  Result_Data.List[7].label: 值不一致 ('业态缺失告警' vs '保底偏低预警')
+  Result_Data.List[7].value: 值不一致 (40 vs 35)
+
+=== BusinessProject/GetAnnualSplit (25 diffs) ===
+  Result_Data.List[0].BUSINESSPROJECT_NAME: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_ENDDATE: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_PERIOD: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_STARTDATE: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_STATE: 新 API 缺少该字段
+  Result_Data.List[0].CLOSED_DATE: 新 API 缺少该字段
+  Result_Data.List[0].DAILY_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].EXPENSE_TYPE: 新 API 缺少该字段
+  Result_Data.List[0].MERCHANTS_NAME: 新 API 缺少该字段
+  Result_Data.List[0].MERCHANT_PAYMENT: 新 API 缺少该字段
+
+=== BusinessProject/GetBIZPSPLITMONTHDetail (13 diffs) ===
+  Result_Data.Approvalstate: 新 API 缺少该字段
+  Result_Data.BIZPSPLITMONTH_IDS: 新 API 缺少该字段
+  Result_Data.SHOPROYALTY_IDS: 新 API 缺少该字段
+  Result_Data.STATISTICS_MONTH_End: 新 API 缺少该字段
+  Result_Data.STATISTICS_MONTH_Start: 新 API 缺少该字段
+  Result_Data.CASHPAY_AMOUNT: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.CORRECT_AMOUNT: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.DIFFERENT_AMOUNT: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.MINTURNOVER: 类型不一致 (float vs int)，值为 2600000.0 vs 2600000
+  Result_Data.MOBILEPAY_AMOUNT: 类型不一致 (float vs int)，值为 0.0 vs 0
+
+=== BusinessProject/GetBIZPSPLITMONTHList (19 diffs) ===
+  Result_Data.List[0].Approvalstate: 新 API 缺少该字段
+  Result_Data.List[0].BIZPSPLITMONTH_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SHOPROYALTY_IDS: 新 API 缺少该字段
+  Result_Data.List[0].STATISTICS_MONTH_End: 新 API 缺少该字段
+  Result_Data.List[0].STATISTICS_MONTH_Start: 新 API 缺少该字段
+  Result_Data.List[0].ACCCASHPAY_CORRECT: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.List[0].ACCCIGARETTE_AMOUNT: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.List[0].ACCMOBILEPAY_CORRECT: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.List[0].ACCROYALTY_PRICE: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.List[0].ACCTICKET_FEE: 类型不一致 (float vs int)，值为 0.0 vs 0
+
+=== BusinessProject/GetBUSINESSPROJECTSPLITDetail (25 diffs) ===
+  Result_Data.ACCOUNT_AMOUNT: 新 API 缺少该字段
+  Result_Data.BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.CURCASHPAY_AMOUNT: 新 API 缺少该字段
+  Result_Data.CURMOBILEPAY_AMOUNT: 新 API 缺少该字段
+  Result_Data.CURROYALTY_PRICE: 新 API 缺少该字段
+  Result_Data.CURSUBROYALTY_PRICE: 新 API 缺少该字段
+  Result_Data.CURTICKET_FEE: 新 API 缺少该字段
+  Result_Data.CalcAccumulate: 新 API 缺少该字段
+  Result_Data.CalcExpiredDays: 新 API 缺少该字段
+  Result_Data.CompleteState: 新 API 缺少该字段
+
+=== BusinessProject/GetBUSINESSPROJECTSPLITList (25 diffs) ===
+  Result_Data.OtherData: 新 API 缺少该字段
+  Result_Data.List[0].ACCOUNT_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.List[0].CURCASHPAY_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].CURMOBILEPAY_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].CURROYALTY_PRICE: 新 API 缺少该字段
+  Result_Data.List[0].CURSUBROYALTY_PRICE: 新 API 缺少该字段
+  Result_Data.List[0].CURTICKET_FEE: 新 API 缺少该字段
+  Result_Data.List[0].CalcAccumulate: 新 API 缺少该字段
+  Result_Data.List[0].CalcExpiredDays: 新 API 缺少该字段
+
+=== BusinessProject/GetBrandReceivables (4 diffs) ===
+  Result_Data.List: 列表长度不一致 (26 vs 0)
+  Result_Data.OtherData: 列表长度不一致 (11 vs 0)
+  Result_Data.PageSize: 值不一致 (10 vs 999)
+  Result_Data.TotalCount: 值不一致 (26 vs 0)
+
+=== BusinessProject/GetBusinessPaymentDetail (6 diffs) ===
+  Result_Data.BUSINESS_TRADE: 新 API 多出该字段
+  Result_Data.BUSINESS_TRADENAME: 新 API 多出该字段
+  Result_Data.SERVERPART_TYPE: 新 API 多出该字段
+  Result_Data.ACTUAL_REVENUE: 类型不一致 (float vs int)，值为 57614.0 vs 57614
+  Result_Data.BUSINESSPAYMENT_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.TOTAL_COUNT: 类型不一致 (float vs int)，值为 1322.0 vs 1322
+
+=== BusinessProject/GetBusinessPaymentList (25 diffs) ===
+  Result_Data.List[0].BUSINESS_TRADE: 新 API 多出该字段
+  Result_Data.List[0].BUSINESS_TRADENAME: 新 API 多出该字段
+  Result_Data.List[0].SERVERPART_TYPE: 新 API 多出该字段
+  Result_Data.List[0].OPERATE_DATE: 类型不一致 (int vs NoneType)，值为 0 vs None
+  Result_Data.List[0].REVENUE_ACCOUNT: 类型不一致 (float vs int)，值为 20.0 vs 20
+  Result_Data.List[0].TOTAL_COUNT: 类型不一致 (float vs int)，值为 212352.0 vs 212352
+  Result_Data.List[1].BUSINESS_TRADE: 新 API 多出该字段
+  Result_Data.List[1].BUSINESS_TRADENAME: 新 API 多出该字段
+  Result_Data.List[1].SERVERPART_TYPE: 新 API 多出该字段
+  Result_Data.List[1].GUARANTEERATIO: 类型不一致 (float vs NoneType)，值为 0.0 vs None
+
+=== BusinessProject/GetBusinessProjectDetail (16 diffs) ===
+  Result_Data.BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.CLOSED_DATE_End: 新 API 缺少该字段
+  Result_Data.CLOSED_DATE_Start: 新 API 缺少该字段
+  Result_Data.DueDate_End: 新 API 缺少该字段
+  Result_Data.DueDate_Start: 新 API 缺少该字段
+  Result_Data.EXPIREDAYS: 新 API 缺少该字段
+  Result_Data.LogList: 新 API 缺少该字段
+  Result_Data.MerchantsIdEncrypted: 新 API 缺少该字段
+  Result_Data.Period_AvgAmount: 新 API 缺少该字段
+  Result_Data.Period_Count: 新 API 缺少该字段
+
+=== BusinessProject/GetBusinessProjectList (25 diffs) ===
+  Result_Data.List[0].BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.List[0].CLOSED_DATE_End: 新 API 缺少该字段
+  Result_Data.List[0].CLOSED_DATE_Start: 新 API 缺少该字段
+  Result_Data.List[0].DueDate_End: 新 API 缺少该字段
+  Result_Data.List[0].DueDate_Start: 新 API 缺少该字段
+  Result_Data.List[0].EXPIREDAYS: 新 API 缺少该字段
+  Result_Data.List[0].LogList: 新 API 缺少该字段
+  Result_Data.List[0].MerchantsIdEncrypted: 新 API 缺少该字段
+  Result_Data.List[0].ProjectStateSearch: 新 API 缺少该字段
+  Result_Data.List[0].ProjectTypeSearch: 新 API 缺少该字段
+
+=== BusinessProject/GetCONTRACT_SYNDetail (1 diffs) ===
+  原 API JSON 解析失败: Expecting value: line 1 column 1 (char 0)
+
+=== BusinessProject/GetCONTRACT_SYNList (1 diffs) ===
+  原 API JSON 解析失败: Expecting value: line 1 column 1 (char 0)
+
+=== BusinessProject/GetExpenseSummary (11 diffs) ===
+  Result_Data.List: 列表长度不一致 (1 vs 690)
+  Result_Data.List[0].children: 新 API 缺少该字段
+  Result_Data.List[0].node: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_UNIT: 新 API 多出该字段
+  Result_Data.List[0].SERVERPARTSHOP_ID: 新 API 多出该字段
+  Result_Data.List[0].SERVERPARTSHOP_NAME: 新 API 多出该字段
+  Result_Data.List[0].SHOPEXPENSE_AMOUNT: 新 API 多出该字段
+  Result_Data.List[0].SHOPEXPENSE_TYPE: 新 API 多出该字段
+  Result_Data.List[0].STATISTICS_MONTH: 新 API 多出该字段
+  Result_Data.OtherData: 列表长度不一致 (5 vs 0)
+
+=== BusinessProject/GetMerchantSplit (25 diffs) ===
+  Result_Data.List: 列表长度不一致 (4 vs 91)
+  Result_Data.List[0].BUSINESSPROJECT_NAME: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_ENDDATE: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_PERIOD: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_STARTDATE: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_STATE: 新 API 缺少该字段
+  Result_Data.List[0].CLOSED_DATE: 新 API 缺少该字段
+  Result_Data.List[0].DAILY_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].EXPENSE_TYPE: 新 API 缺少该字段
+  Result_Data.List[0].MERCHANTS_NAME: 新 API 缺少该字段
+
+=== BusinessProject/GetMerchantsReceivables (3 diffs) ===
+  Result_Code: 值不一致 (200 vs 100)
+  Result_Data: 类型不一致 (NoneType vs dict)，值为 None vs {'COOPMERCHANTS_ID': None, 'COOPMERCHANTS_NAME': '', 'COOPMERCHANTS_TYPENAME': '', 'COOPMERCHANTS_NAT
+  Result_Desc: 值不一致 ('查询失败，请传入经营商户内码或门店内码集合！' vs '查询成功')
+
+=== BusinessProject/GetMerchantsReceivablesList (25 diffs) ===
+  Result_Data.List[0].ACCOUNT_DATE: 新 API 缺少该字段
+  Result_Data.List[0].AccountReceivablesList: 新 API 缺少该字段
+  Result_Data.List[0].COOPMERCHANTS_EN: 新 API 缺少该字段
+  Result_Data.List[0].COOPMERCHANTS_ID_Encrypted: 新 API 缺少该字段
+  Result_Data.List[0].COOPMERCHANTS_LINKMAN: 新 API 缺少该字段
+  Result_Data.List[0].COOPMERCHANTS_MOBILEPHONE: 新 API 缺少该字段
+  Result_Data.List[0].TAXPAYER_IDENTIFYCODE: 新 API 缺少该字段
+  Result_Data.List[0].UNDISTRIBUTED_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].ACCOUNT_AMOUNT: 类型不一致 (float vs int)，值为 10616.184456 vs 0
+  Result_Data.List[0].ACTUAL_PAYMENT: 类型不一致 (float vs int)，值为 80.008 vs 0
+
+=== BusinessProject/GetMerchantsReceivablesReport (3 diffs) ===
+  Result_Data.List: 列表长度不一致 (185 vs 0)
+  Result_Data.PageSize: 值不一致 (185 vs 999)
+  Result_Data.TotalCount: 值不一致 (185 vs 0)
+
+=== BusinessProject/GetMonthSummaryList (4 diffs) ===
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetMonthSummaryList”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+=== BusinessProject/GetNoProjectShopList (25 diffs) ===
+  Result_Data.List: 列表长度不一致 (10 vs 11)
+  Result_Data.List[0].index: 新 API 缺少该字段
+  Result_Data.List[0].type: 新 API 缺少该字段
+  Result_Data.List[0].value: 类型不一致 (float vs int)，值为 3066.0 vs 3066
+  Result_Data.List[1].index: 新 API 缺少该字段
+  Result_Data.List[1].type: 新 API 缺少该字段
+  Result_Data.List[1].value: 类型不一致 (float vs int)，值为 3046.0 vs 3046
+  Result_Data.List[2].index: 新 API 缺少该字段
+  Result_Data.List[2].type: 新 API 缺少该字段
+  Result_Data.List[2].value: 类型不一致 (float vs int)，值为 3064.0 vs 3064
+
+=== BusinessProject/GetPERIODWARNINGDetail (25 diffs) ===
+  Result_Data.BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.BUSINESS_STATES: 新 API 缺少该字段
+  Result_Data.BUSINESS_TRADES: 新 API 缺少该字段
+  Result_Data.ENDDATE_End: 新 API 缺少该字段
+  Result_Data.ENDDATE_Start: 新 API 缺少该字段
+  Result_Data.GUARANTEED_PROGRESS: 新 API 缺少该字段
+  Result_Data.MERCHANTS_IDS: 新 API 缺少该字段
+  Result_Data.PERIOD_PROGRESS: 新 API 缺少该字段
+  Result_Data.PROJECT_ENDDATE_End: 新 API 缺少该字段
+  Result_Data.PROJECT_ENDDATE_Start: 新 API 缺少该字段
+
+=== BusinessProject/GetPERIODWARNINGList (25 diffs) ===
+  Result_Data.List[0].BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_STATES: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_TRADES: 新 API 缺少该字段
+  Result_Data.List[0].ENDDATE_End: 新 API 缺少该字段
+  Result_Data.List[0].ENDDATE_Start: 新 API 缺少该字段
+  Result_Data.List[0].GUARANTEED_PROGRESS: 新 API 缺少该字段
+  Result_Data.List[0].MERCHANTS_IDS: 新 API 缺少该字段
+  Result_Data.List[0].PERIOD_PROGRESS: 新 API 缺少该字段
+  Result_Data.List[0].PROJECT_ENDDATE_End: 新 API 缺少该字段
+  Result_Data.List[0].PROJECT_ENDDATE_Start: 新 API 缺少该字段
+
+=== BusinessProject/GetPROJECTSPLITMONTHDetail (21 diffs) ===
+  Result_Data.BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.MERCHANTS_IDS: 新 API 缺少该字段
+  Result_Data.REGISTERCOMPACT_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.SHOPROYALTY_IDS: 新 API 缺少该字段
+  Result_Data.STATISTICS_MONTH_End: 新 API 缺少该字段
+  Result_Data.STATISTICS_MONTH_Start: 新 API 缺少该字段
+  Result_Data.CASHPAY_CORRECT: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.CONFIRM_COMINCOME: 类型不一致 (float vs int)，值为 430940.0 vs 430940
+  Result_Data.CONFIRM_INCOME: 类型不一致 (float vs int)，值为 430940.0 vs 430940
+
+=== BusinessProject/GetPROJECTSPLITMONTHList (25 diffs) ===
+  Result_Data.List[0].BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.List[0].MERCHANTS_IDS: 新 API 缺少该字段
+  Result_Data.List[0].REGISTERCOMPACT_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SHOPROYALTY_IDS: 新 API 缺少该字段
+  Result_Data.List[0].STATISTICS_MONTH_End: 新 API 缺少该字段
+  Result_Data.List[0].STATISTICS_MONTH_Start: 新 API 缺少该字段
+  Result_Data.List[0].CASHPAY_CORRECT: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.List[0].CONFIRM_COMINCOME: 类型不一致 (float vs int)，值为 430940.0 vs 430940
+  Result_Data.List[0].CONFIRM_INCOME: 类型不一致 (float vs int)，值为 430940.0 vs 430940
+
+=== BusinessProject/GetPROJECTWARNINGDetail (14 diffs) ===
+  Result_Data.BUSINESSPROJECT_ICO: 新 API 缺少该字段
+  Result_Data.PROJECTWARNING_STATES: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.WARNING_DATE_End: 新 API 缺少该字段
+  Result_Data.WARNING_DATE_Start: 新 API 缺少该字段
+  Result_Data.BUSINESS_BRAND: 新 API 多出该字段
+  Result_Data.GUARANTEERATIO: 新 API 多出该字段
+  Result_Data.SECONDPART_LINKMAN: 新 API 多出该字段
+  Result_Data.SECONDPART_MOBILE: 新 API 多出该字段
+  Result_Data.COMPACT_ENDDATE: 值不一致 ('2027/03/02' vs '2027-03-02T00:00:00')
+
+=== BusinessProject/GetPROJECTWARNINGList (25 diffs) ===
+  Result_Data.List[0].BUSINESSPROJECT_ICO: 新 API 缺少该字段
+  Result_Data.List[0].COMPACT_ENDDATE: 新 API 缺少该字段
+  Result_Data.List[0].COMPACT_STARTDATE: 新 API 缺少该字段
+  Result_Data.List[0].COOPMERCHANTS_LINKMAN: 新 API 缺少该字段
+  Result_Data.List[0].COOPMERCHANTS_MOBILEPHONE: 新 API 缺少该字段
+  Result_Data.List[0].MerchantRatio: 新 API 缺少该字段
+  Result_Data.List[0].PROJECTWARNING_STATES: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].WARNING_DATE_End: 新 API 缺少该字段
+  Result_Data.List[0].WARNING_DATE_Start: 新 API 缺少该字段
+
+=== BusinessProject/GetPaymentConfirmDetail (14 diffs) ===
+  Result_Data.BUSINESSPROJECT_NAME: 新 API 缺少该字段
+  Result_Data.PAYMENTCONFIRM_PID: 新 API 缺少该字段
+  Result_Data.REMARKS_DESC: 新 API 缺少该字段
+  Result_Data.SERVERPART_NAME: 新 API 缺少该字段
+  Result_Data.ACCOUNT_DATE: 类型不一致 (str vs NoneType)，值为 '2024/01/10 19:34:06' vs None
+  Result_Data.ACCOUNT_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.ACCOUNT_TYPE: 类型不一致 (str vs int)，值为 '0' vs 0
+  Result_Data.ATTACHMENT_FILES: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.CONFIRMDATE: 类型不一致 (NoneType vs int)，值为 None vs 20240110193406
+  Result_Data.CURRENTBALANCE: 类型不一致 (float vs int)，值为 0.0 vs 0
+
+=== BusinessProject/GetPaymentConfirmList (4 diffs) ===
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+=== BusinessProject/GetPeriodWarningList (25 diffs) ===
+  Result_Data.List: 列表长度不一致 (1 vs 10)
+  Result_Data.List[0].children: 新 API 缺少该字段
+  Result_Data.List[0].node: 新 API 缺少该字段
+  Result_Data.List[0].ACTUAL_RATIO: 新 API 多出该字段
+  Result_Data.List[0].BUSINESSPROJECT_ID: 新 API 多出该字段
+  Result_Data.List[0].BUSINESSPROJECT_NAME: 新 API 多出该字段
+  Result_Data.List[0].BUSINESS_PERIOD: 新 API 多出该字段
+  Result_Data.List[0].BUSINESS_STATE: 新 API 多出该字段
+  Result_Data.List[0].BUSINESS_TRADE: 新 API 多出该字段
+  Result_Data.List[0].BUSINESS_TYPE: 新 API 多出该字段
+
+=== BusinessProject/GetProjectAccountDetail (3 diffs) ===
+  Result_Code: 值不一致 (100 vs 200)
+  Result_Data: 类型不一致 (dict vs NoneType)，值为 {'BUSINESSPROJECT_ID': 1498, 'BUSINESSPROJECT_NAME': '太白服务区同庆楼合同项目', 'REGISTERCOMPACT_ID': 1537, 'COMPACT_NAM
+  Result_Desc: 值不一致 ('查询成功' vs '查询失败，无数据返回！')
+
+=== BusinessProject/GetProjectAccountList (25 diffs) ===
+  Result_Data.List: 列表长度不一致 (574 vs 10)
+  Result_Data.List[0].APPLY_PROCCESS: 新 API 缺少该字段
+  Result_Data.List[0].APPOVED_IDS: 新 API 缺少该字段
+  Result_Data.List[0].APPOVED_NAME: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESSAPPROVAL_ID: 新 API 缺少该字段
+  Result_Data.List[0].CLOSED_DATE: 新 API 缺少该字段
+  Result_Data.List[0].COMPACT_NAME: 新 API 缺少该字段
+  Result_Data.List[0].CURRENT_PERIOD: 新 API 缺少该字段
+  Result_Data.List[0].CURREVENUE_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].ENDDATE: 新 API 缺少该字段
+
+=== BusinessProject/GetProjectAccountTree (8 diffs) ===
+  Result_Data.List[0].children: 新 API 缺少该字段
+  Result_Data.List[0].node: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_ID: 新 API 多出该字段
+  Result_Data.List[0].SERVERPART_NAME: 新 API 多出该字段
+  Result_Data.List[0].SPREGIONTYPE_ID: 新 API 多出该字段
+  Result_Data.List[0].SPREGIONTYPE_NAME: 新 API 多出该字段
+  Result_Data.PageSize: 值不一致 (1 vs 9999)
+  Result_Data.TotalCount: 值不一致 (0 vs 1)
+
+=== BusinessProject/GetRTPaymentRecordDetail (10 diffs) ===
+  Result_Data.ACCOUNT_AMOUNT: 新 API 缺少该字段
+  Result_Data.ACCOUNT_DATE: 新 API 缺少该字段
+  Result_Data.ACTUAL_PAYMENT: 新 API 缺少该字段
+  Result_Data.BUSINESSPROJECT_ID: 新 API 缺少该字段
+  Result_Data.BUSINESSPROJECT_NAME: 新 API 缺少该字段
+  Result_Data.MERCHANTS_ID: 新 API 缺少该字段
+  Result_Data.SERVERPART_NAME: 新 API 缺少该字段
+  Result_Data.OPERATE_DATE: 类型不一致 (NoneType vs str)，值为 None vs '2024/01/09'
+  Result_Data.RECORD_DATE: 类型不一致 (NoneType vs str)，值为 None vs '2024-01-09T21:22:22'
+  Result_Data.SEPARATE_AMOUNT: 类型不一致 (float vs int)，值为 10000.0 vs 10000
+
+=== BusinessProject/GetRTPaymentRecordList (3 diffs) ===
+  Result_Code: 值不一致 (100 vs 999)
+  Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 0, 'PageSize': 0, 'TotalCount': 1, 'List': [{'RTPAYMENTRECORD_ID': 675, 'PAYMENTCONFIRM_ID': 51
+  Result_Desc: 值不一致 ('查询成功' vs '查询失败[CODE:-2207]第11 行附近出现错误:\n无法解析的成员访问表达式[C.BUSINESSPROJECT_NAME]')
+
+=== BusinessProject/GetRevenueConfirmDetail (12 diffs) ===
+  Result_Data.BUSINESSAPPROVAL_IDS: 新 API 缺少该字段
+  Result_Data.BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.BUSINESSPROJECT_NAME: 新 API 缺少该字段
+  Result_Data.BUSINESS_BRANDS: 新 API 缺少该字段
+  Result_Data.BUSINESS_ENDDATE_End: 新 API 缺少该字段
+  Result_Data.BUSINESS_ENDDATE_Start: 新 API 缺少该字段
+  Result_Data.BUSINESS_STARTDATE_End: 新 API 缺少该字段
+  Result_Data.BUSINESS_STARTDATE_Start: 新 API 缺少该字段
+  Result_Data.BUSINESS_TRADES: 新 API 缺少该字段
+  Result_Data.MERCHANTS_ID: 新 API 缺少该字段
+
+=== BusinessProject/GetRevenueConfirmList (25 diffs) ===
+  Result_Data.List[0].BREACHPENALTY: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESSAPPROVAL_ID: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESSAPPROVAL_IDS: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESSPROJECT_IDS: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_BRAND: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_BRANDS: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_ENDDATE_End: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_ENDDATE_Start: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_PERIOD: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_STARTDATE_End: 新 API 缺少该字段
+
+=== BusinessProject/GetSHOPEXPENSEDetail (16 diffs) ===
+  Result_Data.ApprovalProcess: 新 API 缺少该字段
+  Result_Data.ChangeFlag: 新 API 缺少该字段
+  Result_Data.ImageFlag: 新 API 缺少该字段
+  Result_Data.PREPAIDLAST_AMOUNT: 新 API 缺少该字段
+  Result_Data.PREPAID_AMOUNT: 新 API 缺少该字段
+  Result_Data.RevenueAmount: 新 API 缺少该字段
+  Result_Data.SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.SPREGIONTYPE_IDS: 新 API 缺少该字段
+  Result_Data.STATISTICS_MONTH_End: 新 API 缺少该字段
+
+=== BusinessProject/GetSHOPEXPENSEList (25 diffs) ===
+  Result_Data.summaryObject: 新 API 多出该字段
+  Result_Data.List[0].ApprovalProcess: 新 API 缺少该字段
+  Result_Data.List[0].ChangeFlag: 新 API 缺少该字段
+  Result_Data.List[0].ImageFlag: 新 API 缺少该字段
+  Result_Data.List[0].PREPAIDLAST_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].PREPAID_AMOUNT: 新 API 缺少该字段
+  Result_Data.List[0].RevenueAmount: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  Result_Data.List[0].SPREGIONTYPE_IDS: 新 API 缺少该字段
+
+=== BusinessProject/GetSHOPROYALTYDETAILDetail (2 diffs) ===
+  Result_Data.GUARANTEERATIO: 类型不一致 (float vs int)，值为 19.0 vs 19
+  Result_Data.MINTURNOVER: 类型不一致 (float vs int)，值为 1000.0 vs 1000
+
+=== BusinessProject/GetSHOPROYALTYDETAILList (2 diffs) ===
+  Result_Data.List[0].GUARANTEERATIO: 类型不一致 (float vs int)，值为 19.0 vs 19
+  Result_Data.List[0].MINTURNOVER: 类型不一致 (float vs int)，值为 1000.0 vs 1000
+
+=== BusinessProject/GetShopExpenseSummary (3 diffs) ===
+  Result_Data.List: 列表长度不一致 (1 vs 0)
+  Result_Data.PageSize: 值不一致 (10 vs 9999)
+  Result_Data.TotalCount: 值不一致 (1 vs 0)
+
+=== BusinessProject/GetShopRoyaltyDetail (1 diffs) ===
+  Result_Data.NATUREDAY: 类型不一致 (float vs int)，值为 182.0 vs 182
+
+=== BusinessProject/GetShopRoyaltyList (1 diffs) ===
+  Result_Data.List[0].NATUREDAY: 类型不一致 (float vs int)，值为 182.0 vs 182
+
+=== BusinessProject/GetWillSettleProject (3 diffs) ===
+  Result_Code: 值不一致 (100 vs 999)
+  Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 1, 'PageSize': 6, 'TotalCount': 6, 'List': [{'BUSINESSPROJECT_ID': 166, 'BUSINESSPROJECT_NAME':
+  Result_Desc: 值不一致 ('查询成功' vs '查询失败[CODE:-6130]文字与格式字符串不匹配')
+
+=== Contract/GetAttachmentDetail (1 diffs) ===
+  Result_Data.STAFF_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+=== Contract/GetProjectMonthlyArrearageList (25 diffs) ===
+  Result_Data.ProjectCompleteDetailList: 列表长度不一致 (5 vs 0)
+  Result_Data.ProjectMonthlyCompleteList[0].Business_Year: 新 API 缺少该字段
+  Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[0].Expired_Amount: 新 API 缺少该字段
+  Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[0].UnExpired_Amount: 新 API 缺少该字段
+  Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Expired_Amount: 新 API 缺少该字段
+  Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].UnExpired_Amount: 新 API 缺少该字段
+  Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Account_Amount: 类型不一致 (NoneType vs int)，值为 None vs 0
+  Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Complete_Degree: 类型不一致 (float vs int)，值为 100.0 vs 100
+  Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Payment_Amount: 类型不一致 (NoneType vs int)，值为 None vs 0
+  Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[2].Expired_Amount: 新 API 缺少该字段
+
+=== Contract/GetProjectYearlyArrearageList (1 diffs) ===
+  Result_Data.ProjectCompleteDetailList: 列表长度不一致 (5 vs 0)
+
+=== Contract/GetRegisterCompactDetail (17 diffs) ===
+  Result_Data.CLOSED_DATE: 新 API 缺少该字段
+  Result_Data.RELATE_COMPACT: 新 API 缺少该字段
+  Result_Data.SERVERPARTSHOP_IDS: 新 API 缺少该字段
+  Result_Data.SERVERPARTSHOP_NAME: 新 API 缺少该字段
+  Result_Data.BUSINESS_TRADE: 类型不一致 (NoneType vs int)，值为 None vs 2
+  Result_Data.BUSINESS_TYPE: 类型不一致 (NoneType vs int)，值为 None vs 2000
+  Result_Data.COMPACT_CHILDTYPE: 类型不一致 (NoneType vs int)，值为 None vs 1
+  Result_Data.DURATION: 类型不一致 (float vs int)，值为 1.0 vs 1
+  Result_Data.LogList: 类型不一致 (NoneType vs list)，值为 None vs []
+  Result_Data.OPERATING_AREA: 类型不一致 (NoneType vs int)，值为 None vs 64
+
+=== Contract/GetRegisterCompactList (25 diffs) ===
+  Result_Data.List[0].LogList: 新 API 缺少该字段
+  Result_Data.List[0].RENEWAL_YEARS: 新 API 缺少该字段
+  Result_Data.List[0].BUSINESS_TRADE: 类型不一致 (int vs NoneType)，值为 4 vs None
+  Result_Data.List[0].DURATION: 类型不一致 (float vs int)，值为 3.0 vs 3
+  Result_Data.List[0].OTHER_SCHARGE: 类型不一致 (str vs NoneType)，值为 '' vs None
+  Result_Data.List[0].PROPERTY_FEE: 类型不一致 (float vs NoneType)，值为 0.0 vs None
+  Result_Data.List[0].RELATE_COMPACT: 类型不一致 (int vs NoneType)，值为 0 vs None
+  Result_Data.List[0].SECURITYDEPOSIT: 类型不一致 (float vs int)，值为 5.0 vs 5
+  Result_Data.List[0].SERVERPARTSHOP_NAME: 类型不一致 (str vs NoneType)，值为 '南区自助玩具机,北区自助玩具机' vs None
+  Result_Data.List[1].LogList: 新 API 缺少该字段
+
+=== Contract/GetRegisterCompactSubDetail (2 diffs) ===
+  Result_Data.OPERATING_AREA: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.PROPERTY_FEE: 类型不一致 (float vs int)，值为 0.0 vs 0
+
+=== Contract/GetRegisterCompactSubList (2 diffs) ===
+  Result_Data.List[0].OPERATING_AREA: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.List[0].PROPERTY_FEE: 类型不一致 (float vs int)，值为 0.0 vs 0
+
+=== ContractSyn/GetContractSynDetail (1 diffs) ===
+  原 API JSON 解析失败: Expecting value: line 1 column 1 (char 0)
+
+=== ContractSyn/GetContractSynList (1 diffs) ===
+  原 API JSON 解析失败: Expecting value: line 1 column 1 (char 0)

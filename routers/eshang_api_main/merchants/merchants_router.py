@@ -9,7 +9,7 @@ MerchantsController 路由
   - RTCoopMerchants + TradeBrandMerchants (4个)
 """
 from typing import Optional
-from fastapi import APIRouter, Body, Query, Depends
+from fastapi import APIRouter, Body, Query, Depends, Request
 from loguru import logger
 from core.database import db_helper, DatabaseHelper
 from models.common_model import SearchModel
@@ -29,8 +29,10 @@ from services.merchants.rtcoopmerchants_service import (
 )
 # CoopMerchantsType 复用已有的 AUTOSTATISTICS service
 from services.base_info.autostatistics_service import (
-    synchro_autostatistics, delete_autostatistics
+    synchro_autostatistics, delete_autostatistics, _process_row as _process_autostatistics_row
 )
+# AUTOSTATISTICS_ICO 的 URL 前缀（C# Config.AppSettings.CoopMerchantUrls）
+COOP_MERCHANT_URLS = "https://eshangtech.com:8443"
 
 router = APIRouter()
 
@@ -40,11 +42,20 @@ router = APIRouter()
 # ================================================================
 
 @router.post("/Merchants/GetCoopMerchantsList")
-async def get_coopmerchants_list_api(search_model: Optional[SearchModel] = None):
+async def get_coopmerchants_list_api(request: Request, search_model: Optional[SearchModel] = None):
     """获取经营商户列表"""
     try:
         if search_model is None:
             search_model = SearchModel()
+        # C# Controller: searchModel.SearchParameter.PROVINCE_CODE = GetIntHeader("ProvinceCode", ...)
+        if search_model.SearchParameter is None:
+            search_model.SearchParameter = {}
+        header_pc = request.headers.get("provincecode") or request.headers.get("ProvinceCode")
+        if header_pc and not search_model.SearchParameter.get("PROVINCE_CODE"):
+            try:
+                search_model.SearchParameter["PROVINCE_CODE"] = int(header_pc)
+            except (ValueError, TypeError):
+                pass
         total_count, data_list = get_coopmerchants_list(db_helper, search_model)
         return {
             "Result_Code": 100,
@@ -108,20 +119,82 @@ async def delete_coopmerchants_api(CoopMerchantsId: int = Query(...)):
 # 2. CoopMerchantsType 商户类型（3 个接口，复用 AUTOSTATISTICS）
 # ================================================================
 
+def _bind_autostatistics_model(row: dict) -> dict:
+    """
+    复制 C# AUTOSTATISTICSHelper.GetAUTOSTATISTICSList 中的 BindDataRowToModel 逻辑
+    - 按固定字段顺序输出
+    - AUTOSTATISTICS_TYPE==2000 时设置 INELASTIC_DEMAND = STATISTICS_TYPE
+    - AUTOSTATISTICS_ICO 以 / 开头时加 CoopMerchantUrls 前缀
+    """
+    model = {}
+    model["AUTOSTATISTICS_ID"] = row.get("AUTOSTATISTICS_ID") or 0
+    model["AUTOSTATISTICS_PID"] = row.get("AUTOSTATISTICS_PID") or 0
+    model["AUTOSTATISTICS_NAME"] = row.get("AUTOSTATISTICS_NAME") or ""
+    model["AUTOSTATISTICS_VALUE"] = row.get("AUTOSTATISTICS_VALUE") or ""
+    model["AUTOSTATISTICS_INDEX"] = row.get("AUTOSTATISTICS_INDEX") or 0
+    model["AUTOSTATISTICS_TYPE"] = row.get("AUTOSTATISTICS_TYPE") or 0
+    model["STATISTICS_TYPE"] = row.get("STATISTICS_TYPE") or 0
+    # C#: if (autostatisticsModel.AUTOSTATISTICS_TYPE == 2000) INELASTIC_DEMAND = STATISTICS_TYPE
+    if model["AUTOSTATISTICS_TYPE"] == 2000:
+        model["INELASTIC_DEMAND"] = row.get("STATISTICS_TYPE") or 0
+    else:
+        model["INELASTIC_DEMAND"] = None
+    # AUTOSTATISTICS_ICO: / 开头时拼接商户平台地址
+    ico = row.get("AUTOSTATISTICS_ICO") or ""
+    if ico and ico.startswith("/"):
+        ico = COOP_MERCHANT_URLS + ico
+    model["AUTOSTATISTICS_ICO"] = ico
+    model["OWNERUNIT_ID"] = row.get("OWNERUNIT_ID") or 0
+    model["OWNERUNIT_NAME"] = row.get("OWNERUNIT_NAME") or ""
+    model["PROVINCE_CODE"] = row.get("PROVINCE_CODE") or 0
+    model["AUTOSTATISTICS_STATE"] = row.get("AUTOSTATISTICS_STATE") or 0
+    model["STAFF_ID"] = row.get("STAFF_ID") or 0
+    model["STAF_NAME"] = row.get("STAF_NAME") or ""
+    # 日期格式由 database.py 统一处理为 ISO 格式（与 C# 一致）
+    model["OPERATE_DATE"] = row.get("OPERATE_DATE")
+    model["AUTOSTATISTICS_DESC"] = row.get("AUTOSTATISTICS_DESC") or ""
+    return model
+
+
 @router.post("/Merchants/GetCoopMerchantsTypeList")
-async def get_coopmerchants_type_list_api(search_model: Optional[SearchModel] = None):
+async def get_coopmerchants_type_list_api(request: Request, search_model: Optional[SearchModel] = None):
     """获取商户类型列表（复用 AUTOSTATISTICS 表，固定 TYPE=5000）"""
     try:
         if search_model is None:
             search_model = SearchModel()
-        # 原 C# 在此处强制设置 AUTOSTATISTICS_TYPE = 5000
-        where_sql = "WHERE AUTOSTATISTICS_TYPE = 5000"
-        if search_model.SearchParameter:
-            province_code = search_model.SearchParameter.get("PROVINCE_CODE")
-            if province_code:
-                where_sql += f" AND PROVINCE_CODE = {province_code}"
+        # C# Controller: searchModel.SearchParameter.PROVINCE_CODE = GetIntHeader("ProvinceCode", ...)
+        if search_model.SearchParameter is None:
+            search_model.SearchParameter = {}
+        header_pc = request.headers.get("provincecode") or request.headers.get("ProvinceCode")
+        if header_pc and not search_model.SearchParameter.get("PROVINCE_CODE"):
+            try:
+                search_model.SearchParameter["PROVINCE_CODE"] = int(header_pc)
+            except (ValueError, TypeError):
+                pass
+        # C# 在 Controller 中强制设置 AUTOSTATISTICS_TYPE = 5000
+        where_parts = ["AUTOSTATISTICS_TYPE = 5000"]
+        province_code = search_model.SearchParameter.get("PROVINCE_CODE")
+        if province_code:
+            where_parts.append(f"PROVINCE_CODE = {province_code}")
+        # C# GetWhereSQL 对 SearchParameter 的普通字段做 = 过滤
+        # 排除 AUTOSTATISTICS_ID 和 INELASTIC_DEMAND（C# 显式跳过这两个）
+        skip_fields = {"AUTOSTATISTICS_ID", "INELASTIC_DEMAND", "PROVINCE_CODE",
+                       "AUTOSTATISTICS_TYPE", "current", "pageSize", "total"}
+        for k, v in search_model.SearchParameter.items():
+            if k in skip_fields or v is None or v == "":
+                continue
+            if isinstance(v, str):
+                where_parts.append(f"{k} LIKE '%{v}%'")
+            else:
+                where_parts.append(f"{k} = {v}")
+        # C# 的 INELASTIC_DEMAND 参数映射到 STATISTICS_TYPE
+        inelastic = search_model.SearchParameter.get("INELASTIC_DEMAND")
+        if inelastic is not None and inelastic != "":
+            where_parts.append(f"STATISTICS_TYPE = {inelastic}")
 
-        rows = db_helper.execute_query(f"SELECT * FROM T_AUTOSTATISTICS {where_sql}")
+        where_sql = " AND ".join(where_parts)
+        rows = db_helper.execute_query(f"SELECT * FROM T_AUTOSTATISTICS WHERE {where_sql}")
+
         # 排序
         if search_model.SortStr:
             sort_field = search_model.SortStr.replace(" DESC", "").replace(" ASC", "").replace(" desc", "").replace(" asc", "").strip()
@@ -134,8 +207,9 @@ async def get_coopmerchants_type_list_api(search_model: Optional[SearchModel] = 
         if page_index > 0 and page_size > 0:
             start = (page_index - 1) * page_size
             rows = rows[start:start + page_size]
-        elif len(rows) > 10:
-            rows = rows[:10]
+
+        # C# 风格的 field-by-field 绑定
+        data_list = [_bind_autostatistics_model(r) for r in rows]
 
         return {
             "Result_Code": 100,
@@ -144,7 +218,7 @@ async def get_coopmerchants_type_list_api(search_model: Optional[SearchModel] = 
                 "TotalCount": total_count,
                 "PageIndex": page_index,
                 "PageSize": page_size,
-                "List": rows
+                "List": data_list
             }
         }
     except Exception as e:
@@ -275,11 +349,20 @@ async def get_rtcoopmerchants_list_api(CoopMerchantsId: int = Query(...), SortSt
 
 
 @router.api_route("/Merchants/GetTradeBrandMerchantsList", methods=["GET", "POST"])
-async def get_tradebrand_merchants_list_api(search_model: Optional[SearchModel] = None):
+async def get_tradebrand_merchants_list_api(request: Request, search_model: Optional[SearchModel] = None):
     """获取经营业态品牌下商户列表"""
     try:
         if search_model is None:
             search_model = SearchModel()
+        # C# Controller: searchModel.SearchParameter.PROVINCE_CODE = GetIntHeader("ProvinceCode", ...)
+        if search_model.SearchParameter is None:
+            search_model.SearchParameter = {}
+        header_pc = request.headers.get("provincecode") or request.headers.get("ProvinceCode")
+        if header_pc and not search_model.SearchParameter.get("PROVINCE_CODE"):
+            try:
+                search_model.SearchParameter["PROVINCE_CODE"] = int(header_pc)
+            except (ValueError, TypeError):
+                pass
         total_count, data_list = get_tradebrand_merchants_list(db_helper, search_model)
         return {
             "Result_Code": 100,
@@ -322,3 +405,50 @@ async def delete_rtcoopmerchants_api(RTCoopMerchantsId: int = Query(...)):
     except Exception as e:
         logger.error(f"DeleteRTCoopMerchants 删除失败: {e}")
         return {"Result_Code": 999, "Result_Desc": f"删除失败{e}"}
+
+
+# ================================================================
+# 5. BM-03 补齐: GetCoopMerchantsDDL 商户下拉框
+# ================================================================
+
+@router.get("/Merchants/GetCoopMerchantsDDL")
+async def get_coopmerchants_ddl(
+    ProvinceCode: int = Query(None),
+    OwnerUnitId: int = Query(None),
+    CoopMerchantsState: int = Query(1),
+    ServerpartId: int = Query(None),
+    CoopMerchantsName: str = Query("")
+):
+    """绑定商户下拉框"""
+    try:
+        # 直接查询 T_COOPMERCHANTS 表
+        conditions = []
+        if CoopMerchantsState is not None:
+            conditions.append(f"COOPMERCHANTS_STATE = {CoopMerchantsState}")
+        if ProvinceCode is not None:
+            conditions.append(f"PROVINCE_CODE = {ProvinceCode}")
+        if OwnerUnitId is not None:
+            conditions.append(f"OWNERUNIT_ID = {OwnerUnitId}")
+        if ServerpartId is not None:
+            conditions.append(f"SERVERPART_ID = {ServerpartId}")
+        if CoopMerchantsName:
+            conditions.append(f"COOPMERCHANTS_NAME LIKE '%{CoopMerchantsName}%'")
+        where = " AND ".join(conditions) if conditions else "1=1"
+        sql = f"SELECT COOPMERCHANTS_ID, COOPMERCHANTS_NAME FROM T_COOPMERCHANTS WHERE {where} ORDER BY COOPMERCHANTS_NAME"
+        rows = db_helper.execute_query(sql) or []
+        # 返回 CommonModel 兼容格式
+        result = [{"Id": r.get("COOPMERCHANTS_ID"), "Name": r.get("COOPMERCHANTS_NAME")} for r in rows]
+        return {
+            "Result_Code": 100,
+            "Result_Desc": "查询成功",
+            "Result_Data": {
+                "TotalCount": len(result),
+                "PageIndex": 1,
+                "PageSize": len(result),
+                "List": result
+            }
+        }
+    except Exception as e:
+        logger.error(f"GetCoopMerchantsDDL 查询失败: {e}")
+        return {"Result_Code": 999, "Result_Desc": f"查询失败{e}"}
+

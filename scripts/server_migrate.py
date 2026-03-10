@@ -88,6 +88,13 @@ MIGRATE_TABLES = [
     {"oracle_schema": "CONTRACT_STORAGE", "table": "T_EXPENSESSEPARATE", "sequence": "SEQ_EXPENSESSEPARATE"},
     # MerchantsController 相关表
     {"oracle_schema": "COOP_MERCHANT", "table": "T_COOPMERCHANTS_LINKER", "sequence": "SEQ_COOPMERCHANTS_LINKER"},
+    # ShopVideoController 相关表（Video 模块）
+    {"oracle_schema": "HIGHWAY_EXCHANGE", "table": "T_EXTRANET", "sequence": "SEQ_EXTRANET"},
+    {"oracle_schema": "HIGHWAY_EXCHANGE", "table": "T_EXTRANETDETAIL", "sequence": "SEQ_EXTRANETDETAIL"},
+    {"oracle_schema": "HIGHWAY_EXCHANGE", "table": "T_SHOPVIDEO", "sequence": "SEQ_SHOPVIDEO"},
+    {"oracle_schema": "HIGHWAY_EXCHANGE", "table": "T_VIDEOLOG", "sequence": "SEQ_VIDEOLOG"},
+    # PictureController 相关表
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_IMAGE", "sequence": "SEQ_IMAGE"},
 ]
 
 # 运行配置

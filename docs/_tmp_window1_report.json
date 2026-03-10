@@ -1,0 +1,2600 @@
+{
+  "generated_at": "2026-03-10 12:04:57",
+  "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\windows\\window_1.json",
+  "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\_tmp_window1_report.md",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "module_scope": [
+    "BaseInfo",
+    "Merchants",
+    "Contract"
+  ],
+  "counts": {
+    "pass": 127,
+    "fail": 0,
+    "skip": 0,
+    "total": 127
+  },
+  "cases": [
+    {
+      "endpoint": "BaseInfo/BindingMerchantTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": 340000
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/BindingMerchantTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/BindingOwnerUnitDDL",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": 340000,
+        "DataType": 0
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/BindingOwnerUnitDDL"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/BindingOwnerUnitTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "DataType": 0
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/BindingOwnerUnitTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetAUTOSTATISTICSDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "AUTOSTATISTICSId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetAUTOSTATISTICSDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetAssetsRevenueAmount",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "searchMonth": "202512",
+        "ServerpartIds": "416"
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetAssetsRevenueAmount"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetAutoStatisticsTreeList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": 340000,
+        "OwnerUnit_Id": 211,
+        "AutoStatistics_Type": 0
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetAutoStatisticsTreeList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetBrandDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BrandId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetBrandDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetBrandList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "BRAND_ID": 1314
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetBrandList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetBusinessBrandList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ServerpartShopIds": 3080
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetBusinessBrandList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetBusinessTradeDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BusinessTradeId": 214
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetBusinessTradeDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetBusinessTradeEnum",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BusinessTrade_PID": 214,
+        "ProvinceCode": 340000,
+        "BusinessTradeState": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetBusinessTradeEnum"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetBusinessTradeList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "PROVINCE_CODE": 340000
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetBusinessTradeList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetBusinessTradeTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BusinessTrade_PID": -1,
+        "ProvinceCode": 340000,
+        "BusinessTradeState": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetBusinessTradeTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetCASHWORKERDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "CASHWORKERId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetCASHWORKERDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetCASHWORKERList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "CASHWORKER_ID": "1477"
+        },
+        "PageIndex": 1,
+        "PageSize": 99
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetCASHWORKERList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetCOMMODITYDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "COMMODITYId": 864
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetCOMMODITYDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetCOMMODITYList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "COMMODITY_ID": 864
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetCOMMODITYList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetCOMMODITYTYPEDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "COMMODITYTYPEId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetCOMMODITYTYPEDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetCOMMODITYTYPEList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "COMMODITYTYPE_ID": 418
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetCOMMODITYTYPEList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetCombineBrandList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "PROVINCE_CODE": 340000,
+        "BRAND_TYPE": 2000
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetCombineBrandList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetNestingCOMMODITYTYPEList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "COMMODITYTYPE_PID": -1,
+        "PROVINCE_CODE": 340000,
+        "COMMODITYTYPE_VALID": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetNestingCOMMODITYTYPEList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetNestingCOMMODITYTYPETree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "COMMODITYTYPE_PID": -1,
+        "PROVINCE_CODE": 340000,
+        "COMMODITYTYPE_VALID": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetNestingCOMMODITYTYPETree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetNestingOwnerUnitList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ShowStatus": true,
+        "ProvinceCode": 340000,
+        "OwnerUnitNature": 1000
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetNestingOwnerUnitList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetOWNERUNITDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "OWNERUNITId": 211
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetOWNERUNITDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetOWNERUNITList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "PROVINCE_CODE": 340000
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetOWNERUNITList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetPROPERTYASSETSDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "PROPERTYASSETSId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetPROPERTYASSETSDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetPROPERTYASSETSLOGList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "PROPERTYASSETSLOG_ID": 6
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetPROPERTYASSETSLOGList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetPROPERTYASSETSList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetPROPERTYASSETSList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetPROPERTYASSETSTreeList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetPROPERTYASSETSTreeList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetPROPERTYSHOPDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "PROPERTYSHOPId": 42
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetPROPERTYSHOPDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetPROPERTYSHOPList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetPROPERTYSHOPList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetRTSERVERPARTSHOPDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "RTSERVERPARTSHOPId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetRTSERVERPARTSHOPDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetRTSERVERPARTSHOPList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "RTSERVERPARTSHOP_ID": 101
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetRTSERVERPARTSHOPList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetSERVERPARTCRTDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "SERVERPARTTId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetSERVERPARTCRTDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetSERVERPARTCRTList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetSERVERPARTCRTList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetSERVERPARTCRTTreeList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetSERVERPARTCRTTreeList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetSERVERPARTDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "SERVERPARTId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetSERVERPARTDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetSERVERPARTList",
+      "case_name": "search-model",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": 416
+        },
+        "PageIndex": 1,
+        "PageSize": 999
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetSERVERPARTList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetSERVERPARTSHOP_LOGList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": 416
+        },
+        "PageIndex": 1,
+        "PageSize": 999
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetSERVERPARTSHOP_LOGList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetSPRegionShopTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": "340000",
+        "ServerpartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetSPRegionShopTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerPartShopNewDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "serverPartShopId": 3080
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerPartShopNewDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerPartShopNewList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "provinceCode": "340000",
+        "serverPartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerPartShopNewList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerpartDDL",
+      "case_name": "service-area-416",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": "340000",
+        "ServerpartType": "1000",
+        "StatisticsType": "1000"
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerpartDDL"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerpartShopDDL",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": "340000",
+        "ServerpartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerpartShopDDL"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerpartShopDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ServerpartShopId": 3080
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerpartShopDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerpartShopInfo",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ServerpartCode": "1",
+        "ShopCode": "1"
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerpartShopInfo"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerpartShopList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": 416
+        },
+        "PageIndex": 1,
+        "PageSize": 999
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetServerpartShopList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerpartShopTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": "340000",
+        "ServerpartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerpartShopTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerpartTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": "340000",
+        "ServerpartType": "1000",
+        "StatisticsType": "1000"
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerpartTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetServerpartUDTypeTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ServerpartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetServerpartUDTypeTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetShopReceivables",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ServerpartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetShopReceivables"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetShopShortNames",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": "340000",
+        "ServerpartId": 416,
+        "ShopValid": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetShopShortNames"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetTradeBrandTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BusinessTrade_PID": -1,
+        "ProvinceCode": "340000",
+        "BrandState": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetTradeBrandTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetUSERDEFINEDTYPEDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "USERDEFINEDTYPEId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BaseInfo/GetUSERDEFINEDTYPEDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BaseInfo/GetUSERDEFINEDTYPEList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "USERDEFINEDTYPE_ID": 40
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BaseInfo/GetUSERDEFINEDTYPEList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Commodity/GetCOMMODITYDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Commodity/GetCOMMODITYDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Commodity/GetCOMMODITYList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST Commodity/GetCOMMODITYList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Commodity/GetCommodityList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Commodity/GetCommodityList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Merchants/GetCoopMerchantsDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "CoopMerchantsId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Merchants/GetCoopMerchantsDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Merchants/GetCoopMerchantsLinkerDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "CoopMerchantsLinkerId": 383
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Merchants/GetCoopMerchantsLinkerDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Merchants/GetCoopMerchantsLinkerList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "COOPMERCHANTS_LINKER_ID": 383
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST Merchants/GetCoopMerchantsLinkerList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Merchants/GetCoopMerchantsList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "COOPMERCHANTS_ID": -2867
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST Merchants/GetCoopMerchantsList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Merchants/GetCoopMerchantsTypeList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {},
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST Merchants/GetCoopMerchantsTypeList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Merchants/GetRTCoopMerchantsList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Merchants/GetRTCoopMerchantsList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Merchants/GetTradeBrandMerchantsList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Merchants/GetTradeBrandMerchantsList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetAPPROVEDList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "APPROVED_ID": 5419
+        },
+        "PageIndex": 1,
+        "PageSize": 999
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetAPPROVEDList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetAccountWarningList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ServerpartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetAccountWarningList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetAccountWarningListSummary",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetAccountWarningListSummary"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetAnnualSplit",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "DataType": 1,
+        "BusinessProjectId": 1905
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetAnnualSplit"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBIZPSPLITMONTHDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BIZPSPLITMONTHId": 1
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetBIZPSPLITMONTHDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBIZPSPLITMONTHList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "BIZPSPLITMONTH_ID": 3106
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetBIZPSPLITMONTHList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBUSINESSPROJECTSPLITDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BUSINESSPROJECTSPLITId": 87658
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetBUSINESSPROJECTSPLITDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBUSINESSPROJECTSPLITList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetBUSINESSPROJECTSPLITList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBrandReceivables",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetBrandReceivables"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBusinessPaymentDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetBusinessPaymentDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBusinessPaymentList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetBusinessPaymentList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBusinessProjectDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetBusinessProjectDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetBusinessProjectList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetBusinessProjectList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetCONTRACT_SYNDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetCONTRACT_SYNDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetCONTRACT_SYNList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetCONTRACT_SYNList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetExpenseSummary",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetExpenseSummary"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetMerchantSplit",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetMerchantSplit"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetMerchantsReceivables",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetMerchantsReceivables"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetMerchantsReceivablesList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetMerchantsReceivablesList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetMerchantsReceivablesReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetMerchantsReceivablesReport"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetMonthSummaryList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetMonthSummaryList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetNoProjectShopList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetNoProjectShopList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPERIODWARNINGDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetPERIODWARNINGDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPERIODWARNINGList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetPERIODWARNINGList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPROJECTSPLITMONTHDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetPROJECTSPLITMONTHDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPROJECTSPLITMONTHList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetPROJECTSPLITMONTHList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPROJECTWARNINGDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetPROJECTWARNINGDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPROJECTWARNINGList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetPROJECTWARNINGList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPaymentConfirmDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetPaymentConfirmDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPaymentConfirmList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetPaymentConfirmList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetPeriodWarningList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetPeriodWarningList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetProjectAccountDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetProjectAccountDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetProjectAccountList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetProjectAccountList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetProjectAccountTree",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetProjectAccountTree"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetRTPaymentRecordDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetRTPaymentRecordDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetRTPaymentRecordList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetRTPaymentRecordList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetRemarksDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetRemarksDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetRemarksList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetRemarksList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetRevenueConfirmDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetRevenueConfirmDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetRevenueConfirmList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetRevenueConfirmList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetSHOPEXPENSEDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetSHOPEXPENSEDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetSHOPEXPENSEList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetSHOPEXPENSEList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetSHOPROYALTYDETAILDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetSHOPROYALTYDETAILDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetSHOPROYALTYDETAILList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetSHOPROYALTYDETAILList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetShopExpenseSummary",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetShopExpenseSummary"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetShopRoyaltyDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetShopRoyaltyDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetShopRoyaltyList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST BusinessProject/GetShopRoyaltyList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BusinessProject/GetWillSettleProject",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET BusinessProject/GetWillSettleProject"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetAttachmentDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "AttachmentId": 1903
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Contract/GetAttachmentDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetAttachmentList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "ATTACHMENT_ID": 1903
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST Contract/GetAttachmentList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetContractExpiredInfo",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": "340000",
+        "ServerpartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Contract/GetContractExpiredInfo"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetProjectMonthlyArrearageList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "StatisticsYear": 2025,
+        "ProvinceCode": "340000"
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Contract/GetProjectMonthlyArrearageList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetProjectSummaryInfo",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ServerpartId": 416,
+        "ProvinceCode": "340000"
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Contract/GetProjectSummaryInfo"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetProjectYearlyArrearageList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ServerpartId": 416,
+        "ProvinceCode": "340000"
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Contract/GetProjectYearlyArrearageList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetRTRegisterCompactDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "RTRegisterCompactId": 12426,
+        "RegisterCompactId": 466
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Contract/GetRTRegisterCompactDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetRTRegisterCompactList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {},
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST Contract/GetRTRegisterCompactList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetRegisterCompactDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "RegisterCompactId": 21
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Contract/GetRegisterCompactDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetRegisterCompactList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST Contract/GetRegisterCompactList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetRegisterCompactSubDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "RegisterCompactSubId": 737,
+        "RegisterCompactId": 731
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET Contract/GetRegisterCompactSubDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Contract/GetRegisterCompactSubList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "REGISTERCOMPACTSUB_ID": 737
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST Contract/GetRegisterCompactSubList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "ContractSyn/GetContractSynDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "GET ContractSyn/GetContractSynDetail"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "ContractSyn/GetContractSynList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "Dry Run",
+          "ok": true,
+          "detail": "POST ContractSyn/GetContractSynList"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": null,
+      "new_status_code": null
+    }
+  ]
+}

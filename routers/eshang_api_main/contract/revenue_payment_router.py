@@ -138,7 +138,7 @@ async def get_paymentconfirm_list_get(
 ):
     try:
         if not MerchantsId and not ServerpartShopIds and not BusinessProjectId:
-            return Result(Result_Code=200, Result_Desc="查询失败，请传入经营商户内码或门店内码集合或经营项目内码！")
+            return {"Result_Code": 200, "Result_Desc": "查询失败，请传入经营商户内码或门店内码集合或经营项目内码！", "Result_Data": None}
         data_list, summary_list = pc_svc.get_paymentconfirm_list_get(
             db, MerchantsId, ServerpartShopIds, BusinessProjectId, AccountDate,
             ShowJustPayable, WholeAccountType, AccountType, StartDate, EndDate,

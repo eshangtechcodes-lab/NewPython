@@ -1,0 +1,158 @@
+{
+  "name": "Sales dynamic compare manifest",
+  "note": "Sales 动态执行 manifest；仅保留 matched + 读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "Sales"
+  ],
+  "endpoints": [
+    {
+      "name": "Sales/GetCOMMODITYSALEDetail",
+      "endpoint": "Sales/GetCOMMODITYSALEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCOMMODITYSALEList",
+      "endpoint": "Sales/GetCOMMODITYSALEList",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCommoditySaleSummary",
+      "endpoint": "Sales/GetCommoditySaleSummary",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCommodityTypeHistory",
+      "endpoint": "Sales/GetCommodityTypeHistory",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetCommodityTypeSummary",
+      "endpoint": "Sales/GetCommodityTypeSummary",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetEndaccountError",
+      "endpoint": "Sales/GetEndaccountError",
+      "method": "POST",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Sales/GetEndaccountSaleInfo",
+      "endpoint": "Sales/GetEndaccountSaleInfo",
+      "method": "GET",
+      "meta": {
+        "module": "Sales",
+        "baseline_status": "matched",
+        "method_match": false,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\DataVerification\\SalesController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    }
+  ]
+}

@@ -375,6 +375,7 @@ def get_businesstrade_detail(db: DatabaseHelper, businesstrade_id: int) -> Optio
     sql = f"SELECT * FROM {TABLE_NAME} WHERE {PRIMARY_KEY} = {businesstrade_id}"
     rows = db.execute_query(sql)
     if rows:
+        # 需要调用 _process_row 以添加 INELASTIC_DEMAND 等计算字段
         return _process_row(rows[0])
     return None
 

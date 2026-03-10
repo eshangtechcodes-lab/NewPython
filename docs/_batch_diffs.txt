@@ -1,0 +1,65 @@
+
+## BaseInfo/BindingOwnerUnitTree (2 diffs)
+  Result_Data.List[0].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+  Result_Data.List[13].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+
+## BaseInfo/GetAssetsRevenueAmount (2 diffs)
+  Result_Data.List: 列表长度不一致 (1 vs 0)
+  Result_Data.TotalCount: 值不一致 (1 vs 0)
+
+## BaseInfo/GetCOMMODITYTYPEDetail (2 diffs)
+  Result_Data.COMMODITYTYPE_EN: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.STAFF_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+## BaseInfo/GetNestingOwnerUnitList (1 diffs)
+  Result_Data.List[0].node.DOWNLOAD_DATE: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+## BaseInfo/GetPROPERTYASSETSLOGList (1 diffs)
+  Result_Data.List[0].OPERATE_NAME: 类型不一致 (str vs NoneType)，值为 '' vs None
+
+## BaseInfo/GetServerpartShopList (2 diffs)
+  Result_Data.List: 列表长度不一致 (69 vs 0)
+  Result_Data.TotalCount: 值不一致 (69 vs 0)
+
+## Merchants/GetCoopMerchantsDetail (2 diffs)
+  Result_Data.LINKER_MOBILEPHONE: 类型不一致 (NoneType vs str)，值为 None vs '0571-81991302'
+  Result_Data.LINKER_NAME: 类型不一致 (NoneType vs str)，值为 None vs '杨雅意'
+
+## BusinessProject/GetCONTRACT_SYNDetail (1 diffs)
+  原 API JSON 解析失败: Expecting value: line 1 column 1 (char 0)
+
+## BusinessProject/GetCONTRACT_SYNList (1 diffs)
+  原 API JSON 解析失败: Expecting value: line 1 column 1 (char 0)
+
+## BusinessProject/GetPaymentConfirmDetail (4 diffs)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetPaymentConfirmDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+## BusinessProject/GetProjectAccountDetail (4 diffs)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetProjectAccountDetail”匹配的 HTTP 资源。' vs '查询失败Result() takes no arguments')
+
+## BusinessProject/GetRemarksDetail (4 diffs)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetRemarksDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+## BusinessProject/GetSHOPEXPENSEDetail (4 diffs)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetSHOPEXPENSEDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+## Contract/GetProjectYearlyArrearageList (1 diffs)
+  Result_Data.ProjectCompleteDetailList: 列表长度不一致 (5 vs 0)
+
+## ContractSyn/GetContractSynDetail (1 diffs)
+  原 API JSON 解析失败: Expecting value: line 1 column 1 (char 0)
+
+## ContractSyn/GetContractSynList (1 diffs)
+  原 API JSON 解析失败: Expecting value: line 1 column 1 (char 0)

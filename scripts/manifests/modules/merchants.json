@@ -1,0 +1,185 @@
+{
+  "name": "Merchants dynamic compare manifest",
+  "note": "Merchants 动态执行 manifest；仅保留 matched + 读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "Merchants"
+  ],
+  "endpoints": [
+    {
+      "name": "Merchants/GetCoopMerchantsDetail",
+      "endpoint": "Merchants/GetCoopMerchantsDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Merchants",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Merchants\\MerchantsController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\merchants\\merchants_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CoopMerchantsId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCoopMerchantsLinkerDetail",
+      "endpoint": "Merchants/GetCoopMerchantsLinkerDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Merchants",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Merchants\\MerchantsController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\merchants\\merchants_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CoopMerchantsLinkerId": 383
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCoopMerchantsLinkerList",
+      "endpoint": "Merchants/GetCoopMerchantsLinkerList",
+      "method": "POST",
+      "meta": {
+        "module": "Merchants",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Merchants\\MerchantsController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\merchants\\merchants_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COOPMERCHANTS_LINKER_ID": 383
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCoopMerchantsList",
+      "endpoint": "Merchants/GetCoopMerchantsList",
+      "method": "POST",
+      "meta": {
+        "module": "Merchants",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Merchants\\MerchantsController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\merchants\\merchants_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COOPMERCHANTS_ID": -2867
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetCoopMerchantsTypeList",
+      "endpoint": "Merchants/GetCoopMerchantsTypeList",
+      "method": "POST",
+      "meta": {
+        "module": "Merchants",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Merchants\\MerchantsController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\merchants\\merchants_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetRTCoopMerchantsList",
+      "endpoint": "Merchants/GetRTCoopMerchantsList",
+      "method": "GET",
+      "meta": {
+        "module": "Merchants",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Merchants\\MerchantsController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\merchants\\merchants_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CoopMerchantsId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants/GetTradeBrandMerchantsList",
+      "endpoint": "Merchants/GetTradeBrandMerchantsList",
+      "method": "POST",
+      "meta": {
+        "module": "Merchants",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Merchants\\MerchantsController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\merchants\\merchants_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "SortStr": "RTCOOPMERCHANTS_ID",
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    }
+  ]
+}

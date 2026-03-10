@@ -1,0 +1,72 @@
+{
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "report_path": "docs/dynamic_compare_report_20260309.md",
+  "notes": [
+    "只放读接口，不要把 Synchro/Delete/Approve/Upload 这类写接口放进来。",
+    "每个接口至少保留 3 组参数：空参、常规、边界。",
+    "如果接口需要特殊 Header，在 endpoint 或 case 内单独覆盖。"
+  ],
+  "endpoints": [
+    {
+      "name": "BaseInfo/GetSERVERPARTList",
+      "endpoint": "BaseInfo/GetSERVERPARTList",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "empty-body",
+          "json": {}
+        },
+        {
+          "name": "search-model",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": 416,
+              "SERVERPART_ID": 416,
+              "ProvinceCode": "340000"
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        },
+        {
+          "name": "flat-body",
+          "json": {
+            "SERVERPART_IDS": 416,
+            "SERVERPART_ID": 416,
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartDDL",
+      "endpoint": "BaseInfo/GetServerpartDDL",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-type",
+          "query": {
+            "ServerpartType": "1000"
+          }
+        },
+        {
+          "name": "service-area-416",
+          "query": {
+            "SERVERPART_ID": 416
+          }
+        },
+        {
+          "name": "empty-query",
+          "query": {}
+        }
+      ]
+    }
+  ]
+}

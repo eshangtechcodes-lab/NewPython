@@ -1,0 +1,29 @@
+NEW PASS: ['BaseInfo/GetNestingOwnerUnitList', 'BaseInfo/GetOWNERUNITList', 'BaseInfo/GetPROPERTYASSETSLOGList', 'BaseInfo/GetServerpartDDL', 'BaseInfo/GetServerpartShopDDL']
+
+REGRESSED: ['BaseInfo/GetOWNERUNITDetail', 'BaseInfo/GetSERVERPARTSHOPDetail', 'BaseInfo/GetSPRegionTypeTree', 'BaseInfo/GetServerPartShopNewDetail', 'BusinessProject/GetMonthSummaryList', 'BusinessProject/GetNoProjectShopList', 'Merchants/GetCoopMerchantsLinkerDetail']
+
+
+BaseInfo/GetOWNERUNITDetail:
+  Result_Data.OWNERUNIT_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.OWNERUNIT_EN: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.OWNERUNIT_ICO: 类型不一致 (NoneType vs str)，值为 None vs ''
+
+BaseInfo/GetServerPartShopNewDetail:
+  Result_Data.RtServerPartShopList[1].BusinessEndDate: 值不一致 ('2022年7月21日' vs '2022年7月20日')
+  Result_Data.RtServerPartShopList[2].BusinessEndDate: 值不一致 ('2022年7月7日' vs '2022年7月6日')
+  Result_Data.RtServerPartShopList[3].BusinessEndDate: 值不一致 ('2022年7月6日' vs '2022年7月5日')
+
+BusinessProject/GetMonthSummaryList:
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetNoProjectShopList:
+  Result_Data.List: 列表长度不一致 (10 vs 11)
+  Result_Data.List[0].index: 新 API 缺少该字段
+  Result_Data.List[0].type: 新 API 缺少该字段
+
+Merchants/GetCoopMerchantsLinkerDetail:
+  Result_Data.BANK_ACCOUNT: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.BANK_NAME: 类型不一致 (NoneType vs str)，值为 None vs ''
+  Result_Data.COOPMERCHANTS_DRAWER: 类型不一致 (NoneType vs str)，值为 None vs ''

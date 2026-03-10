@@ -1,0 +1,192 @@
+BaseInfo/GetServerpartUDTypeTree | 其他
+  <root>.Message: 新 API 多出该字段
+  Result_Code: 值不一致 (100 vs 999)
+  Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 1, 'PageSize': 10, 'TotalCount': 1, 'List': [{'node': {'label': '皖中管理中心', 'value': 72, 'key': '0-72', 'type': 0, 'desc': None, 'ico': None}, 'chi
+  Result_Desc: 值不一致 ('查询成功' vs "查询失败local variable 'ProvinceCode' referenced before assignment")
+
+Commodity/GetCOMMODITYDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Commodity/GetCOMMODITYDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+Commodity/GetCOMMODITYList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+Commodity/GetCommodityList | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('请求的资源不支持 http 方法“GET”。' vs '请求参数校验失败')
+
+Merchants/GetRTCoopMerchantsList | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Merchants/GetRTCoopMerchantsList”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetBusinessProjectList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetExpenseSummary | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetExpenseSummary”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetMerchantSplit | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetMerchantSplit”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetMonthSummaryList | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetMonthSummaryList”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetNoProjectShopList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetPERIODWARNINGDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetPERIODWARNINGDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetPROJECTSPLITMONTHDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetPROJECTSPLITMONTHDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetPROJECTWARNINGDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetPROJECTWARNINGDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetPROJECTWARNINGList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetPaymentConfirmDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetPaymentConfirmDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetPeriodWarningList | 其他
+  <root>.Message: 新 API 多出该字段
+  Result_Code: 值不一致 (100 vs 999)
+  Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 1, 'PageSize': 5, 'TotalCount': 5, 'List': [{'node': {'BUSINESSPROJECT_ID': None, 'BUSINESSPROJECT_NAME': None, 'SPREGIONTYPE_ID': 72, 'SPREGIONT
+  Result_Desc: 值不一致 ('查询成功' vs '查询失败[CODE:-2111]第2 行附近出现错误:\n无效的列名[PERIODWARNING_STATE]')
+
+BusinessProject/GetProjectAccountDetail | 旧API无此路由(404) | ⚠有Result()bug
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetProjectAccountDetail”匹配的 HTTP 资源。' vs '查询失败Result() takes no arguments')
+
+BusinessProject/GetProjectAccountTree | 其他
+  <root>.Message: 新 API 多出该字段
+  Result_Code: 值不一致 (100 vs 999)
+  Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 1, 'PageSize': 6, 'TotalCount': 0, 'List': [{'node': {'BUSINESSPROJECT_ID': None, 'BUSINESSPROJECT_NAME': None, 'REGISTERCOMPACT_ID': None, 'COMP
+  Result_Desc: 值不一致 ('查询成功' vs '查询失败[CODE:-2207]第5 行附近出现错误:\n无法解析的成员访问表达式[A.ISVALID]')
+
+BusinessProject/GetRTPaymentRecordDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetRTPaymentRecordDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetRTPaymentRecordList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetRemarksDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetRemarksDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetRemarksList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetRevenueConfirmDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetRevenueConfirmDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetRevenueConfirmList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetSHOPEXPENSEDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetSHOPEXPENSEDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetSHOPEXPENSEList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetSHOPROYALTYDETAILDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetSHOPROYALTYDETAILDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetShopExpenseSummary | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetShopExpenseSummary”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetShopRoyaltyDetail | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetShopRoyaltyDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+BusinessProject/GetShopRoyaltyList | 旧API无此路由(404)
+  <root>.Message: 新 API 缺少该字段
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+
+BusinessProject/GetWillSettleProject | 旧API无此路由(404)
+  <root>.Result_Code: 新 API 多出该字段
+  <root>.Result_Data: 新 API 多出该字段
+  <root>.Result_Desc: 新 API 多出该字段
+  Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/BusinessProject/GetWillSettleProject”匹配的 HTTP 资源。' vs '请求参数校验失败')
+
+Contract/GetProjectSummaryInfo | 其他
+  Result_Data.ArrearageList[0].Arrearage_Amount: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.ArrearageList[1].Arrearage_Amount: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.NewlyAccount_Amount: 类型不一致 (float vs int)，值为 0.0 vs 0
+  Result_Data.NewlyContract_Amount: 类型不一致 (float vs int)，值为 0.0 vs 0
+

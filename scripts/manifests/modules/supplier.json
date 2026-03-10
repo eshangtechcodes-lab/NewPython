@@ -1,0 +1,158 @@
+{
+  "name": "Supplier dynamic compare manifest",
+  "note": "Supplier 动态执行 manifest；仅保留 matched + 读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "Supplier"
+  ],
+  "endpoints": [
+    {
+      "name": "Supplier/GetQUALIFICATION_HISDetail",
+      "endpoint": "Supplier/GetQUALIFICATION_HISDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetQUALIFICATION_HISList",
+      "endpoint": "Supplier/GetQUALIFICATION_HISList",
+      "method": "POST",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetQualificationDetail",
+      "endpoint": "Supplier/GetQualificationDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetQualificationList",
+      "endpoint": "Supplier/GetQualificationList",
+      "method": "POST",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetSupplierDetail",
+      "endpoint": "Supplier/GetSupplierDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetSupplierList",
+      "endpoint": "Supplier/GetSupplierList",
+      "method": "POST",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Supplier/GetSupplierTreeList",
+      "endpoint": "Supplier/GetSupplierTreeList",
+      "method": "POST",
+      "meta": {
+        "module": "Supplier",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BusinessMan\\SupplierController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    }
+  ]
+}

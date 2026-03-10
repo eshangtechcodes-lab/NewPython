@@ -67,14 +67,14 @@ async def get_shopexpense_list(
     search_model: Optional[SearchModel] = None,
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取门店费用列表"""
+    """获取门店费用列表（含 summaryObject 费用合计）"""
     try:
         if search_model is None:
             search_model = SearchModel()
         if search_model.SearchParameter is None:
             search_model.SearchParameter = {}
 
-        total_count, data_list = se_svc.get_shopexpense_list(db, search_model)
+        total_count, data_list, summary_list = se_svc.get_shopexpense_list(db, search_model)
 
         json_list = JsonListData.create(
             data_list=data_list,
@@ -82,8 +82,12 @@ async def get_shopexpense_list(
             page_index=search_model.PageIndex,
             page_size=search_model.PageSize
         )
+        result = json_list.model_dump()
+        # summaryObject / OtherData — 与 C# 返回结构对齐
+        result["summaryObject"] = summary_list
+        result["OtherData"] = summary_list
 
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        return Result.success(data=result, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSHOPEXPENSEList 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -108,7 +112,7 @@ async def synchro_shopexpense(
     data: dict,
     db: DatabaseHelper = Depends(get_db)
 ):
-    """同步门店费用（新增/更新，简化版不含级联逻辑）"""
+    """同步门店费用（含级联写 BUSINESSPROJECTSPLIT）"""
     try:
         success, result_data = se_svc.synchro_shopexpense(db, data)
         if success:
@@ -123,11 +127,13 @@ async def synchro_shopexpense(
 @router.api_route("/BusinessProject/DeleteSHOPEXPENSE", methods=["GET", "POST"])
 async def delete_shopexpense(
     SHOPEXPENSEId: int = Query(..., description="门店费用内码"),
+    StaffId: int = Query(None, description="操作人内码"),
+    StaffName: str = Query("", description="操作人名称"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """删除门店费用（简化版软删除）"""
+    """删除门店费用（级联作废 BUSINESSPROJECTSPLIT + 历史备份）"""
     try:
-        success = se_svc.delete_shopexpense(db, SHOPEXPENSEId)
+        success = se_svc.delete_shopexpense(db, SHOPEXPENSEId, StaffId, StaffName)
         if success:
             return Result.success(msg="删除成功")
         else:

@@ -1,0 +1,940 @@
+{
+  "name": "Finance dynamic compare manifest",
+  "note": "Finance 动态执行 manifest；仅保留 matched + 读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "Finance"
+  ],
+  "endpoints": [
+    {
+      "name": "Budget/GetBudgetDetailDetail",
+      "endpoint": "Budget/GetBudgetDetailDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUDGETDETAIL_AHId": 132
+          }
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetBudgetDetailList",
+      "endpoint": "Budget/GetBudgetDetailList",
+      "method": "POST",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BUDGETDETAIL_AH_ID": 10518
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetBudgetProjectList",
+      "endpoint": "Budget/GetBudgetProjectList",
+      "method": "POST",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetBudgetProjectReportOfMonth",
+      "endpoint": "Budget/GetBudgetProjectReportOfMonth",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetbudgetProjectDetail",
+      "endpoint": "Budget/GetbudgetProjectDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUDGETPROJECT_AHId": 128
+          }
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetbudgetProjectReport",
+      "endpoint": "Budget/GetbudgetProjectReport",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetbudgetProjectReportDynamic",
+      "endpoint": "Budget/GetbudgetProjectReportDynamic",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetbudgetProjectReportIn",
+      "endpoint": "Budget/GetbudgetProjectReportIn",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetbudgetProjectReportInDynamic",
+      "endpoint": "Budget/GetbudgetProjectReportInDynamic",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetbudgetProjectReportOut",
+      "endpoint": "Budget/GetbudgetProjectReportOut",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Budget/GetbudgetProjectReportOutDynamic",
+      "endpoint": "Budget/GetbudgetProjectReportOutDynamic",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\BudgetProjectAHController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\budget_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetAHJKtoken",
+      "endpoint": "Finance/GetAHJKtoken",
+      "method": "POST",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetATTACHMENTDetail",
+      "endpoint": "Finance/GetATTACHMENTDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\fattachment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetATTACHMENTList",
+      "endpoint": "Finance/GetATTACHMENTList",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\fattachment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetAccountCompare",
+      "endpoint": "Finance/GetAccountCompare",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-31",
+            "ServerpartId": 416,
+            "CompareStartDate": "2024-12-01",
+            "CompareEndDate": "2024-12-31"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetAccountReached",
+      "endpoint": "Finance/GetAccountReached",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetAnnualAccountList",
+      "endpoint": "Finance/GetAnnualAccountList",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsYear": 2025,
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetBankAccountAnalyseList",
+      "endpoint": "Finance/GetBankAccountAnalyseList",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "searchMonth": "202512",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetBankAccountAnalyseTreeList",
+      "endpoint": "Finance/GetBankAccountAnalyseTreeList",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "searchMonth": "202512",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetContractExcuteAnalysis",
+      "endpoint": "Finance/GetContractExcuteAnalysis",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "StatisticsMonth": "202512"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetContractMerchant",
+      "endpoint": "Finance/GetContractMerchant",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetMonthAccountDiff",
+      "endpoint": "Finance/GetMonthAccountDiff",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": "416",
+            "StatisticsMonth": "202512"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetMonthAccountProinst",
+      "endpoint": "Finance/GetMonthAccountProinst",
+      "method": "POST",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "Serverpart_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetPeriodSupplementList",
+      "endpoint": "Finance/GetPeriodSupplementList",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetProjectExpenseList",
+      "endpoint": "Finance/GetProjectExpenseList",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetProjectMerchantSummary",
+      "endpoint": "Finance/GetProjectMerchantSummary",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartId": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetProjectPeriodAccount",
+      "endpoint": "Finance/GetProjectPeriodAccount",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUSINESSPROJECT_ID": "1905"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetProjectPeriodIncome",
+      "endpoint": "Finance/GetProjectPeriodIncome",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessProjectId": "1905",
+            "StatisticsMonth": "202512"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetProjectShopIncome",
+      "endpoint": "Finance/GetProjectShopIncome",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsDate": "2025-12-31",
+            "ContrastDate": "2025-12-30",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetProjectSplitSummary",
+      "endpoint": "Finance/GetProjectSplitSummary",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartId": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetProjectSummary",
+      "endpoint": "Finance/GetProjectSummary",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartId": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetReconciliation",
+      "endpoint": "Finance/GetReconciliation",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUSINESSPROJECT_ID": "1905"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetRevenueRecognition",
+      "endpoint": "Finance/GetRevenueRecognition",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "202512",
+            "endDate": "202512"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetRevenueSplitSummary",
+      "endpoint": "Finance/GetRevenueSplitSummary",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetRoyaltyDateSumReport",
+      "endpoint": "Finance/GetRoyaltyDateSumReport",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetRoyaltyReport",
+      "endpoint": "Finance/GetRoyaltyReport",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance/GetShopExpense",
+      "endpoint": "Finance/GetShopExpense",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\FinanceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\finance_scattered_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "202512",
+            "endDate": "202512"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invoice/GetBILLDETAILDetail",
+      "endpoint": "Invoice/GetBILLDETAILDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\InvoiceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\invoice_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BILLDETAILId": "12"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invoice/GetBILLDETAILList",
+      "endpoint": "Invoice/GetBILLDETAILList",
+      "method": "POST",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\InvoiceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\invoice_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BILLDETAIL_ID": 12
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invoice/GetBILLDetail",
+      "endpoint": "Invoice/GetBILLDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\InvoiceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\invoice_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BILLId": "9"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invoice/GetBILLList",
+      "endpoint": "Invoice/GetBILLList",
+      "method": "POST",
+      "meta": {
+        "module": "Finance",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Finance\\InvoiceController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\finance\\invoice_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BILL_ID": 9
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    }
+  ]
+}

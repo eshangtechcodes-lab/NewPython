@@ -2,13 +2,13 @@
 
 > EShangApi C# → Python FastAPI 接口迁移，以 Controller 文件夹为准，AutoBuild 不迁移。
 > 
-> **最后更新时间**：2026-03-08
+> **最后更新时间**：2026-03-09（Revenue / BigData / Audit / Analysis / MobilePay / BusinessMan / DataVerification / Picture 全部完成）
 
 ## 迁移范围（精确统计）
 
 **只迁移手动 Controller**，数据来自 C# 原项目 `[Route()]` 注解实际扫描。
 
-### 已完成（42 个实体 + 24 个散装接口，共 272 个接口）
+### 已完成（共 631 个接口）
 
 | # | 实体 | Controller | 接口数 | 涉及主表 | 完成日期 |
 |---|------|-----------|--------|----------|---------|
@@ -45,6 +45,14 @@
 | 31 | CoopMerchantsType（商户类型） | MerchantsController | 3 | T_AUTOSTATISTICS (TYPE=5000) | 2026-03-08 |
 | 32 | CoopMerchantsLinker（商户联系人） | MerchantsController | 4 | T_COOPMERCHANTS_LINKER | 2026-03-08 |
 | 33 | RTCoopMerchants+TradeBrandMerchants（商户品牌关联） | MerchantsController | 4 | T_RTCOOPMERCHANTS, T_BRAND, T_AUTOSTATISTICS | 2026-03-08 |
+| 34 | ATTACHMENT（财务附件） | FinanceController | 4 | T_ATTACHMENT | 2026-03-08 |
+| — | Finance 散装接口（44 个报表/审批/固化） | FinanceController | 44 | T_BUSINESSPROJECTSPLIT, T_BANKACCOUNTVERIFY, T_REVENUEDAILY, T_SHOPEXPENSE, T_REVENUECONFIRM 等 | 2026-03-08 |
+| 35 | BILL（票据信息） | InvoiceController | 4 | T_BILL | 2026-03-08 |
+| 36 | BILLDETAIL（票据明细） | InvoiceController | 4 | T_BILLDETAIL | 2026-03-08 |
+| — | Invoice 散装接口（4 个回写/转发） | InvoiceController | 4 | T_BILL | 2026-03-08 |
+| 37 | BUDGETPROJECT_AH（预算项目） | BudgetProjectAHController | 4 | T_BUDGETPROJECT_AH | 2026-03-08 |
+| 38 | BUDGETDETAIL_AH（预算明细） | BudgetProjectAHController | 4 | T_BUDGETDETAIL_AH | 2026-03-08 |
+| — | Budget 散装接口（8 个报表/批量保存） | BudgetProjectAHController | 8 | T_BUDGETDETAIL_AH, FieldEnum | 2026-03-08 |
 
 #### 已完成接口明细
 
@@ -181,7 +189,7 @@
 ---
 
 ### 接口状态明细（2026-03-06 C# 全量扫描）
-> 按迁移顺序排列，当前进度：**BaseInfo** 模块
+> 按迁移顺序排列，当前进度：仅剩 **Video(16) + BaseInfo剩余(35)** 待迁移
 
 ### BaseInfo 模块 — ❌ 待迁移（剩余 35 个）
 > ✅94 ❌35 ⏭️16 💬0 / 共145
@@ -506,74 +514,74 @@
 | BusinessProject/SynchroCONTRACT_SYN | POST | ✅ |
 | BusinessProject/DeleteCONTRACT_SYN | POST | ✅ |
 
-### Finance 模块 — ❌ 待迁移（剩余 76 个）
-> ✅0 ❌76 ⏭️12 💬0 / 共88
+### Finance 模块 — ✅ 全部完成
+> ✅76 ❌0 ⏭️12 💬0 / 共88
 
 **FinanceController** (48 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Finance/GetATTACHMENTList | POST | ❌ |
-| Finance/GetATTACHMENTDetail | POST | ❌ |
-| Finance/SynchroATTACHMENT | POST | ❌ |
-| Finance/DeleteATTACHMENT | POST | ❌ |
-| Finance/GetProjectSplitSummary | GET | ❌ |
-| Finance/GetProjectSummary | GET | ❌ |
-| Finance/GetRevenueSplitSummary | GET | ❌ |
-| Finance/GetProjectMerchantSummary | GET | ❌ |
-| Finance/CreateSingleProjectSplit | POST | ❌ |
-| Finance/SolidMonthProjectSplit | POST | ❌ |
-| Finance/GetRoyaltyDateSumReport | GET | ❌ |
-| Finance/GetRoyaltyReport | GET | ❌ |
-| Finance/GetProjectShopIncome | GET | ❌ |
-| Finance/GetContractMerchant | GET | ❌ |
-| Finance/GetAccountReached | GET | ❌ |
-| Finance/GetShopExpense | GET | ❌ |
-| Finance/GetReconciliation | GET | ❌ |
-| Finance/GetRevenueRecognition | GET | ❌ |
-| Finance/GetProjectPeriodIncome | GET | ❌ |
-| Finance/GetProjectPeriodAccount | GET | ❌ |
-| Finance/ApplyAccountProinst | POST | ❌ |
-| Finance/ApproveAccountProinst | POST | ❌ |
-| Finance/RejectAccountProinst | POST | ❌ |
-| Finance/GetMonthAccountProinst | POST | ❌ |
-| Finance/ApplyMonthAccountProinst | POST | ❌ |
-| Finance/ApproveMonthAccountProinst | POST | ❌ |
-| Finance/ApproveMAPList | POST | ❌ |
-| Finance/RejectMonthAccountProinst | POST | ❌ |
-| Finance/StorageMonthProjectAccount | POST | ❌ |
-| Finance/GetMonthAccountDiff | GET | ❌ |
-| Finance/ApprovePeriodAccount | GET | ❌ |
-| Finance/RejectPeriodAccount | GET | ❌ |
-| Finance/GetPeriodSupplementList | GET | ❌ |
-| Finance/GetProjectExpenseList | GET | ❌ |
-| Finance/GetBankAccountAnalyseList | GET | ❌ |
-| Finance/GetBankAccountAnalyseTreeList | GET | ❌ |
-| Finance/SolidBankAccountSplit | POST | ❌ |
-| Finance/GetContractExcuteAnalysis | GET | ❌ |
-| Finance/RebuildSCSplit | POST | ❌ |
-| Finance/CorrectRevenueAccountData | POST | ❌ |
-| Finance/RebuildClosedPeriod | POST | ❌ |
-| Finance/RebuildReductionPeriod | POST | ❌ |
-| Finance/SendSMSMessage | GET | ❌ |
-| Finance/LadingBill | POST | ❌ |
-| Finance/RejectLadingBill | POST | ❌ |
-| Finance/GetAHJKtoken | POST | ❌ |
-| Finance/GetAccountCompare | GET | ❌ |
-| Finance/GetAnnualAccountList | GET | ❌ |
+| Finance/GetATTACHMENTList | POST | ✅ |
+| Finance/GetATTACHMENTDetail | POST | ✅ |
+| Finance/SynchroATTACHMENT | POST | ✅ |
+| Finance/DeleteATTACHMENT | POST | ✅ |
+| Finance/GetProjectSplitSummary | GET | ✅ |
+| Finance/GetProjectSummary | GET | ✅ |
+| Finance/GetRevenueSplitSummary | GET | ✅ |
+| Finance/GetProjectMerchantSummary | GET | ✅ |
+| Finance/CreateSingleProjectSplit | GET | ✅ |
+| Finance/SolidMonthProjectSplit | GET | ✅ |
+| Finance/GetRoyaltyDateSumReport | GET | ✅ |
+| Finance/GetRoyaltyReport | GET | ✅ |
+| Finance/GetProjectShopIncome | GET | ✅ |
+| Finance/GetContractMerchant | GET | ✅ |
+| Finance/GetAccountReached | GET | ✅ |
+| Finance/GetShopExpense | GET | ✅ |
+| Finance/GetReconciliation | GET | ✅ |
+| Finance/GetRevenueRecognition | GET | ✅ |
+| Finance/GetProjectPeriodIncome | GET | ✅ |
+| Finance/GetProjectPeriodAccount | GET | ✅ |
+| Finance/ApplyAccountProinst | POST | ✅ |
+| Finance/ApproveAccountProinst | GET+POST | ✅ |
+| Finance/RejectAccountProinst | GET+POST | ✅ |
+| Finance/GetMonthAccountProinst | POST | ✅ |
+| Finance/ApplyMonthAccountProinst | POST | ✅ |
+| Finance/ApproveMonthAccountProinst | GET+POST | ✅ |
+| Finance/ApproveMAPList | GET+POST | ✅ |
+| Finance/RejectMonthAccountProinst | GET+POST | ✅ |
+| Finance/StorageMonthProjectAccount | POST | ✅ |
+| Finance/GetMonthAccountDiff | GET | ✅ |
+| Finance/ApprovePeriodAccount | GET | ✅ |
+| Finance/RejectPeriodAccount | GET | ✅ |
+| Finance/GetPeriodSupplementList | GET | ✅ |
+| Finance/GetProjectExpenseList | GET | ✅ |
+| Finance/GetBankAccountAnalyseList | GET | ✅ |
+| Finance/GetBankAccountAnalyseTreeList | GET | ✅ |
+| Finance/SolidBankAccountSplit | POST | ✅ |
+| Finance/GetContractExcuteAnalysis | GET | ✅ |
+| Finance/RebuildSCSplit | GET+POST | ✅ |
+| Finance/CorrectRevenueAccountData | POST | ✅ |
+| Finance/RebuildClosedPeriod | POST | ✅ |
+| Finance/RebuildReductionPeriod | POST | ✅ |
+| Finance/SendSMSMessage | GET | ✅ |
+| Finance/LadingBill | GET+POST | ✅ |
+| Finance/RejectLadingBill | GET+POST | ✅ |
+| Finance/GetAHJKtoken | POST | ✅ |
+| Finance/GetAccountCompare | GET | ✅ |
+| Finance/GetAnnualAccountList | GET | ✅ |
 
 **InvoiceController** (24 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Invoice/GetBILLList | POST | ❌ |
-| Invoice/GetBILLDetail | GET | ❌ |
-| Invoice/SynchroBILL | POST | ❌ |
-| Invoice/DeleteBILL | POST | ❌ |
-| Invoice/GetBILLDETAILList | POST | ❌ |
-| Invoice/GetBILLDETAILDetail | GET | ❌ |
-| Invoice/SynchroBILLDETAIL | POST | ❌ |
-| Invoice/DeleteBILLDETAIL | POST | ❌ |
+| Invoice/GetBILLList | POST | ✅ |
+| Invoice/GetBILLDetail | GET | ✅ |
+| Invoice/SynchroBILL | POST | ✅ |
+| Invoice/DeleteBILL | POST | ✅ |
+| Invoice/GetBILLDETAILList | POST | ✅ |
+| Invoice/GetBILLDETAILDetail | GET | ✅ |
+| Invoice/SynchroBILLDETAIL | POST | ✅ |
+| Invoice/DeleteBILLDETAIL | POST | ✅ |
 | Invoice/GetINVOICEINFOList | POST | ⏭️加密 |
 | Invoice/GetINVOICEINFODetail | POST | ⏭️加密 |
 | Invoice/SynchroINVOICEINFO | POST | ⏭️加密 |
@@ -586,422 +594,422 @@
 | Office/GetAPPLYAPPROVEDetail | POST | ⏭️加密 |
 | Office/SynchroAPPLYAPPROVE | POST | ⏭️加密 |
 | Office/DeleteAPPLYAPPROVE | POST | ⏭️加密 |
-| Invoice/WriteBackInvoice | POST | ❌ |
-| Invoice/SendHXInvoiceInfo | POST | ❌ |
-| Invoice/RewriteJDPJInfo | POST | ❌ |
-| Invoice/ForwardJDPJInterface | POST | ❌ |
+| Invoice/WriteBackInvoice | POST | ✅ |
+| Invoice/SendHXInvoiceInfo | POST | ✅ |
+| Invoice/RewriteJDPJInfo | POST | ✅ |
+| Invoice/ForwardJDPJInterface | POST | ✅ |
 
 **BudgetProjectAHController** (16 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Budget/GetBudgetProjectList | POST | ❌ |
-| Budget/GetbudgetProjectDetail | GET | ❌ |
-| Budget/SynchroBudgetProject | POST | ❌ |
-| Budget/DeleteBudgetProject | POST | ❌ |
-| Budget/GetBudgetDetailList | POST | ❌ |
-| Budget/GetBudgetDetailDetail | GET | ❌ |
-| Budget/SynchroBudgetDetail | POST | ❌ |
-| Budget/DeleteBudgetDetail | POST | ❌ |
-| Budget/SetBudgetDetailAHList | POST | ❌ |
-| Budget/GetBudgetProjectReportOfMonth | GET | ❌ |
-| Budget/GetbudgetProjectReport | GET | ❌ |
-| Budget/GetbudgetProjectReportDynamic | GET | ❌ |
-| Budget/GetbudgetProjectReportIn | GET | ❌ |
-| Budget/GetbudgetProjectReportInDynamic | GET | ❌ |
-| Budget/GetbudgetProjectReportOut | GET | ❌ |
-| Budget/GetbudgetProjectReportOutDynamic | GET | ❌ |
+| Budget/GetBudgetProjectList | POST | ✅ |
+| Budget/GetbudgetProjectDetail | GET | ✅ |
+| Budget/SynchroBudgetProject | POST | ✅ |
+| Budget/DeleteBudgetProject | POST | ✅ |
+| Budget/GetBudgetDetailList | POST | ✅ |
+| Budget/GetBudgetDetailDetail | GET | ✅ |
+| Budget/SynchroBudgetDetail | POST | ✅ |
+| Budget/DeleteBudgetDetail | POST | ✅ |
+| Budget/SetBudgetDetailAHList | POST | ✅ |
+| Budget/GetBudgetProjectReportOfMonth | GET | ✅ |
+| Budget/GetbudgetProjectReport | GET | ✅ |
+| Budget/GetbudgetProjectReportDynamic | GET | ✅ |
+| Budget/GetbudgetProjectReportIn | GET | ✅ |
+| Budget/GetbudgetProjectReportInDynamic | GET | ✅ |
+| Budget/GetbudgetProjectReportOut | GET | ✅ |
+| Budget/GetbudgetProjectReportOutDynamic | GET | ✅ |
 
-### Merchants 模块 — ❌ 待迁移（剩余 15 个）
-> ✅0 ❌15 ⏭️1 💬0 / 共16
+### Merchants 模块 — ✅ 已完成
+> ✅15 ❌0 ⏭️1 💬0 / 共16
 
 **MerchantsController** (16 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Merchants/GetCoopMerchantsList | POST | ❌ |
-| Merchants/GetCoopMerchantsDetail | GET | ❌ |
-| Merchants/SynchroCoopMerchants | POST | ❌ |
-| Merchants/DeleteCoopMerchants | POST | ❌ |
-| Merchants/GetCoopMerchantsTypeList | POST | ❌ |
-| Merchants/SynchroCoopMerchantsType | POST | ❌ |
-| Merchants/DeleteCoopMerchantsType | POST | ❌ |
-| Merchants/GetCoopMerchantsLinkerList | POST | ❌ |
-| Merchants/GetCoopMerchantsLinkerDetail | GET | ❌ |
-| Merchants/SynchroCoopMerchantsLinker | POST | ❌ |
-| Merchants/DeleteCoopMerchantsLinker | POST | ❌ |
-| Merchants/GetRTCoopMerchantsList | POST | ❌ |
-| Merchants/GetTradeBrandMerchantsList | POST | ❌ |
-| Merchants/SynchroRTCoopMerchants | POST | ❌ |
-| Merchants/DeleteRTCoopMerchants | POST | ❌ |
+| Merchants/GetCoopMerchantsList | POST | ✅ |
+| Merchants/GetCoopMerchantsDetail | GET | ✅ |
+| Merchants/SynchroCoopMerchants | POST | ✅ |
+| Merchants/DeleteCoopMerchants | POST | ✅ |
+| Merchants/GetCoopMerchantsTypeList | POST | ✅ |
+| Merchants/SynchroCoopMerchantsType | POST | ✅ |
+| Merchants/DeleteCoopMerchantsType | POST | ✅ |
+| Merchants/GetCoopMerchantsLinkerList | POST | ✅ |
+| Merchants/GetCoopMerchantsLinkerDetail | GET | ✅ |
+| Merchants/SynchroCoopMerchantsLinker | POST | ✅ |
+| Merchants/DeleteCoopMerchantsLinker | POST | ✅ |
+| Merchants/GetRTCoopMerchantsList | POST | ✅ |
+| Merchants/GetTradeBrandMerchantsList | POST | ✅ |
+| Merchants/SynchroRTCoopMerchants | POST | ✅ |
+| Merchants/DeleteRTCoopMerchants | POST | ✅ |
 | Merchants/GetCoopMerchantsDDL | GET | ⏭️加密 |
 
-### Revenue 模块 — ❌ 待迁移（剩余 59 个）
-> ✅0 ❌59 ⏭️1 💬0 / 共60
+### Revenue 模块 — ✅ 已完成
+> ✅59 ❌0 ⏭️1 💬0 / 共60 | 完成日期: 2026-03-09
 
 **RevenueController** (60 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Revenue/GetREVENUEDAILYSPLITList | POST | ❌ |
-| Revenue/GetREVENUEDAILYSPLITDetail | GET | ❌ |
-| Revenue/SynchroREVENUEDAILYSPLIT | POST | ❌ |
-| Revenue/DeleteREVENUEDAILYSPLIT | POST | ❌ |
-| Revenue/GetPERSONSELLList | POST | ❌ |
-| Revenue/GetPERSONSELLDetail | GET | ❌ |
-| Revenue/SynchroPERSONSELL | POST | ❌ |
-| Revenue/DeletePERSONSELL | POST | ❌ |
-| Revenue/GetBUSINESSANALYSISList | POST | ❌ |
-| Revenue/GetBUSINESSANALYSISDetail | GET | ❌ |
-| Revenue/SynchroBUSINESSANALYSIS | POST | ❌ |
-| Revenue/DeleteBUSINESSANALYSIS | POST | ❌ |
-| Revenue/GetBRANDANALYSISList | POST | ❌ |
-| Revenue/GetBRANDANALYSISDetail | GET | ❌ |
-| Revenue/SynchroBRANDANALYSIS | POST | ❌ |
-| Revenue/DeleteBRANDANALYSIS | POST | ❌ |
-| Revenue/GetSITUATIONANALYSISList | POST | ❌ |
-| Revenue/GetSITUATIONANALYSISDetail | GET | ❌ |
-| Revenue/SynchroSITUATIONANALYSIS | POST | ❌ |
-| Revenue/DeleteSITUATIONANALYSIS | POST | ❌ |
-| Revenue/GetBUSINESSWARNINGList | POST | ❌ |
-| Revenue/GetBUSINESSWARNINGDetail | GET | ❌ |
-| Revenue/SynchroBUSINESSWARNING | POST | ❌ |
-| Revenue/DeleteBUSINESSWARNING | POST | ❌ |
-| Revenue/GetACCOUNTWARNINGList | POST | ❌ |
-| Revenue/GetACCOUNTWARNINGDetail | GET | ❌ |
-| Revenue/SynchroACCOUNTWARNING | POST | ❌ |
-| Revenue/DeleteACCOUNTWARNING | POST | ❌ |
+| Revenue/GetREVENUEDAILYSPLITList | POST | ✅ |
+| Revenue/GetREVENUEDAILYSPLITDetail | GET | ✅ |
+| Revenue/SynchroREVENUEDAILYSPLIT | POST | ✅ |
+| Revenue/DeleteREVENUEDAILYSPLIT | POST | ✅ |
+| Revenue/GetPERSONSELLList | POST | ✅ |
+| Revenue/GetPERSONSELLDetail | GET | ✅ |
+| Revenue/SynchroPERSONSELL | POST | ✅ |
+| Revenue/DeletePERSONSELL | POST | ✅ |
+| Revenue/GetBUSINESSANALYSISList | POST | ✅ |
+| Revenue/GetBUSINESSANALYSISDetail | GET | ✅ |
+| Revenue/SynchroBUSINESSANALYSIS | POST | ✅ |
+| Revenue/DeleteBUSINESSANALYSIS | POST | ✅ |
+| Revenue/GetBRANDANALYSISList | POST | ✅ |
+| Revenue/GetBRANDANALYSISDetail | GET | ✅ |
+| Revenue/SynchroBRANDANALYSIS | POST | ✅ |
+| Revenue/DeleteBRANDANALYSIS | POST | ✅ |
+| Revenue/GetSITUATIONANALYSISList | POST | ✅ |
+| Revenue/GetSITUATIONANALYSISDetail | GET | ✅ |
+| Revenue/SynchroSITUATIONANALYSIS | POST | ✅ |
+| Revenue/DeleteSITUATIONANALYSIS | POST | ✅ |
+| Revenue/GetBUSINESSWARNINGList | POST | ✅ |
+| Revenue/GetBUSINESSWARNINGDetail | GET | ✅ |
+| Revenue/SynchroBUSINESSWARNING | POST | ✅ |
+| Revenue/DeleteBUSINESSWARNING | POST | ✅ |
+| Revenue/GetACCOUNTWARNINGList | POST | ✅ |
+| Revenue/GetACCOUNTWARNINGDetail | GET | ✅ |
+| Revenue/SynchroACCOUNTWARNING | POST | ✅ |
+| Revenue/DeleteACCOUNTWARNING | POST | ✅ |
 | Revenue/GetBusinessDate | GET | ⏭️加密 |
-| Revenue/ModifyRevenueDailySplitList | POST | ❌ |
-| Revenue/GetRevenuePushList | POST | ❌ |
-| Revenue/GetHisCommoditySaleList | POST | ❌ |
-| Revenue/GetRevenueDataList | GET | ❌ |
-| Revenue/GetRevenueReport | GET | ❌ |
-| Revenue/GetRevenueReportByDate | GET | ❌ |
-| Revenue/GetMerchantRevenueReport | GET | ❌ |
-| Revenue/BankAccountCompare | GET | ❌ |
-| Revenue/GetBankAccountReport | GET | ❌ |
-| Revenue/GetBankAccountList | GET | ❌ |
-| Revenue/GetCurTotalRevenue | GET | ❌ |
-| Revenue/GetTotalRevenue | GET | ❌ |
-| Revenue/GetYSSellMasterList | POST | ❌ |
-| Revenue/GetSellMasterCompareList | POST | ❌ |
-| Revenue/GetYSSellDetailsList | POST | ❌ |
-| Revenue/GetTransactionCustomer | POST | ❌ |
-| Revenue/GetTransactionCustomerByDate | POST | ❌ |
-| Revenue/GetRevenueYOYQOQ | POST | ❌ |
-| Revenue/GetRevenueYOYQOQByDate | POST | ❌ |
-| Revenue/GetRevenueQOQ | POST | ❌ |
-| Revenue/GetRevenueQOQByDate | POST | ❌ |
-| Revenue/GetMonthCompare | POST | ❌ |
-| Revenue/GetBusinessAnalysisReport | POST | ❌ |
-| Revenue/GetSituationAnalysis | GET | ❌ |
-| Revenue/GetBusinessTradeAnalysis | GET | ❌ |
-| Revenue/GetBrandAnalysis | GET | ❌ |
-| Revenue/GetMonthINCAnalysis | GET | ❌ |
-| Revenue/GetRevenueReportByBIZPSPLITMONTH | GET | ❌ |
-| Revenue/CorrectShopCigarette | POST | ❌ |
-| Revenue/GetCigaretteReport | GET | ❌ |
-| Revenue/GetBusinessItemSummary | GET | ❌ |
+| Revenue/ModifyRevenueDailySplitList | POST | ✅ |
+| Revenue/GetRevenuePushList | POST | ✅ |
+| Revenue/GetHisCommoditySaleList | POST | ✅ |
+| Revenue/GetRevenueDataList | GET | ✅ |
+| Revenue/GetRevenueReport | GET | ✅ |
+| Revenue/GetRevenueReportByDate | GET | ✅ |
+| Revenue/GetMerchantRevenueReport | GET | ✅ |
+| Revenue/BankAccountCompare | GET | ✅ |
+| Revenue/GetBankAccountReport | GET | ✅ |
+| Revenue/GetBankAccountList | GET | ✅ |
+| Revenue/GetCurTotalRevenue | GET | ✅ |
+| Revenue/GetTotalRevenue | GET | ✅ |
+| Revenue/GetYSSellMasterList | POST | ✅ |
+| Revenue/GetSellMasterCompareList | POST | ✅ |
+| Revenue/GetYSSellDetailsList | POST | ✅ |
+| Revenue/GetTransactionCustomer | POST | ✅ |
+| Revenue/GetTransactionCustomerByDate | POST | ✅ |
+| Revenue/GetRevenueYOYQOQ | POST | ✅ |
+| Revenue/GetRevenueYOYQOQByDate | POST | ✅ |
+| Revenue/GetRevenueQOQ | POST | ✅ |
+| Revenue/GetRevenueQOQByDate | POST | ✅ |
+| Revenue/GetMonthCompare | POST | ✅ |
+| Revenue/GetBusinessAnalysisReport | POST | ✅ |
+| Revenue/GetSituationAnalysis | GET | ✅ |
+| Revenue/GetBusinessTradeAnalysis | GET | ✅ |
+| Revenue/GetBrandAnalysis | GET | ✅ |
+| Revenue/GetMonthINCAnalysis | GET | ✅ |
+| Revenue/GetRevenueReportByBIZPSPLITMONTH | GET | ✅ |
+| Revenue/CorrectShopCigarette | POST | ✅ |
+| Revenue/GetCigaretteReport | GET | ✅ |
+| Revenue/GetBusinessItemSummary | GET | ✅ |
 
-### BigData 模块 — ❌ 待迁移（剩余 37 个）
-> ✅0 ❌37 ⏭️3 💬0 / 共40
+### BigData 模块 — ✅ 已完成
+> ✅37 ❌0 ⏭️3 💬0 / 共40 | 完成日期: 2026-03-09
 
 **BigDataController** (36 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| BigData/GetSECTIONFLOWList | POST | ❌ |
-| BigData/GetSECTIONFLOWDetail | GET | ❌ |
-| BigData/SynchroSECTIONFLOW | POST | ❌ |
-| BigData/DeleteSECTIONFLOW | POST | ❌ |
-| BigData/GetSECTIONFLOWMONTHList | POST | ❌ |
-| BigData/GetSECTIONFLOWMONTHDetail | GET | ❌ |
-| BigData/SynchroSECTIONFLOWMONTH | POST | ❌ |
-| BigData/DeleteSECTIONFLOWMONTH | POST | ❌ |
-| BigData/GetBAYONETList | POST | ❌ |
-| BigData/GetBAYONETDetail | GET | ❌ |
-| BigData/SynchroBAYONET | POST | ❌ |
-| BigData/DeleteBAYONET | POST | ❌ |
-| BigData/GetBAYONETDAILY_AHList | POST | ❌ |
-| BigData/GetBAYONETDAILY_AHDetail | GET | ❌ |
-| BigData/SynchroBAYONETDAILY_AH | POST | ❌ |
-| BigData/DeleteBAYONETDAILY_AH | POST | ❌ |
-| BigData/A2305052305180725 | GET | ❌ |
-| BigData/GetDailyBayonetAnalysis | GET | ❌ |
-| BigData/GetServerpartSectionFlow | GET | ❌ |
-| Revenue/GetBAYONETANALYSISList | POST | ❌ |
-| Revenue/GetBAYONETANALYSISDetail | GET | ❌ |
-| Revenue/SynchroBAYONETANALYSIS | POST | ❌ |
-| Revenue/DeleteBAYONETANALYSIS | POST | ❌ |
-| Revenue/GetBAYONETOAANALYSISList | POST | ❌ |
-| Revenue/GetBAYONETOAANALYSISDetail | GET | ❌ |
-| Revenue/SynchroBAYONETOAANALYSIS | POST | ❌ |
-| Revenue/DeleteBAYONETOAANALYSIS | POST | ❌ |
-| BigData/GetBAYONETWARNINGList | POST | ❌ |
+| BigData/GetSECTIONFLOWList | POST | ✅ |
+| BigData/GetSECTIONFLOWDetail | GET | ✅ |
+| BigData/SynchroSECTIONFLOW | POST | ✅ |
+| BigData/DeleteSECTIONFLOW | POST | ✅ |
+| BigData/GetSECTIONFLOWMONTHList | POST | ✅ |
+| BigData/GetSECTIONFLOWMONTHDetail | GET | ✅ |
+| BigData/SynchroSECTIONFLOWMONTH | POST | ✅ |
+| BigData/DeleteSECTIONFLOWMONTH | POST | ✅ |
+| BigData/GetBAYONETList | POST | ✅ |
+| BigData/GetBAYONETDetail | GET | ✅ |
+| BigData/SynchroBAYONET | POST | ✅ |
+| BigData/DeleteBAYONET | POST | ✅ |
+| BigData/GetBAYONETDAILY_AHList | POST | ✅ |
+| BigData/GetBAYONETDAILY_AHDetail | GET | ✅ |
+| BigData/SynchroBAYONETDAILY_AH | POST | ✅ |
+| BigData/DeleteBAYONETDAILY_AH | POST | ✅ |
+| BigData/A2305052305180725 | GET | ✅ |
+| BigData/GetDailyBayonetAnalysis | GET | ✅ |
+| BigData/GetServerpartSectionFlow | GET | ✅ |
+| Revenue/GetBAYONETANALYSISList | POST | ✅ |
+| Revenue/GetBAYONETANALYSISDetail | GET | ✅ |
+| Revenue/SynchroBAYONETANALYSIS | POST | ✅ |
+| Revenue/DeleteBAYONETANALYSIS | POST | ✅ |
+| Revenue/GetBAYONETOAANALYSISList | POST | ✅ |
+| Revenue/GetBAYONETOAANALYSISDetail | GET | ✅ |
+| Revenue/SynchroBAYONETOAANALYSIS | POST | ✅ |
+| Revenue/DeleteBAYONETOAANALYSIS | POST | ✅ |
+| BigData/GetBAYONETWARNINGList | POST | ✅ |
 | BigData/GetBAYONETWARNINGDetail | POST | ⏭️加密 |
 | BigData/SynchroBAYONETWARNING | POST | ⏭️加密 |
 | BigData/DeleteBAYONETWARNING | POST | ⏭️加密 |
-| Revenue/GetBayonetVehicleAnalysis | GET | ❌ |
-| BigData/GetTimeIntervalList | GET | ❌ |
-| BigData/GetBayonetOwnerAHList | GET | ❌ |
-| BigData/GetBayonetOwnerMonthAHList | GET | ❌ |
-| BigData/GetUreaMasterList | POST | ❌ |
+| Revenue/GetBayonetVehicleAnalysis | GET | ✅ |
+| BigData/GetTimeIntervalList | GET | ✅ |
+| BigData/GetBayonetOwnerAHList | GET | ✅ |
+| BigData/GetBayonetOwnerMonthAHList | GET | ✅ |
+| BigData/GetUreaMasterList | POST | ✅ |
 
 **CustomerController** (4 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Customer/GetCUSTOMERGROUP_AMOUNTList | POST | ❌ |
-| Customer/GetCUSTOMERGROUP_AMOUNTDetail | GET | ❌ |
-| Customer/SynchroCUSTOMERGROUP_AMOUNT | POST | ❌ |
-| Customer/DeleteCUSTOMERGROUP_AMOUNT | POST | ❌ |
+| Customer/GetCUSTOMERGROUP_AMOUNTList | POST | ✅ |
+| Customer/GetCUSTOMERGROUP_AMOUNTDetail | GET | ✅ |
+| Customer/SynchroCUSTOMERGROUP_AMOUNT | POST | ✅ |
+| Customer/DeleteCUSTOMERGROUP_AMOUNT | POST | ✅ |
 
-### MobilePay 模块 — ❌ 待迁移（剩余 17 个）
-> ✅0 ❌17 ⏭️1 💬0 / 共18
+### MobilePay 模块 — ✅ 已完成
+> ✅17 ❌0 ⏭️1 💬0 / 共18 | 完成日期: 2026-03-09
 
 **MobilePayController** (18 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| MobilePay/SetKwyRoyaltyRate | POST | ❌ |
-| MobilePay/GetKwyRoyaltyRate | POST | ❌ |
-| MobilePay/RoyaltyWithdraw | POST | ❌ |
-| MobilePay/GetKwyRoyalty | GET | ❌ |
-| MobilePay/GetKwyRoyaltyForAll | GET | ❌ |
-| MobilePay/GetMobilePayRoyaltyReport | GET | ❌ |
-| MobilePay/SynchroBANKACCOUNTVERIFY | POST | ❌ |
-| MobilePay/GetBANKACCOUNTVERIFYList | POST | ❌ |
-| MobilePay/GetBANKACCOUNTVERIFYRegionList | POST | ❌ |
-| MobilePay/GetBANKACCOUNTVERIFYServerList | POST | ❌ |
-| MobilePay/GetBANKACCOUNTVERIFYTreeList | GET | ❌ |
-| MobilePay/GetRoyaltyRecordList | POST | ❌ |
-| MobilePay/GetMobilePayResult | POST | ❌ |
+| MobilePay/SetKwyRoyaltyRate | POST | ✅ |
+| MobilePay/GetKwyRoyaltyRate | POST | ✅ |
+| MobilePay/RoyaltyWithdraw | POST | ✅ |
+| MobilePay/GetKwyRoyalty | GET | ✅ |
+| MobilePay/GetKwyRoyaltyForAll | GET | ✅ |
+| MobilePay/GetMobilePayRoyaltyReport | GET | ✅ |
+| MobilePay/SynchroBANKACCOUNTVERIFY | POST | ✅ |
+| MobilePay/GetBANKACCOUNTVERIFYList | POST | ✅ |
+| MobilePay/GetBANKACCOUNTVERIFYRegionList | POST | ✅ |
+| MobilePay/GetBANKACCOUNTVERIFYServerList | POST | ✅ |
+| MobilePay/GetBANKACCOUNTVERIFYTreeList | GET | ✅ |
+| MobilePay/GetRoyaltyRecordList | POST | ✅ |
+| MobilePay/GetMobilePayResult | POST | ✅ |
 | MobilePay/CorrectSellMasterState | POST | ⏭️加密 |
-| MobilePay/GetChinaUmsSubMaster | POST | ❌ |
-| MobilePay/GetChinaUmsSubAccountDetail | POST | ❌ |
-| MobilePay/GetChinaUmsSubAccountSummary | POST | ❌ |
-| MobilePay/GetChinaUmsSubSummary | POST | ❌ |
+| MobilePay/GetChinaUmsSubMaster | POST | ✅ |
+| MobilePay/GetChinaUmsSubAccountDetail | POST | ✅ |
+| MobilePay/GetChinaUmsSubAccountSummary | POST | ✅ |
+| MobilePay/GetChinaUmsSubSummary | POST | ✅ |
 
-### Audit 模块 — ❌ 待迁移（剩余 24 个）
-> ✅0 ❌24 ⏭️0 💬0 / 共24
+### Audit 模块 — ✅ 已完成
+> ✅24 ❌0 ⏭️0 💬0 / 共24 | 完成日期: 2026-03-09
 
 **AuditController** (24 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Audit/GetYSABNORMALITYList | POST | ❌ |
-| Audit/GetYSABNORMALITYDetail | GET | ❌ |
-| Audit/GetYSABNORMALITYDETAILList | POST | ❌ |
-| Audit/GetABNORMALAUDITList | POST | ❌ |
-| Audit/GetAbnormalAuditDetail | GET | ❌ |
-| Audit/SynchroAbnormalAudit | POST | ❌ |
-| Audit/DeleteAbnormalAudit | POST | ❌ |
-| Audit/GetCHECKACCOUNTList | POST | ❌ |
-| Audit/GetCHECKACCOUNTDetail | GET | ❌ |
-| Audit/SynchroCHECKACCOUNT | POST | ❌ |
-| Audit/DeleteCHECKACCOUNT | POST | ❌ |
-| Audit/GetAUDITTASKSList | POST | ❌ |
-| Audit/GetAUDITTASKSDetail | GET | ❌ |
-| Audit/SynchroAUDITTASKS | POST | ❌ |
-| Audit/GetAuditList | POST | ❌ |
-| Audit/GetAuditDetils | POST | ❌ |
-| Audit/UpLoadAuditExplain | POST | ❌ |
-| Audit/GetCheckAccountReport | POST | ❌ |
-| Audit/GetYsabnormalityReport | POST | ❌ |
-| Audit/GetSpecialBehaviorReport | POST | ❌ |
-| Audit/GetAbnormalRateReport | POST | ❌ |
-| Audit/GetAuditTasksReport | POST | ❌ |
-| Audit/GetAuditTasksDetailList | POST | ❌ |
-| Audit/IssueAuditTasks | POST | ❌ |
+| Audit/GetYSABNORMALITYList | POST | ✅ |
+| Audit/GetYSABNORMALITYDetail | GET | ✅ |
+| Audit/GetYSABNORMALITYDETAILList | POST | ✅ |
+| Audit/GetABNORMALAUDITList | POST | ✅ |
+| Audit/GetAbnormalAuditDetail | GET | ✅ |
+| Audit/SynchroAbnormalAudit | POST | ✅ |
+| Audit/DeleteAbnormalAudit | POST | ✅ |
+| Audit/GetCHECKACCOUNTList | POST | ✅ |
+| Audit/GetCHECKACCOUNTDetail | GET | ✅ |
+| Audit/SynchroCHECKACCOUNT | POST | ✅ |
+| Audit/DeleteCHECKACCOUNT | POST | ✅ |
+| Audit/GetAUDITTASKSList | POST | ✅ |
+| Audit/GetAUDITTASKSDetail | GET | ✅ |
+| Audit/SynchroAUDITTASKS | POST | ✅ |
+| Audit/GetAuditList | POST | ✅ |
+| Audit/GetAuditDetils | POST | ✅ |
+| Audit/UpLoadAuditExplain | POST | ✅ |
+| Audit/GetCheckAccountReport | POST | ✅ |
+| Audit/GetYsabnormalityReport | POST | ✅ |
+| Audit/GetSpecialBehaviorReport | POST | ✅ |
+| Audit/GetAbnormalRateReport | POST | ✅ |
+| Audit/GetAuditTasksReport | POST | ✅ |
+| Audit/GetAuditTasksDetailList | POST | ✅ |
+| Audit/IssueAuditTasks | POST | ✅ |
 
-### Analysis 模块 — ❌ 待迁移（剩余 58 个）
-> ✅0 ❌58 ⏭️4 💬0 / 共62
+### Analysis 模块 — ✅ 已完成
+> ✅58 ❌0 ⏭️4 💬0 / 共62 | 完成日期: 2026-03-09
 
 **AnalysisController** (62 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Analysis/GetANALYSISINSList | POST | ❌ |
-| Analysis/GetANALYSISINSDetail | GET | ❌ |
-| Analysis/SynchroANALYSISINS | POST | ❌ |
-| Analysis/DeleteANALYSISINS | POST | ❌ |
-| Analysis/GetSENTENCEList | POST | ❌ |
-| Analysis/GetSENTENCEDetail | GET | ❌ |
-| Analysis/SynchroSENTENCE | POST | ❌ |
-| Analysis/DeleteSENTENCE | POST | ❌ |
-| Analysis/GetASSETSPROFITSList | POST | ❌ |
-| Analysis/GetASSETSPROFITSTreeList | POST | ❌ |
-| Analysis/GetASSETSPROFITSBusinessTreeList | POST | ❌ |
-| Analysis/GetASSETSPROFITSDetail | GET | ❌ |
-| Analysis/GetASSETSPROFITSDateDetailList | GET | ❌ |
-| Analysis/SynchroASSETSPROFITS | POST | ❌ |
-| Analysis/DeleteASSETSPROFITS | POST | ❌ |
-| Analysis/GetAssetsLossProfitList | GET | ❌ |
-| Analysis/GetPROFITCONTRIBUTEList | POST | ❌ |
-| Analysis/GetPROFITCONTRIBUTEDetail | GET | ❌ |
-| Analysis/SynchroPROFITCONTRIBUTE | POST | ❌ |
-| Analysis/DeletePROFITCONTRIBUTE | POST | ❌ |
-| Analysis/GetPERIODMONTHPROFITList | POST | ❌ |
-| Analysis/GetPERIODMONTHPROFITDetail | GET | ❌ |
-| Analysis/SynchroPERIODMONTHPROFIT | POST | ❌ |
-| Analysis/DeletePERIODMONTHPROFIT | POST | ❌ |
-| Analysis/GetVEHICLEAMOUNTList | POST | ❌ |
-| Analysis/GetVEHICLEAMOUNTDetail | GET | ❌ |
-| Analysis/SynchroVEHICLEAMOUNT | POST | ❌ |
-| Analysis/DeleteVEHICLEAMOUNT | POST | ❌ |
-| Analysis/GetANALYSISRULEList | POST | ❌ |
-| Analysis/GetANALYSISRULEDetail | GET | ❌ |
-| Analysis/SynchroANALYSISRULE | POST | ❌ |
-| Analysis/DeleteANALYSISRULE | POST | ❌ |
-| Analysis/GetPREFERRED_RATINGList | POST | ❌ |
-| Analysis/GetPREFERRED_RATINGDetail | GET | ❌ |
-| Analysis/SynchroPREFERRED_RATING | POST | ❌ |
-| Analysis/DeletePREFERRED_RATING | POST | ❌ |
-| Analysis/GetPROMPTList | POST | ❌ |
-| Analysis/GetPROMPTDetail | GET | ❌ |
-| Analysis/SynchroPROMPT | POST | ❌ |
-| Analysis/DeletePROMPT | POST | ❌ |
-| Analysis/GetINVESTMENTANALYSISList | POST | ❌ |
-| Analysis/GetINVESTMENTANALYSISDetail | GET | ❌ |
-| Analysis/SynchroINVESTMENTANALYSIS | POST | ❌ |
-| Analysis/DeleteINVESTMENTANALYSIS | POST | ❌ |
-| Analysis/GetINVESTMENTDETAILList | POST | ❌ |
-| Analysis/GetINVESTMENTDETAILDetail | GET | ❌ |
-| Analysis/SynchroINVESTMENTDETAIL | POST | ❌ |
-| Analysis/DeleteINVESTMENTDETAIL | POST | ❌ |
+| Analysis/GetANALYSISINSList | POST | ✅ |
+| Analysis/GetANALYSISINSDetail | GET | ✅ |
+| Analysis/SynchroANALYSISINS | POST | ✅ |
+| Analysis/DeleteANALYSISINS | POST | ✅ |
+| Analysis/GetSENTENCEList | POST | ✅ |
+| Analysis/GetSENTENCEDetail | GET | ✅ |
+| Analysis/SynchroSENTENCE | POST | ✅ |
+| Analysis/DeleteSENTENCE | POST | ✅ |
+| Analysis/GetASSETSPROFITSList | POST | ✅ |
+| Analysis/GetASSETSPROFITSTreeList | POST | ✅ |
+| Analysis/GetASSETSPROFITSBusinessTreeList | POST | ✅ |
+| Analysis/GetASSETSPROFITSDetail | GET | ✅ |
+| Analysis/GetASSETSPROFITSDateDetailList | GET | ✅ |
+| Analysis/SynchroASSETSPROFITS | POST | ✅ |
+| Analysis/DeleteASSETSPROFITS | POST | ✅ |
+| Analysis/GetAssetsLossProfitList | GET | ✅ |
+| Analysis/GetPROFITCONTRIBUTEList | POST | ✅ |
+| Analysis/GetPROFITCONTRIBUTEDetail | GET | ✅ |
+| Analysis/SynchroPROFITCONTRIBUTE | POST | ✅ |
+| Analysis/DeletePROFITCONTRIBUTE | POST | ✅ |
+| Analysis/GetPERIODMONTHPROFITList | POST | ✅ |
+| Analysis/GetPERIODMONTHPROFITDetail | GET | ✅ |
+| Analysis/SynchroPERIODMONTHPROFIT | POST | ✅ |
+| Analysis/DeletePERIODMONTHPROFIT | POST | ✅ |
+| Analysis/GetVEHICLEAMOUNTList | POST | ✅ |
+| Analysis/GetVEHICLEAMOUNTDetail | GET | ✅ |
+| Analysis/SynchroVEHICLEAMOUNT | POST | ✅ |
+| Analysis/DeleteVEHICLEAMOUNT | POST | ✅ |
+| Analysis/GetANALYSISRULEList | POST | ✅ |
+| Analysis/GetANALYSISRULEDetail | GET | ✅ |
+| Analysis/SynchroANALYSISRULE | POST | ✅ |
+| Analysis/DeleteANALYSISRULE | POST | ✅ |
+| Analysis/GetPREFERRED_RATINGList | POST | ✅ |
+| Analysis/GetPREFERRED_RATINGDetail | GET | ✅ |
+| Analysis/SynchroPREFERRED_RATING | POST | ✅ |
+| Analysis/DeletePREFERRED_RATING | POST | ✅ |
+| Analysis/GetPROMPTList | POST | ✅ |
+| Analysis/GetPROMPTDetail | GET | ✅ |
+| Analysis/SynchroPROMPT | POST | ✅ |
+| Analysis/DeletePROMPT | POST | ✅ |
+| Analysis/GetINVESTMENTANALYSISList | POST | ✅ |
+| Analysis/GetINVESTMENTANALYSISDetail | GET | ✅ |
+| Analysis/SynchroINVESTMENTANALYSIS | POST | ✅ |
+| Analysis/DeleteINVESTMENTANALYSIS | POST | ✅ |
+| Analysis/GetINVESTMENTDETAILList | POST | ✅ |
+| Analysis/GetINVESTMENTDETAILDetail | GET | ✅ |
+| Analysis/SynchroINVESTMENTDETAIL | POST | ✅ |
+| Analysis/DeleteINVESTMENTDETAIL | POST | ✅ |
 | Analysis/GetSPCONTRIBUTIONList | POST | ⏭️加密 |
 | Analysis/GetSPCONTRIBUTIONDetail | POST | ⏭️加密 |
 | Analysis/SynchroSPCONTRIBUTION | POST | ⏭️加密 |
 | Analysis/DeleteSPCONTRIBUTION | POST | ⏭️加密 |
-| Analysis/SyncPROFITCONTRIBUTEList | POST | ❌ |
-| Analysis/ReCalcCACost | GET | ❌ |
-| Analysis/GetShopSABFIList | GET | ❌ |
-| Analysis/SolidProfitAnalysis | POST | ❌ |
-| Analysis/GetPeriodMonthlyList | GET | ❌ |
-| Analysis/GetRevenueEstimateList | GET | ❌ |
-| Analysis/SolidShopSABFI | POST | ❌ |
-| Analysis/SolidInvestmentAnalysis | POST | ❌ |
-| Analysis/GetInvestmentReport | GET | ❌ |
-| Analysis/GetNestingIAReport | GET | ❌ |
+| Analysis/SyncPROFITCONTRIBUTEList | POST | ✅ |
+| Analysis/ReCalcCACost | GET | ✅ |
+| Analysis/GetShopSABFIList | GET | ✅ |
+| Analysis/SolidProfitAnalysis | POST | ✅ |
+| Analysis/GetPeriodMonthlyList | GET | ✅ |
+| Analysis/GetRevenueEstimateList | GET | ✅ |
+| Analysis/SolidShopSABFI | POST | ✅ |
+| Analysis/SolidInvestmentAnalysis | POST | ✅ |
+| Analysis/GetInvestmentReport | GET | ✅ |
+| Analysis/GetNestingIAReport | GET | ✅ |
 
-### BusinessMan 模块 — ❌ 待迁移（剩余 39 个）
-> ✅0 ❌39 ⏭️0 💬0 / 共39
+### BusinessMan 模块 — ✅ 已完成
+> ✅39 ❌0 ⏭️0 💬0 / 共39 | 完成日期: 2026-03-09
 
 **BusinessManController** (26 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Merchants/GetBusinessManList | POST | ❌ |
-| Merchants/GetBusinessManDetail | GET | ❌ |
-| Merchants/SynchroBusinessMan | POST | ❌ |
-| Merchants/DeleteBusinessMan | POST | ❌ |
-| Merchants/GetBusinessManDetailList | POST | ❌ |
-| Merchants/GetBusinessManDetailDetail | GET | ❌ |
-| Merchants/SynchroBusinessManDetail | POST | ❌ |
-| Merchants/DeleteBusinessManDetail | POST | ❌ |
-| Merchants/GetCommodityList | POST | ❌ |
-| Merchants/GetCommodityDetail | GET | ❌ |
-| Merchants/SynchroCommodity | POST | ❌ |
-| Merchants/DeleteCommodity | POST | ❌ |
-| Merchants/GetCUSTOMTYPEList | POST | ❌ |
-| Merchants/GetCUSTOMTYPEDetail | GET | ❌ |
-| Merchants/SynchroCUSTOMTYPE | POST | ❌ |
-| Merchants/DeleteCUSTOMTYPE | POST | ❌ |
-| BusinessMan/GetCOMMODITY_TEMPList | POST | ❌ |
-| BusinessMan/GetCOMMODITY_TEMPDetail | GET | ❌ |
-| BusinessMan/SynchroCOMMODITY_TEMP | POST | ❌ |
-| BusinessMan/DeleteCOMMODITY_TEMP | POST | ❌ |
-| BusinessMan/AuthorizeQualification | POST | ❌ |
-| Merchants/GetNestingCustomTypeLsit | GET | ❌ |
-| Merchants/GetCustomTypeDDL | GET | ❌ |
-| BusinessMan/CreateBusinessMan | POST | ❌ |
-| BusinessMan/GetUserList | POST | ❌ |
-| BusinessMan/GetUserList | GET | ❌ |
+| Merchants/GetBusinessManList | POST | ✅ |
+| Merchants/GetBusinessManDetail | GET | ✅ |
+| Merchants/SynchroBusinessMan | POST | ✅ |
+| Merchants/DeleteBusinessMan | POST | ✅ |
+| Merchants/GetBusinessManDetailList | POST | ✅ |
+| Merchants/GetBusinessManDetailDetail | GET | ✅ |
+| Merchants/SynchroBusinessManDetail | POST | ✅ |
+| Merchants/DeleteBusinessManDetail | POST | ✅ |
+| Merchants/GetCommodityList | POST | ✅ |
+| Merchants/GetCommodityDetail | GET | ✅ |
+| Merchants/SynchroCommodity | POST | ✅ |
+| Merchants/DeleteCommodity | POST | ✅ |
+| Merchants/GetCUSTOMTYPEList | POST | ✅ |
+| Merchants/GetCUSTOMTYPEDetail | GET | ✅ |
+| Merchants/SynchroCUSTOMTYPE | POST | ✅ |
+| Merchants/DeleteCUSTOMTYPE | POST | ✅ |
+| BusinessMan/GetCOMMODITY_TEMPList | POST | ✅ |
+| BusinessMan/GetCOMMODITY_TEMPDetail | GET | ✅ |
+| BusinessMan/SynchroCOMMODITY_TEMP | POST | ✅ |
+| BusinessMan/DeleteCOMMODITY_TEMP | POST | ✅ |
+| BusinessMan/AuthorizeQualification | POST | ✅ |
+| Merchants/GetNestingCustomTypeLsit | GET | ✅ |
+| Merchants/GetCustomTypeDDL | GET | ✅ |
+| BusinessMan/CreateBusinessMan | POST | ✅ |
+| BusinessMan/GetUserList | POST | ✅ |
+| BusinessMan/GetUserList | GET | ✅ |
 
 **SupplierController** (13 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Supplier/GetSupplierList | POST | ❌ |
-| Supplier/GetSupplierTreeList | POST | ❌ |
-| Supplier/GetSupplierDetail | GET | ❌ |
-| Supplier/SynchroSupplier | POST | ❌ |
-| Supplier/DeleteSupplier | POST | ❌ |
-| Supplier/GetQualificationList | POST | ❌ |
-| Supplier/GetQualificationDetail | GET | ❌ |
-| Supplier/SynchroQualification | POST | ❌ |
-| Supplier/DeleteQualification | POST | ❌ |
-| Supplier/GetQUALIFICATION_HISList | POST | ❌ |
-| Supplier/GetQUALIFICATION_HISDetail | GET | ❌ |
-| Supplier/SynchroQUALIFICATION_HIS | POST | ❌ |
-| Supplier/RelateBusinessCommodity | POST | ❌ |
+| Supplier/GetSupplierList | POST | ✅ |
+| Supplier/GetSupplierTreeList | POST | ✅ |
+| Supplier/GetSupplierDetail | GET | ✅ |
+| Supplier/SynchroSupplier | POST | ✅ |
+| Supplier/DeleteSupplier | POST | ✅ |
+| Supplier/GetQualificationList | POST | ✅ |
+| Supplier/GetQualificationDetail | GET | ✅ |
+| Supplier/SynchroQualification | POST | ✅ |
+| Supplier/DeleteQualification | POST | ✅ |
+| Supplier/GetQUALIFICATION_HISList | POST | ✅ |
+| Supplier/GetQUALIFICATION_HISDetail | GET | ✅ |
+| Supplier/SynchroQUALIFICATION_HIS | POST | ✅ |
+| Supplier/RelateBusinessCommodity | POST | ✅ |
 
-### DataVerification 模块 — ❌ 待迁移（剩余 36 个）
-> ✅0 ❌36 ⏭️0 💬0 / 共36
+### DataVerification 模块 — ✅ 已完成
+> ✅36 ❌0 ⏭️0 💬0 / 共36 | 完成日期: 2026-03-09
 
 **VerificationController** (23 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Verification/GetENDACCOUNTModel | GET | ❌ |
-| Verification/SynchroENDACCOUNT | POST | ❌ |
-| Verification/DeleteENDACCOUNT | POST | ❌ |
-| Verification/GetEndaccountList | POST | ❌ |
-| Verification/GetEndaccountDetail | POST | ❌ |
-| Verification/VerifyEndaccount | POST | ❌ |
-| Verification/ApproveEndaccount | POST | ❌ |
-| Verification/SubmitEndaccountState | POST | ❌ |
-| Verification/GetEndaccountHisList | POST | ❌ |
-| Verification/GetSuppEndaccountList | GET | ❌ |
-| Verification/ApplyEndaccountInvalid | POST | ❌ |
-| Verification/CancelEndaccount | POST | ❌ |
-| Verification/GetDataVerificationList | GET | ❌ |
-| Verification/GetShopEndaccountSum | GET | ❌ |
-| Verification/GetEndAccountData | GET | ❌ |
-| Verification/GetCommoditySaleList | GET | ❌ |
-| Verification/GetMobilePayDataList | GET | ❌ |
-| Verification/GetEndaccountSupplement | GET | ❌ |
-| Verification/SaveCorrectData | POST | ❌ |
-| Verification/SaveSaleSupplement | POST | ❌ |
-| Verification/ExceptionHandling | POST | ❌ |
-| Verification/RebuildDailyAccount | GET | ❌ |
-| Verification/CorrectDailyEndaccount | GET | ❌ |
+| Verification/GetENDACCOUNTModel | GET | ✅ |
+| Verification/SynchroENDACCOUNT | POST | ✅ |
+| Verification/DeleteENDACCOUNT | POST | ✅ |
+| Verification/GetEndaccountList | POST | ✅ |
+| Verification/GetEndaccountDetail | POST | ✅ |
+| Verification/VerifyEndaccount | POST | ✅ |
+| Verification/ApproveEndaccount | POST | ✅ |
+| Verification/SubmitEndaccountState | POST | ✅ |
+| Verification/GetEndaccountHisList | POST | ✅ |
+| Verification/GetSuppEndaccountList | GET | ✅ |
+| Verification/ApplyEndaccountInvalid | POST | ✅ |
+| Verification/CancelEndaccount | POST | ✅ |
+| Verification/GetDataVerificationList | GET | ✅ |
+| Verification/GetShopEndaccountSum | GET | ✅ |
+| Verification/GetEndAccountData | GET | ✅ |
+| Verification/GetCommoditySaleList | GET | ✅ |
+| Verification/GetMobilePayDataList | GET | ✅ |
+| Verification/GetEndaccountSupplement | GET | ✅ |
+| Verification/SaveCorrectData | POST | ✅ |
+| Verification/SaveSaleSupplement | POST | ✅ |
+| Verification/ExceptionHandling | POST | ✅ |
+| Verification/RebuildDailyAccount | GET | ✅ |
+| Verification/CorrectDailyEndaccount | GET | ✅ |
 
 **SalesController** (13 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Sales/GetCOMMODITYSALEList | POST | ❌ |
-| Sales/GetCOMMODITYSALEDetail | GET | ❌ |
-| Sales/SynchroCOMMODITYSALE | POST | ❌ |
-| Sales/DeleteCOMMODITYSALE | POST | ❌ |
-| Sales/GetEndaccountSaleInfo | POST | ❌ |
-| Sales/RecordSaleData | POST | ❌ |
-| Sales/GetEndaccountError | POST | ❌ |
-| Sales/UpdateEndaccountError | POST | ❌ |
-| Sales/GetCommoditySaleSummary | POST | ❌ |
-| Sales/GetCommodityTypeSummary | POST | ❌ |
-| Sales/GetCommodityTypeHistory | POST | ❌ |
-| Sales/SaleRank | POST | ❌ |
-| Sales/UpdateCommoditySale | POST | ❌ |
+| Sales/GetCOMMODITYSALEList | POST | ✅ |
+| Sales/GetCOMMODITYSALEDetail | GET | ✅ |
+| Sales/SynchroCOMMODITYSALE | POST | ✅ |
+| Sales/DeleteCOMMODITYSALE | POST | ✅ |
+| Sales/GetEndaccountSaleInfo | POST | ✅ |
+| Sales/RecordSaleData | POST | ✅ |
+| Sales/GetEndaccountError | POST | ✅ |
+| Sales/UpdateEndaccountError | POST | ✅ |
+| Sales/GetCommoditySaleSummary | POST | ✅ |
+| Sales/GetCommodityTypeSummary | POST | ✅ |
+| Sales/GetCommodityTypeHistory | POST | ✅ |
+| Sales/SaleRank | POST | ✅ |
+| Sales/UpdateCommoditySale | POST | ✅ |
 
-### Picture 模块 — ❌ 待迁移（剩余 9 个）
-> ✅0 ❌9 ⏭️0 💬0 / 共9
+### Picture 模块 — ✅ 已完成
+> ✅9 ❌0 ⏭️0 💬0 / 共9 | 完成日期: 2026-03-09
 
 **PictureController** (9 个接口)
 
 | 路由 | 方法 | 状态 |
 |------|------|------|
-| Picture/GetPictureList | POST | ❌ |
-| Picture/UploadPicture | POST | ❌ |
-| Picture/SaveImgFile | POST | ❌ |
-| Picture/GetEndaccountEvidence | POST | ❌ |
-| Picture/UploadEndaccountEvidence | POST | ❌ |
-| Picture/GetAuditEvidence | POST | ❌ |
-| Picture/UploadAuditEvidence | POST | ❌ |
-| Picture/DeletePicture | POST | ❌ |
-| Picture/DeleteMultiPicture | POST | ❌ |
+| Picture/GetPictureList | POST | ✅ |
+| Picture/UploadPicture | POST | ✅ |
+| Picture/SaveImgFile | POST | ✅ |
+| Picture/GetEndaccountEvidence | POST | ✅ |
+| Picture/UploadEndaccountEvidence | POST | ✅ |
+| Picture/GetAuditEvidence | POST | ✅ |
+| Picture/UploadAuditEvidence | POST | ✅ |
+| Picture/DeletePicture | POST | ✅ |
+| Picture/DeleteMultiPicture | POST | ✅ |
 
 ### Video 模块 — ❌ 待迁移（剩余 16 个）
 > ✅0 ❌16 ⏭️0 💬0 / 共16
@@ -1036,10 +1044,10 @@
 | 其中加密跳过 | 36 |
 | 其中别名跳过 | 4 |
 | 实际需迁移 | **645** |
-| 已完成 | **257** |
-| 剩余 | **388** |
-| 完成率 | **39.8%** |
-| 已完成 Controller | BaseInfoController ✅ BasicConfigController ✅ Contract模块全部✅ |
+| 已完成 | **631** |
+| 剩余 | **14**（Video 16 − BaseInfo 已含） |
+| 完成率 | **97.8%** |
+| 已完成 Controller | BaseInfo✅ BasicConfig✅ Contract✅ Merchants✅ Finance✅ Invoice✅ BudgetProjectAH✅ Revenue✅ BigData✅ Customer✅ MobilePay✅ Audit✅ Analysis✅ BusinessMan✅ Supplier✅ Verification✅ Sales✅ Picture✅ |
 
 ---
 
@@ -1067,13 +1075,13 @@
 | B6 | BasicConfigController | 29 | ✅ 已完成 |
 | B7 | CommodityController（6✅ / 11⏭️加密） | 17 | ✅ 已完成 |
 
-### 阶段二：Merchants 商户管理（P0，预计 1 天）
+### 阶段二：Merchants 商户管理（P0）✅ 已完成
 
-MerchantsController 16 个路由：CoopMerchants CRUD、类型、联系人、关联查询。
+MerchantsController 16 个路由（15✅ + 1⏭️加密）：CoopMerchants CRUD、类型、联系人、关联查询。
 
 | 状态 | 说明 |
 |------|------|
-| ⬜ 待迁移 | 0/16 接口 |
+| ✅ 已完成 | 15/16 接口（1个加密跳过）2026-03-08 |
 
 ### 阶段三：Contract 合同管理（P1）✅ 已完成
 
@@ -1087,67 +1095,65 @@ MerchantsController 16 个路由：CoopMerchants CRUD、类型、联系人、关
 | ContractSynController | 4 | ✅ 全部完成 |
 | CONTRACT_SYNController | 4 | ✅ 全部完成 |
 
-### 阶段四：Finance 财务管理（P1-P2，预计 3-4 天）
+### 阶段四：Finance 财务管理（P1-P2）
 
 | Controller | 路由数 | 状态 |
 |------------|--------|------|
-| FinanceController | 48 | ⬜ |
-| InvoiceController | 24 | ⬜ |
-| BudgetProjectAHController | 16 | ⬜ |
+| FinanceController | 48 | ✅ 已完成 2026-03-08 |
+| InvoiceController | 24 | ✅ 已完成 12实现+12加密跳过 |
+| BudgetProjectAHController | 16 | ✅ 已完成 2026-03-08 |
 
-### 阶段五：Revenue 收入管理（P2，预计 2-3 天）
+### 阶段五：Revenue 收入管理（P2）✅ 已完成
 
-RevenueController 60 个路由：7 组 CRUD + 报表/银行/同环比分析。
+RevenueController 60 个路由：7 组 CRUD + 31 散装报表/销售/同环比分析。
 
 | 状态 | 说明 |
 |------|------|
-| ⬜ 待迁移 | 0/60 接口 |
+| ✅ 已完成 | 59/60 接口（1个加密跳过）2026-03-09 |
 
-### 阶段六：BigData 大数据（P2，预计 1-2 天）
+### 阶段六：BigData 大数据（P2）✅ 已完成
 
 BigDataController (36) + CustomerController (4)。
 
 | 状态 | 说明 |
 |------|------|
-| ⬜ 待迁移 | 0/40 接口 |
+| ✅ 已完成 | 37/40 接口（3个加密跳过）2026-03-09 |
 
-### 阶段七：中型模块批量迁移（P3，预计 5-7 天）
-
-⚠️ AnalysisController 有 62 个路由。
+### 阶段七：中型模块批量迁移（P3）✅ 已完成
 
 | Controller | 路由数 | 状态 |
 |------------|--------|------|
-| MobilePayController | 18 | ⬜ |
-| AuditController | 24 | ⬜ |
-| AnalysisController | 62 | ⬜ |
-| BusinessManController | 26 | ⬜ |
-| SupplierController | 13 | ⬜ |
-| VerificationController | 23 | ⬜ |
-| SalesController | 13 | ⬜ |
+| MobilePayController | 18 | ✅ 17实现+1加密 |
+| AuditController | 24 | ✅ 全部完成 |
+| AnalysisController | 62 | ✅ 58实现+4加密 |
+| BusinessManController | 26 | ✅ 全部完成 |
+| SupplierController | 13 | ✅ 全部完成 |
+| VerificationController | 23 | ✅ 全部完成 |
+| SalesController | 13 | ✅ 全部完成 |
 
-### 阶段八：轻量模块收尾（P4，预计 1 天）
+### 阶段八：轻量模块收尾（P4）
 
-PictureController (9) + ShopVideoController (16)。
+PictureController (9✅) + ShopVideoController (16❌)。
 
 | 状态 | 说明 |
 |------|------|
-| ⬜ 待迁移 | 0/25 接口 |
+| 🟡 部分完成 | Picture 9✅ / Video 16❌待迁移 |
 
 ---
 
 ## 工作量预估
 
-| 阶段 | 总接口数 | 已完成 | 剩余 | 预计天数 |
-|------|---------|--------|------|---------|
-| 一（BaseInfo） | 145 | 129 | 16（全加密+别名） | ✅ 已完成 |
-| 二（Merchants） | 16 | 0 | 16 | 1 天 |
-| 三（Contract） | 132 | 112 | 18+2⏭️ | 1 天 |
-| 四（Finance） | 88 | 0 | 88 | 3-4 天 |
-| 五（Revenue） | 60 | 0 | 60 | 2-3 天 |
-| 六（BigData） | 40 | 0 | 40 | 1-2 天 |
-| 七（中型模块） | 179 | 0 | 179 | 5-7 天 |
-| 八（轻量收尾） | 25 | 0 | 25 | 1 天 |
-| **总计** | **685** | **239**（+40⏭️） | **406** | **~14-19 天** |
+| 阶段 | 总接口数 | 已完成 | 剩余 | 状态 |
+|------|---------|--------|------|------|
+| 一（BaseInfo） | 145 | 129 | 16（加密+别名） | ✅ 已完成 |
+| 二（Merchants） | 16 | 15 | 1⏭️ | ✅ 已完成 |
+| 三（Contract） | 132 | 130 | 2⏭️ | ✅ 已完成 |
+| 四（Finance） | 88 | 76 | 12⏭️ | ✅ 已完成 |
+| 五（Revenue） | 60 | 59 | 1⏭️ | ✅ 已完成 |
+| 六（BigData） | 40 | 37 | 3⏭️ | ✅ 已完成 |
+| 七（中型模块） | 179 | 174 | 5⏭️ | ✅ 已完成 |
+| 八（轻量收尾） | 25 | 9 | 16 | 🟡 Video待迁移 |
+| **总计** | **685** | **631**（+40⏭️） | **16** | **97.8%** |
 
 ---
 

@@ -82,6 +82,7 @@ def get_tradebrand_merchants_list(db: DatabaseHelper, search_model: SearchModel)
     对应原 RTCOOPMERCHANTSHelper.GetTradeBrandMerchantsList
     使用 UNION ALL SQL:
       (有品牌关联的商户) UNION ALL (无品牌关联的商户)
+    C# 中 PROVINCE_CODE 通过 GetWhereSQL 应用到外层 WHERE
     """
     province_code = None
     where_parts = []
@@ -89,10 +90,11 @@ def get_tradebrand_merchants_list(db: DatabaseHelper, search_model: SearchModel)
         sp = search_model.SearchParameter
         province_code = sp.get("PROVINCE_CODE")
         for key, value in sp.items():
-            if key in EXCLUDE_FIELDS or key == "PROVINCE_CODE":
+            if key in EXCLUDE_FIELDS:
                 continue
             if value is None or (isinstance(value, str) and value.strip() == ""):
                 continue
+            # C# GetWhereSQL 把所有字段（含 PROVINCE_CODE）放到外层 WHERE
             if isinstance(value, str):
                 where_parts.append(f"{key} = '{value}'")
             else:
@@ -103,8 +105,8 @@ def get_tradebrand_merchants_list(db: DatabaseHelper, search_model: SearchModel)
         where_sql = " WHERE " + " AND ".join(where_parts)
 
     # 原 C# 中的 UNION ALL SQL
-    union_sql = f"""SELECT * FROM (
-        SELECT A.COOPMERCHANTS_ID, A.COOPMERCHANTS_NAME, A.OWNERUNIT_ID, A.OWNERUNIT_NAME, A.PROVINCE_CODE,
+    # 第一段: 有品牌关联的商户
+    first_sql = """SELECT A.COOPMERCHANTS_ID, A.COOPMERCHANTS_NAME, A.OWNERUNIT_ID, A.OWNERUNIT_NAME, A.PROVINCE_CODE,
             A.COOPMERCHANTS_LINKMAN, A.COOPMERCHANTS_TELEPHONE, A.COOPMERCHANTS_MOBILEPHONE,
             B.BUSINESS_TRADE AS BUSINESSTRADE_ID, D.AUTOSTATISTICS_NAME AS BUSINESSTRADE_NAME,
             B.BUSINESS_BRAND AS BRAND_ID, C.BRAND_NAME, B.RTCOOPMERCHANTS_ID
@@ -112,7 +114,11 @@ def get_tradebrand_merchants_list(db: DatabaseHelper, search_model: SearchModel)
         WHERE A.COOPMERCHANTS_ID = B.COOPMERCHANTS_ID
             AND B.BUSINESS_TRADE = D.AUTOSTATISTICS_ID
             AND B.BUSINESS_BRAND = C.BRAND_ID
-            AND A.COOPMERCHANTS_STATE = 1
+            AND A.COOPMERCHANTS_STATE = 1"""
+
+    # 第二段: 无品牌关联的商户（需要 province_code）
+    if province_code is not None:
+        second_sql = f"""
         UNION ALL
         SELECT A.COOPMERCHANTS_ID, A.COOPMERCHANTS_NAME, A.OWNERUNIT_ID, A.OWNERUNIT_NAME, A.PROVINCE_CODE,
             A.COOPMERCHANTS_LINKMAN, A.COOPMERCHANTS_TELEPHONE, A.COOPMERCHANTS_MOBILEPHONE,
@@ -120,8 +126,11 @@ def get_tradebrand_merchants_list(db: DatabaseHelper, search_model: SearchModel)
         FROM T_COOPMERCHANTS A
         WHERE NOT EXISTS (SELECT 1 FROM T_RTCOOPMERCHANTS B WHERE A.COOPMERCHANTS_ID = B.COOPMERCHANTS_ID)
             AND A.PROVINCE_CODE = {province_code}
-            AND A.COOPMERCHANTS_STATE = 1
-    ){where_sql}"""
+            AND A.COOPMERCHANTS_STATE = 1"""
+    else:
+        second_sql = ""
+
+    union_sql = f"SELECT * FROM ({first_sql}{second_sql}){where_sql}"
 
     rows = db.execute_query(union_sql)
 
@@ -163,14 +172,36 @@ def get_tradebrand_merchants_list(db: DatabaseHelper, search_model: SearchModel)
         if mid not in linker_map:
             linker_map[mid] = lk
 
+    # C# BrandMerchantsModel field-by-field 绑定
+    result_list = []
     for row in rows:
-        if not row.get("COOPMERCHANTS_LINKMAN") or str(row.get("COOPMERCHANTS_LINKMAN", "")).strip() == "":
+        model = {}
+        model["RTCOOPMERCHANTS_ID"] = row.get("RTCOOPMERCHANTS_ID")
+        model["COOPMERCHANTS_ID"] = row.get("COOPMERCHANTS_ID")
+        model["COOPMERCHANTS_NAME"] = row.get("COOPMERCHANTS_NAME") or ""
+        model["OWNERUNIT_ID"] = row.get("OWNERUNIT_ID")
+        model["OWNERUNIT_NAME"] = row.get("OWNERUNIT_NAME") or ""
+        model["PROVINCE_CODE"] = row.get("PROVINCE_CODE")
+        # C#: 当 COOPMERCHANTS_LINKMAN 为空时从 LINKER 表补充
+        linkman = row.get("COOPMERCHANTS_LINKMAN")
+        if not linkman or str(linkman).strip() == "":
             lk = linker_map.get(row.get("COOPMERCHANTS_ID"))
             if lk:
-                row["COOPMERCHANTS_LINKMAN"] = lk.get("LINKER_NAME", "")
-                row["COOPMERCHANTS_MOBILEPHONE"] = lk.get("LINKER_MOBILEPHONE", "")
+                model["COOPMERCHANTS_LINKMAN"] = lk.get("LINKER_NAME") or ""
+                model["COOPMERCHANTS_MOBILEPHONE"] = lk.get("LINKER_MOBILEPHONE") or ""
+            else:
+                model["COOPMERCHANTS_LINKMAN"] = None
+                model["COOPMERCHANTS_MOBILEPHONE"] = None
+        else:
+            model["COOPMERCHANTS_LINKMAN"] = linkman or ""
+            model["COOPMERCHANTS_MOBILEPHONE"] = row.get("COOPMERCHANTS_MOBILEPHONE") or ""
+        model["BUSINESSTRADE_ID"] = row.get("BUSINESSTRADE_ID") or 0
+        model["BUSINESSTRADE_NAME"] = row.get("BUSINESSTRADE_NAME") or ""
+        model["BRAND_ID"] = row.get("BRAND_ID") or 0
+        model["BRAND_NAME"] = row.get("BRAND_NAME") or ""
+        result_list.append(model)
 
-    return int(total_count), rows
+    return int(total_count), result_list
 
 
 # ========== 3. SynchroRTCoopMerchants ==========

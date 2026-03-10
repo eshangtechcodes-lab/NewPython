@@ -1,0 +1,40 @@
+{
+  "name": "window_4 dynamic compare manifest",
+  "note": "收尾与高风险模块 窗口并行测试 manifest；仅保留可执行读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "Picture",
+    "Video"
+  ],
+  "endpoints": [
+    {
+      "name": "Picture/GetPictureList",
+      "endpoint": "Picture/GetPictureList",
+      "method": "GET",
+      "meta": {
+        "module": "Picture",
+        "baseline_status": "matched",
+        "method_match": false,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Picture\\PictureController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\batch_modules\\batch_router_part2.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    }
+  ],
+  "report_path": "docs/window_4_dynamic_compare_report.md"
+}

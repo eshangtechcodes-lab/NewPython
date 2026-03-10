@@ -114,102 +114,167 @@ def get_registercompact_list(db: DatabaseHelper, search_model: SearchModel,
     获取合同备案列表
     C# 核心 SQL：多表 JOIN（T_REGISTERCOMPACT A LEFT JOIN T_REGISTERCOMPACTSUB D
         JOIN T_RTREGISTERCOMPACT B JOIN T_SERVERPART C）+ WM_CONCAT + GROUP BY
-    Python 简化版：直接查 T_REGISTERCOMPACT，关联数据在 Python 层拼接
     """
     sp = search_model.SearchParameter or {}
     where_sql = ""
 
-    # SERVERPART_IDS 过滤
-    ids = sp.get("SERVERPART_IDS") or serverpart_ids
-    if ids and str(ids).strip():
-        where_sql += f""" WHERE EXISTS (SELECT 1 FROM T_RTREGISTERCOMPACT B
-            WHERE A.REGISTERCOMPACT_ID = B.REGISTERCOMPACT_ID AND B.SERVERPART_ID IN ({ids}))"""
-
     # SERVERPARTSHOP_IDS 过滤
     shop_ids = sp.get("SERVERPARTSHOP_IDS") or serverpartshop_ids
     if shop_ids and str(shop_ids).strip():
-        prefix = " AND " if where_sql else " WHERE "
-        where_sql += f"""{prefix}EXISTS (SELECT 1 FROM T_RTBUSINESSPROJECT F, T_BUSINESSPROJECT G,
-            T_SERVERPARTSHOP E
-            WHERE A.REGISTERCOMPACT_ID = F.REGISTERCOMPACT_ID AND F.BUSINESSPROJECT_ID = G.BUSINESSPROJECT_ID AND
-            E.SERVERPARTSHOP_ID IN ({shop_ids}))"""
+        where_sql += f""" AND EXISTS (SELECT 1 FROM T_RTBUSINESSPROJECT F,
+            T_BUSINESSPROJECT G, T_SERVERPARTSHOP E
+            WHERE A.REGISTERCOMPACT_ID = F.REGISTERCOMPACT_ID
+            AND F.BUSINESSPROJECT_ID = G.BUSINESSPROJECT_ID
+            AND ',' || G.SERVERPARTSHOP_ID || ',' LIKE '%,' || E.SERVERPARTSHOP_ID || ',%'
+            AND E.SERVERPARTSHOP_ID IN ({shop_ids}))"""
+
+    # SERVERPART_IDS 过滤
+    ids = sp.get("SERVERPART_IDS") or serverpart_ids
+    if ids and str(ids).strip():
+        where_sql += f" AND B.SERVERPART_ID IN ({ids})"
+
+    # SERVERPART_NAME 过滤
+    sp_name = sp.get("SERVERPART_NAME")
+    if sp_name and str(sp_name).strip():
+        where_sql += f" AND C.SERVERPART_NAME = '{sp_name}'"
+
+    # BUSINESS_TYPE 过滤
+    if sp.get("BUSINESS_TYPE") is not None:
+        where_sql += f" AND D.BUSINESS_TYPE = {sp['BUSINESS_TYPE']}"
+
+    # SETTLEMENT_CYCLE 过滤
+    if sp.get("SETTLEMENT_CYCLE") is not None:
+        where_sql += f" AND D.SETTLEMENT_CYCLE = {sp['SETTLEMENT_CYCLE']}"
 
     # 通用字段过滤（排除特殊字段）
     exclude = {"SERVERPART_IDS", "SERVERPARTSHOP_IDS", "SERVERPART_NAME",
                "BUSINESS_TYPE", "SETTLEMENT_CYCLE", "COMPACT_STARTDATE", "COMPACT_ENDDATE",
-               "CLOSED_DATE", "Due_StartDate", "Due_EndDate", "AbnormalContract"}
+               "CLOSED_DATE", "Due_StartDate", "Due_EndDate", "AbnormalContract",
+               "COMPACT_CHILDTYPE", "FIRSTYEAR_RENT", "GUARANTEE_RATIO", "OPERATING_AREA",
+               "SERVERPART_TYPE", "BUSINESS_TRADE", "SETTLEMENT_MODES",
+               "PROPERTY_FEE", "EQUIPMENT_DEPOSIT", "WATER_CHARGE", "ELECTRICITY_FEES",
+               "OTHER_SCHARGE", "RELATE_COMPACT", "LogList"}
     for key, value in sp.items():
         if key in exclude or value is None:
             continue
         if isinstance(value, str) and value.strip() == "":
             continue
-        prefix = " AND " if where_sql else " WHERE "
         if isinstance(value, str):
-            where_sql += f"{prefix}A.{key} LIKE '%{value}%'"
+            where_sql += f" AND A.{key} LIKE '%{value}%'"
         else:
-            where_sql += f"{prefix}A.{key} = {value}"
+            where_sql += f" AND A.{key} = {value}"
 
     # 日期范围
     if sp.get("COMPACT_STARTDATE"):
-        prefix = " AND " if where_sql else " WHERE "
         date = str(sp["COMPACT_STARTDATE"]).split(" ")[0]
-        where_sql += f"{prefix}A.COMPACT_ENDDATE >= TO_DATE('{date}','YYYY/MM/DD')"
+        where_sql += f" AND A.COMPACT_ENDDATE >= TO_DATE('{date}','YYYY/MM/DD')"
     if sp.get("COMPACT_ENDDATE"):
-        prefix = " AND " if where_sql else " WHERE "
         date = str(sp["COMPACT_ENDDATE"]).split(" ")[0]
-        where_sql += f"{prefix}A.COMPACT_ENDDATE <= TO_DATE('{date}','YYYY/MM/DD')"
+        where_sql += f" AND A.COMPACT_ENDDATE <= TO_DATE('{date}','YYYY/MM/DD')"
 
-    base_sql = f"SELECT * FROM T_REGISTERCOMPACT A{where_sql}"
+    # 核心 SQL：与 C# 一致的多表 JOIN
+    # 列出主表字段 + LEFT JOIN Sub 表字段 + WM_CONCAT 聚合服务区
+    base_sql = f"""SELECT
+            A.REGISTERCOMPACT_ID, A.PROINSTCOMPACT_ID, A.REGISTERCOMPACT_HOSTID, A.COMPACT_TYPE,
+            A.COMPACT_DETAILS, A.COMPACT_NAME, A.COMPACT_CODE, A.ORGANIZER_TEL, A.FIRSTPART_NAME,
+            A.FIRSTPART_MOBILE, A.FIRSTPART_LINKMAN, A.SECONDPART_NAME, A.SECONDPART_MOBILE,
+            A.SECONDPART_LINKMAN, A.THREEPART_NAME, A.THREEPART_MOBILE, A.THREEPART_LINKMAN,
+            A.COMPACT_STARTDATE, A.COMPACT_ENDDATE, A.COMPACT_AMOUNT, A.COMPACT_ACCOUNTDATE,
+            A.DURATION, A.DURATIONDAY, A.SECURITYDEPOSIT, A.SECURITYDEPOSIT_STARTDATE,
+            A.SECURITYDEPOSIT_ENDDATE, A.SAFETYRISKMORTGAGE, A.SAFETYRISKMORTGAGE_STARTDATE,
+            A.SAFETYRISKMORTGAGE_ENDDATE, A.ATTACHMENT_STATE, A.COMPACT_STATE, A.ORGANIZER_LINKMAN,
+            A.ORGANIZER, A.STAFF_ID, A.STAFF_NAME, A.COMPACT_DESC, A.OPERATE_DATE,
+            A.FIRSTPART_ID, A.SECONDPART_ID, A.THREEPART_ID,
+            D.BUSINESS_TYPE, D.SETTLEMENT_CYCLE, D.SETTLEMENT_MODES,
+            WM_CONCAT(C.SERVERPART_ID) AS SERVERPART_IDS,
+            WM_CONCAT(C.SERVERPART_NAME) AS SERVERPART_NAME
+        FROM T_REGISTERCOMPACT A
+        LEFT JOIN T_REGISTERCOMPACTSUB D ON A.REGISTERCOMPACT_ID = D.REGISTERCOMPACT_ID,
+            T_RTREGISTERCOMPACT B, T_SERVERPART C
+        WHERE A.REGISTERCOMPACT_ID = B.REGISTERCOMPACT_ID
+            AND B.SERVERPART_ID = C.SERVERPART_ID{where_sql}
+        GROUP BY
+            A.REGISTERCOMPACT_ID, A.PROINSTCOMPACT_ID, A.REGISTERCOMPACT_HOSTID, A.COMPACT_TYPE,
+            A.COMPACT_DETAILS, A.COMPACT_NAME, A.COMPACT_CODE, A.ORGANIZER_TEL, A.FIRSTPART_NAME,
+            A.FIRSTPART_MOBILE, A.FIRSTPART_LINKMAN, A.SECONDPART_NAME, A.SECONDPART_MOBILE,
+            A.SECONDPART_LINKMAN, A.THREEPART_NAME, A.THREEPART_MOBILE, A.THREEPART_LINKMAN,
+            A.COMPACT_STARTDATE, A.COMPACT_ENDDATE, A.COMPACT_AMOUNT, A.COMPACT_ACCOUNTDATE,
+            A.DURATION, A.DURATIONDAY, A.SECURITYDEPOSIT, A.SECURITYDEPOSIT_STARTDATE,
+            A.SECURITYDEPOSIT_ENDDATE, A.SAFETYRISKMORTGAGE, A.SAFETYRISKMORTGAGE_STARTDATE,
+            A.SAFETYRISKMORTGAGE_ENDDATE, A.ATTACHMENT_STATE, A.COMPACT_STATE, A.ORGANIZER_LINKMAN,
+            A.ORGANIZER, A.STAFF_ID, A.STAFF_NAME, A.COMPACT_DESC, A.OPERATE_DATE,
+            A.FIRSTPART_ID, A.SECONDPART_ID, A.THREEPART_ID,
+            D.BUSINESS_TYPE, D.SETTLEMENT_CYCLE, D.SETTLEMENT_MODES"""
 
-    # keyWord 过滤
+    # keyWord 过滤（在外层包装后做RowFilter）
+    kw_filter = ""
     if search_model.keyWord:
         kw = search_model.keyWord.model_dump() if hasattr(search_model.keyWord, 'model_dump') else search_model.keyWord
         if kw and kw.get("Key") and kw.get("Value"):
             parts = [f"{k.strip()} LIKE '%{kw['Value']}%'" for k in kw["Key"].split(",") if k.strip()]
             if parts:
-                prefix = " AND " if where_sql else " WHERE "
-                base_sql += f"{prefix}({' OR '.join(parts)})"
+                kw_filter = f" WHERE {' OR '.join(parts)}"
 
     # 排序
     sort = search_model.SortStr or "OPERATE_DATE DESC"
-    base_sql += f" ORDER BY {sort}"
 
-    count_sql = f"SELECT COUNT(*) FROM ({base_sql})"
+    # 包装成可排序的子查询
+    if kw_filter:
+        outer_sql = f"SELECT * FROM ({base_sql}){kw_filter} ORDER BY {sort}"
+    else:
+        outer_sql = f"{base_sql} ORDER BY {sort}"
+
+    count_sql = f"SELECT COUNT(*) FROM ({outer_sql})"
     total = db.execute_scalar(count_sql) or 0
 
     pi, ps = search_model.PageIndex, search_model.PageSize
     if pi and ps and ps < 999999:
         s, e = (pi - 1) * ps + 1, pi * ps
-        paged = f"SELECT * FROM (SELECT A2.*, ROWNUM RN FROM ({base_sql}) A2 WHERE ROWNUM <= {e}) WHERE RN >= {s}"
+        paged = f"SELECT * FROM (SELECT A2.*, ROWNUM RN FROM ({outer_sql}) A2 WHERE ROWNUM <= {e}) WHERE RN >= {s}"
         rows = db.execute_query(paged)
         for r in rows:
             r.pop("RN", None)
     else:
-        rows = db.execute_query(base_sql)
+        rows = db.execute_query(outer_sql)
 
-    # 补充关联信息（服务区名称、关联合同数量等）
+    # 补充 C# Model 中有但 SQL 查询不包含的属性默认值
+    # 这些字段在 C# 序列化时以默认值（null/0/""）输出，Python 中也需要对齐
+    model_defaults = {
+        "COMPACT_CHILDTYPE": None, "FIRSTYEAR_RENT": None, "GUARANTEE_RATIO": None,
+        "OPERATING_AREA": None, "SERVERPART_TYPE": None, "BUSINESS_TRADE": None,
+        "PROPERTY_FEE": None, "EQUIPMENT_DEPOSIT": None, "WATER_CHARGE": None,
+        "ELECTRICITY_FEES": None, "OTHER_SCHARGE": None, "RELATE_COMPACT": None,
+        "CLOSED_DATE": None, "SERVERPARTSHOP_IDS": None, "SERVERPARTSHOP_NAME": None,
+    }
     for row in rows:
-        rc_id = row.get("REGISTERCOMPACT_ID")
-        if rc_id:
-            try:
-                rt_rows = db.execute_query(
-                    f"""SELECT B.SERVERPART_ID, C.SERVERPART_NAME
-                    FROM T_RTREGISTERCOMPACT B, T_SERVERPART C
-                    WHERE B.SERVERPART_ID = C.SERVERPART_ID AND B.REGISTERCOMPACT_ID = {rc_id}""")
-                row["SERVERPART_IDS"] = ",".join([str(r["SERVERPART_ID"]) for r in rt_rows])
-                row["SERVERPART_NAME"] = ",".join([r["SERVERPART_NAME"] or "" for r in rt_rows])
-            except:
-                row["SERVERPART_IDS"] = ""
-                row["SERVERPART_NAME"] = ""
+        for field, default in model_defaults.items():
+            if field not in row:
+                row[field] = default
 
     return int(total), rows
 
 
 def get_registercompact_detail(db: DatabaseHelper, rc_id: int) -> dict:
-    """获取合同备案明细（含服务区名称、日志）"""
+    """获取合同备案明细（含服务区名称、Sub表字段、日志）"""
     detail = _std_get_detail(db, "T_REGISTERCOMPACT", "REGISTERCOMPACT_ID", rc_id)
     if not detail:
         return {}
+
+    # 补充 Sub 表字段（BUSINESS_TYPE, SETTLEMENT_CYCLE, SETTLEMENT_MODES）
+    try:
+        sub_rows = db.execute_query(
+            f"SELECT * FROM T_REGISTERCOMPACTSUB WHERE REGISTERCOMPACT_ID = {rc_id}")
+        if sub_rows:
+            sub = sub_rows[0]
+            for field in ["BUSINESS_TYPE", "SETTLEMENT_CYCLE", "SETTLEMENT_MODES",
+                          "BUSINESS_TRADE", "COMPACT_CHILDTYPE", "FIRSTYEAR_RENT",
+                          "GUARANTEE_RATIO", "OPERATING_AREA", "SERVERPART_TYPE",
+                          "PROPERTY_FEE", "EQUIPMENT_DEPOSIT", "WATER_CHARGE",
+                          "ELECTRICITY_FEES", "OTHER_SCHARGE", "RELATE_COMPACT", "CLOSED_DATE"]:
+                if field in sub:
+                    detail[field] = sub[field]
+    except Exception:
+        pass
 
     # 补充服务区关联
     try:
@@ -283,19 +348,61 @@ def delete_registercompact(db: DatabaseHelper, rc_id: int, force_delete: bool = 
 # ===================================================================
 
 def get_registercompactsub_list(db: DatabaseHelper, search_model: SearchModel) -> tuple:
-    return _std_get_list(db, "T_REGISTERCOMPACTSUB", search_model, "REGISTERCOMPACTSUB_ID")
+    total, rows = _std_get_list(db, "T_REGISTERCOMPACTSUB", search_model, "REGISTERCOMPACTSUB_ID")
+    # 补充 BRAND_NAME（从 T_BRAND 通过 BUSINESS_BRAND 获取）
+    for row in rows:
+        brand_id = row.get("BUSINESS_BRAND")
+        if brand_id:
+            try:
+                br = db.execute_query(f"SELECT BRAND_NAME FROM T_BRAND WHERE BRAND_ID = {brand_id}")
+                row["BRAND_NAME"] = br[0]["BRAND_NAME"] if br else None
+            except:
+                row["BRAND_NAME"] = None
+        else:
+            row["BRAND_NAME"] = None
+        # 对齐 C# 类型：RegisterCompactSub 的 C# BindDataRowToModel 不转空字符串
+        _align_sub_types(row)
+    return total, rows
 
 
 def get_registercompactsub_detail(db: DatabaseHelper,
                                    sub_id: int = None, rc_id: int = None) -> dict:
     """获取附属明细（支持 SubId 或 RegisterCompactId 查询）"""
     if sub_id:
-        return _std_get_detail(db, "T_REGISTERCOMPACTSUB", "REGISTERCOMPACTSUB_ID", sub_id)
+        detail = _std_get_detail(db, "T_REGISTERCOMPACTSUB", "REGISTERCOMPACTSUB_ID", sub_id)
     elif rc_id:
         rows = db.execute_query(
             f"SELECT * FROM T_REGISTERCOMPACTSUB WHERE REGISTERCOMPACT_ID = {rc_id}")
-        return rows[0] if rows else {}
-    return {}
+        detail = rows[0] if rows else {}
+    else:
+        return {}
+    # 补充 BRAND_NAME
+    if detail:
+        brand_id = detail.get("BUSINESS_BRAND")
+        if brand_id:
+            try:
+                br = db.execute_query(f"SELECT BRAND_NAME FROM T_BRAND WHERE BRAND_ID = {brand_id}")
+                detail["BRAND_NAME"] = br[0]["BRAND_NAME"] if br else None
+            except:
+                detail["BRAND_NAME"] = None
+        else:
+            detail["BRAND_NAME"] = None
+        # 对齐 C# 类型
+        _align_sub_types(detail)
+    return detail
+
+
+def _align_sub_types(row: dict):
+    """RegisterCompactSub 字段类型对齐 C#（兜底处理）
+    DB 层已全局处理 float→int 和 str NULL→''，
+    此处仅作 service 级兜底。
+    """
+    # float → int 兜底（C# 中 decimal 序列化时整数会去掉小数点）
+    float_to_int_fields = {"OPERATING_AREA", "PROPERTY_FEE"}
+    for f in float_to_int_fields:
+        v = row.get(f)
+        if isinstance(v, float) and v == int(v):
+            row[f] = int(v)
 
 
 def synchro_registercompactsub(db: DatabaseHelper, data: dict) -> tuple:
@@ -311,7 +418,12 @@ def delete_registercompactsub(db: DatabaseHelper, sub_id: int) -> bool:
 # ===================================================================
 
 def get_rtregistercompact_list(db: DatabaseHelper, search_model: SearchModel) -> tuple:
-    return _std_get_list(db, "T_RTREGISTERCOMPACT", search_model, "RTREGISTERCOMPACT_ID")
+    total, rows = _std_get_list(db, "T_RTREGISTERCOMPACT", search_model, "RTREGISTERCOMPACT_ID")
+    # C# 中 PROVINCE_CODE 使用 TryParseToInt（null → 0）
+    for row in rows:
+        if row.get("PROVINCE_CODE") is None:
+            row["PROVINCE_CODE"] = 0
+    return total, rows
 
 
 def get_rtregistercompact_detail(db: DatabaseHelper,
@@ -343,7 +455,14 @@ def delete_rtregistercompact(db: DatabaseHelper, rt_id: int) -> bool:
 # ===================================================================
 
 def get_attachment_list(db: DatabaseHelper, search_model: SearchModel) -> tuple:
-    return _std_get_list(db, "T_ATTACHMENT", search_model, "ATTACHMENT_ID")
+    total, rows = _std_get_list(db, "T_ATTACHMENT", search_model, "ATTACHMENT_ID")
+    # 补充 C# Model 默认值（STAFF_ID=0, STAFF_NAME=""）
+    for row in rows:
+        if row.get("STAFF_ID") is None:
+            row["STAFF_ID"] = 0
+        if row.get("STAFF_NAME") is None:
+            row["STAFF_NAME"] = ""
+    return total, rows
 
 
 def get_attachment_detail(db: DatabaseHelper, attachment_id: int) -> dict:
@@ -413,6 +532,11 @@ def _get_compact_type(db: DatabaseHelper, province_code: int) -> str:
     return ""
 
 
+def _smart_round(val, digits=4):
+    """round() 结果始终返回 float，匹配 C# decimal 序列化行为"""
+    return float(round(val, digits))
+
+
 def _build_serverpart_where(serverpart_id, serverpartshop_ids, alias_prefix="A") -> str:
     """构建服务区/门店权限过滤 SQL"""
     w = ""
@@ -457,7 +581,8 @@ def _get_account_type_dict(db: DatabaseHelper) -> list:
 
 def get_project_summary_info(db: DatabaseHelper, province_code: int = None,
                               serverpart_id: int = None,
-                              serverpartshop_ids: str = "") -> dict:
+                              serverpartshop_ids: str = "",
+                              get_from_redis: bool = False) -> dict:
     """
     获取项目欠款汇总信息（C# ProjectSummaryHelper.GetProjectSummaryInfo 的 Python 实现）
     返回结构：Contract_SignCount, Contract_Amount, Contractor_Count,
@@ -557,10 +682,10 @@ def get_project_summary_info(db: DatabaseHelper, province_code: int = None,
             "Contractor_Count": contractor_count,
             "ArrearageMerchant_Count": len(arr_merchant_ids),
             "ArrearageContract_Count": len(arr_project_ids),
-            "Arrearage_Amount": round(arrearage_amount, 6),
+            "Arrearage_Amount": _smart_round(arrearage_amount, 6),
             "NewlyContract_Count": newly_contract_count,
-            "NewlyContract_Amount": round(newly_contract_amount, 2),
-            "NewlyAccount_Amount": round(newly_account_amount, 2),
+            "NewlyContract_Amount": _smart_round(newly_contract_amount, 2),
+            "NewlyAccount_Amount": _smart_round(newly_account_amount, 2),
         }
 
         # 4. 按经营模式分组统计 BusinessTypeSummaryList
@@ -583,7 +708,7 @@ def get_project_summary_info(db: DatabaseHelper, province_code: int = None,
                 "Contractor_Count": len(bt_contractor_ids),
                 "ArrearageMerchant_Count": len(bt_arr_merchants),
                 "ArrearageContract_Count": len(bt_arr_projects),
-                "Arrearage_Amount": round(bt_arr_amount, 6),
+                "Arrearage_Amount": _smart_round(bt_arr_amount, 6),
             })
         result["BusinessTypeSummaryList"] = bts_list
 
@@ -602,7 +727,7 @@ def get_project_summary_info(db: DatabaseHelper, province_code: int = None,
                 "Overdue_Situation": label,
                 "ArrearageMerchant_Count": len(set(r.get("MERCHANTS_ID") for r in filtered)),
                 "ArrearageContract_Count": len(set(r.get("BUSINESSPROJECT_ID") for r in filtered)),
-                "Arrearage_Amount": round(sum(float(r.get("CURRENTBALANCE") or 0) for r in filtered), 6),
+                "Arrearage_Amount": _smart_round(sum(float(r.get("CURRENTBALANCE") or 0) for r in filtered), 6),
             })
         result["ArrearageList"] = arr_list
 
@@ -615,13 +740,14 @@ def get_project_summary_info(db: DatabaseHelper, province_code: int = None,
 
 def get_contract_expired_info(db: DatabaseHelper, province_code: int = None,
                                serverpart_id: int = None,
-                               serverpartshop_ids: str = "") -> dict:
+                               serverpartshop_ids: str = "",
+                               get_from_redis: bool = False) -> dict:
     """
     获取合同到期信息（C# ProjectSummaryHelper.GetContractExpiredInfo 的 Python 实现）
     """
     result = {
-        "Expired_Amount": 0, "UnExpired_Amount": 0, "Expired_HalfYearCount": 0,
-        "Total_Amount": 0, "Paid_Amount": 0, "UnPaid_Amount": 0, "Complete_Degree": 0,
+        "Expired_Amount": 0.0, "UnExpired_Amount": 0.0, "Expired_HalfYearCount": 0.0,
+        "Total_Amount": 0.0, "Paid_Amount": 0.0, "UnPaid_Amount": 0.0, "Complete_Degree": 0.0,
     }
 
     compact_type = _get_compact_type(db, province_code)
@@ -693,7 +819,7 @@ def get_contract_expired_info(db: DatabaseHelper, province_code: int = None,
                 "Expired_Situation": labels.get(sit, sit),
                 "Expired_Count": cnt,
             })
-        result["Expired_HalfYearCount"] = total_half_year
+        result["Expired_HalfYearCount"] = float(total_half_year)
         result["ContractHalfYearListExpired"] = half_year_list
 
     except Exception as e:
@@ -705,7 +831,8 @@ def get_contract_expired_info(db: DatabaseHelper, province_code: int = None,
 
 def get_project_yearly_arrearage(db: DatabaseHelper, province_code: int = None,
                                   serverpart_id: int = None,
-                                  serverpartshop_ids: str = "") -> dict:
+                                  serverpartshop_ids: str = "",
+                                  get_from_redis: bool = False) -> dict:
     """
     获取合同年度完成度信息（C# ProjectSummaryHelper.GetProjectYearlyArrearageList 的 Python 实现）
     """
@@ -763,21 +890,21 @@ def get_project_yearly_arrearage(db: DatabaseHelper, province_code: int = None,
                 if row:
                     aa = float(row.get("ACCOUNT_AMOUNT") or 0)
                     pa = float(row.get("ACTUAL_PAYMENT") or 0)
-                    cd = round(pa / aa * 100, 2) if aa != 0 else 100
+                    cd = _smart_round(pa / aa * 100, 2) if aa != 0 else 100
                     account_amount += aa
                     payment_amount += pa
-                    pcd.update({"Account_Amount": round(aa, 4), "Payment_Amount": round(pa, 4), "Complete_Degree": cd})
+                    pcd.update({"Account_Amount": _smart_round(aa, 4), "Payment_Amount": _smart_round(pa, 4), "Complete_Degree": cd})
                 else:
                     pcd.update({"Account_Amount": 0, "Payment_Amount": 0, "Complete_Degree": 100})
                 detail_list.append(pcd)
 
             unpaid = account_amount - payment_amount
-            cd_year = round(payment_amount / account_amount * 100, 2) if account_amount != 0 else 100
+            cd_year = _smart_round(payment_amount / account_amount * 100, 2) if account_amount != 0 else 100
             yearly_list.append({
                 "Business_Year": int(year) if year.isdigit() else 0,
-                "Account_Amount": round(account_amount, 4),
-                "Payment_Amount": round(payment_amount, 4),
-                "Unpaid_Amount": round(unpaid, 4),
+                "Account_Amount": _smart_round(account_amount, 4),
+                "Payment_Amount": _smart_round(payment_amount, 4),
+                "Unpaid_Amount": _smart_round(unpaid, 4),
                 "Complete_Degree": cd_year,
                 "ProjectCompleteDetailList": detail_list,
             })
@@ -802,15 +929,15 @@ def get_project_yearly_arrearage(db: DatabaseHelper, province_code: int = None,
         for kv in key_values:
             at = kv["value"]
             v = all_data.get(at, {"aa": 0, "pa": 0, "ea": 0, "ua": 0})
-            cd = round(v["pa"] / v["aa"] * 100, 2) if v["aa"] != 0 else 100
+            cd = _smart_round(v["pa"] / v["aa"] * 100, 2) if v["aa"] != 0 else 100
             total_detail.append({
                 "Account_Type": int(at) if at.isdigit() else 0,
                 "Account_Name": kv["label"],
-                "Account_Amount": round(v["aa"], 4),
-                "Payment_Amount": round(v["pa"], 4),
+                "Account_Amount": _smart_round(v["aa"], 4),
+                "Payment_Amount": _smart_round(v["pa"], 4),
                 "Complete_Degree": cd,
-                "Expired_Amount": round(v["ea"], 4),
-                "UnExpired_Amount": round(v["ua"], 4),
+                "Expired_Amount": _smart_round(v["ea"], 4),
+                "UnExpired_Amount": _smart_round(v["ua"], 4),
             })
         result["ProjectCompleteDetailList"] = total_detail
 
@@ -824,7 +951,8 @@ def get_project_yearly_arrearage(db: DatabaseHelper, province_code: int = None,
 def get_project_monthly_arrearage(db: DatabaseHelper, statistics_year: int,
                                    province_code: int = None,
                                    serverpart_id: int = None,
-                                   serverpartshop_ids: str = "") -> dict:
+                                   serverpartshop_ids: str = "",
+                                   get_from_redis: bool = False) -> dict:
     """
     获取合同月度完成度信息（C# ProjectSummaryHelper.GetProjectMonthlyArrearageList 的 Python 实现）
     """
@@ -883,21 +1011,21 @@ def get_project_monthly_arrearage(db: DatabaseHelper, statistics_year: int,
                 if row:
                     aa = float(row.get("ACCOUNT_AMOUNT") or 0)
                     pa = float(row.get("ACTUAL_PAYMENT") or 0)
-                    cd = round(pa / aa * 100, 2) if aa != 0 else 100
+                    cd = _smart_round(pa / aa * 100, 2) if aa != 0 else 100
                     account_amount += aa
                     payment_amount += pa
-                    pcd.update({"Account_Amount": round(aa, 4), "Payment_Amount": round(pa, 4), "Complete_Degree": cd})
+                    pcd.update({"Account_Amount": _smart_round(aa, 4), "Payment_Amount": _smart_round(pa, 4), "Complete_Degree": cd})
                 else:
                     pcd.update({"Account_Amount": 0, "Payment_Amount": 0, "Complete_Degree": 100})
                 detail_list.append(pcd)
 
             unpaid = account_amount - payment_amount
-            cd_month = round(payment_amount / account_amount * 100, 2) if account_amount != 0 else 100
+            cd_month = _smart_round(payment_amount / account_amount * 100, 2) if account_amount != 0 else 100
             monthly_list.append({
-                "Business_Month": month,
-                "Account_Amount": round(account_amount, 4),
-                "Payment_Amount": round(payment_amount, 4),
-                "Unpaid_Amount": round(unpaid, 4),
+                "Business_Month": int(month) if str(month).isdigit() else month,
+                "Account_Amount": _smart_round(account_amount, 4),
+                "Payment_Amount": _smart_round(payment_amount, 4),
+                "Unpaid_Amount": _smart_round(unpaid, 4),
                 "Complete_Degree": cd_month,
                 "ProjectCompleteDetailList": detail_list,
             })
@@ -928,3 +1056,46 @@ def synchro_contract_syn(db: DatabaseHelper, data_list: list) -> bool:
         ok, _ = _std_synchro(db, "T_CONTRACTSYN", "CONTRACTSYN_ID", data)
         flag = ok
     return flag
+
+
+# ===================================================================
+# 7. CT-05 补齐接口
+# ===================================================================
+
+def get_contract_year_list(db: DatabaseHelper, sort_str: str = "YEAR") -> list:
+    """
+    获取合同年份列表（C# ProjectSummaryHelper.GetContractYearList）
+    从 T_PAYMENTCONFIRM 取 MANAGEMONTH 前4位去重得年份列表
+    """
+    now_ym = datetime.now().strftime("%Y%m")
+    sql = f"""SELECT SUBSTR(MANAGEMONTH,1,4) AS YEAR
+        FROM T_PAYMENTCONFIRM
+        WHERE MERCHANTS_ID IS NOT NULL AND PAYMENTCONFIRM_VALID = 1
+        AND ACCOUNT_TYPE <> 9000 AND MANAGEMONTH <= {now_ym}
+        GROUP BY SUBSTR(MANAGEMONTH,1,4)
+        ORDER BY {sort_str}"""
+    rows = db.execute_query(sql) or []
+    return [{"value": str(r.get("YEAR", "")), "label": str(r.get("YEAR", ""))} for r in rows]
+
+
+def get_shop_business_type_ratio(db: DatabaseHelper, province_code: int = None) -> list:
+    """
+    统计门店经营模式占比（C# ProjectSummaryHelper.GetShopBusinessTypeRatio）
+    从 T_SERVERPARTSHOP 按 BUSINESS_TYPE 分组统计在营门店数量
+    """
+    where = ""
+    if province_code:
+        where = f" AND EXISTS (SELECT 1 FROM T_SERVERPART B WHERE A.SERVERPART_ID = B.SERVERPART_ID AND B.PROVINCE_CODE = {province_code})"
+    sql = f"""SELECT BUSINESS_TYPE, COUNT(*) AS CNT
+        FROM T_SERVERPARTSHOP A
+        WHERE A.ISVALID = 1 AND BUSINESS_STATE = 1000{where}
+        GROUP BY BUSINESS_TYPE
+        ORDER BY BUSINESS_TYPE"""
+    rows = db.execute_query(sql) or []
+    type_labels = {"1000": "业主自营", "2000": "合作分成", "3000": "固定租金", "4000": "临时业态"}
+    return [
+        {"value": str(r.get("CNT", 0)),
+         "label": type_labels.get(str(r.get("BUSINESS_TYPE", "")), str(r.get("BUSINESS_TYPE", "")))}
+        for r in rows
+    ]
+

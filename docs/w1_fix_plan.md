@@ -1,0 +1,201 @@
+# 窗口 1 深度修复清单
+
+## 1. Python 报错但 C# 成功 (16 个)
+
+- `BaseInfo/GetCOMMODITYTYPEList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetOWNERUNITList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetPROPERTYASSETSLOGList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetPROPERTYASSETSList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetPROPERTYASSETSTreeList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetPROPERTYSHOPList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetRTSERVERPARTSHOPList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetSERVERPARTCRTList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetSERVERPARTCRTTreeList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetSERVERPARTList / empty-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BaseInfo/GetSERVERPARTSHOP_LOGList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BusinessProject/GetAPPROVEDList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BusinessProject/GetBIZPSPLITMONTHList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BusinessProject/GetPERIODWARNINGList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BusinessProject/GetPROJECTSPLITMONTHList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+- `BusinessProject/GetSHOPROYALTYDETAILList / default-body`
+  - Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '查询成功')
+
+## 2. Python 成功但 C# 报错 (4 个)
+
+- `BaseInfo/GetSERVERPARTList / search-model`
+  - Result_Desc: 值不一致 ('查询成功' vs '查询失败[CODE:-2111]第1 行附近出现错误:\n无效的列名[PROVINCECODE]')
+- `BaseInfo/GetServerpartUDTypeTree / default-query`
+  - Result_Desc: 值不一致 ('查询成功' vs '请求参数校验失败')
+- `BusinessProject/GetPeriodWarningList / default-query`
+  - Result_Desc: 值不一致 ('查询成功' vs '查询失败[CODE:-2111]第2 行附近出现错误:\n无效的列名[PERIODWARNING_STATE]')
+- `BusinessProject/GetProjectAccountTree / default-query`
+  - Result_Desc: 值不一致 ('查询成功' vs '查询失败[CODE:-2207]第5 行附近出现错误:\n无法解析的成员访问表达式[A.ISVALID]')
+
+## 3. 仅 Message 差异 (0 个)
+
+
+## 4. 缺少/多出字段 (14 个接口)
+
+- `BaseInfo/GetBusinessTradeEnum / default-query`
+  - Result_Data.List[0].children[0].node.desc: 新 API 缺少该字段
+  - Result_Data.List[0].children[1].node.desc: 新 API 缺少该字段
+  - Result_Data.List[0].children[2].node.desc: 新 API 缺少该字段
+  - Result_Data.List[0].children[3].node.desc: 新 API 缺少该字段
+  - Result_Data.List[0].children[4].node.desc: 新 API 缺少该字段
+  - ... 还有 20 处
+- `BaseInfo/GetCombineBrandList / default-query`
+  - Result_Data.List[0].BRAND_TYPENAME: 新 API 缺少该字段
+  - Result_Data.List[0].BUSINESS_TRADE: 新 API 缺少该字段
+  - Result_Data.List[0].COMMISSION_RATIO: 新 API 缺少该字段
+  - Result_Data.List[0].REVENUE_AMOUNT: 新 API 缺少该字段
+  - Result_Data.List[0].REVENUE_DAILYAMOUNT: 新 API 缺少该字段
+  - ... 还有 3 处
+- `BaseInfo/GetSERVERPARTDetail / default-query`
+  - Result_Data.SERVERPART_CODES: 新 API 缺少该字段
+  - Result_Data.SERVERPART_IDS: 新 API 缺少该字段
+- `BaseInfo/GetSERVERPARTList / flat-body`
+  - Result_Data.List[0].RtServerPart: 新 API 缺少该字段
+  - Result_Data.List[0].SERVERPART_CODES: 新 API 缺少该字段
+  - Result_Data.List[0].SERVERPART_IDS: 新 API 缺少该字段
+  - Result_Data.List[0].ServerPartInfo: 新 API 缺少该字段
+  - Result_Data.List[1].RtServerPart: 新 API 缺少该字段
+  - ... 还有 3 处
+- `BaseInfo/GetSPRegionShopTree / default-query`
+  - Result_Data.List[0].children[0].node.children[0].desc: 新 API 缺少该字段
+  - Result_Data.List[0].children[0].node.children[0].ico: 新 API 缺少该字段
+  - Result_Data.List[0].children[0].node.children[1].desc: 新 API 缺少该字段
+  - Result_Data.List[0].children[0].node.children[1].ico: 新 API 缺少该字段
+  - Result_Data.List[0].children[0].node.children[2].desc: 新 API 缺少该字段
+  - ... 还有 20 处
+- `BaseInfo/GetServerPartShopNewList / default-query`
+  - Result_Data.List[0].BUSINESS_BRAND: 新 API 缺少该字段
+  - Result_Data.List[0].BUSINESS_DATE: 新 API 缺少该字段
+  - Result_Data.List[0].BUSINESS_TRADE: 新 API 缺少该字段
+  - Result_Data.List[0].BUS_STARTDATE: 新 API 缺少该字段
+  - Result_Data.List[0].LINKMAN: 新 API 缺少该字段
+  - ... 还有 18 处
+- `BaseInfo/GetServerpartShopTree / default-query`
+  - Result_Data.List[0].node.children[0].desc: 新 API 缺少该字段
+  - Result_Data.List[0].node.children[0].ico: 新 API 缺少该字段
+  - Result_Data.List[0].node.children[1].desc: 新 API 缺少该字段
+  - Result_Data.List[0].node.children[1].ico: 新 API 缺少该字段
+  - Result_Data.List[0].node.children[2].desc: 新 API 缺少该字段
+  - ... 还有 20 处
+- `BaseInfo/GetTradeBrandTree / default-query`
+  - Result_Data.List[0].children[0].node.BrandTreeList[0].Brand_ICO: 新 API 缺少该字段
+  - Result_Data.List[0].children[0].node.BrandTreeList[0].Brand_ID: 新 API 缺少该字段
+  - Result_Data.List[0].children[0].node.BrandTreeList[0].Brand_Name: 新 API 缺少该字段
+  - Result_Data.List[0].children[0].node.BrandTreeList[0].Brand_Type: 新 API 缺少该字段
+  - Result_Data.List[0].children[0].node.BrandTreeList[0].BRAND_ID: 新 API 多出该字段
+  - ... 还有 19 处
+- `BusinessProject/GetMerchantsReceivablesList / default-query`
+  - Result_Data.List[0].ACCOUNT_DATE: 新 API 缺少该字段
+  - Result_Data.List[0].AccountReceivablesList: 新 API 缺少该字段
+  - Result_Data.List[0].COOPMERCHANTS_EN: 新 API 缺少该字段
+  - Result_Data.List[0].COOPMERCHANTS_ID_Encrypted: 新 API 缺少该字段
+  - Result_Data.List[0].COOPMERCHANTS_LINKMAN: 新 API 缺少该字段
+  - ... 还有 8 处
+- `BusinessProject/GetProjectAccountList / default-query`
+  - Result_Data.List[0].APPLY_PROCCESS: 新 API 缺少该字段
+  - Result_Data.List[0].APPOVED_IDS: 新 API 缺少该字段
+  - Result_Data.List[0].APPOVED_NAME: 新 API 缺少该字段
+  - Result_Data.List[0].BUSINESSAPPROVAL_ID: 新 API 缺少该字段
+  - Result_Data.List[0].CLOSED_DATE: 新 API 缺少该字段
+  - ... 还有 19 处
+- `Contract/GetProjectMonthlyArrearageList / default-query`
+  - Result_Data.ProjectMonthlyCompleteList[0].Business_Year: 新 API 缺少该字段
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[0].Expired_Amount: 新 API 缺少该字段
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[0].UnExpired_Amount: 新 API 缺少该字段
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Expired_Amount: 新 API 缺少该字段
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].UnExpired_Amount: 新 API 缺少该字段
+  - ... 还有 7 处
+- `Contract/GetProjectYearlyArrearageList / default-query`
+  - Result_Data.ProjectMonthlyCompleteList[0].Business_Month: 新 API 缺少该字段
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[0].Expired_Amount: 新 API 缺少该字段
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[0].UnExpired_Amount: 新 API 缺少该字段
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Expired_Amount: 新 API 缺少该字段
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].UnExpired_Amount: 新 API 缺少该字段
+  - ... 还有 1 处
+- `Contract/GetRTRegisterCompactDetail / default-query`
+  - Result_Data.PROVINCE_CODE: 新 API 缺少该字段
+  - Result_Data.REGISTERCOMPACT_ID: 新 API 缺少该字段
+  - Result_Data.RTREGISTERCOMPACT_ID: 新 API 缺少该字段
+  - Result_Data.SERVERPART_ID: 新 API 缺少该字段
+- `Contract/GetRegisterCompactSubDetail / default-query`
+  - Result_Data.BRAND_NAME: 新 API 缺少该字段
+  - Result_Data.BUSINESS_BRAND: 新 API 缺少该字段
+  - Result_Data.BUSINESS_TRADE: 新 API 缺少该字段
+  - Result_Data.BUSINESS_TYPE: 新 API 缺少该字段
+  - Result_Data.COMPACT_BASIS: 新 API 缺少该字段
+  - ... 还有 20 处
+
+## 5. 列表长度不一致 (8 个接口)
+
+- `BaseInfo/BindingMerchantTree / default-query`: Result_Data.List[0].children: 列表长度不一致 (10 vs 5)
+- `BaseInfo/GetNestingCOMMODITYTYPEList / default-query`: Result_Data.List: 列表长度不一致 (10 vs 0)
+- `BaseInfo/GetNestingCOMMODITYTYPETree / default-query`: Result_Data.List: 列表长度不一致 (10 vs 0)
+- `BaseInfo/GetSERVERPARTList / flat-body`: Result_Data.List: 列表长度不一致 (10 vs 1168)
+- `BaseInfo/GetServerPartShopNewList / default-query`: Result_Data.List: 列表长度不一致 (1937 vs 4230)
+- `BusinessProject/GetMerchantsReceivablesReport / default-query`: Result_Data.List: 列表长度不一致 (185 vs 0)
+- `BusinessProject/GetProjectAccountList / default-query`: Result_Data.List: 列表长度不一致 (19114 vs 10)
+- `Contract/GetProjectMonthlyArrearageList / default-query`: Result_Data.ProjectCompleteDetailList: 列表长度不一致 (5 vs 0)
+
+## 6. 类型不一致 (15 个接口)
+
+- `BaseInfo/BindingMerchantTree / default-query`
+  - Result_Data.List[0].children[1].children[0].children: 类型不一致 (NoneType vs list)，值为 None vs [{'node': 
+  - Result_Data.List[0].children[2].children: 类型不一致 (list vs NoneType)，值为 [{'node': {'label': '董邦商贸有限公司'
+- `BaseInfo/BindingOwnerUnitTree / default-query`
+  - Result_Data.List[0].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+  - Result_Data.List[13].children: 类型不一致 (list vs NoneType)，值为 [] vs None
+- `BaseInfo/GetBusinessTradeTree / default-query`
+  - Result_Data.List[2].node.INELASTIC_DEMAND: 类型不一致 (NoneType vs int)，值为 None vs 0
+- `BaseInfo/GetCombineBrandList / default-query`
+  - Result_Data.List[0].BRAND_DESC: 类型不一致 (NoneType vs str)，值为 None vs ''
+- `BaseInfo/GetNestingOwnerUnitList / default-query`
+  - Result_Data.List[0].children[0].node.DOWNLOAD_DATE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  - Result_Data.List[0].node.DOWNLOAD_DATE: 类型不一致 (NoneType vs str)，值为 None vs ''
+  - Result_Data.List[1].node.DOWNLOAD_DATE: 类型不一致 (NoneType vs str)，值为 None vs ''
+- `BaseInfo/GetSERVERPARTCRTDetail / default-query`
+  - Result_Data: 类型不一致 (dict vs NoneType)，值为 {'SERVERPARTCRT_ID': None, 'ACCOUNTBODY_CODE': None, 'ACCOU
+- `BaseInfo/GetSERVERPARTList / flat-body`
+  - Result_Data.List[0].EXPRESSWAY_NAME: 类型不一致 (str vs NoneType)，值为 '' vs None
+  - Result_Data.List[0].HKBL: 类型不一致 (str vs NoneType)，值为 '' vs None
+  - Result_Data.List[0].MANAGERCOMPANY: 类型不一致 (str vs NoneType)，值为 '' vs None
+- `BaseInfo/GetServerPartShopNewList / default-query`
+  - Result_Data.List[0].BRAND_NAME: 类型不一致 (str vs NoneType)，值为 '自营餐厅' vs None
+- `BaseInfo/GetTradeBrandTree / default-query`
+  - Result_Data.List[0].children[0].children: 类型不一致 (NoneType vs list)，值为 None vs []
+- `BusinessProject/GetMerchantsReceivables / default-query`
+  - Result_Data: 类型不一致 (NoneType vs dict)，值为 None vs {'COOPMERCHANTS_ID': None, 'COOPMERCHANTS_NAME': ''
+- `BusinessProject/GetMerchantsReceivablesList / default-query`
+  - Result_Data.List[0].ACCOUNT_AMOUNT: 类型不一致 (float vs int)，值为 10616.184456 vs 0
+  - Result_Data.List[0].ACTUAL_PAYMENT: 类型不一致 (float vs int)，值为 80.008 vs 0
+  - Result_Data.List[0].COOPMERCHANTS_ID: 类型不一致 (str vs int)，值为 'C64BAE48506C3ACB' vs -684
+- `Contract/GetContractExpiredInfo / default-query`
+  - Result_Data.Expired_HalfYearCount: 类型不一致 (float vs int)，值为 56.0 vs 56
+- `Contract/GetProjectMonthlyArrearageList / default-query`
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Account_Amount: 类型不一致 (NoneTy
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Complete_Degree: 类型不一致 (float
+  - Result_Data.ProjectMonthlyCompleteList[0].ProjectCompleteDetailList[1].Payment_Amount: 类型不一致 (NoneTy
+- `Contract/GetProjectSummaryInfo / default-query`
+  - Result_Data.ArrearageList[1].Arrearage_Amount: 类型不一致 (float vs int)，值为 0.0 vs 0
+- `Contract/GetProjectYearlyArrearageList / default-query`
+  - Result_Data.ProjectCompleteDetailList[3].Account_Amount: 类型不一致 (float vs int)，值为 0.0 vs 0
+  - Result_Data.ProjectCompleteDetailList[3].Complete_Degree: 类型不一致 (float vs int)，值为 100.0 vs 100
+  - Result_Data.ProjectCompleteDetailList[3].Expired_Amount: 类型不一致 (float vs int)，值为 0.0 vs 0

@@ -6,9 +6,51 @@ from __future__ import annotations
 对应 MerchantsController 中 COOPMERCHANTS 相关 4 个接口
 """
 from typing import Optional
+from datetime import datetime as _dt
 from loguru import logger
 from core.database import DatabaseHelper
 from models.common_model import SearchModel
+
+
+# C# 中 string 字段通过 .ToString() 绑定，DBNull→''；int? 字段通过 TryParseToInt()→null
+# 这里列出 COOPMERCHANTSModel 中所有 System.String 类型的字段
+_STR_FIELDS = {
+    "OWNERUNIT_NAME", "COOPMERCHANTS_TYPE", "COOPMERCHANTS_CODE",
+    "COOPMERCHANTS_NAME", "COOPMERCHANTS_EN", "TAXPAYER_IDENTIFYCODE",
+    "COOPMERCHANTS_DRAWER", "BANK_NAME", "BANK_ACCOUNT",
+    "COOPMERCHANTS_LINKMAN", "COOPMERCHANTS_TELEPHONE",
+    "COOPMERCHANTS_MOBILEPHONE", "COOPMERCHANTS_ADDRESS",
+    "STAFF_NAME", "COOPMERCHANTS_DESC", "MERCHANTTYPE_NAME",
+    "COOPMERCHANTS_BRAND", "LINKER_NAME", "LINKER_MOBILEPHONE",
+}
+
+
+def _format_csharp_datetime(val) -> str:
+    """将日期值转为 C# DateTime.ToString() zh-CN 格式: yyyy/M/d H:mm:ss"""
+    if val is None:
+        return None
+    s = str(val)
+    # ISO 格式: 2021-04-01T15:29:15
+    if len(s) >= 19 and s[4:5] == '-' and s[10:11] == 'T':
+        try:
+            dt = _dt.fromisoformat(s)
+            return f"{dt.year}/{dt.month}/{dt.day} {dt.hour}:{dt.minute:02d}:{dt.second:02d}"
+        except (ValueError, TypeError):
+            pass
+    # 已经是 C# 格式或其他格式，直接返回
+    return s
+
+
+def _bind_coopmerchants_row(row: dict) -> dict:
+    """对照 C# COOPMERCHANTSHelper 的 field-by-field 绑定，确保类型一致"""
+    # 字符串字段: None → ''
+    for f in _STR_FIELDS:
+        if f in row and row[f] is None:
+            row[f] = ""
+    # C# TryParseToInt() 对 DBNull 返回 0（非 null）
+    if row.get("COOPMERCHANTS_PID") is None:
+        row["COOPMERCHANTS_PID"] = 0
+    return row
 
 
 # 表名常量
@@ -127,8 +169,18 @@ def get_coopmerchants_list(db: DatabaseHelper, search_model: SearchModel) -> tup
                     row["LINKER_MOBILEPHONE"] = mobile if mobile and str(mobile).strip() else (
                         tel if tel and str(tel).strip() else "")
                 else:
-                    row["LINKER_NAME"] = None
-                    row["LINKER_MOBILEPHONE"] = None
+                    row["LINKER_NAME"] = ""
+                    row["LINKER_MOBILEPHONE"] = ""
+
+
+        # C# GetCOOPMERCHANTSList 中没有查 BrandList（只有 Detail 有）
+        # 所以 List 中 BrandList 应该是 null（C# Model 属性默认 null）
+        for row in rows:
+            row["BrandList"] = None
+
+    # C# 风格绑定：字符串 None→''，日期格式化
+    for row in rows:
+        _bind_coopmerchants_row(row)
 
     return int(total_count), rows
 
@@ -140,17 +192,16 @@ def get_coopmerchants_detail(db: DatabaseHelper, coopmerchants_id: int) -> Optio
     获取经营商户明细
     对应原 COOPMERCHANTSHelper.GetCOOPMERCHANTSDetail
     额外返回 BrandList: 从 T_RTCOOPMERCHANTS + T_BRAND 获取品牌列表
+    额外返回 LINKER_NAME/LINKER_MOBILEPHONE: 从 T_COOPMERCHANTS_LINKER 获取联系人信息
     """
     sql = f"SELECT * FROM {TABLE_NAME} WHERE {PRIMARY_KEY} = {coopmerchants_id}"
-    rows = db.execute_query(sql)
+    # C# Detail 直接赋 entity 属性，null string 保持 null（不做 NULL→'' 转换）
+    rows = db.execute_query(sql, null_to_empty=False)
     if not rows:
         return None
     detail = rows[0]
 
-    # 品牌列表 - 原 C# SQL:
-    # SELECT B.BRAND_ID, B.BRAND_INDEX, B.BRAND_NAME, B.BRAND_INTRO
-    # FROM COOP_MERCHANT.T_RTCOOPMERCHANTS A, COOP_MERCHANT.T_BRAND B
-    # WHERE A.BUSINESS_BRAND = B.BRAND_ID AND A.COOPMERCHANTS_ID = {id}
+    # 品牌列表 - 原 C# SQL
     brand_sql = f"""SELECT B.BRAND_ID, B.BRAND_INDEX, B.BRAND_NAME, B.BRAND_INTRO
         FROM T_RTCOOPMERCHANTS A, T_BRAND B
         WHERE A.BUSINESS_BRAND = B.BRAND_ID AND A.COOPMERCHANTS_ID = {coopmerchants_id}
@@ -165,6 +216,13 @@ def get_coopmerchants_detail(db: DatabaseHelper, coopmerchants_id: int) -> Optio
         }
         brand_list.append(brand_item)
     detail["BrandList"] = brand_list
+
+    # C# GetCOOPMERCHANTSDetail 不查 LINKER 表，Model 属性默认 null
+    detail["LINKER_NAME"] = None
+    detail["LINKER_MOBILEPHONE"] = None
+
+    # C# Detail 直接赋 entity 属性，null string 保持 null
+    # 日期格式由 database.py 统一处理为 ISO 格式（与 C# 一致）
 
     return detail
 

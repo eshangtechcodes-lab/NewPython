@@ -110,15 +110,18 @@ async def delete_businesspayment(
 @router.post("/BusinessProject/GetPROJECTWARNINGList")
 async def get_projectwarning_list(
     search_model: Optional[SearchModel] = None,
+    ModuleGuid: str = Query("", description="用户审批权限GUID"),
+    SourcePlatform: str = Query("", description="操作平台"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取经营项目预警表列表"""
+    """获取经营项目预警表列表（含 DealMark 审批待办标记）"""
     try:
         if search_model is None:
             search_model = SearchModel()
         if search_model.SearchParameter is None:
             search_model.SearchParameter = {}
-        total_count, data_list = pw_svc.get_projectwarning_list(db, search_model)
+        total_count, data_list = pw_svc.get_projectwarning_list(
+            db, search_model, ModuleGuid, SourcePlatform)
         json_list = JsonListData.create(data_list=data_list, total=total_count,
                                         page_index=search_model.PageIndex, page_size=search_model.PageSize)
         return Result.success(data=json_list.model_dump(), msg="查询成功")

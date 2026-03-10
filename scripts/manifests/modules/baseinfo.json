@@ -1,0 +1,1396 @@
+{
+  "name": "BaseInfo dynamic compare manifest",
+  "note": "BaseInfo 动态执行 manifest；仅保留 matched + 读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "BaseInfo"
+  ],
+  "endpoints": [
+    {
+      "name": "BaseInfo/BindingMerchantTree",
+      "endpoint": "BaseInfo/BindingMerchantTree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": 340000
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/BindingOwnerUnitDDL",
+      "endpoint": "BaseInfo/BindingOwnerUnitDDL",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": 340000,
+            "DataType": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/BindingOwnerUnitTree",
+      "endpoint": "BaseInfo/BindingOwnerUnitTree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetAUTOSTATISTICSDetail",
+      "endpoint": "BaseInfo/GetAUTOSTATISTICSDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\autostatistics_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AUTOSTATISTICSId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetAssetsRevenueAmount",
+      "endpoint": "BaseInfo/GetAssetsRevenueAmount",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\propertyassets_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "searchMonth": "202512",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetAutoStatisticsTreeList",
+      "endpoint": "BaseInfo/GetAutoStatisticsTreeList",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\autostatistics_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": 340000,
+            "OwnerUnit_Id": 211,
+            "AutoStatistics_Type": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetBrandDetail",
+      "endpoint": "BaseInfo/GetBrandDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\brand_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BrandId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetBrandList",
+      "endpoint": "BaseInfo/GetBrandList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\brand_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BRAND_ID": 1314
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetBusinessBrandList",
+      "endpoint": "BaseInfo/GetBusinessBrandList",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartShopIds": 3080
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetBusinessTradeDetail",
+      "endpoint": "BaseInfo/GetBusinessTradeDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\businesstrade_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessTradeId": 214
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetBusinessTradeEnum",
+      "endpoint": "BaseInfo/GetBusinessTradeEnum",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\businesstrade_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessTrade_PID": 214,
+            "ProvinceCode": 340000,
+            "BusinessTradeState": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetBusinessTradeList",
+      "endpoint": "BaseInfo/GetBusinessTradeList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\businesstrade_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PROVINCE_CODE": 340000
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetBusinessTradeTree",
+      "endpoint": "BaseInfo/GetBusinessTradeTree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\businesstrade_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessTrade_PID": -1,
+            "ProvinceCode": 340000,
+            "BusinessTradeState": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetCASHWORKERDetail",
+      "endpoint": "BaseInfo/GetCASHWORKERDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\cashworker_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CASHWORKERId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetCASHWORKERList",
+      "endpoint": "BaseInfo/GetCASHWORKERList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\cashworker_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "CASHWORKER_ID": "1477"
+            },
+            "PageIndex": 1,
+            "PageSize": 99
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetCOMMODITYDetail",
+      "endpoint": "BaseInfo/GetCOMMODITYDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commodity_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYId": 864
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetCOMMODITYList",
+      "endpoint": "BaseInfo/GetCOMMODITYList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commodity_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_ID": 864
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetCOMMODITYTYPEDetail",
+      "endpoint": "BaseInfo/GetCOMMODITYTYPEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commoditytype_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYTYPEId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetCOMMODITYTYPEList",
+      "endpoint": "BaseInfo/GetCOMMODITYTYPEList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commoditytype_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITYTYPE_ID": 418
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetCombineBrandList",
+      "endpoint": "BaseInfo/GetCombineBrandList",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\brand_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROVINCE_CODE": 340000,
+            "BRAND_TYPE": 2000
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetNestingCOMMODITYTYPEList",
+      "endpoint": "BaseInfo/GetNestingCOMMODITYTYPEList",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commoditytype_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYTYPE_PID": -1,
+            "PROVINCE_CODE": 340000,
+            "COMMODITYTYPE_VALID": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetNestingCOMMODITYTYPETree",
+      "endpoint": "BaseInfo/GetNestingCOMMODITYTYPETree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commoditytype_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYTYPE_PID": -1,
+            "PROVINCE_CODE": 340000,
+            "COMMODITYTYPE_VALID": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetNestingOwnerUnitList",
+      "endpoint": "BaseInfo/GetNestingOwnerUnitList",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ShowStatus": true,
+            "ProvinceCode": 340000,
+            "OwnerUnitNature": 1000
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetOWNERUNITDetail",
+      "endpoint": "BaseInfo/GetOWNERUNITDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\ownerunit_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "OWNERUNITId": 211
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetOWNERUNITList",
+      "endpoint": "BaseInfo/GetOWNERUNITList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\ownerunit_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PROVINCE_CODE": 340000
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetPROPERTYASSETSDetail",
+      "endpoint": "BaseInfo/GetPROPERTYASSETSDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\propertyassets_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROPERTYASSETSId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetPROPERTYASSETSLOGList",
+      "endpoint": "BaseInfo/GetPROPERTYASSETSLOGList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\propertyassetslog_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PROPERTYASSETSLOG_ID": 6
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetPROPERTYASSETSList",
+      "endpoint": "BaseInfo/GetPROPERTYASSETSList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\propertyassets_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetPROPERTYASSETSTreeList",
+      "endpoint": "BaseInfo/GetPROPERTYASSETSTreeList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\propertyassets_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetPROPERTYSHOPDetail",
+      "endpoint": "BaseInfo/GetPROPERTYSHOPDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\propertyshop_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROPERTYSHOPId": 42
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetPROPERTYSHOPList",
+      "endpoint": "BaseInfo/GetPROPERTYSHOPList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\propertyshop_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetRTSERVERPARTSHOPDetail",
+      "endpoint": "BaseInfo/GetRTSERVERPARTSHOPDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\rtserverpartshop_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RTSERVERPARTSHOPId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetRTSERVERPARTSHOPList",
+      "endpoint": "BaseInfo/GetRTSERVERPARTSHOPList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\rtserverpartshop_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "RTSERVERPARTSHOP_ID": 101
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetSERVERPARTCRTDetail",
+      "endpoint": "BaseInfo/GetSERVERPARTCRTDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpartcrt_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SERVERPARTTId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetSERVERPARTCRTList",
+      "endpoint": "BaseInfo/GetSERVERPARTCRTList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpartcrt_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetSERVERPARTCRTTreeList",
+      "endpoint": "BaseInfo/GetSERVERPARTCRTTreeList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpartcrt_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetSERVERPARTDetail",
+      "endpoint": "BaseInfo/GetSERVERPARTDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SERVERPARTId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetSERVERPARTList",
+      "endpoint": "BaseInfo/GetSERVERPARTList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpart_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "search-model",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": 416
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetSERVERPARTSHOP_LOGList",
+      "endpoint": "BaseInfo/GetSERVERPARTSHOP_LOGList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpartshop_log_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": 416
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetSPRegionShopTree",
+      "endpoint": "BaseInfo/GetSPRegionShopTree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerPartShopNewDetail",
+      "endpoint": "BaseInfo/GetServerPartShopNewDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpartshop_new_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartShopId": 3080
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerPartShopNewList",
+      "endpoint": "BaseInfo/GetServerPartShopNewList",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpartshop_new_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "provinceCode": "340000",
+            "serverPartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartDDL",
+      "endpoint": "BaseInfo/GetServerpartDDL",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "service-area-416",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartType": "1000",
+            "StatisticsType": "1000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartShopDDL",
+      "endpoint": "BaseInfo/GetServerpartShopDDL",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartShopDetail",
+      "endpoint": "BaseInfo/GetServerpartShopDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": false,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpartshop_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartShopId": 3080
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartShopInfo",
+      "endpoint": "BaseInfo/GetServerpartShopInfo",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartCode": "1",
+            "ShopCode": "1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartShopList",
+      "endpoint": "BaseInfo/GetServerpartShopList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\serverpartshop_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": 416
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartShopTree",
+      "endpoint": "BaseInfo/GetServerpartShopTree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartTree",
+      "endpoint": "BaseInfo/GetServerpartTree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartType": "1000",
+            "StatisticsType": "1000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetServerpartUDTypeTree",
+      "endpoint": "BaseInfo/GetServerpartUDTypeTree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetShopReceivables",
+      "endpoint": "BaseInfo/GetShopReceivables",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetShopShortNames",
+      "endpoint": "BaseInfo/GetShopShortNames",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\base_info_misc_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416,
+            "ShopValid": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetTradeBrandTree",
+      "endpoint": "BaseInfo/GetTradeBrandTree",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\brand_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessTrade_PID": -1,
+            "ProvinceCode": "340000",
+            "BrandState": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetUSERDEFINEDTYPEDetail",
+      "endpoint": "BaseInfo/GetUSERDEFINEDTYPEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\userdefinedtype_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "USERDEFINEDTYPEId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BaseInfo/GetUSERDEFINEDTYPEList",
+      "endpoint": "BaseInfo/GetUSERDEFINEDTYPEList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\BaseInfoController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\userdefinedtype_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "USERDEFINEDTYPE_ID": 40
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Commodity/GetCOMMODITYDetail",
+      "endpoint": "Commodity/GetCOMMODITYDetail",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\CommodityController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commodity_ctrl_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYId": 13232
+          }
+        }
+      ]
+    },
+    {
+      "name": "Commodity/GetCOMMODITYList",
+      "endpoint": "Commodity/GetCOMMODITYList",
+      "method": "POST",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\CommodityController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commodity_ctrl_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Commodity/GetCommodityList",
+      "endpoint": "Commodity/GetCommodityList",
+      "method": "GET",
+      "meta": {
+        "module": "BaseInfo",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\BaseInfo\\CommodityController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\base_info\\commodity_ctrl_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SearchType": 1,
+            "ProvinceCode": "340000",
+            "ServerpartID": 416
+          }
+        }
+      ]
+    }
+  ]
+}

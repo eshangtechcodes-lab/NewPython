@@ -7,7 +7,13 @@ from __future__ import annotations
 from datetime import datetime
 from loguru import logger
 from core.database import DatabaseHelper
+from core.format_utils import format_int_date, format_row_dates
 from models.common_model import SearchModel, SEARCH_PARAM_SKIP_FIELDS
+
+# 日期字段（纯日期 yyyyMMdd）和时间字段（yyyyMMddHHmmss）
+_RTP_DATE_FIELDS = {"OPERATE_DATE", "PAYMENTDATE"}
+_RTP_DATETIME_FIELDS = {"CONFIRMDATE"}
+_REMARKS_DATETIME_FIELDS = {"OPERATE_DATE"}
 
 
 def _apply_kw_sort_page(rows, search_model, default_sort=""):
@@ -301,7 +307,8 @@ def get_rtpaymentrecord_list(db: DatabaseHelper, search_model: SearchModel):
 
     sql = f"""SELECT
             A.*,B.ACCOUNT_AMOUNT AS ACTUAL_PAYMENT,C.MERCHANTS_ID,
-            C.ACCOUNT_AMOUNT,C.ACCOUNT_DATE,C.BUSINESSPROJECT_ID
+            C.ACCOUNT_AMOUNT,C.ACCOUNT_DATE,C.BUSINESSPROJECT_ID,
+            C.BUSINESSPROJECT_NAME, C.SERVERPART_NAME
         FROM
             T_RTPAYMENTRECORD A,
             T_PAYMENTCONFIRM B,
@@ -313,13 +320,23 @@ def get_rtpaymentrecord_list(db: DatabaseHelper, search_model: SearchModel):
     rows = db.execute_query(sql)
     if not rows:
         return 0, []
+    # 格式化日期字段（int → C# 格式字符串）
+    for row in rows:
+        format_row_dates(row, _RTP_DATE_FIELDS, _RTP_DATETIME_FIELDS)
+        # ACCOUNT_DATE 从关联表来，是 C# 格式化的日期
+        if isinstance(row.get("ACCOUNT_DATE"), int):
+            row["ACCOUNT_DATE"] = format_int_date(row["ACCOUNT_DATE"])
     return _apply_kw_sort_page(rows, search_model)
 
 
 def get_rtpaymentrecord_detail(db: DatabaseHelper, rtp_id: int):
     """获取商家回款记录表明细"""
     rows = db.execute_query(f"SELECT * FROM T_RTPAYMENTRECORD WHERE RTPAYMENTRECORD_ID = {rtp_id}")
-    return rows[0] if rows else None
+    if not rows:
+        return None
+    row = rows[0]
+    format_row_dates(row, _RTP_DATE_FIELDS, _RTP_DATETIME_FIELDS)
+    return row
 
 
 def synchro_rtpaymentrecord(db: DatabaseHelper, data: dict):
@@ -409,13 +426,21 @@ def get_remarks_list(db: DatabaseHelper, search_model: SearchModel):
     rows = db.execute_query(f"SELECT * FROM T_REMARKS {where_sql}")
     if not rows:
         return 0, []
+    # 格式化日期字段: OPERATE_DATE (int 20230526155250 → '2023/05/26 15:52:50')
+    for row in rows:
+        format_row_dates(row, set(), _REMARKS_DATETIME_FIELDS)
     return _apply_kw_sort_page(rows, search_model)
 
 
 def get_remarks_detail(db: DatabaseHelper, remarks_id: int):
     """获取备注说明表明细"""
     rows = db.execute_query(f"SELECT * FROM T_REMARKS WHERE REMARKS_ID = {remarks_id}")
-    return rows[0] if rows else None
+    if not rows:
+        return None
+    row = rows[0]
+    # 格式化日期字段: OPERATE_DATE (int 20230526155250 → '2023/05/26 15:52:50')
+    format_row_dates(row, set(), _REMARKS_DATETIME_FIELDS)
+    return row
 
 
 def synchro_remarks(db: DatabaseHelper, data: dict):

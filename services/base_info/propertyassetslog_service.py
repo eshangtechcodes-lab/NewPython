@@ -113,6 +113,13 @@ def get_propertyassetslog_list(db: DatabaseHelper, search_model: SearchModel) ->
         for row in rows:
             row.pop("RN", None)
 
+    # C# Model 字符串属性默认值为 ""，数据库 null 需转为 ""
+    str_default_fields = ["OPERATE_NAME"]
+    for row in rows:
+        for f in str_default_fields:
+            if f in row and row[f] is None:
+                row[f] = ""
+
     return int(total_count), rows
 
 

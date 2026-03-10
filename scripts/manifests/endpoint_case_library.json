@@ -1,0 +1,4264 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "ignore_paths": [],
+  "notes": [
+    "这是动态对比测试的唯一入参源。需要调整接口入参时，优先修改本文件。",
+    "修改完成后，先执行 `python scripts/generate_compare_manifests.py` 重生成 manifests，再执行 compare_api。",
+    "每个接口建议至少保留 3 组 cases：空参、常规参数、边界参数。当前没有真实样本的接口会自动保留默认空参。",
+    "GET 接口用 `query`，POST 接口用 `json`，如果某个接口需要特殊 Header，可在 endpoint 或 case 内补 `headers`。"
+  ],
+  "endpoints": {
+    "Analysis/GetANALYSISINSDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ANALYSISINSId": 1805
+          }
+        }
+      ]
+    },
+    "Analysis/GetANALYSISINSList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ANALYSISINS_ID": "1805"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetANALYSISRULEDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ANALYSISRULEId": 19
+          }
+        }
+      ]
+    },
+    "Analysis/GetANALYSISRULEList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ANALYSISRULE_ID": 19
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSBusinessTreeList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSDateDetailList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "propertyAssetsId": 1,
+            "startDate": "202501",
+            "endDate": "202512",
+            "shopId": 9475
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ASSETSPROFITSId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSTreeList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetAssetsLossProfitList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "propertyAssetsId": 1,
+            "startDate": "202501",
+            "endDate": "202512"
+          }
+        }
+      ]
+    },
+    "Analysis/GetINVESTMENTANALYSISDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "INVESTMENTANALYSISId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetINVESTMENTANALYSISList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetINVESTMENTDETAILDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "INVESTMENTDETAILId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetINVESTMENTDETAILList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetInvestmentReport": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ContainHoliday": 0,
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Analysis/GetNestingIAReport": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ContainHoliday": 0,
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Analysis/GetPERIODMONTHPROFITDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PERIODMONTHPROFITId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetPERIODMONTHPROFITList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PERIODMONTHPROFIT_ID": 651
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetPREFERRED_RATINGDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Analysis/GetPREFERRED_RATINGList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Analysis/GetPROFITCONTRIBUTEDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROFITCONTRIBUTEId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetPROFITCONTRIBUTEList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetPROMPTDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROMPTId": 5
+          }
+        }
+      ]
+    },
+    "Analysis/GetPROMPTList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetPeriodMonthlyList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsMonth": "202512",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Analysis/GetRevenueEstimateList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsMonth": "202512",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Analysis/GetSENTENCEDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SENTENCEId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetSENTENCEList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SENTENCE_ID": 1
+            },
+            "PageIndex": 1,
+            "PageSize": 99
+          }
+        }
+      ]
+    },
+    "Analysis/GetShopSABFIList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416,
+            "StatisticsMonth": "202511"
+          }
+        }
+      ]
+    },
+    "Analysis/GetVEHICLEAMOUNTDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "VEHICLEAMOUNTId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetVEHICLEAMOUNTList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetABNORMALAUDITList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetAUDITTASKSDetail": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AUDITTASKSId": 3675
+          }
+        }
+      ]
+    },
+    "Audit/GetAUDITTASKSList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "AUDITTASKS_ID": 3675
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetAbnormalAuditDetail": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AbnormalAuditId": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetAbnormalRateReport": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-02"
+          }
+        }
+      ]
+    },
+    "Audit/GetAuditDetils": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Audit/GetAuditList": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Audit/GetAuditTasksDetailList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Audit/GetAuditTasksReport": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Audit/GetCHECKACCOUNTDetail": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CHECKACCOUNTId": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetCHECKACCOUNTList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetCheckAccountReport": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02",
+            "checkType": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetSpecialBehaviorReport": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02"
+          }
+        }
+      ]
+    },
+    "Audit/GetYSABNORMALITYDETAILList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "AbnormalityCode": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetYSABNORMALITYDetail": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AbnormalityCode": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetYSABNORMALITYList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetYsabnormalityReport": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02"
+          }
+        }
+      ]
+    },
+    "BaseInfo/BindingMerchantTree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": 340000
+          }
+        }
+      ]
+    },
+    "BaseInfo/BindingOwnerUnitDDL": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": 340000,
+            "DataType": 0
+          }
+        }
+      ]
+    },
+    "BaseInfo/BindingOwnerUnitTree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": 0
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetAUTOSTATISTICSDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AUTOSTATISTICSId": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetAssetsRevenueAmount": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "searchMonth": "202512",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetAutoStatisticsTreeList": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": 340000,
+            "OwnerUnit_Id": 211,
+            "AutoStatistics_Type": 0
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetBrandDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BrandId": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetBrandList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BRAND_ID": 1314
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetBusinessBrandList": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartShopIds": 3080
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetBusinessTradeDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessTradeId": 214
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetBusinessTradeEnum": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessTrade_PID": 214,
+            "ProvinceCode": 340000,
+            "BusinessTradeState": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetBusinessTradeList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PROVINCE_CODE": 340000
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetBusinessTradeTree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessTrade_PID": -1,
+            "ProvinceCode": 340000,
+            "BusinessTradeState": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetCASHWORKERDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CASHWORKERId": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetCASHWORKERList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "CASHWORKER_ID": "1477"
+            },
+            "PageIndex": 1,
+            "PageSize": 99
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetCOMMODITYDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYId": 864
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetCOMMODITYList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_ID": 864
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetCOMMODITYTYPEDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYTYPEId": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetCOMMODITYTYPEList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITYTYPE_ID": 418
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetCombineBrandList": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROVINCE_CODE": 340000,
+            "BRAND_TYPE": 2000
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetNestingCOMMODITYTYPEList": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYTYPE_PID": -1,
+            "PROVINCE_CODE": 340000,
+            "COMMODITYTYPE_VALID": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetNestingCOMMODITYTYPETree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYTYPE_PID": -1,
+            "PROVINCE_CODE": 340000,
+            "COMMODITYTYPE_VALID": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetNestingOwnerUnitList": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ShowStatus": true,
+            "ProvinceCode": 340000,
+            "OwnerUnitNature": 1000
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetOWNERUNITDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "OWNERUNITId": 211
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetOWNERUNITList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PROVINCE_CODE": 340000
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetPROPERTYASSETSDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROPERTYASSETSId": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetPROPERTYASSETSLOGList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PROPERTYASSETSLOG_ID": 6
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetPROPERTYASSETSList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetPROPERTYASSETSTreeList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetPROPERTYSHOPDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROPERTYSHOPId": 42
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetPROPERTYSHOPList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetRTSERVERPARTSHOPDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RTSERVERPARTSHOPId": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetRTSERVERPARTSHOPList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "RTSERVERPARTSHOP_ID": 101
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetSERVERPARTCRTDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SERVERPARTTId": 416
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetSERVERPARTCRTList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetSERVERPARTCRTTreeList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetSERVERPARTDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SERVERPARTId": 416
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetSERVERPARTList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "search-model",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": 416
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetSERVERPARTSHOP_LOGList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": 416
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetSPRegionShopTree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerPartShopNewDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartShopId": 3080
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerPartShopNewList": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "provinceCode": "340000",
+            "serverPartId": 416
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerpartDDL": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "service-area-416",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartType": "1000",
+            "StatisticsType": "1000"
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerpartShopDDL": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerpartShopDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartShopId": 3080
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerpartShopInfo": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartCode": "1",
+            "ShopCode": "1"
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerpartShopList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": 416
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerpartShopTree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerpartTree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartType": "1000",
+            "StatisticsType": "1000"
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetServerpartUDTypeTree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetShopReceivables": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetShopShortNames": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416,
+            "ShopValid": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetTradeBrandTree": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessTrade_PID": -1,
+            "ProvinceCode": "340000",
+            "BrandState": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetUSERDEFINEDTYPEDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "USERDEFINEDTYPEId": 1
+          }
+        }
+      ]
+    },
+    "BaseInfo/GetUSERDEFINEDTYPEList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "USERDEFINEDTYPE_ID": 40
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BigData/GetBAYONETDAILY_AHDetail": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "BigData/GetBAYONETDAILY_AHList": {
+      "module": "BigData",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BAYONETDAILY_ID": 385364
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BigData/GetBAYONETDetail": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BAYONETId": 1
+          }
+        }
+      ]
+    },
+    "BigData/GetBAYONETList": {
+      "module": "BigData",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BigData/GetBAYONETWARNINGList": {
+      "module": "BigData",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BAYONETWARNING_ID": 1337641
+            },
+            "PageIndex": 1,
+            "PageSize": 99
+          }
+        }
+      ]
+    },
+    "BigData/GetBayonetOwnerAHList": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "vehicleType": "大型车",
+            "statisticsStartTime": "20241201",
+            "statisticsEndTime": "20241231"
+          }
+        }
+      ]
+    },
+    "BigData/GetBayonetOwnerMonthAHList": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "vehicleType": "大型车",
+            "searchKey": "SERVERPART_NAME",
+            "searchValue": "1",
+            "sortKey": "SERVERPART_NAME",
+            "sortStr": "asc",
+            "statisticsStartMonth": "202412",
+            "statisticsEndMonth": "202412"
+          }
+        }
+      ]
+    },
+    "BigData/GetDailyBayonetAnalysis": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SERVERPART_ID": 416
+          }
+        }
+      ]
+    },
+    "BigData/GetSECTIONFLOWDetail": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SECTIONFLOWId": 2
+          }
+        }
+      ]
+    },
+    "BigData/GetSECTIONFLOWList": {
+      "module": "BigData",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BigData/GetSECTIONFLOWMONTHDetail": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SECTIONFLOWMONTHId": 1
+          }
+        }
+      ]
+    },
+    "BigData/GetSECTIONFLOWMONTHList": {
+      "module": "BigData",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BigData/GetServerpartSectionFlow": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SERVERPART_ID": 416
+          }
+        }
+      ]
+    },
+    "BigData/GetTimeIntervalList": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "statisticsType": 1,
+            "serverPartId": 416,
+            "statisticsMonth": "202512",
+            "vehicleType": "小型车",
+            "DataType": 0
+          }
+        }
+      ]
+    },
+    "BigData/GetUreaMasterList": {
+      "module": "BigData",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "OperateDate": "2025-12-31",
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    "Budget/GetBudgetDetailDetail": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUDGETDETAIL_AHId": 132
+          }
+        }
+      ]
+    },
+    "Budget/GetBudgetDetailList": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BUDGETDETAIL_AH_ID": 10518
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Budget/GetBudgetProjectList": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Budget/GetBudgetProjectReportOfMonth": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectDetail": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUDGETPROJECT_AHId": 128
+          }
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReport": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportDynamic": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportIn": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportInDynamic": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportOut": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportOutDynamic": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "BusinessMan/GetCOMMODITY_TEMPDetail": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITY_TEMPId": 43
+          }
+        }
+      ]
+    },
+    "BusinessMan/GetCOMMODITY_TEMPList": {
+      "module": "BusinessMan",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_TEMP_ID": 10459
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessMan/GetUserList": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetAPPROVEDList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "APPROVED_ID": 5419
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetAccountWarningList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetAccountWarningListSummary": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "BusinessProject/GetAnnualSplit": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": 1,
+            "BusinessProjectId": 1905
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBIZPSPLITMONTHDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BIZPSPLITMONTHId": 1
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBIZPSPLITMONTHList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BIZPSPLITMONTH_ID": 3106
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBUSINESSPROJECTSPLITDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUSINESSPROJECTSPLITId": 87658
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBUSINESSPROJECTSPLITList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BUSINESSPROJECTSPLIT_ID": 138058
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBrandReceivables": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBusinessPaymentDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessPaymentId": 2
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBusinessPaymentList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_ID": 416
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBusinessProjectDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessProjectId": 1905
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetBusinessProjectList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetCONTRACT_SYNDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "BusinessProject/GetCONTRACT_SYNList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "BusinessProject/GetExpenseSummary": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverpart_ids": "416"
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetMerchantSplit": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "MerchantId": -1104,
+            "ServerpartId": 419
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetMerchantsReceivables": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "BusinessProject/GetMerchantsReceivablesList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "BusinessProject/GetMerchantsReceivablesReport": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "BusinessProject/GetMonthSummaryList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "BusinessProject/GetNoProjectShopList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": 340000,
+            "ServerpartID": 416
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPERIODWARNINGDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PERIODWARNINGId": 884
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPERIODWARNINGList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPROJECTSPLITMONTHDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROJECTSPLITMONTHId": 109
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPROJECTSPLITMONTHList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPROJECTWARNINGDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROJECTWARNINGId": 293
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPROJECTWARNINGList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPaymentConfirmDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PaymentConfirmId": 5240
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPaymentConfirmList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "query": {
+            "SearchParameter": {
+              "PAYMENTCONFIRM_ID": 5240
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetPeriodWarningList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetProjectAccountDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessApprovalId": 18751
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetProjectAccountList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetProjectAccountTree": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetRTPaymentRecordDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RTPaymentRecordId": 675
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetRTPaymentRecordList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "RTPAYMENTRECORD_ID": 675
+            },
+            "PageIndex": 0,
+            "PageSize": 0
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetRemarksDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RemarksId": 113
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetRemarksList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "REMARKS_ID": 113
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetRevenueConfirmDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RevenueConfirmId": 13849
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetRevenueConfirmList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetSHOPEXPENSEDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SHOPEXPENSEId": 21018
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetSHOPEXPENSEList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetSHOPROYALTYDETAILDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SHOPROYALTYDETAILId": 92
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetSHOPROYALTYDETAILList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SHOPROYALTYDETAIL_ID": 92
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetShopExpenseSummary": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverpartshop_id": 3080,
+            "statistics_month_start": "2025-12-31",
+            "statistics_month_end": "2025-12-31"
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetShopRoyaltyDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ShopRoyaltyId": 1
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetShopRoyaltyList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SHOPROYALTY_ID": 1
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessProject/GetWillSettleProject": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-01-01",
+            "EndDate": "2025-12-31",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Commodity/GetCOMMODITYDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYId": 13232
+          }
+        }
+      ]
+    },
+    "Commodity/GetCOMMODITYList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Commodity/GetCommodityList": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SearchType": 1,
+            "ProvinceCode": "340000",
+            "ServerpartID": 416
+          }
+        }
+      ]
+    },
+    "Contract/GetAttachmentDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AttachmentId": 1903
+          }
+        }
+      ]
+    },
+    "Contract/GetAttachmentList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ATTACHMENT_ID": 1903
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Contract/GetContractExpiredInfo": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Contract/GetProjectMonthlyArrearageList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsYear": 2025,
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    "Contract/GetProjectSummaryInfo": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416,
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    "Contract/GetProjectYearlyArrearageList": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416,
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    "Contract/GetRTRegisterCompactDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RTRegisterCompactId": 12426,
+            "RegisterCompactId": 466
+          }
+        }
+      ]
+    },
+    "Contract/GetRTRegisterCompactList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Contract/GetRegisterCompactDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RegisterCompactId": 21
+          }
+        }
+      ]
+    },
+    "Contract/GetRegisterCompactList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Contract/GetRegisterCompactSubDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RegisterCompactSubId": 737,
+            "RegisterCompactId": 731
+          }
+        }
+      ]
+    },
+    "Contract/GetRegisterCompactSubList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "REGISTERCOMPACTSUB_ID": 737
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "ContractSyn/GetContractSynDetail": {
+      "module": "Contract",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "ContractSyn/GetContractSynList": {
+      "module": "Contract",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Customer/GetCUSTOMERGROUP_AMOUNTDetail": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CUSTOMERGROUP_AMOUNTId": 296
+          }
+        }
+      ]
+    },
+    "Customer/GetCUSTOMERGROUP_AMOUNTList": {
+      "module": "BigData",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Finance/GetAHJKtoken": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Finance/GetATTACHMENTDetail": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Finance/GetATTACHMENTList": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Finance/GetAccountCompare": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-31",
+            "ServerpartId": 416,
+            "CompareStartDate": "2024-12-01",
+            "CompareEndDate": "2024-12-31"
+          }
+        }
+      ]
+    },
+    "Finance/GetAccountReached": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetAnnualAccountList": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsYear": 2025,
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Finance/GetBankAccountAnalyseList": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "searchMonth": "202512",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetBankAccountAnalyseTreeList": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "searchMonth": "202512",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetContractExcuteAnalysis": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "StatisticsMonth": "202512"
+          }
+        }
+      ]
+    },
+    "Finance/GetContractMerchant": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetMonthAccountDiff": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": "416",
+            "StatisticsMonth": "202512"
+          }
+        }
+      ]
+    },
+    "Finance/GetMonthAccountProinst": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "Serverpart_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Finance/GetPeriodSupplementList": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Finance/GetProjectExpenseList": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Finance/GetProjectMerchantSummary": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartId": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetProjectPeriodAccount": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUSINESSPROJECT_ID": "1905"
+          }
+        }
+      ]
+    },
+    "Finance/GetProjectPeriodIncome": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessProjectId": "1905",
+            "StatisticsMonth": "202512"
+          }
+        }
+      ]
+    },
+    "Finance/GetProjectShopIncome": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsDate": "2025-12-31",
+            "ContrastDate": "2025-12-30",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetProjectSplitSummary": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartId": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetProjectSummary": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartId": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetReconciliation": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUSINESSPROJECT_ID": "1905"
+          }
+        }
+      ]
+    },
+    "Finance/GetRevenueRecognition": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "202512",
+            "endDate": "202512"
+          }
+        }
+      ]
+    },
+    "Finance/GetRevenueSplitSummary": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Finance/GetRoyaltyDateSumReport": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetRoyaltyReport": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Finance/GetShopExpense": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "202512",
+            "endDate": "202512"
+          }
+        }
+      ]
+    },
+    "Invoice/GetBILLDETAILDetail": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BILLDETAILId": "12"
+          }
+        }
+      ]
+    },
+    "Invoice/GetBILLDETAILList": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BILLDETAIL_ID": 12
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Invoice/GetBILLDetail": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BILLId": "9"
+          }
+        }
+      ]
+    },
+    "Invoice/GetBILLList": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BILL_ID": 9
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Merchants/GetBusinessManDetail": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 123
+          }
+        }
+      ]
+    },
+    "Merchants/GetBusinessManDetailDetail": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManDetailId": 19
+          }
+        }
+      ]
+    },
+    "Merchants/GetBusinessManDetailList": {
+      "module": "BusinessMan",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Merchants/GetBusinessManList": {
+      "module": "BusinessMan",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "OWNERUNIT_ID": 49
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Merchants/GetCUSTOMTYPEDetail": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CUSTOMTYPEId": 49
+          }
+        }
+      ]
+    },
+    "Merchants/GetCUSTOMTYPEList": {
+      "module": "BusinessMan",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "CUSTOMTYPE_ID": 49
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Merchants/GetCommodityDetail": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "Commodity_BusinessId": 12
+          }
+        }
+      ]
+    },
+    "Merchants/GetCommodityList": {
+      "module": "BusinessMan",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_TYPE": "33"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Merchants/GetCoopMerchantsDetail": {
+      "module": "Merchants",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CoopMerchantsId": 1
+          }
+        }
+      ]
+    },
+    "Merchants/GetCoopMerchantsLinkerDetail": {
+      "module": "Merchants",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CoopMerchantsLinkerId": 383
+          }
+        }
+      ]
+    },
+    "Merchants/GetCoopMerchantsLinkerList": {
+      "module": "Merchants",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COOPMERCHANTS_LINKER_ID": 383
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Merchants/GetCoopMerchantsList": {
+      "module": "Merchants",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COOPMERCHANTS_ID": -2867
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Merchants/GetCoopMerchantsTypeList": {
+      "module": "Merchants",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Merchants/GetCustomTypeDDL": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 374
+          }
+        }
+      ]
+    },
+    "Merchants/GetNestingCustomTypeLsit": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessManId": 374
+          }
+        }
+      ]
+    },
+    "Merchants/GetRTCoopMerchantsList": {
+      "module": "Merchants",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Merchants/GetTradeBrandMerchantsList": {
+      "module": "Merchants",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "MobilePay/GetBANKACCOUNTVERIFYList": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetBANKACCOUNTVERIFYRegionList": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetBANKACCOUNTVERIFYServerList": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetBANKACCOUNTVERIFYTreeList": {
+      "module": "MobilePay",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": 1,
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartIds": 416
+          }
+        }
+      ]
+    },
+    "MobilePay/GetChinaUmsSubAccountDetail": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetChinaUmsSubAccountSummary": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetChinaUmsSubMaster": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetChinaUmsSubSummary": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetKwyRoyalty": {
+      "module": "MobilePay",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "MobilePay/GetKwyRoyaltyForAll": {
+      "module": "MobilePay",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "MobilePay/GetKwyRoyaltyRate": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetMobilePayResult": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "MobilePay/GetMobilePayRoyaltyReport": {
+      "module": "MobilePay",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": 1,
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartIds": 416
+          }
+        }
+      ]
+    },
+    "MobilePay/GetRoyaltyRecordList": {
+      "module": "MobilePay",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Picture/GetPictureList": {
+      "module": "Picture",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Revenue/GetACCOUNTWARNINGDetail": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ACCOUNTWARNINGId": 8941
+          }
+        }
+      ]
+    },
+    "Revenue/GetACCOUNTWARNINGList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ACCOUNTWARNING_ID": 8941
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Revenue/GetBRANDANALYSISDetail": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BRANDANALYSISId": 4478
+          }
+        }
+      ]
+    },
+    "Revenue/GetBRANDANALYSISList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BRANDANALYSIS_ID": 4478
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Revenue/GetBUSINESSANALYSISDetail": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Revenue/GetBUSINESSANALYSISList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Revenue/GetBUSINESSWARNINGDetail": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUSINESSWARNINGId": 21487
+          }
+        }
+      ]
+    },
+    "Revenue/GetBUSINESSWARNINGList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Revenue/GetBankAccountList": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Revenue/GetBankAccountReport": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-31",
+            "EndDate": "2025-12-31",
+            "ServerpartShopIds": "419"
+          }
+        }
+      ]
+    },
+    "Revenue/GetBrandAnalysis": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416,
+            "ServerpartShopId": 3080
+          }
+        }
+      ]
+    },
+    "Revenue/GetBusinessAnalysisReport": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Revenue/GetBusinessDate": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Revenue/GetBusinessItemSummary": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": "2",
+            "ProvinceCode": "340000",
+            "ServerpartId": "416",
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetBusinessTradeAnalysis": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": "416",
+            "ServerpartShopId": 3080
+          }
+        }
+      ]
+    },
+    "Revenue/GetCigaretteReport": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataSourceType": "1",
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    },
+    "Revenue/GetCurTotalRevenue": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": "416",
+            "ServerpartShopId": 3080
+          }
+        }
+      ]
+    },
+    "Revenue/GetHisCommoditySaleList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ProvinceCode": "340000",
+            "startMonth": "202512",
+            "endMonth": "202512",
+            "ServerpartShopIds": "3080"
+          }
+        }
+      ]
+    },
+    "Revenue/GetMerchantRevenueReport": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": "1",
+            "ServerpartIds": "416",
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetMonthCompare": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "serverpartId": "416",
+            "startMonth": "2025-01-01",
+            "endMonth": "2025-01-01",
+            "compareMonth": "2024-12"
+          }
+        }
+      ]
+    },
+    "Revenue/GetMonthINCAnalysis": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsStartMonth": "202512",
+            "StatisticsEndMonth": "202512",
+            "ServerpartId": "416",
+            "ServerpartShopIds": "3080"
+          }
+        }
+      ]
+    },
+    "Revenue/GetPERSONSELLDetail": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Revenue/GetPERSONSELLList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Revenue/GetREVENUEDAILYSPLITDetail": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "REVENUEDAILYSPLITId": 74914
+          }
+        }
+      ]
+    },
+    "Revenue/GetREVENUEDAILYSPLITList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "REVENUEDAILYSPLIT_ID": 74914
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Revenue/GetRevenueDataList": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": 416
+          }
+        }
+      ]
+    },
+    "Revenue/GetRevenuePushList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "pushProvinceCode": 340000,
+            "Statistics_Date": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetRevenueQOQ": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": "416",
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-01",
+            "MOMstartDate": "2024-12-01",
+            "MOMendDate": "2024-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetRevenueQOQByDate": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": "416",
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-01",
+            "MOMstartDate": "2024-01-01",
+            "MOMendDate": "2024-01-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetRevenueReport": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": 1,
+            "ServerpartIds": 416
+          }
+        }
+      ]
+    },
+    "Revenue/GetRevenueReportByBIZPSPLITMONTH": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Revenue/GetRevenueReportByDate": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01",
+            "DataSourceType": "1"
+          }
+        }
+      ]
+    },
+    "Revenue/GetRevenueYOYQOQ": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": 416,
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetRevenueYOYQOQByDate": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": 416,
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetSITUATIONANALYSISDetail": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SITUATIONANALYSISId": 2446
+          }
+        }
+      ]
+    },
+    "Revenue/GetSITUATIONANALYSISList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Revenue/GetSellMasterCompareList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Revenue/GetSituationAnalysis": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Revenue/GetTotalRevenue": {
+      "module": "Revenue",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "ServerpartShopIds": "3080",
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetTransactionCustomer": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": 416,
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetTransactionCustomerByDate": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": 416,
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Revenue/GetYSSellDetailsList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Revenue/GetYSSellMasterList": {
+      "module": "Revenue",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Sales/GetCOMMODITYSALEDetail": {
+      "module": "Sales",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Sales/GetCOMMODITYSALEList": {
+      "module": "Sales",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Sales/GetCommoditySaleSummary": {
+      "module": "Sales",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Sales/GetCommodityTypeHistory": {
+      "module": "Sales",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Sales/GetCommodityTypeSummary": {
+      "module": "Sales",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Sales/GetEndaccountError": {
+      "module": "Sales",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Sales/GetEndaccountSaleInfo": {
+      "module": "Sales",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Supplier/GetQUALIFICATION_HISDetail": {
+      "module": "Supplier",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Supplier/GetQUALIFICATION_HISList": {
+      "module": "Supplier",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Supplier/GetQualificationDetail": {
+      "module": "Supplier",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Supplier/GetQualificationList": {
+      "module": "Supplier",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Supplier/GetSupplierDetail": {
+      "module": "Supplier",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Supplier/GetSupplierList": {
+      "module": "Supplier",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Supplier/GetSupplierTreeList": {
+      "module": "Supplier",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Verification/GetCommoditySaleList": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetDataVerificationList": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetENDACCOUNTModel": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetEndAccountData": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetEndaccountDetail": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetEndaccountHisList": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetEndaccountList": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetEndaccountSupplement": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetMobilePayDataList": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Verification/GetShopEndaccountSum": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RoleType": "1",
+            "ServerpartId": "416",
+            "ServerpartShopCode": "049001",
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Verification/GetSuppEndaccountList": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    }
+  }
+}

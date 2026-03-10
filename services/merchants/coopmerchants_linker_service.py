@@ -6,6 +6,7 @@ from __future__ import annotations
 对应 MerchantsController 中 COOPMERCHANTS_LINKER 相关 4 个接口
 """
 from typing import Optional
+from datetime import datetime as _dt
 from loguru import logger
 from core.database import DatabaseHelper
 from models.common_model import SearchModel
@@ -19,6 +20,22 @@ PRIMARY_KEY = "COOPMERCHANTS_LINKER_ID"
 DATE_FIELDS = {"OPERATE_DATE"}
 # 非数据库字段（在搜索/同步中跳过）
 EXCLUDE_FIELDS = {"current", "pageSize", "total"}
+
+# C# Model 中 System.String 类型的字段（.ToString() → DBNull变''}）
+_STR_FIELDS = {
+    "BANK_NAME", "BANK_ACCOUNT", "COOPMERCHANTS_DRAWER",
+    "LINKER_NAME", "LINKER_TELEPHONE", "LINKER_MOBILEPHONE",
+    "LINKER_ADDRESS", "STAFF_NAME", "COOPMERCHANTS_LINKER_DESC",
+}
+
+
+def _bind_linker_row(row: dict) -> dict:
+    """对照 C# Helper 的 field-by-field 绑定"""
+    for f in _STR_FIELDS:
+        if f in row and row[f] is None:
+            row[f] = ""
+    # 日期格式由 database.py 统一处理为 ISO 格式（与 C# 一致）
+    return row
 
 
 def _build_where_sql(search_param: dict, query_type: int = 0) -> str:
@@ -88,6 +105,9 @@ def get_coopmerchants_linker_list(db: DatabaseHelper, search_model: SearchModel)
     elif len(rows) > 10:
         rows = rows[:10]
 
+    for row in rows:
+        _bind_linker_row(row)
+
     return int(total_count), rows
 
 
@@ -99,10 +119,13 @@ def get_coopmerchants_linker_detail(db: DatabaseHelper, linker_id: int) -> Optio
     对应原 COOPMERCHANTS_LINKERHelper.GetCOOPMERCHANTS_LINKERDetail
     """
     sql = f"SELECT * FROM {TABLE_NAME} WHERE {PRIMARY_KEY} = {linker_id}"
-    rows = db.execute_query(sql)
+    # C# Detail 直接赋 entity 属性，null string 保持 null
+    rows = db.execute_query(sql, null_to_empty=False)
     if not rows:
         return None
-    return rows[0]
+    detail = rows[0]
+    # 日期格式由 database.py 统一处理为 ISO 格式（与 C# 一致）
+    return detail
 
 
 # ========== 3. SynchroCoopMerchantsLinker ==========

@@ -271,7 +271,7 @@ def get_project_account_list(db: DatabaseHelper, serverpart_id: str = "",
 def get_project_account_tree(db: DatabaseHelper, serverpart_id: str = "",
                                settlement_mode: str = "") -> list[dict]:
     """获取组织架构树+经营项目(Nesting)"""
-    conditions = ["A.ISVALID = 1"]
+    conditions = ["1=1"]  # T_SERVERPART 没有 ISVALID 列，去掉此条件
     if serverpart_id:
         conditions.append(f"A.SERVERPART_ID IN ({serverpart_id})")
 
@@ -357,21 +357,22 @@ def get_period_warning_list(db: DatabaseHelper, serverpart_id: str = "",
                               search_key_name: str = "", search_key_value: str = "",
                               page_index: int = 1, page_size: int = 10) -> tuple[list[dict], int, dict]:
     """获取经营项目周期预警列表（+OtherData汇总）"""
-    conditions = ["PERIODWARNING_STATE = 1"]
+    conditions = ["1=1"]  # T_PERIODWARNING 表无 STATE 相关列，不做状态过滤
     if serverpart_id:
         conditions.append(f"SERVERPART_ID IN ({serverpart_id})")
     if business_type:
         conditions.append(f"BUSINESS_TYPE IN ({business_type})")
     if start_date:
-        conditions.append(f"STATISTICS_MONTH >= '{start_date}'")
+        # T_PERIODWARNING 表使用 ENDDATE 列（非 STATISTICS_MONTH）
+        conditions.append(f"ENDDATE >= '{start_date}'")
     if end_date:
-        conditions.append(f"STATISTICS_MONTH <= '{end_date}'")
+        conditions.append(f"ENDDATE <= '{end_date}'")
     if search_key_value:
         conditions.append(f"SERVERPART_NAME LIKE '%{search_key_value}%'")
 
     where_sql = " AND ".join(conditions)
     sql = f"""SELECT * FROM T_PERIODWARNING WHERE {where_sql}
-        ORDER BY STATISTICS_MONTH DESC, SERVERPART_NAME"""
+        ORDER BY ENDDATE DESC, SERVERPART_NAME"""
     rows = db.execute_query(sql)
     total = len(rows)
     start = (page_index - 1) * page_size

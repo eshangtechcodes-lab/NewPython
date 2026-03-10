@@ -1,0 +1,1447 @@
+{
+  "name": "Contract dynamic compare manifest",
+  "note": "Contract 动态执行 manifest；仅保留 matched + 读接口。",
+  "case_library_path": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "diff_limit": 25,
+  "ignore_paths": [],
+  "module_scope": [
+    "Contract"
+  ],
+  "endpoints": [
+    {
+      "name": "BusinessProject/GetAPPROVEDList",
+      "endpoint": "BusinessProject/GetAPPROVEDList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch4_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "APPROVED_ID": 5419
+            },
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetAccountWarningList",
+      "endpoint": "BusinessProject/GetAccountWarningList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetAccountWarningListSummary",
+      "endpoint": "BusinessProject/GetAccountWarningListSummary",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5a_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetAnnualSplit",
+      "endpoint": "BusinessProject/GetAnnualSplit",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "DataType": 1,
+            "BusinessProjectId": 1905
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBIZPSPLITMONTHDetail",
+      "endpoint": "BusinessProject/GetBIZPSPLITMONTHDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BIZPSPLITMONTHId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBIZPSPLITMONTHList",
+      "endpoint": "BusinessProject/GetBIZPSPLITMONTHList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BIZPSPLITMONTH_ID": 3106
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBUSINESSPROJECTSPLITDetail",
+      "endpoint": "BusinessProject/GetBUSINESSPROJECTSPLITDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUSINESSPROJECTSPLITId": 87658
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBUSINESSPROJECTSPLITList",
+      "endpoint": "BusinessProject/GetBUSINESSPROJECTSPLITList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BUSINESSPROJECTSPLIT_ID": 138058
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBrandReceivables",
+      "endpoint": "BusinessProject/GetBrandReceivables",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBusinessPaymentDetail",
+      "endpoint": "BusinessProject/GetBusinessPaymentDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessPaymentId": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBusinessPaymentList",
+      "endpoint": "BusinessProject/GetBusinessPaymentList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_ID": 416
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBusinessProjectDetail",
+      "endpoint": "BusinessProject/GetBusinessProjectDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\business_project_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessProjectId": 1905
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetBusinessProjectList",
+      "endpoint": "BusinessProject/GetBusinessProjectList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\business_project_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetCONTRACT_SYNDetail",
+      "endpoint": "BusinessProject/GetCONTRACT_SYNDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\CONTRACT_SYNController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contractsyn_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetCONTRACT_SYNList",
+      "endpoint": "BusinessProject/GetCONTRACT_SYNList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\CONTRACT_SYNController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contractsyn_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetExpenseSummary",
+      "endpoint": "BusinessProject/GetExpenseSummary",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverpart_ids": "416"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetMerchantSplit",
+      "endpoint": "BusinessProject/GetMerchantSplit",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5a_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "MerchantId": -1104,
+            "ServerpartId": 419
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetMerchantsReceivables",
+      "endpoint": "BusinessProject/GetMerchantsReceivables",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetMerchantsReceivablesList",
+      "endpoint": "BusinessProject/GetMerchantsReceivablesList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetMerchantsReceivablesReport",
+      "endpoint": "BusinessProject/GetMerchantsReceivablesReport",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetMonthSummaryList",
+      "endpoint": "BusinessProject/GetMonthSummaryList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetNoProjectShopList",
+      "endpoint": "BusinessProject/GetNoProjectShopList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5a_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": 340000,
+            "ServerpartID": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPERIODWARNINGDetail",
+      "endpoint": "BusinessProject/GetPERIODWARNINGDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PERIODWARNINGId": 884
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPERIODWARNINGList",
+      "endpoint": "BusinessProject/GetPERIODWARNINGList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPROJECTSPLITMONTHDetail",
+      "endpoint": "BusinessProject/GetPROJECTSPLITMONTHDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch4_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROJECTSPLITMONTHId": 109
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPROJECTSPLITMONTHList",
+      "endpoint": "BusinessProject/GetPROJECTSPLITMONTHList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch4_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPROJECTWARNINGDetail",
+      "endpoint": "BusinessProject/GetPROJECTWARNINGDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROJECTWARNINGId": 293
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPROJECTWARNINGList",
+      "endpoint": "BusinessProject/GetPROJECTWARNINGList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch3_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPaymentConfirmDetail",
+      "endpoint": "BusinessProject/GetPaymentConfirmDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\revenue_payment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PaymentConfirmId": 5240
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPaymentConfirmList",
+      "endpoint": "BusinessProject/GetPaymentConfirmList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\revenue_payment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "query": {
+            "SearchParameter": {
+              "PAYMENTCONFIRM_ID": 5240
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetPeriodWarningList",
+      "endpoint": "BusinessProject/GetPeriodWarningList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetProjectAccountDetail",
+      "endpoint": "BusinessProject/GetProjectAccountDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BusinessApprovalId": 18751
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetProjectAccountList",
+      "endpoint": "BusinessProject/GetProjectAccountList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetProjectAccountTree",
+      "endpoint": "BusinessProject/GetProjectAccountTree",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetRTPaymentRecordDetail",
+      "endpoint": "BusinessProject/GetRTPaymentRecordDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\revenue_payment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RTPaymentRecordId": 675
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetRTPaymentRecordList",
+      "endpoint": "BusinessProject/GetRTPaymentRecordList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\revenue_payment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "RTPAYMENTRECORD_ID": 675
+            },
+            "PageIndex": 0,
+            "PageSize": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetRemarksDetail",
+      "endpoint": "BusinessProject/GetRemarksDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\revenue_payment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RemarksId": 113
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetRemarksList",
+      "endpoint": "BusinessProject/GetRemarksList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\revenue_payment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "REMARKS_ID": 113
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetRevenueConfirmDetail",
+      "endpoint": "BusinessProject/GetRevenueConfirmDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\revenue_payment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RevenueConfirmId": 13849
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetRevenueConfirmList",
+      "endpoint": "BusinessProject/GetRevenueConfirmList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\revenue_payment_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetSHOPEXPENSEDetail",
+      "endpoint": "BusinessProject/GetSHOPEXPENSEDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch4_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SHOPEXPENSEId": 21018
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetSHOPEXPENSEList",
+      "endpoint": "BusinessProject/GetSHOPEXPENSEList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch4_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetSHOPROYALTYDETAILDetail",
+      "endpoint": "BusinessProject/GetSHOPROYALTYDETAILDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\shoproyalty_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SHOPROYALTYDETAILId": 92
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetSHOPROYALTYDETAILList",
+      "endpoint": "BusinessProject/GetSHOPROYALTYDETAILList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\shoproyalty_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SHOPROYALTYDETAIL_ID": 92
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetShopExpenseSummary",
+      "endpoint": "BusinessProject/GetShopExpenseSummary",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverpartshop_id": 3080,
+            "statistics_month_start": "2025-12-31",
+            "statistics_month_end": "2025-12-31"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetShopRoyaltyDetail",
+      "endpoint": "BusinessProject/GetShopRoyaltyDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\shoproyalty_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ShopRoyaltyId": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetShopRoyaltyList",
+      "endpoint": "BusinessProject/GetShopRoyaltyList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\shoproyalty_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SHOPROYALTY_ID": 1
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "BusinessProject/GetWillSettleProject",
+      "endpoint": "BusinessProject/GetWillSettleProject",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\BusinessProjectController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\bp_batch5b_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-01-01",
+            "EndDate": "2025-12-31",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetAttachmentDetail",
+      "endpoint": "Contract/GetAttachmentDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AttachmentId": 1903
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetAttachmentList",
+      "endpoint": "Contract/GetAttachmentList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ATTACHMENT_ID": 1903
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetContractExpiredInfo",
+      "endpoint": "Contract/GetContractExpiredInfo",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetProjectMonthlyArrearageList",
+      "endpoint": "Contract/GetProjectMonthlyArrearageList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsYear": 2025,
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetProjectSummaryInfo",
+      "endpoint": "Contract/GetProjectSummaryInfo",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416,
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetProjectYearlyArrearageList",
+      "endpoint": "Contract/GetProjectYearlyArrearageList",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416,
+            "ProvinceCode": "340000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetRTRegisterCompactDetail",
+      "endpoint": "Contract/GetRTRegisterCompactDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RTRegisterCompactId": 12426,
+            "RegisterCompactId": 466
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetRTRegisterCompactList",
+      "endpoint": "Contract/GetRTRegisterCompactList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetRegisterCompactDetail",
+      "endpoint": "Contract/GetRegisterCompactDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RegisterCompactId": 21
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetRegisterCompactList",
+      "endpoint": "Contract/GetRegisterCompactList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetRegisterCompactSubDetail",
+      "endpoint": "Contract/GetRegisterCompactSubDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RegisterCompactSubId": 737,
+            "RegisterCompactId": 731
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contract/GetRegisterCompactSubList",
+      "endpoint": "Contract/GetRegisterCompactSubList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contract_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "REGISTERCOMPACTSUB_ID": 737
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "ContractSyn/GetContractSynDetail",
+      "endpoint": "ContractSyn/GetContractSynDetail",
+      "method": "GET",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": true,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractSynController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contractsyn_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "name": "ContractSyn/GetContractSynList",
+      "endpoint": "ContractSyn/GetContractSynList",
+      "method": "POST",
+      "meta": {
+        "module": "Contract",
+        "baseline_status": "matched",
+        "method_match": true,
+        "param_match": false,
+        "csharp_source": "E:\\workfile\\JAVA\\API\\CSharp\\EShangApiMain\\Controllers\\Contract\\ContractSynController.cs",
+        "python_source": "E:\\workfile\\JAVA\\NewAPI\\routers\\eshang_api_main\\contract\\contractsyn_router.py",
+        "case_library_route": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\endpoint_case_library.json"
+      },
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    }
+  ]
+}

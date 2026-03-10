@@ -1,0 +1,3271 @@
+{
+  "generated_at": "2026-03-10 12:12:56",
+  "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\windows\\window_2.json",
+  "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\window_2_compare_report.md",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "module_scope": [
+    "Finance",
+    "Revenue",
+    "BigData",
+    "MobilePay"
+  ],
+  "counts": {
+    "pass": 0,
+    "fail": 115,
+    "skip": 0,
+    "total": 115
+  },
+  "cases": [
+    {
+      "endpoint": "Budget/GetBudgetDetailDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetDetailDetail | 新 API: http://localhost:8080/EShangApiMain/Budget/GetBudgetDetailDetail"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败'DatabaseHelper' object has no attribute 'fetch_one'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetDetailDetail”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetBudgetDetailList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetDetailList | 新 API: http://localhost:8080/EShangApiMain/Budget/GetBudgetDetailList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "999 vs 999"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "查询失败未将对象引用设置到对象的实例。 vs 请求参数校验失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 2 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 多出该字段",
+        "Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '请求参数校验失败')"
+      ],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetBudgetProjectList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetProjectList | 新 API: http://localhost:8080/EShangApiMain/Budget/GetBudgetProjectList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "999 vs 999"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "查询失败未将对象引用设置到对象的实例。 vs 请求参数校验失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 2 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 多出该字段",
+        "Result_Desc: 值不一致 ('查询失败未将对象引用设置到对象的实例。' vs '请求参数校验失败')"
+      ],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetBudgetProjectReportOfMonth",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetProjectReportOfMonth | 新 API: http://localhost:8080/EShangApiMain/Budget/GetBudgetProjectReportOfMonth"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": false,
+          "detail": "NoneType vs dict"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectDetail | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectDetail"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败'DatabaseHelper' object has no attribute 'fetch_one'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectDetail”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReport | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReport"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": false,
+          "detail": "NoneType vs str"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportDynamic",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportDynamic | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportDynamic"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_dynamic'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportDynamic”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportIn",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportIn | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportIn"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_in'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportIn”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportInDynamic",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportInDynamic | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportInDynamic"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_in_dynamic'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportInDynamic”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportOut",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportOut | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportOut"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_out'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportOut”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportOutDynamic",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportOutDynamic | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportOutDynamic"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_out_dynamic'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportOutDynamic”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetAHJKtoken",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetAHJKtoken | 新 API: http://localhost:8080/EShangApiMain/Finance/GetAHJKtoken"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "999 vs 999"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "获取失败未将对象引用设置到对象的实例。 vs 请求参数校验失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 2 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 多出该字段",
+        "Result_Desc: 值不一致 ('获取失败未将对象引用设置到对象的实例。' vs '请求参数校验失败')"
+      ],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetATTACHMENTDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetATTACHMENTDetail | 新 API: http://localhost:8080/EShangApiMain/Finance/GetATTACHMENTDetail"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 999"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 请求参数校验失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Finance/GetATTACHMENTDetail”匹配的 HTTP 资源。' vs '请求参数校验失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetATTACHMENTList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetATTACHMENTList | 新 API: http://localhost:8080/EShangApiMain/Finance/GetATTACHMENTList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 999"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 请求参数校验失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Finance/GetATTACHMENTList”匹配的 HTTP 资源。' vs '请求参数校验失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetAccountCompare",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetAccountCompare | 新 API: http://localhost:8080/EShangApiMain/Finance/GetAccountCompare"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": false,
+          "detail": "NoneType vs dict"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetAccountReached",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetAccountReached | 新 API: http://localhost:8080/EShangApiMain/Finance/GetAccountReached"
+        }
+      ],
+      "diffs": [
+        "原 API 调用失败: HTTPConnectionPool(host='192.168.1.99', port=8900): Read timed out. (read timeout=20)",
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetAnnualAccountList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetAnnualAccountList | 新 API: http://localhost:8080/EShangApiMain/Finance/GetAnnualAccountList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetBankAccountAnalyseList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetBankAccountAnalyseList | 新 API: http://localhost:8080/EShangApiMain/Finance/GetBankAccountAnalyseList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetBankAccountAnalyseTreeList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetBankAccountAnalyseTreeList | 新 API: http://localhost:8080/EShangApiMain/Finance/GetBankAccountAnalyseTreeList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetContractExcuteAnalysis",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetContractExcuteAnalysis | 新 API: http://localhost:8080/EShangApiMain/Finance/GetContractExcuteAnalysis"
+        }
+      ],
+      "diffs": [
+        "原 API 调用失败: HTTPConnectionPool(host='192.168.1.99', port=8900): Read timed out. (read timeout=20)",
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetContractMerchant",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetContractMerchant | 新 API: http://localhost:8080/EShangApiMain/Finance/GetContractMerchant"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetMonthAccountDiff",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetMonthAccountDiff | 新 API: http://localhost:8080/EShangApiMain/Finance/GetMonthAccountDiff"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetMonthAccountProinst",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetMonthAccountProinst | 新 API: http://localhost:8080/EShangApiMain/Finance/GetMonthAccountProinst"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 500,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetPeriodSupplementList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetPeriodSupplementList | 新 API: http://localhost:8080/EShangApiMain/Finance/GetPeriodSupplementList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetProjectExpenseList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectExpenseList | 新 API: http://localhost:8080/EShangApiMain/Finance/GetProjectExpenseList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetProjectMerchantSummary",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectMerchantSummary | 新 API: http://localhost:8080/EShangApiMain/Finance/GetProjectMerchantSummary"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetProjectPeriodAccount",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectPeriodAccount | 新 API: http://localhost:8080/EShangApiMain/Finance/GetProjectPeriodAccount"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Finance/GetProjectPeriodIncome",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectPeriodIncome | 新 API: http://localhost:8080/EShangApiMain/Finance/GetProjectPeriodIncome"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": false,
+          "detail": "NoneType vs dict"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetProjectShopIncome",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectShopIncome | 新 API: http://localhost:8080/EShangApiMain/Finance/GetProjectShopIncome"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 获取失败: [CODE:-2207]第6 行附近出现错误:\n无法解析的成员访问表达式[A.SELLER_NAME]"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectShopIncome”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetProjectSplitSummary",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectSplitSummary | 新 API: http://localhost:8080/EShangApiMain/Finance/GetProjectSplitSummary"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 获取失败: [CODE:-544]超出全局排序空间，请调整SORT_BUF_GLOBAL_SIZE、SORT_BUF_SIZE、SORT_BLK_SIZE"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectSplitSummary”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetProjectSummary",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectSummary | 新 API: http://localhost:8080/EShangApiMain/Finance/GetProjectSummary"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 获取失败: time data '' does not match format '%Y-%m-%d'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Finance/GetProjectSummary”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetReconciliation",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetReconciliation | 新 API: http://localhost:8080/EShangApiMain/Finance/GetReconciliation"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": false,
+          "detail": "NoneType vs dict"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetRevenueRecognition",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetRevenueRecognition | 新 API: http://localhost:8080/EShangApiMain/Finance/GetRevenueRecognition"
+        }
+      ],
+      "diffs": [
+        "原 API 调用失败: HTTPConnectionPool(host='192.168.1.99', port=8900): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": null,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetRevenueSplitSummary",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetRevenueSplitSummary | 新 API: http://localhost:8080/EShangApiMain/Finance/GetRevenueSplitSummary"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 获取失败: time data '' does not match format '%Y-%m-%d'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Finance/GetRevenueSplitSummary”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetRoyaltyDateSumReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetRoyaltyDateSumReport | 新 API: http://localhost:8080/EShangApiMain/Finance/GetRoyaltyDateSumReport"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 获取失败: [CODE:-2106]第7 行附近出现错误:\n无效的表或视图名[T_BANKACCOUNTVERIFY]"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Finance/GetRoyaltyDateSumReport”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetRoyaltyReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetRoyaltyReport | 新 API: http://localhost:8080/EShangApiMain/Finance/GetRoyaltyReport"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 获取失败: [CODE:-2106]第2 行附近出现错误:\n无效的表或视图名[T_BANKACCOUNTVERIFY]"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('找不到与请求 URI“http://192.168.1.99:8900/EShangApiMain/Finance/GetRoyaltyReport”匹配的 HTTP 资源。' vs '失败')"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetShopExpense",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetShopExpense | 新 API: http://localhost:8080/EShangApiMain/Finance/GetShopExpense"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Invoice/GetBILLDETAILDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Invoice/GetBILLDETAILDetail | 新 API: http://localhost:8080/EShangApiMain/Invoice/GetBILLDETAILDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Invoice/GetBILLDETAILList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Invoice/GetBILLDETAILList | 新 API: http://localhost:8080/EShangApiMain/Invoice/GetBILLDETAILList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Invoice/GetBILLDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Invoice/GetBILLDetail | 新 API: http://localhost:8080/EShangApiMain/Invoice/GetBILLDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Invoice/GetBILLList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Invoice/GetBILLList | 新 API: http://localhost:8080/EShangApiMain/Invoice/GetBILLList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetACCOUNTWARNINGDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetACCOUNTWARNINGDetail | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetACCOUNTWARNINGDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetACCOUNTWARNINGList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetACCOUNTWARNINGList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetACCOUNTWARNINGList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBRANDANALYSISDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBRANDANALYSISDetail | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBRANDANALYSISDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBRANDANALYSISList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBRANDANALYSISList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBRANDANALYSISList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBUSINESSANALYSISDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBUSINESSANALYSISDetail | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBUSINESSANALYSISDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBUSINESSANALYSISList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBUSINESSANALYSISList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBUSINESSANALYSISList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBUSINESSWARNINGDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBUSINESSWARNINGDetail | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBUSINESSWARNINGDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBUSINESSWARNINGList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBUSINESSWARNINGList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBUSINESSWARNINGList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBankAccountList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBankAccountList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBankAccountList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBankAccountReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBankAccountReport | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBankAccountReport"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBrandAnalysis",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBrandAnalysis | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBrandAnalysis"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBusinessAnalysisReport",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBusinessAnalysisReport | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBusinessAnalysisReport"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBusinessDate",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBusinessDate | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBusinessDate"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBusinessItemSummary",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBusinessItemSummary | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBusinessItemSummary"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetBusinessTradeAnalysis",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetBusinessTradeAnalysis | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetBusinessTradeAnalysis"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetCigaretteReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetCigaretteReport | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetCigaretteReport"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetCurTotalRevenue",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetCurTotalRevenue | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetCurTotalRevenue"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetHisCommoditySaleList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetHisCommoditySaleList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetHisCommoditySaleList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetMerchantRevenueReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetMerchantRevenueReport | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetMerchantRevenueReport"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetMonthCompare",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetMonthCompare | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetMonthCompare"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetMonthINCAnalysis",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetMonthINCAnalysis | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetMonthINCAnalysis"
+        }
+      ],
+      "diffs": [
+        "原 API 调用失败: HTTPConnectionPool(host='192.168.1.99', port=8900): Read timed out. (read timeout=20)",
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": null,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetPERSONSELLDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetPERSONSELLDetail | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetPERSONSELLDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetPERSONSELLList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetPERSONSELLList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetPERSONSELLList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetREVENUEDAILYSPLITDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetREVENUEDAILYSPLITDetail | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetREVENUEDAILYSPLITDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetREVENUEDAILYSPLITList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetREVENUEDAILYSPLITList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetREVENUEDAILYSPLITList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenueDataList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenueDataList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenueDataList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenuePushList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenuePushList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenuePushList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenueQOQ",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenueQOQ | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenueQOQ"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenueQOQByDate",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenueQOQByDate | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenueQOQByDate"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenueReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenueReport | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenueReport"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenueReportByBIZPSPLITMONTH",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenueReportByBIZPSPLITMONTH | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenueReportByBIZPSPLITMONTH"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenueReportByDate",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenueReportByDate | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenueReportByDate"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenueYOYQOQ",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenueYOYQOQ | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenueYOYQOQ"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetRevenueYOYQOQByDate",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetRevenueYOYQOQByDate | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetRevenueYOYQOQByDate"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetSITUATIONANALYSISDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetSITUATIONANALYSISDetail | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetSITUATIONANALYSISDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetSITUATIONANALYSISList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetSITUATIONANALYSISList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetSITUATIONANALYSISList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetSellMasterCompareList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetSellMasterCompareList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetSellMasterCompareList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetSituationAnalysis",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetSituationAnalysis | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetSituationAnalysis"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetTotalRevenue",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetTotalRevenue | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetTotalRevenue"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetTransactionCustomer",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetTransactionCustomer | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetTransactionCustomer"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetTransactionCustomerByDate",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetTransactionCustomerByDate | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetTransactionCustomerByDate"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetYSSellDetailsList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetYSSellDetailsList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetYSSellDetailsList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 500,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Revenue/GetYSSellMasterList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Revenue/GetYSSellMasterList | 新 API: http://localhost:8080/EShangApiMain/Revenue/GetYSSellMasterList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 500,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetBAYONETDAILY_AHDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetBAYONETDAILY_AHDetail | 新 API: http://localhost:8080/EShangApiMain/BigData/GetBAYONETDAILY_AHDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetBAYONETDAILY_AHList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetBAYONETDAILY_AHList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetBAYONETDAILY_AHList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetBAYONETDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetBAYONETDetail | 新 API: http://localhost:8080/EShangApiMain/BigData/GetBAYONETDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetBAYONETList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetBAYONETList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetBAYONETList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetBAYONETWARNINGList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetBAYONETWARNINGList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetBAYONETWARNINGList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetBayonetOwnerAHList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetBayonetOwnerAHList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetBayonetOwnerAHList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetBayonetOwnerMonthAHList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetBayonetOwnerMonthAHList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetBayonetOwnerMonthAHList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetDailyBayonetAnalysis",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetDailyBayonetAnalysis | 新 API: http://localhost:8080/EShangApiMain/BigData/GetDailyBayonetAnalysis"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetSECTIONFLOWDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetSECTIONFLOWDetail | 新 API: http://localhost:8080/EShangApiMain/BigData/GetSECTIONFLOWDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetSECTIONFLOWList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetSECTIONFLOWList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetSECTIONFLOWList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetSECTIONFLOWMONTHDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetSECTIONFLOWMONTHDetail | 新 API: http://localhost:8080/EShangApiMain/BigData/GetSECTIONFLOWMONTHDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetSECTIONFLOWMONTHList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetSECTIONFLOWMONTHList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetSECTIONFLOWMONTHList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetServerpartSectionFlow",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetServerpartSectionFlow | 新 API: http://localhost:8080/EShangApiMain/BigData/GetServerpartSectionFlow"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetTimeIntervalList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetTimeIntervalList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetTimeIntervalList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "BigData/GetUreaMasterList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BigData/GetUreaMasterList | 新 API: http://localhost:8080/EShangApiMain/BigData/GetUreaMasterList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Customer/GetCUSTOMERGROUP_AMOUNTDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Customer/GetCUSTOMERGROUP_AMOUNTDetail | 新 API: http://localhost:8080/EShangApiMain/Customer/GetCUSTOMERGROUP_AMOUNTDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "Customer/GetCUSTOMERGROUP_AMOUNTList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Customer/GetCUSTOMERGROUP_AMOUNTList | 新 API: http://localhost:8080/EShangApiMain/Customer/GetCUSTOMERGROUP_AMOUNTList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 500,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetBANKACCOUNTVERIFYList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetBANKACCOUNTVERIFYList | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetBANKACCOUNTVERIFYList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetBANKACCOUNTVERIFYRegionList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetBANKACCOUNTVERIFYRegionList | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetBANKACCOUNTVERIFYRegionList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetBANKACCOUNTVERIFYServerList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetBANKACCOUNTVERIFYServerList | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetBANKACCOUNTVERIFYServerList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetBANKACCOUNTVERIFYTreeList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetBANKACCOUNTVERIFYTreeList | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetBANKACCOUNTVERIFYTreeList"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetChinaUmsSubAccountDetail",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetChinaUmsSubAccountDetail | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetChinaUmsSubAccountDetail"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetChinaUmsSubAccountSummary",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetChinaUmsSubAccountSummary | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetChinaUmsSubAccountSummary"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetChinaUmsSubMaster",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetChinaUmsSubMaster | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetChinaUmsSubMaster"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetChinaUmsSubSummary",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetChinaUmsSubSummary | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetChinaUmsSubSummary"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetKwyRoyalty",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetKwyRoyalty | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetKwyRoyalty"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetKwyRoyaltyForAll",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetKwyRoyaltyForAll | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetKwyRoyaltyForAll"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetKwyRoyaltyRate",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetKwyRoyaltyRate | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetKwyRoyaltyRate"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 404,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetMobilePayResult",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": false,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetMobilePayResult | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetMobilePayResult"
+        }
+      ],
+      "diffs": [
+        "新 API 调用失败: HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=20)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": null
+    },
+    {
+      "endpoint": "MobilePay/GetMobilePayRoyaltyReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetMobilePayRoyaltyReport | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetMobilePayRoyaltyReport"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": false,
+          "detail": "NoneType vs list"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "MobilePay/GetRoyaltyRecordList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/MobilePay/GetRoyaltyRecordList | 新 API: http://localhost:8080/EShangApiMain/MobilePay/GetRoyaltyRecordList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "500 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 999"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 请求参数校验失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段",
+        "Message: 值不一致 ('出现错误。' vs '请求参数校验失败')"
+      ],
+      "old_status_code": 500,
+      "new_status_code": 200
+    }
+  ]
+}

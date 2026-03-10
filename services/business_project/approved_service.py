@@ -11,6 +11,7 @@ from typing import Optional
 from datetime import datetime
 from loguru import logger
 from core.database import DatabaseHelper
+from core.format_utils import format_row_dates
 from models.common_model import SearchModel
 
 
@@ -22,6 +23,9 @@ EXCLUDE_FIELDS = {
 }
 
 SEARCH_PARAM_SKIP_FIELDS = {"PageIndex", "PageSize", "SortStr", "keyWord", "QueryType"}
+
+# C# TranslateDateTime 对应的 int 日期字段
+DATETIME_FIELDS = {"APPROVED_DATE"}
 
 
 def get_approved_list(db: DatabaseHelper, search_model: SearchModel) -> tuple[int, list[dict]]:
@@ -105,4 +109,7 @@ def get_approved_list(db: DatabaseHelper, search_model: SearchModel) -> tuple[in
     elif len(rows) > 10:
         rows = rows[:10]
 
+    # C# TranslateDateTime: int 日期→格式化字符串
+    for r in rows:
+        format_row_dates(r, set(), DATETIME_FIELDS)
     return int(total_count), rows

@@ -384,7 +384,8 @@ async def get_project_summary_info(
             ServerpartShopIds = request.headers.get("ServerpartShopIds", ServerpartShopIds) or "0"
         ProvinceCode = int(request.headers.get("ProvinceCode", str(ProvinceCode or ""))) if not ProvinceCode else ProvinceCode
 
-        data = contract_service.get_project_summary_info(db, ProvinceCode, ServerpartId, ServerpartShopIds)
+        data = contract_service.get_project_summary_info(
+            db, ProvinceCode, ServerpartId, ServerpartShopIds, get_from_redis=GetFromRedis)
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"Contract/GetProjectSummaryInfo 查询失败: {ex}")
@@ -407,7 +408,8 @@ async def get_contract_expired_info(
             ServerpartShopIds = request.headers.get("ServerpartShopIds", ServerpartShopIds) or "0"
         ProvinceCode = int(request.headers.get("ProvinceCode", str(ProvinceCode or ""))) if not ProvinceCode else ProvinceCode
 
-        data = contract_service.get_contract_expired_info(db, ProvinceCode, ServerpartId, ServerpartShopIds)
+        data = contract_service.get_contract_expired_info(
+            db, ProvinceCode, ServerpartId, ServerpartShopIds, get_from_redis=GetFromRedis)
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"Contract/GetContractExpiredInfo 查询失败: {ex}")
@@ -430,7 +432,8 @@ async def get_project_yearly_arrearage_list(
             ServerpartShopIds = request.headers.get("ServerpartShopIds", ServerpartShopIds) or "0"
         ProvinceCode = int(request.headers.get("ProvinceCode", str(ProvinceCode or ""))) if not ProvinceCode else ProvinceCode
 
-        data = contract_service.get_project_yearly_arrearage(db, ProvinceCode, ServerpartId, ServerpartShopIds)
+        data = contract_service.get_project_yearly_arrearage(
+            db, ProvinceCode, ServerpartId, ServerpartShopIds, get_from_redis=GetFromRedis)
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"Contract/GetProjectYearlyArrearageList 查询失败: {ex}")
@@ -458,7 +461,8 @@ async def get_project_monthly_arrearage_list(
             StatisticsYear = (datetime.now().year)
 
         data = contract_service.get_project_monthly_arrearage(
-            db, StatisticsYear, ProvinceCode, ServerpartId, ServerpartShopIds)
+            db, StatisticsYear, ProvinceCode, ServerpartId, ServerpartShopIds,
+            get_from_redis=GetFromRedis)
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"Contract/GetProjectMonthlyArrearageList 查询失败: {ex}")
@@ -499,3 +503,45 @@ async def synchro_contract_syn(
     except Exception as ex:
         logger.error(f"Contract/SynchroContractSyn 同步失败: {ex}")
         return Result.fail(msg=f"同步失败{ex}")
+
+
+# ===================================================================
+# 7. CT-05 补齐路由
+# ===================================================================
+
+@router.get("/Contract/GetContractYearList")
+async def get_contract_year_list(
+    SortStr: str = Query("YEAR", description="排序条件"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取合同年份列表"""
+    try:
+        data = contract_service.get_contract_year_list(db, SortStr)
+        json_list = JsonListData.create(data_list=data, total=len(data),
+                                         page_index=1, page_size=len(data))
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"Contract/GetContractYearList 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+@router.get("/Contract/GetShopBusinessTypeRatio")
+async def get_shop_business_type_ratio(
+    request: Request,
+    ProvinceCode: int = Query(None, description="省份编码"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """统计门店经营模式占比"""
+    try:
+        # C# 逻辑：从 Header 获取 ProvinceCode
+        if ProvinceCode is None:
+            hdr = request.headers.get("ProvinceCode", "")
+            if hdr:
+                ProvinceCode = int(hdr)
+        data = contract_service.get_shop_business_type_ratio(db, ProvinceCode)
+        json_list = JsonListData.create(data_list=data, total=len(data),
+                                         page_index=1, page_size=len(data))
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"Contract/GetShopBusinessTypeRatio 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
