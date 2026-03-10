@@ -10,7 +10,7 @@ from loguru import logger
 
 from core.database import DatabaseHelper
 from models.base import Result, JsonListData
-from routers.deps import get_db
+from routers.deps import get_db, parse_multi_ids, build_in_condition
 
 router = APIRouter()
 
@@ -226,8 +226,9 @@ async def get_brand_analysis(
 
         # 构建 WHERE 条件
         where_sql = ""
-        if Serverpart_ID:
-            where_sql += f' AND A."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
         elif ProvinceCode:
             fe_rows = db.execute_query(f"""SELECT "FIELDENUM_ID" FROM "T_FIELDENUM"
                 WHERE "FIELD_NAME" = 'DIVISION_CODE' AND "FIELDENUM_VALUE" = '{ProvinceCode}'""") or []
@@ -830,8 +831,9 @@ async def get_serverpart_service_summary(
         where_sql = f' AND A."PROVINCE_CODE" = {province_key}'
         if sp_region_type_id:
             where_sql += f' AND A."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
-        if serverpart_id:
-            where_sql += f' AND A."SERVERPART_ID" IN ({serverpart_id})'
+        _sp_ids = parse_multi_ids(serverpart_id)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
 
         # 排除片区（安徽驿达=89）
         exclude_region = "89"
@@ -860,6 +862,8 @@ async def get_serverpart_service_summary(
             FROM "T_SERVERPART" A
             LEFT JOIN "T_SERVERPARTINFO" C ON A."SERVERPART_ID" = C."SERVERPART_ID"
             WHERE A."STATISTICS_TYPE" = 1000
+                AND A."STATISTIC_TYPE" = 1000
+                AND A."SERVERPART_CODE" NOT IN ('340001','530590')
                 AND A."SPREGIONTYPE_ID" NOT IN ({exclude_region}){where_sql}
             GROUP BY A."SERVERPART_ID", A."SERVERPART_NAME" """
         

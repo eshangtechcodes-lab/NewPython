@@ -11,27 +11,9 @@ from datetime import datetime
 
 from core.database import DatabaseHelper
 from models.base import Result, JsonListData
-from routers.deps import get_db
+from routers.deps import get_db, parse_multi_ids, build_in_condition
 
-def _parse_multi_ids(raw: str) -> list:
-    """解析逗号分隔的多值ID字符串，返回合法整数列表"""
-    if not raw:
-        return []
-    ids = []
-    for part in str(raw).split(","):
-        part = part.strip()
-        if part:
-            try:
-                ids.append(int(part))
-            except ValueError:
-                pass
-    return ids
-
-def _build_in_condition(column: str, ids: list) -> str:
-    """构建 IN 或 = 条件表达式"""
-    if len(ids) == 1:
-        return f'{column} = {ids[0]}'
-    return f'{column} IN ({",".join(str(i) for i in ids)})'
+# 使用 routers.deps 中的公共解析函数
 
 def _resolve_province_id(db, province_code: str):
     """将行政区划码(如 340000)转换为 FIELDENUM_ID（T_SERVERPART.PROVINCE_CODE 存的是内码）
@@ -387,8 +369,9 @@ async def wechat_get_examine_list(
 
         if SPRegionType_ID:
             conditions.append(f"SPREGIONTYPE_ID IN ({SPRegionType_ID})")
-        if Serverpart_ID:
-            conditions.append(f"SERVERPART_ID IN ({Serverpart_ID})")
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            conditions.append(build_in_condition('SERVERPART_ID', _sp_ids))
         if SearchStartDate:
             try:
                 ds = datetime.strptime(SearchStartDate, "%Y-%m-%d").strftime("%Y%m%d")
@@ -504,8 +487,9 @@ async def wechat_get_patrol_list(
 
         if SPRegionType_ID:
             conditions.append(f"SPREGIONTYPE_ID IN ({SPRegionType_ID})")
-        if Serverpart_ID:
-            conditions.append(f"SERVERPART_ID IN ({Serverpart_ID})")
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            conditions.append(build_in_condition('SERVERPART_ID', _sp_ids))
         if SearchStartDate:
             try:
                 ds = datetime.strptime(SearchStartDate, "%Y-%m-%d").strftime("%Y%m%d")
@@ -576,8 +560,9 @@ async def wechat_get_meeting_list(
 
         if SPRegionType_ID:
             conditions.append(f"SPREGIONTYPE_ID IN ({SPRegionType_ID})")
-        if Serverpart_ID:
-            conditions.append(f"SERVERPART_ID IN ({Serverpart_ID})")
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            conditions.append(build_in_condition('SERVERPART_ID', _sp_ids))
         if SearchStartDate:
             try:
                 ds = datetime.strptime(SearchStartDate, "%Y-%m-%d").strftime("%Y%m%d")
@@ -643,9 +628,9 @@ async def get_patrol_analysis(
         params = []
 
         # C# 参数是 int?，多值时模型绑定失败=null，走 elif 分支
-        _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
-        if len(_sp_ids) == 1:
-            conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            conditions.append(build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"'))
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -718,9 +703,9 @@ async def get_examine_analysis(
         conditions.append("A.\"EXAMINE_TYPE\" = ?")
         params.append(DataType)
 
-        _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
-        if len(_sp_ids) == 1:
-            conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            conditions.append(build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"'))
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -789,11 +774,9 @@ async def get_examine_result_list(
             params.append(DataType)
 
         # 多服务区 IN (...) 过滤
-        _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
-        if len(_sp_ids) == 1:
-            conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
-        elif len(_sp_ids) > 1:
-            conditions.append(f'B."SERVERPART_ID" IN ({",".join(str(i) for i in _sp_ids)})')
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            conditions.append(build_in_condition("B.SERVERPART_ID", _sp_ids).replace('"B.SERVERPART_ID"', 'B."SERVERPART_ID"'))
         elif SPRegionType_ID:
             conditions.append("B.\"SPREGIONTYPE_ID\" = ?")
             params.append(int(SPRegionType_ID))
@@ -938,9 +921,9 @@ async def get_patrol_result_list(
         ]
         params = []
 
-        _sp_ids = _parse_multi_ids(ServerpartId) if ServerpartId else []
-        if len(_sp_ids) == 1:
-            conditions.append(f'B."SERVERPART_ID" = {_sp_ids[0]}')
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            conditions.append(build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"'))
         elif SPRegionType_ID:
             conditions.append('B."SPREGIONTYPE_ID" = ?')
             params.append(int(SPRegionType_ID))

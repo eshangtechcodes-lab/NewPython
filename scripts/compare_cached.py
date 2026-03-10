@@ -12,7 +12,7 @@ import os
 import re
 import sys
 
-OLD = "http://127.0.0.1:8900/CommercialApi"
+OLD = "http://192.168.1.99:8900/CommercialApi"
 NEW = "http://127.0.0.1:8080/CommercialApi"
 HEADERS = {"ProvinceCode": "340000"}
 TIMEOUT = 15
@@ -21,7 +21,7 @@ BASELINE_FILE = "scripts/test_results/baseline_cache.json"
 
 def extract_routes():
     """从 router 文件自动提取所有路由"""
-    router_dir = r"D:\Projects\Python\eshang_api\routers\commercial_api"
+    router_dir = r"D:\Project\Python\NewPython\routers\commercial_api"
     routes = []
     for fname in sorted(os.listdir(router_dir)):
         if not fname.endswith(".py") or fname == "__init__.py":

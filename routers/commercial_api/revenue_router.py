@@ -8,10 +8,9 @@ from fastapi import APIRouter, Depends, Query, Request
 from typing import Optional
 from loguru import logger
 
-from core.database import DatabaseHelper
-# from core.old_api_proxy import proxy_to_old_api  # 已全部完成SQL平移，不再需要代理
 from models.base import Result, JsonListData
-from routers.deps import get_db
+from routers.deps import get_db, parse_multi_ids, build_in_condition
+from core.database import DatabaseHelper
 
 router = APIRouter()
 
@@ -180,8 +179,9 @@ async def get_summary_revenue(
         province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else pushProvinceCode
 
         where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
-        if Serverpart_ID:
-            where_sql += f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
 
@@ -1175,8 +1175,9 @@ async def get_budget_expense_list_get(
         if Statistics_Month:
             conditions.append('"STATISTICS_MONTH" = :sm')
             params["sm"] = Statistics_Month
-        if Serverpart_ID:
-            conditions.append(f'"SERVERPART_ID" IN ({Serverpart_ID})')
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            conditions.append(build_in_condition('SERVERPART_ID', _sp_ids))
 
         where_sql = (" WHERE " + " AND ".join(conditions)) if conditions else ""
         sql = f'SELECT * FROM "T_BUDGETEXPENSE"{where_sql} ORDER BY "BUDGETEXPENSE_ID" DESC'
@@ -1931,8 +1932,9 @@ async def get_transaction_time_analysis(
         month_str = stat_date.strftime("%Y%m")
 
         where_sql = ""
-        if Serverpart_ID:
-            where_sql += f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
 
@@ -2005,8 +2007,9 @@ async def get_transaction_convert(
         month_str = stat_date.strftime("%Y%m")
 
         where_sql = ""
-        if Serverpart_ID:
-            where_sql += f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
 
@@ -2079,8 +2082,9 @@ async def get_business_trade_revenue(
         date_str = stat_date.strftime("%Y%m%d")
 
         where_sql = f' AND A."STATISTICS_DATE" >= {month_start} AND A."STATISTICS_DATE" <= {date_str}'
-        if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionTypeID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
 
@@ -2177,7 +2181,7 @@ async def get_business_trade_level(
 
         where_sql = f' AND A."PROVINCE_ID" = {province_id} AND A."STATISTICS_MONTH" = {month_str}'
         if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', [ServerpartId]).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
 
         # 按业态+消费等级分组
         sql = f"""SELECT C."BUSINESS_TRADE", A."AMOUNT_RANGE",
@@ -2330,7 +2334,7 @@ async def get_business_brand_level(
 
         where_sql = f' AND A."PROVINCE_ID" = {province_id} AND A."STATISTICS_MONTH" = {month_str}'
         if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', [ServerpartId]).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
 
         # 查T_CONSUMPTIONLEVEL按品牌+消费等级分组
         sql = f"""SELECT C."BRAND_NAME", A."AMOUNT_RANGE",
@@ -2459,8 +2463,9 @@ async def get_revenue_trend_get(
             except: return 0.0
 
         where_sql = ""
-        if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionTypeID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
 
@@ -2883,8 +2888,9 @@ async def get_salable_commodity(
         month_str = stat_date.strftime("%Y%m")
 
         where_sql = f' AND A."STATISTICS_MONTH" = {month_str}'
-        if Serverpart_ID:
-            where_sql += f' AND A."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND A."SERVERPART_ID" IN (SELECT "SERVERPART_ID" FROM "T_SERVERPART" WHERE "SPREGIONTYPE_ID" IN ({SPRegionType_ID}))'
 
@@ -3036,8 +3042,9 @@ async def get_revenue_yoy(
 
         # 构建WHERE
         where_sql = ""
-        if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionTypeID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
 
@@ -3168,8 +3175,9 @@ async def get_holiday_compare(
         ce_date = max(cmp_dates)
 
         where_sql = ""
-        if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionTypeID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
 
@@ -3421,8 +3429,9 @@ async def get_cur_revenue(
 
         stat_date = dt.strptime(StatisticsDate, "%Y-%m-%d") if "-" in StatisticsDate else dt.strptime(StatisticsDate, "%Y%m%d")
         where_sql = ""
-        if serverPartId:
-            where_sql += f' AND A."SERVERPART_ID" IN ({serverPartId})'
+        _sp_ids = parse_multi_ids(serverPartId)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
 
         sql = f"""SELECT SUM(A."CASHPAY") AS "CASHPAY",
                 SUM(A."TICKETCOUNT") AS "TICKETCOUNT",
@@ -3472,11 +3481,10 @@ async def get_shop_cur_revenue(
         stat_date = dt.strptime(statisticsDate, "%Y-%m-%d") if "-" in statisticsDate else dt.strptime(statisticsDate, "%Y%m%d")
 
         # 多服务区ID兼容
-        sp_ids = [p.strip() for p in str(serverPartId).split(",") if p.strip()]
-        if len(sp_ids) == 1:
-            sp_condition = f'A."SERVERPART_ID" = {sp_ids[0]}'
-        else:
-            sp_condition = f'A."SERVERPART_ID" IN ({",".join(sp_ids)})'
+        _sp_ids = parse_multi_ids(serverPartId)
+        if not _sp_ids:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+        sp_condition = build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
 
         sql = f"""SELECT A."BUSINESS_TYPE", A."SHOPNAME",
                 SUM(A."CASHPAY") AS "CASHPAY",
@@ -3697,8 +3705,9 @@ async def get_holiday_analysis(
         if ServerpartId:
             table_name = "T_HOLIDAYREVENUE"
             state_name = "HOLIDAYREVENUE_STATE"
-            sp_ids = "','".join(ServerpartId.split(","))
-            where_sql += f" AND A.\"SERVERPART_ID\" IN ('{sp_ids}')"
+            _sp_ids = parse_multi_ids(ServerpartId)
+            if _sp_ids:
+                where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
         elif pushProvinceCode == "340000":
             where_sql += ' AND A."BUSINESS_REGION" = 1'
         
@@ -3803,7 +3812,12 @@ async def get_holiday_analysis(
         
         # 7. 查询车流量
         if ServerpartId:
-            bw_sql = f' AND A."SERVERPART_ID" IN ({ServerpartId})'
+            _sp_ids2 = parse_multi_ids(ServerpartId)
+            if _sp_ids2:
+                bw_sql = ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids2).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
+            else:
+                bw_sql = f""" AND EXISTS (SELECT 1 FROM "T_SERVERPART" S
+                    WHERE A."SERVERPART_ID" = S."SERVERPART_ID" AND S."PROVINCE_CODE" = {field_enum_id})"""
         else:
             bw_sql = f""" AND EXISTS (SELECT 1 FROM "T_SERVERPART" S
                 WHERE A."SERVERPART_ID" = S."SERVERPART_ID" AND S."PROVINCE_CODE" = {field_enum_id})"""
@@ -4033,8 +4047,9 @@ async def get_serverpart_inc_analysis(
         # 3. 查营收(T_HOLIDAYREVENUE)
         where_rev = f' AND A."PROVINCE_ID" = {province_id}'
         if ServerpartId:
-            sp_list = "'" + ServerpartId.replace(",", "','") + "'"
-            where_rev += f' AND A."SERVERPART_ID" IN ({sp_list})'
+            _sp_ids = parse_multi_ids(ServerpartId)
+            if _sp_ids:
+                where_rev += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
 
         cur_start_str = (stat_date if calcType == 1 else stats_start).strftime("%Y%m%d")
         cur_end_str = stat_date.strftime("%Y%m%d")
@@ -4058,7 +4073,11 @@ async def get_serverpart_inc_analysis(
         # 4. 查车流(T_SECTIONFLOW)
         where_bay = ""
         if ServerpartId:
-            where_bay = f' AND A."SERVERPART_ID" IN ({ServerpartId})'
+            _sp_ids3 = parse_multi_ids(ServerpartId)
+            if _sp_ids3:
+                where_bay = ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids3).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
+            else:
+                where_bay = f''' AND EXISTS (SELECT 1 FROM "T_SERVERPART" S WHERE A."SERVERPART_ID" = S."SERVERPART_ID" AND S."PROVINCE_CODE" = {province_id})'''
         else:
             where_bay = f''' AND EXISTS (SELECT 1 FROM "T_SERVERPART" S WHERE A."SERVERPART_ID" = S."SERVERPART_ID" AND S."PROVINCE_CODE" = {province_id})'''
 
@@ -4083,7 +4102,9 @@ async def get_serverpart_inc_analysis(
         # 5. 查服务区列表
         where_sp = f' AND "PROVINCE_CODE" = {province_id}'
         if ServerpartId:
-            where_sp += f' AND "SERVERPART_ID" IN ({ServerpartId})'
+            _sp_ids4 = parse_multi_ids(ServerpartId)
+            if _sp_ids4:
+                where_sp += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids4)
         if businessRegion == 1:
             where_sp += ' AND "SPREGIONTYPE_ID" NOT IN (72)'  # 排除城市店片区
         sp_rows = db.execute_query(f"""SELECT * FROM "T_SERVERPART"
@@ -4603,10 +4624,10 @@ async def get_monthly_business_analysis(
             where_sql += f" AND B.SPREGIONTYPE_ID IN ({SPRegionTypeId})"
             table_name = "T_HOLIDAYREVENUE"
         if ServerpartId:
-            # 兼容 ServerpartId="416" 字符串形式
-            ids_cleaned = ",".join([f"'{s.strip()}'" for s in ServerpartId.split(",")])
-            where_sql += f" AND B.SERVERPART_ID IN ({ids_cleaned})"
-            table_name = "T_HOLIDAYREVENUE"
+            _sp_ids = parse_multi_ids(ServerpartId)
+            if _sp_ids:
+                where_sql += " AND " + build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
+                table_name = "T_HOLIDAYREVENUE"
         if businessType:
             where_sql += f" AND A.BUSINESS_TYPE IN ({businessType})"
         if businessTrade:
@@ -4660,8 +4681,9 @@ async def get_monthly_business_analysis(
 
         # 5. 查询车流量
         flow_where = f" AND EXISTS (SELECT 1 FROM T_SERVERPART S WHERE A.SERVERPART_ID = S.SERVERPART_ID AND S.PROVINCE_CODE = '{province_id}')"
-        if ServerpartId:
-            flow_where = f" AND A.SERVERPART_ID IN ({ServerpartId})"
+        _sp_ids_flow = parse_multi_ids(ServerpartId)
+        if _sp_ids_flow:
+            flow_where = " AND " + build_in_condition('SERVERPART_ID', _sp_ids_flow).replace('"SERVERPART_ID"', 'A.SERVERPART_ID')
 
         flow_sql = f"""SELECT SUM(A.SERVERPART_FLOW) AS SERVERPART_FLOW 
                    FROM T_SECTIONFLOW A 
@@ -4829,8 +4851,9 @@ async def get_monthly_sp_inc_analysis(
         # 3. 查询车流量 (Dimension 3)
         if not Dimension or "3" in Dimension:
             flow_where = f" AND EXISTS (SELECT 1 FROM T_SERVERPART S WHERE A.SERVERPART_ID = S.SERVERPART_ID AND S.PROVINCE_CODE = '{province_id}')"
-            if ServerpartId:
-                flow_where = f" AND A.SERVERPART_ID IN ({ServerpartId})"
+            _sp_ids_f = parse_multi_ids(ServerpartId)
+            if _sp_ids_f:
+                flow_where = ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids_f).replace('"SERVERPART_ID"', 'A.SERVERPART_ID')
             
             flow_sql = f"""SELECT SERVERPART_ID, SUM(A.SERVERPART_FLOW) AS SERVERPART_FLOW 
                         FROM T_SECTIONFLOW A WHERE A.SECTIONFLOW_STATUS = 1 AND A.SERVERPART_ID > 0 
@@ -4844,7 +4867,8 @@ async def get_monthly_sp_inc_analysis(
 
         # 4. 获取服务区列表
         sp_where = f"WHERE SPREGIONTYPE_ID IS NOT NULL AND STATISTICS_TYPE = 1000 AND STATISTIC_TYPE = 1000 AND PROVINCE_CODE = '{province_id}'"
-        if ServerpartId: sp_where += f" AND SERVERPART_ID IN ({ServerpartId})"
+        _sp_ids_sp = parse_multi_ids(ServerpartId)
+        if _sp_ids_sp: sp_where += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids_sp)
         # 暂时忽略 ExcludeRegionId 过滤以保持简单
         dt_serverpart = db.execute_query(f"SELECT SPREGIONTYPE_ID, SPREGIONTYPE_NAME, SERVERPART_ID, SERVERPART_NAME FROM T_SERVERPART {sp_where} ORDER BY SERVERPART_ID")
 
@@ -4942,7 +4966,9 @@ async def get_transaction_detail_list(
         if ServerpartShopId:
             where_sql = f' AND C."SERVERPARTSHOP_ID" IN ({ServerpartShopId})'
         elif ServerpartId:
-            where_sql = f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+            _sp_ids = parse_multi_ids(ServerpartId)
+            if _sp_ids:
+                where_sql = ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif ProvinceCode:
             where_sql = f' AND B."PROVINCE_CODE" = {ProvinceCode}'
         else:
@@ -5128,8 +5154,9 @@ async def get_company_revenue_report(
 
         # 2. 构建WHERE条件
         where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
-        if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         else:
             where_sql += f' AND B."STATISTIC_TYPE" = 1000 AND B."STATISTICS_TYPE" = 1000 AND B."PROVINCE_CODE" = {province_id}'
         if StartTime:
@@ -5478,8 +5505,9 @@ async def get_revenue_compare(
         province_id = fe_rows[0]["FIELDENUM_ID"] if fe_rows else ProvinceCode
 
         where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
-        if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionTypeID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
 
@@ -6093,8 +6121,9 @@ async def get_holiday_daily_analysis(
         if SPRegionTypeId:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeId})'
             use_holiday_table = True
-        if ServerpartId:
-            where_sql += f' AND B."SERVERPART_ID" IN ({ServerpartId})'
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
             use_holiday_table = True
         if businessType:
             where_sql += f' AND A."BUSINESS_TYPE" IN ({businessType})'
@@ -6230,8 +6259,9 @@ async def get_month_inc_analysis(
             if compare_field:
                 warning_val = 1 if is_show_warning else 0
                 where_parts += f' AND A."{compare_field}" = {warning_val}'
-            if ServerpartId:
-                where_parts += f' AND A."SERVERPART_ID" IN ({ServerpartId})'
+            _sp_ids = parse_multi_ids(ServerpartId)
+            if _sp_ids:
+                where_parts += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
             if BusinessTradeType:
                 where_parts += f' AND A."BUSINESSTRADETYPE" IN ({BusinessTradeType})'
 
@@ -6364,8 +6394,9 @@ async def get_month_inc_analysis(
         else:
             # --- 实时数据路径 ---
             where_sql = ""
-            if ServerpartId:
-                where_sql += f' AND A."SERVERPART_ID" IN ({ServerpartId})'
+            _sp_ids = parse_multi_ids(ServerpartId)
+            if _sp_ids:
+                where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
             # BusinessTradeType 正确映射
             where_sql += _btt_where("A")
             if shopTrade:
@@ -6580,12 +6611,9 @@ async def get_shop_sabfi_list(
 
         # 多服务区ID兼容
         sp_where = ""
-        if ServerpartId:
-            sp_ids = [p.strip() for p in str(ServerpartId).split(",") if p.strip()]
-            if len(sp_ids) == 1:
-                sp_where = f' AND A."SERVERPART_ID" = {sp_ids[0]}'
-            elif sp_ids:
-                sp_where = f' AND A."SERVERPART_ID" IN ({",".join(sp_ids)})'
+        _sp_ids = parse_multi_ids(ServerpartId)
+        if _sp_ids:
+            sp_where = " AND " + build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
 
         btt_where = ""
         if BusinessTradeType:
@@ -6631,6 +6659,54 @@ async def get_shop_sabfi_list(
                     profit_map[pr.get("SERVERPART_ID")] = pr
         except Exception as pe:
             logger.warning(f"GetShopSABFIList Profit查询失败: {pe}")
+
+        # --- 新增: 获取相关的门店系统商业适配指数项目列表 (13项) ---
+        sabfi_projects_map = {}
+        try:
+            if sp_id_list:
+                sp_in = ",".join(str(i) for i in sp_id_list)
+                project_sql = f"""SELECT A.SERVERPART_ID, A.BUSINESSPROJECT_ID, B.BUSINESSPROJECT_NAME,
+                                         A.EVALUATE_TYPE, A.EVALUATE_SCORE, A.PROFITCONTRIBUTE_ID, A.PROFITCONTRIBUTE_PID
+                                  FROM T_PROFITCONTRIBUTE A
+                                  JOIN T_BUSINESSPROJECT B ON A.BUSINESSPROJECT_ID = B.BUSINESSPROJECT_ID
+                                  WHERE A.STATISTICS_DATE = {stat_month}
+                                    AND A.PROFITCONTRIBUTE_STATE = 1
+                                    AND A.SERVERPART_ID IN ({sp_in})
+                                  ORDER BY A.SERVERPART_ID, A.BUSINESSPROJECT_ID, A.EVALUATE_TYPE"""
+                project_rows = db.execute_query(project_sql) or []
+                
+                # 按 (SERVERPART_ID, BUSINESSPROJECT_ID) 分组并构建 SABFIList
+                temp_sp_projects = {} # { (sp_id, p_id): { name, score, list } }
+                for pr in project_rows:
+                    sid = pr["SERVERPART_ID"]
+                    pid = pr["BUSINESSPROJECT_ID"]
+                    key = (sid, pid)
+                    if key not in temp_sp_projects:
+                        temp_sp_projects[key] = {
+                            "BusinessProjectId": pid,
+                            "BusinessProjectName": pr["BUSINESSPROJECT_NAME"],
+                            "SABFI_Score": 0.0,
+                            "SABFIList": [{"name": str(et), "value": "", "key": "", "data": ""} for et in range(1, 8)],
+                            "StatisticsMonth": f"{stat_month[:4]}/{stat_month[4:]}"
+                        }
+                    
+                    et = int(pr["EVALUATE_TYPE"])
+                    score = pr["EVALUATE_SCORE"]
+                    if et == 0:
+                        temp_sp_projects[key]["SABFI_Score"] = safe_dec(score)
+                    elif 1 <= et <= 7:
+                        idx = et - 1
+                        temp_sp_projects[key]["SABFIList"][idx]["value"] = str(score or "")
+                        temp_sp_projects[key]["SABFIList"][idx]["key"] = str(pr["PROFITCONTRIBUTE_ID"] or "")
+                        temp_sp_projects[key]["SABFIList"][idx]["data"] = str(pr["PROFITCONTRIBUTE_PID"] or "")
+
+                # 最终放入 sabfi_projects_map
+                for (sid, pid), p_data in temp_sp_projects.items():
+                    if sid not in sabfi_projects_map:
+                        sabfi_projects_map[sid] = []
+                    sabfi_projects_map[sid].append(p_data)
+        except Exception as ex_p:
+            logger.warning(f"GetShopSABFIList 经营项目查询失败: {ex_p}")
 
         # 服务区车流数据 (DATATYPE=1)
         sql_flow = f"""SELECT A."SERVERPART_ID",
@@ -6776,11 +6852,12 @@ async def get_shop_sabfi_list(
                 # BayonetINC_ORI：C# 只填 curYearData（车流原始值）
                 bayonet_ori = make_inc(sp_flow)
 
-                # TODO: ShopSABFIList 需从 T_PROFITCONTRIBUTE 表按经营项目(BUSINESSPROJECT_ID)分组构建
-                # 当前数据源不匹配（T_BUSINESSWARNING 按门店分，而 C# 按经营项目分）
+                # 获取该服务区的经营项目列表
+                sp_sabfi_projects = sabfi_projects_map.get(sp_id, [])
+                sp_overall_score = round(sum(p["SABFI_Score"] for p in sp_sabfi_projects) / len(sp_sabfi_projects), 2) if sp_sabfi_projects else 0.0
 
                 sp_node = {
-                    "SABFI_Score": 0.0, "ShopSABFIList": None,
+                    "SABFI_Score": sp_overall_score, "ShopSABFIList": sp_sabfi_projects,
                     "SPRegionTypeId": rg["id"], "SPRegionTypeName": rg["name"],
                     "ServerpartId": sp_id, "ServerpartName": sp_data["name"],
                     "RevenueINC": make_inc(sp_rev, None, None, None,
@@ -6969,21 +7046,25 @@ async def get_shop_month_sabfi_list(
             # C#: SABFI_Score = SABFIList.Sum(o => o.value.TryParseToDecimal())
             sabfi_sum = sum(float(s["value"]) if s["value"] else 0.0 for s in sabfi_list)
 
+            # TODO: 此处若需对齐 C# 细化数据，需查 T_BUSINESSWARNING / T_PERIODMONTHPROFIT
+            # 临时占位逻辑：从 rows_m 获取基础信息
+            sample = rows_m[0] if rows_m else {}
+            
             data_list.append({
                 "StatisticsMonth": m_fmt,
-                "BusinessTrade": None,
+                "BusinessTrade": sample.get("SERVERPARTSHOP_NAME"), # 临时
                 "BusinessProjectName": None,
                 "SABFI_Score": sabfi_sum,
                 "Revenue_SD": None,
                 "Revenue_AVG": None,
                 "SABFIList": sabfi_list,
-                "ServerpartId": None,
-                "ServerpartName": None,
-                "ServerpartShopId": None,
-                "ServerpartShopName": None,
+                "ServerpartId": sample.get("SERVERPART_ID"),
+                "ServerpartName": sample.get("SERVERPART_NAME"),
+                "ServerpartShopId": sample.get("SERVERPARTSHOP_ID"),
+                "ServerpartShopName": sample.get("SERVERPARTSHOP_NAME"),
                 "Brand_Id": None, "Brand_Name": None, "BrandType_Name": None, "Brand_ICO": None,
                 "ShopTrade": 0, "BusinessTradeName": None, "BusinessTradeType": 0,
-                "BusinessProjectId": None, "CompactStartDate": None, "CompactEndDate": None,
+                "BusinessProjectId": sample.get("BUSINESSPROJECT_ID"), "CompactStartDate": None, "CompactEndDate": None,
                 "BusinessType": None, "SettlementModes": None,
                 "MERCHANTS_ID": None, "MERCHANTS_ID_Encrypted": None, "MERCHANTS_NAME": None,
                 "RevenueINC": None, "AccountINC": None, "TicketINC": None, "AvgTicketINC": None,

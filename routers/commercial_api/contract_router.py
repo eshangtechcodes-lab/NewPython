@@ -10,7 +10,7 @@ from loguru import logger
 
 from core.database import DatabaseHelper
 from models.base import Result
-from routers.deps import get_db
+from routers.deps import get_db, parse_multi_ids, build_in_condition
 
 router = APIRouter()
 
@@ -45,8 +45,9 @@ async def get_contract_analysis(
 
         # ========== 1. 构建 WHERE 子句 (对齐 C#) ==========
         where_sql = ""
-        if Serverpart_ID:
-            where_sql = f" AND D.SERVERPART_ID IN ({Serverpart_ID})"
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql = " AND " + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'D.SERVERPART_ID')
         elif SPRegionType_ID:
             where_sql = f" AND D.SERVERPART_ID IN ({SPRegionType_ID})"
         elif provinceCode:
@@ -74,8 +75,8 @@ async def get_contract_analysis(
 
         # ========== 3. 查询门店数量 → ShopCount ==========
         shop_where = ""
-        if Serverpart_ID:
-            shop_where = f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        if _sp_ids:
+            shop_where = ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif provinceCode:
             fe_rows2 = db.execute_query(f"""SELECT "FIELDENUM_ID" FROM "T_FIELDENUM"
                 WHERE "FIELD_NAME" = 'DIVISION_CODE' AND "FIELDENUM_VALUE" = '{provinceCode}'""") or []

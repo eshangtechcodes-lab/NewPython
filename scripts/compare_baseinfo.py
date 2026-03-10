@@ -12,8 +12,8 @@ if hasattr(sys.stderr, "reconfigure"):
 session = requests.Session()
 session.trust_env = False
 
-OLD = "http://localhost:8900/CommercialApi"
-NEW = "http://localhost:8080/CommercialApi"
+OLD = "http://192.168.1.99:8900/CommercialApi"
+NEW = "http://127.0.0.1:8080/CommercialApi"
 
 output = []
 def log(msg):

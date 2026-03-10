@@ -9,10 +9,9 @@ from fastapi import APIRouter, Depends, Query
 from typing import Optional
 from loguru import logger
 
-from core.database import DatabaseHelper
-# from core.old_api_proxy import proxy_to_old_api  # 已全部完成SQL平移，不再需要代理
 from models.base import Result, JsonListData
-from routers.deps import get_db
+from routers.deps import get_db, parse_multi_ids, build_in_condition
+from core.database import DatabaseHelper
 
 router = APIRouter()
 
@@ -595,8 +594,9 @@ async def get_sp_bayonet_list(
 
         # 构建WHERE条件
         where_sql = ""
-        if Serverpart_ID:
-            where_sql += f" AND B.\"SERVERPART_ID\" IN ({Serverpart_ID})"
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f" AND B.\"SPREGIONTYPE_ID\" IN ({SPRegionType_ID})"
         if Serverpart_Region:
@@ -856,8 +856,9 @@ async def get_avg_bayonet_analysis(
             return Result.fail(code=101, msg="查询失败，无数据返回！")
 
         # 有服务区/片区参数时：查明细后求平均
-        if Serverpart_ID:
-            where_sql += f' AND C."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'C."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND C."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
         if Serverpart_Region:
@@ -1110,8 +1111,9 @@ async def get_bayonet_st_analysis(
         if EndMonth:
             conditions.append(f'A."STATISTICS_MONTH" <= ?')
             params.append(int(EndMonth.replace("-", "")))
-        if Serverpart_ID:
-            conditions.append(f'B."SERVERPART_ID" IN ({Serverpart_ID})')
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            conditions.append(build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"'))
         elif SPRegionType_ID:
             conditions.append(f'B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})')
 
@@ -1363,8 +1365,9 @@ async def get_province_month_analysis(
         params.append(month_end)
 
         # 过滤条件
-        if Serverpart_ID:
-            conditions.append(f'"B"."SERVERPART_ID" IN ({Serverpart_ID})')
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            conditions.append(build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', '"B"."SERVERPART_ID"'))
         elif SPRegion_ID:
             conditions.append(f'"B"."SPREGIONTYPE_ID" IN ({SPRegion_ID})')
 
@@ -1729,8 +1732,9 @@ async def get_bayonet_growth_analysis(
             except: return 0
 
         where_sql = ""
-        if Serverpart_ID:
-            where_sql += f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
         if Serverpart_Region:
@@ -1879,8 +1883,9 @@ async def get_bayonet_compare(
         ce_date = parse_d(CompareEndDate) if CompareEndDate else e_date.replace(year=e_date.year - 1)
 
         where_sql = ""
-        if Serverpart_ID:
-            where_sql += f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
         if Serverpart_Region:
@@ -2003,8 +2008,9 @@ async def get_holiday_compare(
 
         # 复用 BayonetCompare 查询逻辑
         where_sql = ""
-        if Serverpart_ID:
-            where_sql += f' AND B."SERVERPART_ID" IN ({Serverpart_ID})'
+        _sp_ids = parse_multi_ids(Serverpart_ID)
+        if _sp_ids:
+            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
         if Serverpart_Region:
@@ -2495,8 +2501,12 @@ async def get_revenue_trend_chart(postData: dict = None, db: DatabaseHelper = De
         if serverpart_code:
             serverpart_codes = [serverpart_code]
         elif serverpart_id:
-            rows = db.execute_query(
-                f'SELECT "SERVERPART_CODE" FROM "T_SERVERPART" WHERE "SERVERPART_ID" IN ({serverpart_id})')
+            _sp_ids_rt = parse_multi_ids(serverpart_id)
+            if _sp_ids_rt:
+                rows = db.execute_query(
+                    f'SELECT "SERVERPART_CODE" FROM "T_SERVERPART" WHERE ' + build_in_condition('SERVERPART_ID', _sp_ids_rt))
+            else:
+                rows = []
             serverpart_codes = [r["SERVERPART_CODE"] for r in rows if r.get("SERVERPART_CODE")]
         else:
             # 获取省份对应的FieldEnum_ID
@@ -2924,8 +2934,9 @@ async def get_bayonet_owner_ah_tree_list(
         # dataType!=1: 汇总模式（C# GetBayonetOwnerAHTreeList）
         # 构建过滤条件
         where_sql = ""
-        if serverPartId:
-            where_sql = f' AND "SERVERPART_ID" IN ({serverPartId})'
+        _sp_ids = parse_multi_ids(serverPartId)
+        if _sp_ids:
+            where_sql = " AND " + build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', '"SERVERPART_ID"')
 
         # 1. 查询车辆归属地月度固化数据
         if isSync:
@@ -3107,8 +3118,9 @@ async def get_province_vehicle_tree_list(
         from collections import defaultdict
 
         where_sql = ""
-        if serverPartId:
-            where_sql = f' AND T."SERVERPART_ID" IN ({serverPartId})'
+        _sp_ids = parse_multi_ids(serverPartId)
+        if _sp_ids:
+            where_sql = " AND " + build_in_condition("SERVERPART_ID", _sp_ids).replace('SERVERPART_ID', 'T."SERVERPART_ID"')
 
         # 1. 查车辆归属地月度固化数据(按省份/城市/片区分组)
         sql = f"""SELECT T."PROVINCE_NAME", T."CITY_NAME", T1."SPREGIONTYPE_ID",
@@ -3127,7 +3139,9 @@ async def get_province_vehicle_tree_list(
         rt_ids = list(set(str(r["SPREGIONTYPE_ID"]) for r in dt_data if r.get("SPREGIONTYPE_ID")))
         sp_where = ""
         if serverPartId:
-            sp_where = f" OR \"SERVERPART_ID\" IN ({serverPartId})"
+            _sp_ids_pv = parse_multi_ids(serverPartId)
+            if _sp_ids_pv:
+                sp_where = " OR " + build_in_condition('SERVERPART_ID', _sp_ids_pv)
         sql_sp = f"""SELECT "SERVERPART_ID","SERVERPART_NAME","SPREGIONTYPE_ID","SPREGIONTYPE_NAME","SPREGIONTYPE_INDEX"
             FROM "T_SERVERPART" WHERE "SPREGIONTYPE_ID" IN ({','.join(rt_ids)}){sp_where}"""
         dt_sp = db.execute_query(sql_sp) or []
@@ -3287,8 +3301,9 @@ async def get_province_vehicle_detail(
             # 省份和城市同时为"其他"，表示未匹配到省份及城市的车流信息
             if cityName and cityName == "其他":
                 where_sql += """ AND "CITY_NAME" IS NULL"""
-        if serverPartId:
-            where_sql += f""" AND "SERVERPART_ID" IN ({serverPartId})"""
+        _sp_ids_d = parse_multi_ids(serverPartId)
+        if _sp_ids_d:
+            where_sql += " AND " + build_in_condition('SERVERPART_ID', _sp_ids_d)
         if cityName and cityName != "" and cityName != "其他":
             where_sql += f""" AND "CITY_NAME" = '{cityName}'"""
 
