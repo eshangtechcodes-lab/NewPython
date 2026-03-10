@@ -6222,6 +6222,7 @@ async def get_month_inc_analysis(
             return ""
 
         # --- 固化数据路径 ---
+        logger.info(f"INC固化条件判断: is_solid={is_solid}, Start={StatisticsStartMonth}, End={StatisticsEndMonth}, now={now_month}, 走固化={is_solid and StatisticsStartMonth == StatisticsEndMonth and StatisticsEndMonth != now_month}")
         if is_solid and StatisticsStartMonth == StatisticsEndMonth and StatisticsEndMonth != now_month:
             # C#: 查 T_BUSINESSWARNING 表
             # CompareField 由 warningType/showBayonet/showRevenue/showLevel 决定
@@ -6342,11 +6343,13 @@ async def get_month_inc_analysis(
                     _ss_in = ",".join(str(i) for i in _all_ssids)
                     _ss_rows = db.execute_query(f"""SELECT S.SERVERPARTSHOP_ID, S.SERVERPARTSHOP_NAME,
                             S.BUSINESS_TRADE, S.BUSINESS_TRADENAME, S.SHOPTRADE, S.BUSINESS_BRAND,
+                            S.SELLER_ID, S.SELLER_NAME,
                             B.BRAND_ID, B.BRAND_NAME AS BRAND_NAME2, B.BRAND_INTRO AS BRAND_ICO
                         FROM T_SERVERPARTSHOP S LEFT JOIN T_BRAND B ON S.BUSINESS_BRAND = B.BRAND_ID
                         WHERE S.SERVERPARTSHOP_ID IN ({_ss_in})""") or []
                     for sr in _ss_rows:
                         _inc_shop_info[sr["SERVERPARTSHOP_ID"]] = sr
+                    logger.info(f"INC品牌查询: ssids={len(_all_ssids)}, 查到={len(_ss_rows)}, map_keys={list(_inc_shop_info.keys())[:5]}")
                 if _all_bpids:
                     _bp_in = ",".join(str(i) for i in _all_bpids)
                     _bp_rows = db.execute_query(f"""SELECT BUSINESSPROJECT_ID, MERCHANTS_ID, MERCHANTS_NAME
@@ -6354,7 +6357,8 @@ async def get_month_inc_analysis(
                     for br in _bp_rows:
                         _inc_bp_info[br["BUSINESSPROJECT_ID"]] = br
             except Exception as _ex_info:
-                logger.warning(f"GetMonthINCAnalysis 门店品牌/商户信息查询失败: {_ex_info}")
+                import traceback
+                logger.error(f"GetMonthINCAnalysis 门店品牌/商户信息查询失败: {_ex_info}\n{traceback.format_exc()}")
             # 构建树形节点辅助函数
             def _make_inc(cur, yoy, qoq=None):
                 """构建同比/环比增长结构，对齐旧接口 HolidayINCDetailModel"""
@@ -6484,9 +6488,9 @@ async def get_month_inc_analysis(
                             "BusinessProjectId": _bp_id,
                             "CompactStartDate": "", "CompactEndDate": "",
                             "BusinessType": None, "SettlementModes": None,
-                            "MERCHANTS_ID": float(_merch_id) if _merch_id is not None else None,
+                            "MERCHANTS_ID": float(_merch_id) if _merch_id is not None else (float(_si.get("SELLER_ID")) if _si.get("SELLER_ID") is not None else None),
                             "MERCHANTS_ID_Encrypted": None,
-                            "MERCHANTS_NAME": _bp.get("MERCHANTS_NAME"),
+                            "MERCHANTS_NAME": _bp.get("MERCHANTS_NAME") or _si.get("SELLER_NAME"),
                             "RevenueINC": _make_inc(safe_dec(shop.get("REVENUE_AMOUNT")), safe_dec(shop.get("REVENUE_AMOUNT_YOY")), safe_dec(shop.get("REVENUE_AMOUNT_QOQ"))),
                             "AccountINC": _make_inc(safe_dec(shop.get("ROYALTY_THEORY")), safe_dec(shop.get("ROYALTY_THEORY_YOY")), safe_dec(shop.get("ROYALTY_THEORY_QOQ"))),
                             "TicketINC": _make_inc(safe_dec(shop.get("TICKET_COUNT")), safe_dec(shop.get("TICKET_COUNT_YOY")), safe_dec(shop.get("TICKET_COUNT_QOQ"))),
@@ -7015,8 +7019,8 @@ async def get_shop_sabfi_list(
             bp = bp_info_map.get(bp_id, {}) if bp_id else {}
 
             # BusinessTrade — 旧接口用的是 T_SERVERPARTSHOP.BUSINESS_TRADE
-            biz_trade = str(si.get("BUSINESS_TRADE") or r.get("BUSINESS_TRADE") or "")
-            biz_trade_name = si.get("BUSINESS_TRADENAME") or None
+            biz_trade = str(si.get("BUSINESS_TRADE") or "")
+            biz_trade_name = str(si.get("BUSINESS_TRADENAME") or "")
             shop_trade = si.get("SHOPTRADE", 0) or 0
             brand_id = si.get("BRAND_ID") or si.get("BUSINESS_BRAND")
             # 确保 Brand_Id 为 int
@@ -7102,7 +7106,7 @@ async def get_shop_sabfi_list(
 
             return {
                 "StatisticsMonth": None,
-                "BusinessTrade": biz_trade if biz_trade else None,
+                "BusinessTrade": biz_trade,
                 "BusinessProjectName": bp.get("BUSINESSPROJECT_NAME"),
                 "SABFI_Score": 0.0,
                 "Revenue_SD": safe_dec(r.get("REVENUE_SD")) if r.get("REVENUE_SD") is not None else None,
@@ -7115,7 +7119,7 @@ async def get_shop_sabfi_list(
                 "Brand_Id": brand_id,
                 "Brand_Name": brand_name,
                 "BrandType_Name": None,
-                "Brand_ICO": brand_ico,
+                "Brand_ICO": brand_ico or "",
                 "ShopTrade": shop_trade_val,
                 "BusinessTradeName": biz_trade_name,
                 "BusinessTradeType": btt,
@@ -7127,11 +7131,11 @@ async def get_shop_sabfi_list(
                 "MERCHANTS_ID": float(merch_id) if merch_id is not None else None,
                 "MERCHANTS_ID_Encrypted": merch_id_enc,
                 "MERCHANTS_NAME": merch_name,
-                # C# 规则: 原始值为 None 时，QOQData/增量也为 None
+                # C# 规则: QOQData 使用 safe_dec 后的值；但原始值 None 时相关字段为 None；增量0→null
                 "RevenueINC": make_inc(
                     r.get("REVENUE_AMOUNT"), None,
                     None, None,
-                    rev_qoq if has_qoq and rev_qoq_raw is not None else None,
+                    rev_qoq if has_qoq else None,
                     round(rev - rev_qoq, 2) if has_qoq and r.get("REVENUE_AMOUNT") is not None else None,
                     round((rev - rev_qoq) / rev_qoq * 100, 2) if has_qoq and rev_qoq and r.get("REVENUE_AMOUNT") is not None else None),
                 "AccountINC": make_inc(
@@ -7143,12 +7147,12 @@ async def get_shop_sabfi_list(
                 "TicketINC": make_inc(
                     r.get("TICKET_COUNT"), None,
                     None, None,
-                    tic_qoq if has_qoq and tic_qoq_raw is not None else None,
+                    tic_qoq if has_qoq else None,
                     round(tic - tic_qoq, 2) if has_qoq and r.get("TICKET_COUNT") is not None else None,
                     round((tic - tic_qoq) / tic_qoq * 100, 2) if has_qoq and tic_qoq and r.get("TICKET_COUNT") is not None else None),
                 "AvgTicketINC": make_inc(
                     avg_cur if tic else None, None, None, None,
-                    avg_qoq if has_qoq and tic_qoq_raw is not None else None, avg_inc_qoq, avg_rate_qoq),
+                    avg_qoq if has_qoq else None, avg_inc_qoq, avg_rate_qoq),
                 "CurTransaction": None,
                 "Profit_Amount": shop_profit,
                 "Cost_Amount": shop_cost,
@@ -7486,3 +7490,4 @@ async def get_shop_month_sabfi_list(
     except Exception as ex:
         logger.error(f"GetShopMonthSABFIList 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
+
