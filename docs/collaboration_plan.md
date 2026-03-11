@@ -1178,7 +1178,7 @@ PictureController (9✅) + ShopVideoController (16❌)。
 
 ```
 [开发期] Oracle 为主库，达梦为镜像库 → 定期全量同步
-[过渡期] 双库并行，新老 API 共存 → 增量同步或双写
+[过渡期] 双库并行，新旧 API 共存 → 增量同步或双写
 [上线后] 达梦为主库 → Oracle 停用
 ```
 
@@ -1188,7 +1188,7 @@ PictureController (9✅) + ShopVideoController (16❌)。
 
 **操作流程**：
 
-1. **梳理依赖表清单**：读原 Helper SQL，列出每个接口涉及的所有表（含 JOIN 表、字典表）
+1. **梳理依赖表清单**：读取 Helper SQL，列出每个接口涉及的所有表（含 JOIN 表、字典表）
 2. **确认达梦已有数据**：
 
 ```python
@@ -1196,14 +1196,13 @@ PictureController (9✅) + ShopVideoController (16❌)。
 import dmPython
 conn = dmPython.connect(user='NEWPYTHON', password='NewPython@2025', server='127.0.0.1', port=5236)
 cur = conn.cursor()
-# 检查所有需要的表是否存在及数据量
-tables = ['T_BRAND', 'T_MERCHANTS', 'T_CONTRACT', ...]  # 按需补充
+tables = ['T_BRAND', 'T_MERCHANTS', 'T_CONTRACT', ...]
 for t in tables:
     try:
         cur.execute(f"SELECT COUNT(*) FROM {t}")
-        print(f"  ✅ {t:30s} {cur.fetchone()[0]:>8} 条")
+        print(f"  OK {t:30s} {cur.fetchone()[0]:>8} 条")
     except:
-        print(f"  ❌ {t:30s} 表不存在")
+        print(f"  NO {t:30s} 表不存在")
 ```
 
 3. **缺失的表**：用达梦数据迁移工具（DTS）或手动导入
@@ -1216,23 +1215,23 @@ for t in tables:
 
 ```python
 # 对比 Oracle 和达梦的字段类型
-# Oracle 端
+# Oracle 侧
 cur_ora.execute("""
-    SELECT COLUMN_NAME, DATA_TYPE, DATA_PRECISION, DATA_SCALE 
-    FROM ALL_TAB_COLUMNS 
-    WHERE OWNER='COOP_MERCHANT' AND TABLE_NAME='T_XXX' 
+    SELECT COLUMN_NAME, DATA_TYPE, DATA_PRECISION, DATA_SCALE
+    FROM ALL_TAB_COLUMNS
+    WHERE OWNER='COOP_MERCHANT' AND TABLE_NAME='T_XXX'
     ORDER BY COLUMN_ID
 """)
-# 达梦端
+# 达梦侧
 cur_dm.execute("""
-    SELECT COLUMN_NAME, DATA_TYPE 
-    FROM USER_TAB_COLUMNS 
-    WHERE TABLE_NAME='T_XXX' 
+    SELECT COLUMN_NAME, DATA_TYPE
+    FROM USER_TAB_COLUMNS
+    WHERE TABLE_NAME='T_XXX'
     ORDER BY COLUMN_ID
 """)
 ```
 
-**类型不一致时**修改达梦列：
+**类型不一致时** 修改达梦列：
 
 ```sql
 -- 示例：将 VARCHAR 改为 INT
@@ -1244,36 +1243,28 @@ ALTER TABLE T_BRAND MODIFY BRAND_CATEGORY INT;
 
 ### 三、开发期增量同步
 
-开发期间 Oracle 仍然是生产库，数据会变化。两种方案选其一：
+开发期中 Oracle 仍然是生产库，数据会变化。两种方案选其一：
 
 **方案 A：定期全量覆盖（推荐，简单可靠）**
 
 - 每周一次全量重新导入（用达梦 DTS 工具）
 - 适合：表数据量不大（万级以内），迁移窗口期短
-- 脚本：`scripts/sync_full.py`
 
 **方案 B：增量同步（数据量大时）**
 
 - 按 `OPERATE_DATE` 或主键 ID 范围增量同步
 - 适合：大表（十万级以上），不希望每次全量
-- 脚本：`scripts/sync_incremental.py`
 - 注意：需要原 Oracle 表有时间戳字段支持
 
 ### 四、表依赖关系记录
 
 迁移每个 Controller 时，在 `docs/table_dependencies.md` 中记录该接口依赖的表：
 
-```markdown
 | Controller | 接口 | 主表 | JOIN 表 | 字典表 |
 |------------|------|------|---------|--------|
-| BaseInfoController | GetBrandList | T_BRAND | T_MERCHANTS, T_SERVERPART | T_BUSINESSTRADE |
-| ContractController | GetContractList | T_CONTRACT | T_MERCHANTS, T_SERVERPART | T_CONTRACTTYPE |
-```
-
-这样可以：
-- 快速知道迁移某个接口前需要同步哪些表
-- 确保关联表都已导入达梦
-- 排查数据不一致时精确定位
+| BaseInfoController | GetSPRegionList | T_SERVERPARTTYPE | - | - |
+| BaseInfoController | GetBusinessTradeList | T_AUTOSTATISTICS | T_AUTOSTATISTICS(自关联) | - |
+| BaseInfoController | GetShopCountList | T_SHOPCOUNT | - | - |
 
 ### 五、切换上线检查清单
 
@@ -1281,7 +1272,7 @@ ALTER TABLE T_BRAND MODIFY BRAND_CATEGORY INT;
 
 - [ ] 所有依赖表的数据量与 Oracle 一致
 - [ ] 所有字段类型已校正（无 VARCHAR 冒充 INT 的情况）
-- [ ] 序列（SEQUENCE）的当前值 ≥ Oracle 最大 ID
+- [ ] 序列（SEQUENCE）的当前值大于等于 Oracle 最大 ID
 - [ ] 全部接口对比验证通过
 - [ ] 写操作（INSERT/UPDATE/DELETE）在达梦端测试通过
 - [ ] 事务和并发测试通过

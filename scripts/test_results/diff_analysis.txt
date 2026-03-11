@@ -1,0 +1,52 @@
+# DIFF 分析报告
+
+## 1. 新API行为更正确 (11个，可忽略)
+  - `GET /BigData/GetBayonetRankList` 旧=C=200 → 新=C=100,T=0
+  - `GET /BigData/GetAvgBayonetAnalysis` 旧=C=101 → 新=C=100
+  - `GET /BigData/CorrectBayonet` 旧=C=999 → 新=C=100
+  - `GET /Examine/WeChat_GetPatrolList` 旧=C=999 → 新=C=100,T=1
+  - `GET /Examine/GetPatrolAnalysis` 旧=C=200 → 新=C=100
+  - `GET /Revenue/GetRevenueBudget` 旧=C=101 → 新=C=100
+  - `GET /Revenue/GetProvinceRevenueBudget` 旧=C=101 → 新=C=100
+  - `GET /Revenue/GetTransactionTimeAnalysis` 旧=C=101 → 新=C=100
+  - `GET /Revenue/GetShopCurRevenue` 旧=C=101 → 新=C=100,T=0
+  - `GET /Revenue/GetShopINCAnalysis` 旧=C=101 → 新=C=100,T=0
+  - `GET /Suggestion/GetMemberUnreadData` 旧=C=999 → 新=C=100
+
+## 2. 新API报错 C=999 (5个，需修复代码)
+  - `POST /Analysis/GetANALYSISINSList` 旧=C=100,T=7207 → 新=C=999
+    入参: {"Result_Code": 100, "Result_Desc": "查询成功", "PageIndex": "1", "PageSize": "10", "STATISTICS_DATE": "2026-02-13", "PROVINCE_CODE": "340000", "OPERATE_DATE": "2026-02-13", "SPREGIONTYPE_ID": ""}
+  - `GET /Customer/GetCustomerRatio` 旧=C=100,T=0 → 新=C=999
+    入参: {"statisticsType": "1", "provinceCode": "340000", "serverpartId": "416", "statisticsMonth": "202602"}
+  - `GET /Customer/GetCustomerConsumeRatio` 旧=C=100,T=0 → 新=C=999
+    入参: {"provinceCode": "340000", "serverpartId": "416", "statisticsMonth": "202602"}
+  - `GET /Customer/GetCustomerAgeRatio` 旧=C=100,T=0 → 新=C=999
+    入参: {"provinceCode": "340000", "serverpartId": "416", "statisticsMonth": "202602"}
+  - `GET /Customer/GetCustomerGroupRatio` 旧=C=100,T=0 → 新=C=999
+    入参: {"provinceCode": "340000", "serverpartId": "416", "statisticsMonth": "202602"}
+
+## 3. 微小差异 (6个，可忽略)
+  - `GET /BigData/GetBayonetSTAList` 旧=C=100,T=2 → 新=C=100,T=0
+  - `GET /BigData/GetBayonetOAList` 旧=C=100,T=2 → 新=C=100,T=0
+  - `GET /BigData/GetBayonetProvinceOAList` 旧=C=100,T=2 → 新=C=100,T=0
+  - `POST /Examine/GetMEETINGList` 旧=C=100,T=70994 → 新=C=100,T=70993
+  - `GET /Revenue/GetServerpartINCAnalysis` 旧=C=100,T=1 → 新=C=100,T=0
+  - `GET /Revenue/GetMonthlySPINCAnalysis` 旧=C=100,T=1 → 新=C=100,T=0
+
+## 4. 数据量差异 (16个，需排查)
+  - `POST /Analysis/GetServerpartTypeAnalysis` 旧=C=100,T=6 → 新=C=100,T=0
+  - `GET /BaseInfo/GetBrandAnalysis` 旧=C=100 → 新=C=101
+  - `GET /BaseInfo/GetServerpartList` 旧=C=100,T=10 → 新=C=100,T=0
+  - `GET /BaseInfo/GetServerpartInfo` 旧=C=100 → 新=C=101
+  - `POST /BaseInfo/GetServerpartServiceSummary` 旧=C=100 → 新=C=101
+  - `POST /BaseInfo/GetBrandStructureAnalysis` 旧=C=100,T=4 → 新=C=100,T=0
+  - `GET /BigData/GetBayonetSTAnalysis` 旧=C=100,T=3 → 新=C=100,T=0
+  - `POST /BigData/GetRevenueTrendChart` 旧=C=100,T=45 → 新=C=100,T=0
+  - `GET /Budget/GetBudgetProjectDetailList` 旧=C=100,T=13 → 新=C=100,T=0
+  - `GET /Contract/GetMerchantAccountSplit` 旧=C=100 → 新=C=101
+  - `GET /Customer/GetAnalysisDescDetail` 旧=C=100 → 新=C=101
+  - `GET /Examine/GetPATROLDetail` 旧=C=100 → 新=C=101
+  - `GET /Examine/WeChat_GetExamineDetail` 旧=C=100,T=0 → 新=C=101
+  - `GET /Revenue/GetUnUpLoadShops` 旧=C=100,T=27 → 新=C=100,T=0
+  - `GET /Revenue/GetRevenueReport` 旧=C=100,T=10356318.57 → 新=C=100,T=0
+  - `GET /Revenue/GetCompanyRevenueReport` 旧=C=100,T=3 → 新=C=100,T=0

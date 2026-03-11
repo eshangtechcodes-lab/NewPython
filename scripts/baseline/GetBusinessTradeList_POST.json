@@ -1,0 +1,10 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "PageIndex": 0,
+    "PageSize": 0,
+    "TotalCount": 230,
+    "List": []
+  }
+}

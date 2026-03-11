@@ -1,0 +1,121 @@
+[
+  {
+    "desc": "品牌分析",
+    "path": "/BaseInfo/GetBrandAnalysis",
+    "old": "C=100,['BrandTag', 'ShopBrandList']",
+    "new": "C=101",
+    "result": "DIFF"
+  },
+  {
+    "desc": "片区列表",
+    "path": "/BaseInfo/GetSPRegionList",
+    "old": "C=100,T=7",
+    "new": "C=100,T=7",
+    "result": "PASS"
+  },
+  {
+    "desc": "业态列表",
+    "path": "/BaseInfo/GetBusinessTradeList",
+    "old": "C=100,T=35",
+    "new": "C=100,T=35",
+    "result": "PASS"
+  },
+  {
+    "desc": "服务区列表",
+    "path": "/BaseInfo/GetServerPartList",
+    "old": "C=100,T=141",
+    "new": "HTTP404",
+    "result": "DIFF"
+  },
+  {
+    "desc": "业主单位",
+    "path": "/BaseInfo/GetOwnerUnitListByProvinceCode",
+    "old": "HTTP404",
+    "new": "HTTP404",
+    "result": "SKIP"
+  },
+  {
+    "desc": "考核列表",
+    "path": "/Examine/GetEXAMINEList",
+    "old": "TIMEOUT",
+    "new": "C=100,T=3695",
+    "result": "SKIP"
+  },
+  {
+    "desc": "考核明细",
+    "path": "/Examine/GetEXAMINEDetail",
+    "old": "C=100,['EXAMINE_ID', 'EXAMINE_IDS', 'SPREGIONTYPE_ID']",
+    "new": "C=100,['EXAMINE_ID', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME']",
+    "result": "PASS"
+  },
+  {
+    "desc": "晨会列表",
+    "path": "/Examine/GetMEETINGList",
+    "old": "TIMEOUT",
+    "new": "C=100,T=5000",
+    "result": "SKIP"
+  },
+  {
+    "desc": "晨会明细",
+    "path": "/Examine/GetMEETINGDetail",
+    "old": "C=100,['MEETING_ID', 'MEETING_IDS', 'SPREGIONTYPE_ID']",
+    "new": "C=100,['MEETING_ID', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME']",
+    "result": "PASS"
+  },
+  {
+    "desc": "巡检列表",
+    "path": "/Examine/GetPATROLList",
+    "old": "TIMEOUT",
+    "new": "C=100,T=5000",
+    "result": "SKIP"
+  },
+  {
+    "desc": "巡检明细",
+    "path": "/Examine/GetPATROLDetail",
+    "old": "TIMEOUT",
+    "new": "C=101",
+    "result": "SKIP"
+  },
+  {
+    "desc": "分析列表",
+    "path": "/Analysis/GetANALYSISINSList",
+    "old": "TIMEOUT",
+    "new": "C=100,T=5000",
+    "result": "SKIP"
+  },
+  {
+    "desc": "分析明细",
+    "path": "/Analysis/GetANALYSISINSDetail",
+    "old": "C=100,['ANALYSISINS_ID', 'ANALYSISINS_PID', 'STATISTICS_DATE']",
+    "new": "C=100,['ANALYSISINS_ID', 'ANALYSISINS_PID', 'STATISTICS_DATE']",
+    "result": "PASS"
+  },
+  {
+    "desc": "门店商家",
+    "path": "/Analysis/GetShopMerchant",
+    "old": "C=100,T=76",
+    "new": "C=100,T=76",
+    "result": "PASS"
+  },
+  {
+    "desc": "地图配置",
+    "path": "/Analysis/GetMapConfigByProvinceCode",
+    "old": "C=999",
+    "new": "C=999",
+    "result": "PASS"
+  },
+  {
+    "desc": "预算列表",
+    "path": "/Budget/GetBUDGETPROJECT_AHList",
+    "old": "C=100,T=250",
+    "new": "C=100,T=250",
+    "result": "PASS"
+  },
+  {
+    "desc": "预算明细",
+    "path": "/Budget/GetBUDGETPROJECT_AHDetail",
+    "old": "C=100,['BUDGETPROJECT_AH_ID', 'BUDGETPROJECT_CODE', 'BUDGETPROJECT_YEAR']",
+    "new": "C=101",
+    "result": "DIFF"
+  }
+]

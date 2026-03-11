@@ -1,0 +1,142 @@
+开始深度结构对比检查（实时请求新旧API）...
+================================================================================
+  ✅ [3/121] POST:/Analysis/GetANALYSISINSList
+  ✅ [4/121] GET:/Analysis/GetANALYSISINSDetail
+  ✅ [6/121] POST:/Analysis/GetTransactionAnalysis
+  ❌ [7/121] GET:/Analysis/TranslateSentence
+  ✅ [9/121] POST:/Analysis/GetServerpartTypeAnalysis
+  ✅ [10/121] GET:/BaseInfo/GetSPRegionList
+  ✅ [11/121] GET:/BaseInfo/GetBusinessTradeList
+  ✅ [12/121] POST:/BaseInfo/GetBusinessTradeList
+  ❌ [13/121] GET:/BaseInfo/GetBrandAnalysis
+  ✅ [14/121] GET:/BaseInfo/GetServerpartList
+  ❌ [15/121] GET:/BaseInfo/GetServerpartInfo
+  ✅ [16/121] GET:/BaseInfo/GetServerInfoTree
+  ✅ [17/121] POST:/BaseInfo/GetServerpartServiceSummary
+  ✅ [18/121] POST:/BaseInfo/GetBrandStructureAnalysis
+  ✅ [19/121] GET:/Revenue/GetBayonetEntryList
+  ✅ [20/121] GET:/Revenue/GetBayonetSTAList
+  ✅ [21/121] GET:/Revenue/GetBayonetOAList
+  ✅ [22/121] GET:/Revenue/GetBayonetProvinceOAList
+  ✅ [23/121] GET:/Revenue/GetSPBayonetList
+  ✅ [26/121] GET:/Revenue/GetProvinceAvgBayonetAnalysis
+  ✅ [27/121] GET:/Revenue/GetBayonetSTAnalysis
+  ✅ [28/121] GET:/BigData/GetMonthAnalysis
+  ✅ [29/121] GET:/BigData/GetProvinceMonthAnalysis
+  ✅ [30/121] GET:/BigData/GetBayonetWarning
+  ✅ [31/121] GET:/BigData/GetHolidayBayonetWarning
+  ✅ [32/121] GET:/BigData/GetBayonetGrowthAnalysis
+  ✅ [33/121] GET:/BigData/GetBayonetCompare
+  ✅ [34/121] GET:/BigData/GetHolidayCompare
+  ✅ [35/121] GET:/BigData/GetBayonetOAAnalysis
+  ✅ [36/121] GET:/BigData/GetDateAnalysis
+  ✅ [37/121] POST:/BigData/GetCurBusyRank
+  ✅ [38/121] POST:/BigData/GetRevenueTrendChart
+  ✅ [39/121] POST:/BigData/GetEnergyRevenueInfo
+  ✅ [40/121] GET:/BigData/GetBayonetOwnerAHTreeList
+  ✅ [41/121] GET:/BigData/GetProvinceVehicleTreeList
+  ✅ [42/121] GET:/BigData/GetProvinceVehicleDetail
+  ✅ [43/121] POST:/Budget/GetBUDGETPROJECT_AHList
+  ✅ [44/121] GET:/Budget/GetBUDGETPROJECT_AHDetail
+  ❌ [45/121] GET:/Budget/GetBudgetProjectDetailList
+  ✅ [46/121] GET:/Budget/GetBudgetMainShow
+  ✅ [47/121] GET:/BusinessProcess/GetBusinessProcessList
+  ✅ [48/121] GET:/Contract/GetContractAnalysis
+  ❌ [49/121] GET:/Contract/GetMerchantAccountSplit
+  ✅ [51/121] GET:/Customer/GetCustomerRatio
+  ✅ [52/121] GET:/Customer/GetCustomerConsumeRatio
+  ✅ [53/121] GET:/Customer/GetCustomerAgeRatio
+  ✅ [54/121] GET:/Customer/GetCustomerGroupRatio
+  ✅ [55/121] GET:/Customer/GetAnalysisDescList
+  ✅ [56/121] GET:/Customer/GetAnalysisDescDetail
+  ✅ [57/121] GET:/Customer/GetCustomerSaleRatio
+  ✅ [58/121] POST:/Examine/GetEXAMINEList
+  ✅ [59/121] GET:/Examine/GetEXAMINEDetail
+  ✅ [60/121] GET:/Examine/GetMEETINGDetail
+  ✅ [61/121] POST:/Examine/GetPATROLList
+  ✅ [62/121] GET:/Examine/GetPATROLDetail
+  ❌ [63/121] GET:/Examine/WeChat_GetExamineList
+  ✅ [64/121] GET:/Examine/WeChat_GetExamineDetail
+  ❌ [66/121] GET:/Examine/WeChat_GetMeetingList
+  ✅ [68/121] GET:/Examine/GetExamineAnalysis
+  ✅ [69/121] GET:/Examine/GetExamineResultList
+  ✅ [70/121] GET:/Examine/GetPatrolResultList
+  ✅ [72/121] GET:/Revenue/GetRevenuePushList
+  ✅ [73/121] GET:/Revenue/GetSummaryRevenue
+  ✅ [74/121] GET:/Revenue/GetSummaryRevenueMonth
+  ✅ [75/121] GET:/Revenue/GetWechatPushSalesList
+  ✅ [76/121] GET:/Revenue/GetUnUpLoadShops
+  ✅ [77/121] GET:/Revenue/GetServerpartBrand
+  ✅ [78/121] GET:/Revenue/GetServerpartEndAccountList
+  ✅ [79/121] GET:/Revenue/GetShopEndAccountList
+  ✅ [80/121] POST:/Revenue/GetBudgetExpenseList
+  ✅ [81/121] GET:/Revenue/GetBudgetExpenseList
+  ✅ [84/121] GET:/Revenue/GetMobileShare
+  ✅ [85/121] GET:/Revenue/GetMallDeliver
+  ✅ [86/121] GET:/Revenue/GetTransactionAnalysis
+  ✅ [88/121] GET:/Revenue/GetTransactionConvert
+  ✅ [89/121] GET:/Revenue/GetBusinessTradeRevenue
+  ✅ [90/121] GET:/Revenue/GetBusinessTradeLevel
+  ✅ [91/121] GET:/Revenue/GetBusinessBrandLevel
+  ✅ [92/121] GET:/Revenue/GetRevenueTrend
+  ✅ [93/121] GET:/Revenue/GetRevenueReport
+  ✅ [94/121] GET:/Revenue/GetRevenueReportDetil
+  ✅ [95/121] GET:/Revenue/GetSalableCommodity
+  ✅ [96/121] GET:/Revenue/GetSPRevenueRank
+  ✅ [97/121] GET:/Revenue/GetRevenueYOY
+  ✅ [98/121] GET:/Revenue/GetHolidayCompare
+  ✅ [99/121] GET:/Revenue/GetAccountReceivable
+  ✅ [100/121] GET:/Revenue/GetCurRevenue
+  ✅ [102/121] GET:/Revenue/GetLastSyncDateTime
+  ✅ [103/121] GET:/Revenue/GetHolidayAnalysis
+  ✅ [104/121] GET:/Revenue/GetHolidayAnalysisBatch
+  ✅ [105/121] GET:/Revenue/GetServerpartINCAnalysis
+  ✅ [107/121] GET:/Revenue/GetMonthlyBusinessAnalysis
+  ✅ [108/121] GET:/Revenue/GetMonthlySPINCAnalysis
+  ✅ [109/121] GET:/Revenue/GetTransactionDetailList
+  ✅ [110/121] GET:/Revenue/GetHolidayRevenueRatio
+  ✅ [113/121] GET:/Revenue/GetCompanyRevenueReport
+  ✅ [114/121] GET:/Revenue/GetRevenueCompare
+  ✅ [115/121] GET:/Revenue/GetHolidaySPRAnalysis
+  ✅ [116/121] GET:/Revenue/GetHolidayDailyAnalysis
+  ❌ [117/121] GET:/Revenue/GetMonthINCAnalysis
+  ✅ [118/121] GET:/Revenue/GetMonthINCAnalysisSummary
+  ❌ [120/121] GET:/Revenue/GetShopSABFIList
+  ✅ [121/121] GET:/Revenue/GetShopMonthSABFIList
+
+================================================================================
+检查完成: OK=112, 字段差异=9, 跳过=0, 错误=0
+================================================================================
+
+🔴 发现 9 个接口存在字段差异:
+--------------------------------------------------------------------------------
+
+接口: GET:/Analysis/TranslateSentence
+  ⚠️  Python有但C#无: ['BayonetFlowList', 'ChatContent', 'RevenueList', 'ServerpartInfoList[0].BrandId', 'ServerpartInfoList[0].BrandName', 'ServerpartInfoList[0].BusinessTradeId', 'ServerpartInfoList[0].BusinessTradeName', 'ShopBrandList', 'ShopRevenueList']
+
+接口: GET:/BaseInfo/GetBrandAnalysis
+  ⚠️  Python有但C#无: ['ShopBrandList[0].BrandProject', 'ShopBrandList[0].BrandProjectName', 'ShopBrandList[0].BrandTrade', 'ShopBrandList[0].BrandTradeName', 'ShopBrandList[0].BrandTradeType']
+
+接口: GET:/BaseInfo/GetServerpartInfo
+  ⚠️  Python有但C#无: ['ServerpartInfo.OPERATE_DATE', 'ServerpartInfo.STAFF_ID', 'ServerpartInfo.STAFF_NAME', 'ServerpartInfo.TOTALPARKING']
+
+接口: GET:/Budget/GetBudgetProjectDetailList
+  ⚠️  Python有但C#无: ['List[0].node.ACCOUNT_PCODE']
+
+接口: GET:/Contract/GetMerchantAccountSplit
+  ⚠️  Python有但C#无: ['ProjectDetailList']
+
+接口: GET:/Examine/WeChat_GetExamineList
+  ❌ C#有但Python缺: ['[0].EXAMINE_DESC', '[0].EXAMINE_MQUARTER', '[0].SERVERPART_ID', '[0].SERVERPART_INDEX', '[0].SERVERPART_NAME', '[0].SERVERPART_TAG', '[0].SPREGIONTYPE_ID', '[0].SPREGIONTYPE_INDEX', '[0].SPREGIONTYPE_NAME', '[0].list', '[0].list[0].EXAMINE_SCORE', '[0].list[0].REGION_NAME', '[0].list[0].SERVERPARTList']
+  ⚠️  Python有但C#无: ['List', 'List[0].EXAMINE_MQUARTER', 'List[0].SERVERPART_NAME', 'List[0].list', 'List[0].list[0].REGION_NAME', 'List[0].list[0].SERVERPARTList', 'PageIndex', 'PageSize', 'TotalCount']
+
+接口: GET:/Examine/WeChat_GetMeetingList
+  ❌ C#有但Python缺: ['[0].EXAMINE_DESC', '[0].EXAMINE_MQUARTER', '[0].SERVERPART_ID', '[0].SERVERPART_INDEX', '[0].SERVERPART_NAME', '[0].SERVERPART_TAG', '[0].SPREGIONTYPE_ID', '[0].SPREGIONTYPE_INDEX', '[0].SPREGIONTYPE_NAME', '[0].list', '[0].list[0].EXAMINE_SCORE', '[0].list[0].REGION_NAME', '[0].list[0].SERVERPARTList']
+  ⚠️  Python有但C#无: ['List', 'List[0].SERVERPART_NAME', 'List[0].list', 'List[0].list[0].SERVERPARTList', 'PageIndex', 'PageSize', 'TotalCount']
+
+接口: GET:/Revenue/GetMonthINCAnalysis
+  ❌ C#有但Python缺: ['List[0].node.AvgTicketINC.QOQData', 'List[0].node.AvgTicketINC.curYearData', 'List[0].node.AvgTicketINC.increaseData', 'List[0].node.AvgTicketINC.increaseDataQOQ', 'List[0].node.AvgTicketINC.increaseRate', 'List[0].node.AvgTicketINC.increaseRateQOQ', 'List[0].node.AvgTicketINC.lYearData', 'List[0].node.AvgTicketINC.rankNum', 'List[0].node.BayonetINC.QOQData', 'List[0].node.BayonetINC.curYearData', 'List[0].node.BayonetINC.increaseData', 'List[0].node.BayonetINC.increaseDataQOQ', 'List[0].node.BayonetINC.increaseRate', 'List[0].node.BayonetINC.increaseRateQOQ', 'List[0].node.BayonetINC.lYearData', 'List[0].node.BayonetINC.rankNum', 'List[0].node.TicketINC.QOQData', 'List[0].node.TicketINC.curYearData', 'List[0].node.TicketINC.increaseData', 'List[0].node.TicketINC.increaseDataQOQ', 'List[0].node.TicketINC.increaseRate', 'List[0].node.TicketINC.increaseRateQOQ', 'List[0].node.TicketINC.lYearData', 'List[0].node.TicketINC.rankNum']
+
+接口: GET:/Revenue/GetShopSABFIList
+  ❌ C#有但Python缺: ['List[0].node.AccountINC', 'List[0].node.AccountINC.QOQData', 'List[0].node.AccountINC.curYearData', 'List[0].node.AccountINC.increaseData', 'List[0].node.AccountINC.increaseDataQOQ', 'List[0].node.AccountINC.increaseRate', 'List[0].node.AccountINC.increaseRateQOQ', 'List[0].node.AccountINC.lYearData', 'List[0].node.AccountINC.rankNum', 'List[0].node.AvgTicketINC', 'List[0].node.AvgTicketINC.QOQData', 'List[0].node.AvgTicketINC.curYearData', 'List[0].node.AvgTicketINC.increaseData', 'List[0].node.AvgTicketINC.increaseDataQOQ', 'List[0].node.AvgTicketINC.increaseRate', 'List[0].node.AvgTicketINC.increaseRateQOQ', 'List[0].node.AvgTicketINC.lYearData', 'List[0].node.AvgTicketINC.rankNum', 'List[0].node.BayonetINC', 'List[0].node.BayonetINC.QOQData', 'List[0].node.BayonetINC.curYearData', 'List[0].node.BayonetINC.increaseData', 'List[0].node.BayonetINC.increaseDataQOQ', 'List[0].node.BayonetINC.increaseRate', 'List[0].node.BayonetINC.increaseRateQOQ', 'List[0].node.BayonetINC.lYearData', 'List[0].node.BayonetINC.rankNum', 'List[0].node.BayonetINC_ORI', 'List[0].node.Ca_Cost', 'List[0].node.Cost_Amount', 'List[0].node.Profit_Amount', 'List[0].node.RankDiff', 'List[0].node.RevenueINC', 'List[0].node.RevenueINC.QOQData', 'List[0].node.RevenueINC.curYearData', 'List[0].node.RevenueINC.increaseData', 'List[0].node.RevenueINC.increaseDataQOQ', 'List[0].node.RevenueINC.increaseRate', 'List[0].node.RevenueINC.increaseRateQOQ', 'List[0].node.RevenueINC.lYearData', 'List[0].node.RevenueINC.rankNum', 'List[0].node.SectionFlowINC', 'List[0].node.ShopINCList', 'List[0].node.TicketINC', 'List[0].node.TicketINC.QOQData', 'List[0].node.TicketINC.curYearData', 'List[0].node.TicketINC.increaseData', 'List[0].node.TicketINC.increaseDataQOQ', 'List[0].node.TicketINC.increaseRate', 'List[0].node.TicketINC.increaseRateQOQ', 'List[0].node.TicketINC.lYearData', 'List[0].node.TicketINC.rankNum']
+  ⚠️  Python有但C#无: ['List[0].node.RevenueAmount', 'List[0].node.ServerpartShopId', 'List[0].node.ServerpartShopName']

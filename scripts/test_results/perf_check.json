@@ -1,0 +1,479 @@
+[
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetServerpartList",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.602,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "POST",
+    "path": "/Examine/GetMEETINGList",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.591,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "GET",
+    "path": "/Customer/GetAnalysisDescList",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.545,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "GET",
+    "path": "/Analysis/TranslateSentence",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.488,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "GET",
+    "path": "/Revenue/GetLastSyncDateTime",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.368,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "POST",
+    "path": "/BaseInfo/GetShopCountList",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.361,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "POST",
+    "path": "/Examine/GetEXAMINEList",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.347,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "POST",
+    "path": "/Revenue/GetBudgetExpenseList",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.323,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "POST",
+    "path": "/Examine/GetPATROLList",
+    "http_status": 0,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 60.308,
+    "status": "TIMEOUT(>60s)"
+  },
+  {
+    "method": "POST",
+    "path": "/Analysis/GetANALYSISINSList",
+    "http_status": 200,
+    "result_code": 100,
+    "total_count": 7205,
+    "elapsed_sec": 40.814,
+    "status": "OK"
+  },
+  {
+    "method": "POST",
+    "path": "/Budget/GetBUDGETPROJECT_AHList",
+    "http_status": 200,
+    "result_code": 100,
+    "total_count": 253,
+    "elapsed_sec": 16.807,
+    "status": "OK"
+  },
+  {
+    "method": "POST",
+    "path": "/BaseInfo/GetBusinessTradeList",
+    "http_status": 200,
+    "result_code": 100,
+    "total_count": 230,
+    "elapsed_sec": 9.507,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetSPRegionList",
+    "http_status": 200,
+    "result_code": 100,
+    "total_count": 7,
+    "elapsed_sec": 6.236,
+    "status": "OK"
+  },
+  {
+    "method": "POST",
+    "path": "/Analysis/GetTransactionAnalysis",
+    "http_status": 200,
+    "result_code": 100,
+    "total_count": 288,
+    "elapsed_sec": 5.891,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/Customer/GetAnalysisDescDetail",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 2.024,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetPATROLDetail",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 2.007,
+    "status": "HTTP404"
+  },
+  {
+    "method": "POST",
+    "path": "/BaseInfo/GetServerpartServiceSummary",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.947,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/Revenue/GetTransactionDetailList",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.8,
+    "status": "HTTP404"
+  },
+  {
+    "method": "POST",
+    "path": "/SupplyChain/GetSupplierTypeList",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.714,
+    "status": "OK"
+  },
+  {
+    "method": "POST",
+    "path": "/AbnormalAudit/GetCurrentEarlyWarning",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.589,
+    "status": "OK"
+  },
+  {
+    "method": "POST",
+    "path": "/SupplyChain/GetSupplierList",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.582,
+    "status": "OK"
+  },
+  {
+    "method": "POST",
+    "path": "/SupplyChain/GetWelFareSummary",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.459,
+    "status": "OK"
+  },
+  {
+    "method": "POST",
+    "path": "/Analysis/GetServerpartTypeAnalysis",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.373,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetMEETINGDetail",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.289,
+    "status": "HTTP404"
+  },
+  {
+    "method": "POST",
+    "path": "/SupplyChain/GetMemberDashboard",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.201,
+    "status": "OK"
+  },
+  {
+    "method": "POST",
+    "path": "/BaseInfo/GetBrandStructureAnalysis",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.145,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/WeChat_GetExamineDetail",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.106,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/WeChat_GetExamineList",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.084,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Analysis/GetMapConfigByProvinceCode",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 1.01,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetExamineResultList",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.915,
+    "status": "HTTP404"
+  },
+  {
+    "method": "POST",
+    "path": "/SupplyChain/GetMallOrderSummary",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.909,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetEXAMINEDetail",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.9,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetBusinessTradeList",
+    "http_status": 405,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.88,
+    "status": "HTTP405"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetPatrolResultList",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.85,
+    "status": "HTTP404"
+  },
+  {
+    "method": "POST",
+    "path": "/AbnormalAudit/GetMonthEarlyWarning",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.819,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/WeChat_GetMeetingList",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.731,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Budget/GetBUDGETPROJECT_AHDetail",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.701,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Analysis/GetANALYSISINSDetail",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.625,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/WeChat_GetPatrolList",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.623,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetPatrolAnalysis",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.568,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Revenue/GetHolidayRevenueRatio",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.558,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/BigData/GetBayonetGrowthAnalysis",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.526,
+    "status": "HTTP404"
+  },
+  {
+    "method": "POST",
+    "path": "/Revenue/GetBusinessRevenueList",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.501,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/Examine/GetExamineAnalysis",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.498,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/BigData/GetBayonetCompare",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.478,
+    "status": "HTTP404"
+  },
+  {
+    "method": "POST",
+    "path": "/Revenue/GetMonthlyBusinessRevenue",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.478,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/Analysis/GetShopRevenue",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.452,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/BaseInfo/GetBrandAnalysis",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.442,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/Analysis/GetShopMerchant",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.395,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/BigData/CorrectBayonet",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.379,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/BigData/GetMonthAnalysis",
+    "http_status": 200,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.326,
+    "status": "OK"
+  },
+  {
+    "method": "GET",
+    "path": "/BigData/GetProvinceMonthAnalysis",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.3,
+    "status": "HTTP404"
+  },
+  {
+    "method": "GET",
+    "path": "/BigData/GetDateAnalysis",
+    "http_status": 404,
+    "result_code": null,
+    "total_count": null,
+    "elapsed_sec": 0.244,
+    "status": "HTTP404"
+  }
+]

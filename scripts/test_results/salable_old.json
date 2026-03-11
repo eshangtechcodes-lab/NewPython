@@ -1,0 +1,52 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "SalableCommodity": 24.7,
+    "SalableCommodityList": [
+      {
+        "Commodity_name": "红牛",
+        "Proportion": 9.3
+      },
+      {
+        "Commodity_name": "农夫山泉",
+        "Proportion": 5.3
+      },
+      {
+        "Commodity_name": "康师傅牛肉面",
+        "Proportion": 4.5
+      },
+      {
+        "Commodity_name": "面条",
+        "Proportion": 3.3
+      },
+      {
+        "Commodity_name": "其他",
+        "Proportion": 2.3
+      }
+    ],
+    "UnSalableCommodity": 10.6,
+    "UnSalableCommodityList": [
+      {
+        "Commodity_name": "水杯",
+        "Proportion": 0.13
+      },
+      {
+        "Commodity_name": "吸油纸",
+        "Proportion": 0.06
+      },
+      {
+        "Commodity_name": "女儿红",
+        "Proportion": 0.05
+      },
+      {
+        "Commodity_name": "消毒纸巾",
+        "Proportion": 0.02
+      },
+      {
+        "Commodity_name": "其他",
+        "Proportion": 0.15
+      }
+    ]
+  }
+}

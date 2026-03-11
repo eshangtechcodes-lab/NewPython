@@ -30,10 +30,11 @@ class Result:
 class JsonListData(BaseModel):
     """
     分页列表响应数据
-    对应原 JsonList<T>
+    对应原 JsonList<T> 和 JsonList<T1,T2>
+    OtherData仅在有值时输出（对应JsonList<T1,T2>的OtherData字段）
     """
     PageIndex: int = 1
-    PageSize: int = 10
+    PageSize: int = 0
     TotalCount: int = 0
     List: list = []
     StaticsModel: Optional[dict] = None

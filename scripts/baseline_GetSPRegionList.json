@@ -1,0 +1,39 @@
+{
+  "Result_Code": 100,
+  "Result_Desc": "查询成功",
+  "Result_Data": {
+    "PageIndex": 1,
+    "PageSize": 7,
+    "TotalCount": 7,
+    "List": [
+      {
+        "name": "皖中管理中心",
+        "value": "72"
+      },
+      {
+        "name": "皖东管理中心",
+        "value": "45"
+      },
+      {
+        "name": "皖南管理中心",
+        "value": "47"
+      },
+      {
+        "name": "皖西管理中心",
+        "value": "65"
+      },
+      {
+        "name": "皖北管理中心",
+        "value": "66"
+      },
+      {
+        "name": "城市店及商城",
+        "value": "89"
+      },
+      {
+        "name": "百和餐饮",
+        "value": "143"
+      }
+    ]
+  }
+}

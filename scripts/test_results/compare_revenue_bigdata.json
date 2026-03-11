@@ -1,0 +1,34 @@
+{
+  "time": "2026-03-10 17:44:31",
+  "elapsed": 46.4,
+  "stats": {
+    "PASS": 70,
+    "DIFF": 4,
+    "SKIP": 0,
+    "FIELD_DIFF": 0
+  },
+  "diffs": [
+    {
+      "method": "GET",
+      "route": "/BigData/GetProvinceVehicleTreeList",
+      "detail": "Code: 旧=100 新=999"
+    },
+    {
+      "method": "POST",
+      "route": "/BigData/GetRevenueTrendChart",
+      "detail": "Code: 旧=100 新=999"
+    },
+    {
+      "method": "GET",
+      "route": "/Revenue/GetProvinceAvgBayonetAnalysis",
+      "detail": "Code: 旧=100 新=999"
+    },
+    {
+      "method": "GET",
+      "route": "/Revenue/GetSPBayonetList",
+      "detail": "Code: 旧=100 新=999"
+    }
+  ],
+  "field_diffs": [],
+  "ignored_notes": []
+}

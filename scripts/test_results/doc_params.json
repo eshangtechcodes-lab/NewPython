@@ -1,0 +1,1329 @@
+{
+  "GET:/BaseInfo/GetBrandAnalysis": {
+    "method": "GET",
+    "route": "/BaseInfo/GetBrandAnalysis",
+    "params": {
+      "ProvinceCode": "340000",
+      "Serverpart_ID": "416",
+      "Statistics_Date": "2026-02-13",
+      "ShowAllShop": "false",
+      "BusinessTradeIds": ""
+    }
+  },
+  "POST:/BaseInfo/GetBrandStructureAnalysis": {
+    "method": "POST",
+    "route": "/BaseInfo/GetBrandStructureAnalysis",
+    "params": {
+      "name": "",
+      "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ3ImMh1SJC8APHtWEQEUKEwmNgp6"
+    }
+  },
+  "GET:/BaseInfo/GetBusinessTradeList": {
+    "method": "GET",
+    "route": "/BaseInfo/GetBusinessTradeList",
+    "params": {
+      "pushProvinceCode": "340000"
+    }
+  },
+  "POST:/BaseInfo/GetBusinessTradeList": {
+    "method": "POST",
+    "route": "/BaseInfo/GetBusinessTradeList",
+    "params": {
+      "Result_Code": 100,
+      "Result_Desc": "查询成功"
+    }
+  },
+  "GET:/BaseInfo/GetSPRegionList": {
+    "method": "GET",
+    "route": "/BaseInfo/GetSPRegionList",
+    "params": {
+      "Province_Code": "340000"
+    }
+  },
+  "GET:/BaseInfo/GetServerInfoTree": {
+    "method": "GET",
+    "route": "/BaseInfo/GetServerInfoTree",
+    "params": {
+      "ProvinceCode": "340000",
+      "ServerpartIds": "416",
+      "SPRegionTypeId": ""
+    }
+  },
+  "GET:/BaseInfo/GetServerpartInfo": {
+    "method": "GET",
+    "route": "/BaseInfo/GetServerpartInfo",
+    "params": {
+      "ServerpartId": "416"
+    }
+  },
+  "GET:/BaseInfo/GetServerpartList": {
+    "method": "GET",
+    "route": "/BaseInfo/GetServerpartList",
+    "params": {
+      "Province_Code": "340000",
+      "Serverpart_ID": "416",
+      "PageIndex": "1",
+      "PageSize": "10",
+      "ShowWeather": "false",
+      "ShowService": "false",
+      "SPRegionType_ID": ""
+    }
+  },
+  "POST:/BaseInfo/GetServerpartServiceSummary": {
+    "method": "POST",
+    "route": "/BaseInfo/GetServerpartServiceSummary",
+    "params": {
+      "name": "",
+      "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2MDExFbKDMdPHBHEDt/Vk4vEXRVQHxDPwB1BS0uQw53LWpVEU0oM2wkCTp+QgQ8N1BTG3w="
+    }
+  },
+  "GET:/BaseInfo/GetShopCountList": {
+    "method": "GET",
+    "route": "/BaseInfo/GetShopCountList",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/BigData/GetBayonetCompare": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetCompare",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsStartDate": "2026-01-15",
+      "StatisticsEndDate": "2026-02-13",
+      "CompareStartDate": "2026-01-15",
+      "CompareEndDate": "2026-02-13",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/BigData/GetBayonetGrowthAnalysis": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetGrowthAnalysis",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsEndDate": "2026-02-13",
+      "StatisticsStartDate": "2026-01-15",
+      "Serverpart_ID": "416",
+      "ShowGrowthRate": "false",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/BigData/GetBayonetOAAnalysis": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetOAAnalysis",
+    "params": {
+      "HolidayType": "2",
+      "ServerpartId": "416",
+      "StartMonth": "202602",
+      "EndMonth": "202602"
+    }
+  },
+  "GET:/BigData/GetBayonetOwnerAHTreeList": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetOwnerAHTreeList",
+    "params": {
+      "dataType": "1",
+      "serverPartId": "416",
+      "statisticsStartMonth": "202602",
+      "statisticsEndMonth": "202602",
+      "pageIndex": "1",
+      "pageSize": "10"
+    }
+  },
+  "GET:/BigData/GetBayonetWarning": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetWarning",
+    "params": {
+      "StatisticsDate": "2026-02-13",
+      "StatisticsHour": "1",
+      "StatisticsType": "1"
+    }
+  },
+  "POST:/BigData/GetChargeStationList": {
+    "method": "POST",
+    "route": "/BigData/GetChargeStationList",
+    "params": {
+      "Result_Code": 100,
+      "Result_Desc": "查询成功",
+      "ProvinceCode": "340000"
+    }
+  },
+  "POST:/BigData/GetCurBusyRank": {
+    "method": "POST",
+    "route": "/BigData/GetCurBusyRank",
+    "params": {
+      "name": "",
+      "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2M2MwJZMywSGn1+EUYMMk4hNUBGQmdcMCZ4PCxTMGp3I0RqRBAxNGFdLSRUFjgySDQiVlJCZ1wwJmsycXl8AwtKGBs8"
+    }
+  },
+  "GET:/BigData/GetDateAnalysis": {
+    "method": "GET",
+    "route": "/BigData/GetDateAnalysis",
+    "params": {
+      "Serverpart_ID": "416",
+      "StartDate": "2026-01-15",
+      "EndDate": "2026-02-13"
+    }
+  },
+  "POST:/BigData/GetEnergyRevenueInfo": {
+    "method": "POST",
+    "route": "/BigData/GetEnergyRevenueInfo",
+    "params": {
+      "name": "",
+      "value": "HGN7VEMuOlJVGlMbAiYXCgc3C3ZuOHpjQSIDMwdQMxhVYWMnFX1+CRBDCkpcU0VcTjUTBSRlPQYuLQkhCFAiFlljEhwSZUU/OwZVPxALE1JUN2JcaW97bVZAZn5sM1w+"
+    }
+  },
+  "GET:/BigData/GetHolidayBayonetWarning": {
+    "method": "GET",
+    "route": "/BigData/GetHolidayBayonetWarning",
+    "params": {
+      "StatisticsDate": "2026-02-13",
+      "StatisticsHour": "1",
+      "StatisticsType": "1",
+      "HolidayType": "2",
+      "curYear": "2026",
+      "compareYear": "2026"
+    }
+  },
+  "GET:/BigData/GetHolidayCompare": {
+    "method": "GET",
+    "route": "/BigData/GetHolidayCompare",
+    "params": {
+      "pushProvinceCode": "340000",
+      "holidayType": "2",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/BigData/GetMonthAnalysis": {
+    "method": "GET",
+    "route": "/BigData/GetMonthAnalysis",
+    "params": {
+      "StatisticsDate": "2026-02-13",
+      "StartDate": "2026-01-15",
+      "EndDate": "2026-02-13",
+      "ProvinceCode": "340000",
+      "Serverpart_ID": "416",
+      "ServerpartShopIds": ""
+    }
+  },
+  "POST:/BigData/GetOilPriceList": {
+    "method": "POST",
+    "route": "/BigData/GetOilPriceList",
+    "params": {
+      "Result_Code": 100,
+      "Result_Desc": "查询成功",
+      "ServerpartId": "416",
+      "ProvinceCode": "340000"
+    }
+  },
+  "GET:/BigData/GetProvinceMonthAnalysis": {
+    "method": "GET",
+    "route": "/BigData/GetProvinceMonthAnalysis",
+    "params": {
+      "StatisticsMonth": "202602",
+      "ProvinceCode": "340000",
+      "Serverpart_ID": "416",
+      "SPRegion_ID": ""
+    }
+  },
+  "GET:/BigData/GetProvinceVehicleDetail": {
+    "method": "GET",
+    "route": "/BigData/GetProvinceVehicleDetail",
+    "params": {
+      "statisticsStartMonth": "202602",
+      "statisticsEndMonth": "202602",
+      "provinceName": "1",
+      "serverPartId": "416",
+      "pageIndex": "1",
+      "pageSize": "10"
+    }
+  },
+  "GET:/BigData/GetProvinceVehicleTreeList": {
+    "method": "GET",
+    "route": "/BigData/GetProvinceVehicleTreeList",
+    "params": {
+      "serverPartId": "416",
+      "statisticsStartMonth": "202602",
+      "statisticsEndMonth": "202602",
+      "pageIndex": "1",
+      "pageSize": "10"
+    }
+  },
+  "POST:/BigData/GetRevenueTrendChart": {
+    "method": "POST",
+    "route": "/BigData/GetRevenueTrendChart",
+    "params": {
+      "name": "",
+      "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtA3orJ2M2MwJZMywSGn1+EUYMMk43KFZGPSIMFSZ4OihTNEhqJX8xGip0fBlzAwJ8OHR9LV9BeHA="
+    }
+  },
+  "GET:/BigData/JudgeBayonet": {
+    "method": "GET",
+    "route": "/BigData/JudgeBayonet",
+    "params": {
+      "ServerpartId": "416",
+      "StartDate": "2026-01-15",
+      "EndDate": "2026-02-13"
+    }
+  },
+  "GET:/Revenue/GetAccountReceivable": {
+    "method": "GET",
+    "route": "/Revenue/GetAccountReceivable",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsDate": "2026-02-13",
+      "StatisticsMonth": "202602",
+      "StatisticsStartMonth": "202602",
+      "calcType": "1"
+    }
+  },
+  "GET:/Revenue/GetAvgBayonetAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetAvgBayonetAnalysis",
+    "params": {
+      "Statistics_Date": "2026-02-13",
+      "Province_Code": "340000",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetBayonetEntryList": {
+    "method": "GET",
+    "route": "/Revenue/GetBayonetEntryList",
+    "params": {
+      "StatisticsDate": "2026-02-13",
+      "Serverpart_ID": "416",
+      "ShowAddUpCount": "false"
+    }
+  },
+  "GET:/Revenue/GetBayonetOAList": {
+    "method": "GET",
+    "route": "/Revenue/GetBayonetOAList",
+    "params": {
+      "StatisticsMonth": "202602",
+      "Serverpart_ID": "416"
+    }
+  },
+  "GET:/Revenue/GetBayonetProvinceOAList": {
+    "method": "GET",
+    "route": "/Revenue/GetBayonetProvinceOAList",
+    "params": {
+      "StatisticsMonth": "202602",
+      "Serverpart_ID": "416"
+    }
+  },
+  "GET:/Revenue/GetBayonetRankList": {
+    "method": "GET",
+    "route": "/Revenue/GetBayonetRankList",
+    "params": {
+      "Statistics_Date": "2026-02-13",
+      "Province_Code": "340000",
+      "Serverpart_ID": "416",
+      "ShowGrowthRate": "false",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetBayonetSTAList": {
+    "method": "GET",
+    "route": "/Revenue/GetBayonetSTAList",
+    "params": {
+      "StatisticsDate": "2026-02-13",
+      "Serverpart_ID": "416"
+    }
+  },
+  "GET:/Revenue/GetBayonetSTAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetBayonetSTAnalysis",
+    "params": {
+      "StartMonth": "202602",
+      "EndMonth": "202602",
+      "Province_Code": "340000",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetBudgetExpenseList": {
+    "method": "GET",
+    "route": "/Revenue/GetBudgetExpenseList",
+    "params": {
+      "Statistics_Month": "202602",
+      "Province_Code": "340000",
+      "Serverpart_ID": "416"
+    }
+  },
+  "POST:/Revenue/GetBudgetExpenseList": {
+    "method": "POST",
+    "route": "/Revenue/GetBudgetExpenseList",
+    "params": {
+      "Result_Code": 100,
+      "Result_Desc": "查询成功"
+    }
+  },
+  "GET:/Revenue/GetBusinessBrandLevel": {
+    "method": "GET",
+    "route": "/Revenue/GetBusinessBrandLevel",
+    "params": {
+      "ProvinceCode": "340000",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartId": "416",
+      "ShowWholeBrand": "false",
+      "ShowBrandCount": "false",
+      "SPRegionTypeID": "",
+      "BusinessTradeIds": ""
+    }
+  },
+  "GET:/Revenue/GetBusinessTradeLevel": {
+    "method": "GET",
+    "route": "/Revenue/GetBusinessTradeLevel",
+    "params": {
+      "ProvinceCode": "340000",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartId": "416",
+      "ShowWholeTrade": "false",
+      "ShowTradeCount": "false",
+      "SPRegionTypeID": "",
+      "BusinessTradeIds": ""
+    }
+  },
+  "GET:/Revenue/GetBusinessTradeRevenue": {
+    "method": "GET",
+    "route": "/Revenue/GetBusinessTradeRevenue",
+    "params": {
+      "ProvinceCode": "340000",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartId": "416",
+      "DataType": "1",
+      "SPRegionTypeID": "",
+      "BusinessTradeIds": ""
+    }
+  },
+  "GET:/Revenue/GetCompanyRevenueReport": {
+    "method": "GET",
+    "route": "/Revenue/GetCompanyRevenueReport",
+    "params": {
+      "ProvinceCode": "340000",
+      "StartTime": "2026-01-15",
+      "EndTime": "2026-02-13",
+      "ServerpartId": "416"
+    }
+  },
+  "GET:/Revenue/GetCurRevenue": {
+    "method": "GET",
+    "route": "/Revenue/GetCurRevenue",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsDate": "2026-02-13",
+      "serverPartId": "416"
+    }
+  },
+  "GET:/Revenue/GetHolidayAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetHolidayAnalysis",
+    "params": {
+      "pushProvinceCode": "340000",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "HolidayType": "2",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartId": "416"
+    }
+  },
+  "GET:/Revenue/GetHolidayAnalysisBatch": {
+    "method": "GET",
+    "route": "/Revenue/GetHolidayAnalysisBatch",
+    "params": {
+      "pushProvinceCode": "340000",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "HolidayType": "2",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartIds": "416"
+    }
+  },
+  "GET:/Revenue/GetHolidayCompare": {
+    "method": "GET",
+    "route": "/Revenue/GetHolidayCompare",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsDate": "2026-02-13",
+      "holidayType": "2",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "ServerpartId": "416",
+      "SPRegionTypeID": ""
+    }
+  },
+  "GET:/Revenue/GetHolidayDailyAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetHolidayDailyAnalysis",
+    "params": {
+      "pushProvinceCode": "340000",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "HolidayType": "2",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartId": "416",
+      "SPRegionTypeId": ""
+    }
+  },
+  "GET:/Revenue/GetHolidayRevenueRatio": {
+    "method": "GET",
+    "route": "/Revenue/GetHolidayRevenueRatio",
+    "params": {
+      "ProvinceCode": "340000",
+      "ServerpartId": "416"
+    }
+  },
+  "GET:/Revenue/GetHolidaySPRAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetHolidaySPRAnalysis",
+    "params": {
+      "pushProvinceCode": "340000",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "HolidayType": "2",
+      "StatisticsDate": "2026-02-13"
+    }
+  },
+  "GET:/Revenue/GetMallDeliver": {
+    "method": "GET",
+    "route": "/Revenue/GetMallDeliver",
+    "params": {
+      "Province_Code": "340000",
+      "Statistics_Date": "2026-02-13",
+      "StatisticsStartDate": "2026-01-15",
+      "StatisticsEndDate": "2026-02-13",
+      "ShowCompareRate": "false"
+    }
+  },
+  "GET:/Revenue/GetMobileShare": {
+    "method": "GET",
+    "route": "/Revenue/GetMobileShare",
+    "params": {
+      "Province_Code": "340000",
+      "Statistics_Date": "2026-02-13",
+      "StatisticsStartDate": "2026-01-15",
+      "StatisticsEndDate": "2026-02-13",
+      "Serverpart_ID": "416",
+      "ShowCompareRate": "false",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetMonthINCAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetMonthINCAnalysis",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsStartMonth": "202602",
+      "StatisticsEndMonth": "202602",
+      "ServerpartId": "416",
+      "compactStartDate": "2026-01-15",
+      "compactEndDate": "2026-02-13",
+      "statisticsType": "1",
+      "solidType": "416",
+      "showWarning": "false",
+      "showRevenue": "false",
+      "showBayonet": "false",
+      "showLevel": "false"
+    }
+  },
+  "GET:/Revenue/GetMonthINCAnalysisSummary": {
+    "method": "GET",
+    "route": "/Revenue/GetMonthINCAnalysisSummary",
+    "params": {
+      "StatisticsStartMonth": "202602",
+      "StatisticsEndMonth": "202602"
+    }
+  },
+  "GET:/Revenue/GetMonthlyBusinessAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetMonthlyBusinessAnalysis",
+    "params": {
+      "calcType": "1",
+      "pushProvinceCode": "340000",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "StatisticsMonth": "202602",
+      "StatisticsStartMonth": "202602",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartId": "416",
+      "SPRegionTypeId": ""
+    }
+  },
+  "GET:/Revenue/GetMonthlySPINCAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetMonthlySPINCAnalysis",
+    "params": {
+      "calcType": "1",
+      "pushProvinceCode": "340000",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "StatisticsDate": "2026-02-13",
+      "StatisticsMonth": "202602",
+      "StatisticsStartMonth": "202602",
+      "ServerpartId": "416"
+    }
+  },
+  "GET:/Revenue/GetProvinceAvgBayonetAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetProvinceAvgBayonetAnalysis",
+    "params": {
+      "Province_Code": "340000",
+      "Statistics_Date": "2026-02-13"
+    }
+  },
+  "GET:/Revenue/GetProvinceRevenueBudget": {
+    "method": "GET",
+    "route": "/Revenue/GetProvinceRevenueBudget",
+    "params": {
+      "StatisticsDate": "2026-02-13",
+      "ProvinceCode": "340000",
+      "StatisticsType": "1",
+      "ShowWholeYear": "false",
+      "ServerpartID": "416"
+    }
+  },
+  "GET:/Revenue/GetRevenueBudget": {
+    "method": "GET",
+    "route": "/Revenue/GetRevenueBudget",
+    "params": {
+      "Province_Code": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetRevenueCompare": {
+    "method": "GET",
+    "route": "/Revenue/GetRevenueCompare",
+    "params": {
+      "ProvinceCode": "340000",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartId": "416",
+      "SPRegionTypeID": ""
+    }
+  },
+  "GET:/Revenue/GetRevenuePushList": {
+    "method": "GET",
+    "route": "/Revenue/GetRevenuePushList",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetRevenueReport": {
+    "method": "GET",
+    "route": "/Revenue/GetRevenueReport",
+    "params": {
+      "provinceCode": "340000",
+      "startTime": "2026-01-15",
+      "endTime": "2026-02-13"
+    }
+  },
+  "GET:/Revenue/GetRevenueReportDetil": {
+    "method": "GET",
+    "route": "/Revenue/GetRevenueReportDetil",
+    "params": {
+      "provinceCode": "340000",
+      "serverpartId": "416",
+      "startTime": "2026-01-15",
+      "endTime": "2026-02-13"
+    }
+  },
+  "GET:/Revenue/GetRevenueTrend": {
+    "method": "GET",
+    "route": "/Revenue/GetRevenueTrend",
+    "params": {
+      "ProvinceCode": "340000",
+      "StatisticsDate": "2026-02-13",
+      "StatisticsType": "1",
+      "ServerpartId": "416",
+      "SPRegionTypeID": ""
+    }
+  },
+  "GET:/Revenue/GetRevenueYOY": {
+    "method": "GET",
+    "route": "/Revenue/GetRevenueYOY",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsStartDate": "2026-01-15",
+      "StatisticsEndDate": "2026-02-13",
+      "CompareStartDate": "2026-01-15",
+      "CompareEndDate": "2026-02-13",
+      "StatisticsDate": "2026-02-13",
+      "ServerpartId": "416",
+      "SPRegionTypeID": ""
+    }
+  },
+  "GET:/Revenue/GetSPBayonetList": {
+    "method": "GET",
+    "route": "/Revenue/GetSPBayonetList",
+    "params": {
+      "Statistics_Date": "2026-02-13",
+      "Province_Code": "340000",
+      "Serverpart_ID": "416",
+      "ShowGrowthRate": "false",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetSPRevenueRank": {
+    "method": "GET",
+    "route": "/Revenue/GetSPRevenueRank",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetSalableCommodity": {
+    "method": "GET",
+    "route": "/Revenue/GetSalableCommodity",
+    "params": {
+      "statisticsDate": "2026-02-13",
+      "provinceCode": "340000",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetServerpartBrand": {
+    "method": "GET",
+    "route": "/Revenue/GetServerpartBrand",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Serverpart_Id": "416",
+      "statictics_Time": "2026-02-13"
+    }
+  },
+  "GET:/Revenue/GetServerpartEndAccountList": {
+    "method": "GET",
+    "route": "/Revenue/GetServerpartEndAccountList",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416"
+    }
+  },
+  "GET:/Revenue/GetServerpartINCAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetServerpartINCAnalysis",
+    "params": {
+      "calcType": "1",
+      "pushProvinceCode": "340000",
+      "curYear": "2026",
+      "HolidayType": "2",
+      "StatisticsDate": "2026-02-13",
+      "compareYear": "2026",
+      "CurStartDate": "2026-01-15",
+      "ServerpartId": "416"
+    }
+  },
+  "GET:/Revenue/GetShopCurRevenue": {
+    "method": "GET",
+    "route": "/Revenue/GetShopCurRevenue",
+    "params": {
+      "serverPartId": "416",
+      "statisticsDate": "2026-02-14"
+    }
+  },
+  "GET:/Revenue/GetShopEndAccountList": {
+    "method": "GET",
+    "route": "/Revenue/GetShopEndAccountList",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "ServerpartShop_Ids": ""
+    }
+  },
+  "GET:/Revenue/GetShopINCAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetShopINCAnalysis",
+    "params": {
+      "calcType": "1",
+      "pushProvinceCode": "340000",
+      "curYear": "2026",
+      "compareYear": "2026",
+      "HolidayType": "2",
+      "ServerpartId": "416",
+      "StatisticsDate": "2026-02-13",
+      "CurStartDate": "2026-01-15"
+    }
+  },
+  "GET:/Revenue/GetShopMonthSABFIList": {
+    "method": "GET",
+    "route": "/Revenue/GetShopMonthSABFIList",
+    "params": {
+      "calcSelf": "true",
+      "StatisticsStartMonth": "202602",
+      "StatisticsEndMonth": "202602",
+      "BusinessProjectId": "416",
+      "ServerpartId": "416",
+      "ServerpartShopId": ""
+    }
+  },
+  "GET:/Revenue/GetShopSABFIList": {
+    "method": "GET",
+    "route": "/Revenue/GetShopSABFIList",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsMonth": "202602",
+      "ServerpartId": "416"
+    }
+  },
+  "GET:/Revenue/GetSummaryRevenue": {
+    "method": "GET",
+    "route": "/Revenue/GetSummaryRevenue",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Statistics_StartDate": "2026-01-15",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "ShowYearRevenue": "false",
+      "ShowCompareRate": "false",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetSummaryRevenueMonth": {
+    "method": "GET",
+    "route": "/Revenue/GetSummaryRevenueMonth",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsMonth": "202602",
+      "StatisticsDate": "2026-02-13",
+      "SolidType": "416"
+    }
+  },
+  "GET:/Revenue/GetTransactionAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetTransactionAnalysis",
+    "params": {
+      "Province_Code": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "ShowConsumptionLevel": "false",
+      "ShowConvertRate": "false"
+    }
+  },
+  "GET:/Revenue/GetTransactionConvert": {
+    "method": "GET",
+    "route": "/Revenue/GetTransactionConvert",
+    "params": {
+      "Province_Code": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetTransactionDetailList": {
+    "method": "GET",
+    "route": "/Revenue/GetTransactionDetailList",
+    "params": {
+      "ProvinceCode": "340000",
+      "ServerpartId": "416",
+      "StartTime": "2026-01-15",
+      "EndTime": "2026-02-13",
+      "PageIndex": "1",
+      "PageSize": "10",
+      "ServerpartShopId": ""
+    }
+  },
+  "GET:/Revenue/GetTransactionTimeAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/GetTransactionTimeAnalysis",
+    "params": {
+      "Province_Code": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/GetUnUpLoadShops": {
+    "method": "GET",
+    "route": "/Revenue/GetUnUpLoadShops",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Statistics_Date": "2026-02-13",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Revenue/StorageMonthINCAnalysis": {
+    "method": "GET",
+    "route": "/Revenue/StorageMonthINCAnalysis",
+    "params": {
+      "pushProvinceCode": "340000",
+      "StatisticsMonth": "202602",
+      "ServerpartId": "416"
+    }
+  },
+  "GET:/Customer/GetAnalysisDescDetail": {
+    "method": "GET",
+    "route": "/Customer/GetAnalysisDescDetail",
+    "params": {
+      "statisticsType": "1",
+      "statisticsMonth": "202110",
+      "serverpartId": "416"
+    }
+  },
+  "GET:/Customer/GetAnalysisDescList": {
+    "method": "GET",
+    "route": "/Customer/GetAnalysisDescList",
+    "params": {
+      "statisticsType": "1",
+      "statisticsMonth": "202110",
+      "serverpartId": "416"
+    }
+  },
+  "GET:/Customer/GetCustomerAgeRatio": {
+    "method": "GET",
+    "route": "/Customer/GetCustomerAgeRatio",
+    "params": {
+      "provinceCode": "340000",
+      "statisticsMonth": "202602"
+    }
+  },
+  "GET:/Customer/GetCustomerConsumeRatio": {
+    "method": "GET",
+    "route": "/Customer/GetCustomerConsumeRatio",
+    "params": {
+      "provinceCode": "340000",
+      "statisticsMonth": "202602"
+    }
+  },
+  "GET:/Customer/GetCustomerGroupRatio": {
+    "method": "GET",
+    "route": "/Customer/GetCustomerGroupRatio",
+    "params": {
+      "provinceCode": "340000",
+      "statisticsMonth": "202602"
+    }
+  },
+  "GET:/Customer/GetCustomerRatio": {
+    "method": "GET",
+    "route": "/Customer/GetCustomerRatio",
+    "params": {
+      "statisticsType": "1",
+      "provinceCode": "340000",
+      "statisticsMonth": "202602"
+    }
+  },
+  "GET:/Customer/GetCustomerSaleRatio": {
+    "method": "GET",
+    "route": "/Customer/GetCustomerSaleRatio",
+    "params": {
+      "statisticsType": "1",
+      "startMonth": "202601",
+      "endMonth": "202602",
+      "provinceCode": "340000",
+      "showTradeLevel": "false",
+      "showDetailCount": "false",
+      "serverpartId": "",
+      "spRegionTypeId": ""
+    }
+  },
+  "POST:/Analysis/GetANALYSISINSList": {
+    "method": "POST",
+    "route": "/Analysis/GetANALYSISINSList",
+    "params": {
+      "PageIndex": 1,
+      "PageSize": 10,
+      "SearchParameter": {
+        "SERVERPART_IDS": "416,417,418,419"
+      }
+    }
+  },
+  "GET:/Analysis/GetANALYSISINSDetail": {
+    "method": "GET",
+    "route": "/Analysis/GetANALYSISINSDetail",
+    "params": {
+      "ANALYSISINSId": "416"
+    }
+  },
+  "POST:/Analysis/GetServerpartTypeAnalysis": {
+    "method": "POST",
+    "route": "/Analysis/GetServerpartTypeAnalysis",
+    "params": {
+      "name": "",
+      "value": "HGNvR1g5B0VGGjJORmEEEgs1DgIxfgMtAysNAzZVR3I="
+    }
+  },
+  "POST:/Analysis/GetTransactionAnalysis": {
+    "method": "POST",
+    "route": "/Analysis/GetTransactionAnalysis",
+    "params": {}
+  },
+  "POST:/AbnormalAudit/GetCurrentEarlyWarning": {
+    "method": "POST",
+    "route": "/AbnormalAudit/GetCurrentEarlyWarning",
+    "params": {}
+  },
+  "POST:/AbnormalAudit/GetMonthEarlyWarning": {
+    "method": "POST",
+    "route": "/AbnormalAudit/GetMonthEarlyWarning",
+    "params": {}
+  },
+  "GET:/Analysis/GetShopMerchant": {
+    "method": "GET",
+    "route": "/Analysis/GetShopMerchant",
+    "params": {
+      "ShopName": "便利"
+    }
+  },
+  "POST:/Analysis/SolidTransactionAnalysis": {
+    "method": "POST",
+    "route": "/Analysis/SolidTransactionAnalysis",
+    "params": {}
+  },
+  "GET:/Analysis/TranslateSentence": {
+    "method": "GET",
+    "route": "/Analysis/TranslateSentence",
+    "params": {
+      "Sentence": "test",
+      "DialogCode": "",
+      "ProvinceCode": "340000"
+    }
+  },
+  "GET:/Analysis/GetMapConfigByProvinceCode": {
+    "method": "GET",
+    "route": "/Analysis/GetMapConfigByProvinceCode",
+    "params": {
+      "ProvinceCode": "340000"
+    }
+  },
+  "GET:/BigData/GetBayonetEntryList": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetEntryList",
+    "params": {
+      "StatisticsDate": "2026-02-13",
+      "Serverpart_ID": "416"
+    }
+  },
+  "GET:/BigData/GetBayonetSTAList": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetSTAList",
+    "params": {
+      "StatisticsDate": "2026-02-13",
+      "Serverpart_ID": "416"
+    }
+  },
+  "GET:/BigData/GetBayonetOAList": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetOAList",
+    "params": {
+      "StatisticsMonth": "202602",
+      "Serverpart_ID": "416"
+    }
+  },
+  "GET:/BigData/GetBayonetProvinceOAList": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetProvinceOAList",
+    "params": {
+      "StatisticsMonth": "202602",
+      "Serverpart_ID": "416"
+    }
+  },
+  "GET:/BigData/GetSPBayonetList": {
+    "method": "GET",
+    "route": "/BigData/GetSPBayonetList",
+    "params": {
+      "Statistics_Date": "2026-02-13",
+      "Province_Code": "340000"
+    }
+  },
+  "GET:/BigData/GetBayonetRankList": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetRankList",
+    "params": {
+      "Statistics_Date": "2026-02-13",
+      "Province_Code": "340000"
+    }
+  },
+  "GET:/BigData/GetAvgBayonetAnalysis": {
+    "method": "GET",
+    "route": "/BigData/GetAvgBayonetAnalysis",
+    "params": {
+      "Statistics_Date": "2026-02-13",
+      "Province_Code": "340000"
+    }
+  },
+  "GET:/BigData/GetProvinceAvgBayonetAnalysis": {
+    "method": "GET",
+    "route": "/BigData/GetProvinceAvgBayonetAnalysis",
+    "params": {
+      "Province_Code": "340000",
+      "Statistics_Date": "2026-02-13"
+    }
+  },
+  "GET:/BigData/GetBayonetSTAnalysis": {
+    "method": "GET",
+    "route": "/BigData/GetBayonetSTAnalysis",
+    "params": {
+      "StartMonth": "202601",
+      "EndMonth": "202602",
+      "Province_Code": "340000"
+    }
+  },
+  "GET:/BigData/CorrectBayonet": {
+    "method": "GET",
+    "route": "/BigData/CorrectBayonet",
+    "params": {
+      "ServerpartId": "416",
+      "StartDate": "2026-01-15",
+      "EndDate": "2026-02-13",
+      "ReferenceStartDate": "2025-12-01",
+      "ReferenceEndDate": "2025-12-31"
+    }
+  },
+  "POST:/Budget/GetBUDGETPROJECT_AHList": {
+    "method": "POST",
+    "route": "/Budget/GetBUDGETPROJECT_AHList",
+    "params": {}
+  },
+  "GET:/Budget/GetBUDGETPROJECT_AHDetail": {
+    "method": "GET",
+    "route": "/Budget/GetBUDGETPROJECT_AHDetail",
+    "params": {
+      "BUDGETPROJECT_AHId": "303"
+    }
+  },
+  "GET:/Budget/GetBudgetProjectDetailList": {
+    "method": "GET",
+    "route": "/Budget/GetBudgetProjectDetailList",
+    "params": {}
+  },
+  "GET:/Budget/GetBudgetMainShow": {
+    "method": "GET",
+    "route": "/Budget/GetBudgetMainShow",
+    "params": {
+      "serverpartId": "416",
+      "year": "2026",
+      "month": "2"
+    }
+  },
+  "GET:/BusinessProcess/GetBusinessProcessList": {
+    "method": "GET",
+    "route": "/BusinessProcess/GetBusinessProcessList",
+    "params": {
+      "MembershipId": "1"
+    }
+  },
+  "GET:/Contract/GetContractAnalysis": {
+    "method": "GET",
+    "route": "/Contract/GetContractAnalysis",
+    "params": {
+      "statisticsDate": "2026-02-13",
+      "provinceCode": "340000",
+      "Serverpart_ID": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Contract/GetMerchantAccountSplit": {
+    "method": "GET",
+    "route": "/Contract/GetMerchantAccountSplit",
+    "params": {
+      "StatisticsMonth": "202602",
+      "StatisticsStartMonth": "202602",
+      "calcType": "1"
+    }
+  },
+  "GET:/Contract/GetMerchantAccountDetail": {
+    "method": "GET",
+    "route": "/Contract/GetMerchantAccountDetail",
+    "params": {
+      "MerchantId": "1",
+      "StatisticsMonth": "202602"
+    }
+  },
+  "POST:/Examine/GetEXAMINEList": {
+    "method": "POST",
+    "route": "/Examine/GetEXAMINEList",
+    "params": {}
+  },
+  "GET:/Examine/GetEXAMINEDetail": {
+    "method": "GET",
+    "route": "/Examine/GetEXAMINEDetail",
+    "params": {
+      "EXAMINEId": "1003"
+    }
+  },
+  "POST:/Examine/GetMEETINGList": {
+    "method": "POST",
+    "route": "/Examine/GetMEETINGList",
+    "params": {}
+  },
+  "GET:/Examine/GetMEETINGDetail": {
+    "method": "GET",
+    "route": "/Examine/GetMEETINGDetail",
+    "params": {
+      "MEETINGId": "10"
+    }
+  },
+  "POST:/Examine/GetPATROLList": {
+    "method": "POST",
+    "route": "/Examine/GetPATROLList",
+    "params": {}
+  },
+  "GET:/Examine/GetPATROLDetail": {
+    "method": "GET",
+    "route": "/Examine/GetPATROLDetail",
+    "params": {
+      "PATROLId": "687383"
+    }
+  },
+  "GET:/Examine/WeChat_GetExamineList": {
+    "method": "GET",
+    "route": "/Examine/WeChat_GetExamineList",
+    "params": {
+      "SPRegionType_ID": "",
+      "Serverpart_ID": "416",
+      "SearchStartDate": "",
+      "SearchEndDate": ""
+    }
+  },
+  "GET:/Examine/WeChat_GetExamineDetail": {
+    "method": "GET",
+    "route": "/Examine/WeChat_GetExamineDetail",
+    "params": {
+      "ExamineId": "1003"
+    }
+  },
+  "GET:/Examine/WeChat_GetPatrolList": {
+    "method": "GET",
+    "route": "/Examine/WeChat_GetPatrolList",
+    "params": {
+      "SPRegionType_ID": "",
+      "Serverpart_ID": "416",
+      "SearchStartDate": "",
+      "SearchEndDate": ""
+    }
+  },
+  "GET:/Examine/WeChat_GetMeetingList": {
+    "method": "GET",
+    "route": "/Examine/WeChat_GetMeetingList",
+    "params": {
+      "SPRegionType_ID": "",
+      "Serverpart_ID": "416",
+      "SearchStartDate": "",
+      "SearchEndDate": ""
+    }
+  },
+  "GET:/Examine/GetPatrolAnalysis": {
+    "method": "GET",
+    "route": "/Examine/GetPatrolAnalysis",
+    "params": {
+      "provinceCode": "340000",
+      "ServerpartId": "416",
+      "SPRegionType_ID": "",
+      "StartDate": "2026-01-15",
+      "EndDate": "2026-02-13"
+    }
+  },
+  "GET:/Examine/GetExamineAnalysis": {
+    "method": "GET",
+    "route": "/Examine/GetExamineAnalysis",
+    "params": {
+      "DataType": "1",
+      "StartMonth": "202602",
+      "EndMonth": "202602",
+      "provinceCode": "340000",
+      "ServerpartId": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Examine/GetExamineResultList": {
+    "method": "GET",
+    "route": "/Examine/GetExamineResultList",
+    "params": {
+      "DataType": "1",
+      "StartMonth": "202602",
+      "EndMonth": "202602",
+      "provinceCode": "340000",
+      "ServerpartId": "416",
+      "SPRegionType_ID": ""
+    }
+  },
+  "GET:/Examine/GetPatrolResultList": {
+    "method": "GET",
+    "route": "/Examine/GetPatrolResultList",
+    "params": {
+      "provinceCode": "340000",
+      "ServerpartId": "416",
+      "SPRegionType_ID": "",
+      "StartDate": "2026-01-15",
+      "EndDate": "2026-02-13"
+    }
+  },
+  "POST:/Examine/GetEvaluateResList": {
+    "method": "POST",
+    "route": "/Examine/GetEvaluateResList",
+    "params": {}
+  },
+  "GET:/Revenue/GetWechatPushSalesList": {
+    "method": "GET",
+    "route": "/Revenue/GetWechatPushSalesList",
+    "params": {
+      "pushProvinceCode": "340000",
+      "Statistics_Date": "2026-02-13",
+      "RankNum": "100"
+    }
+  },
+  "GET:/Revenue/GetLastSyncDateTime": {
+    "method": "GET",
+    "route": "/Revenue/GetLastSyncDateTime",
+    "params": {}
+  },
+  "POST:/Revenue/GetBusinessRevenueList": {
+    "method": "POST",
+    "route": "/Revenue/GetBusinessRevenueList",
+    "params": {}
+  },
+  "POST:/Revenue/GetMonthlyBusinessRevenue": {
+    "method": "POST",
+    "route": "/Revenue/GetMonthlyBusinessRevenue",
+    "params": {}
+  },
+  "GET:/Suggestion/GetMemberUnreadData": {
+    "method": "GET",
+    "route": "/Suggestion/GetMemberUnreadData",
+    "params": {
+      "ModuleGuids": "",
+      "ProvinceCode": "340000",
+      "MembershipId": "1"
+    }
+  },
+  "POST:/SupplyChain/GetMemberDashboard": {
+    "method": "POST",
+    "route": "/SupplyChain/GetMemberDashboard",
+    "params": {}
+  },
+  "POST:/SupplyChain/GetSupplierTypeList": {
+    "method": "POST",
+    "route": "/SupplyChain/GetSupplierTypeList",
+    "params": {}
+  },
+  "POST:/SupplyChain/GetSupplierList": {
+    "method": "POST",
+    "route": "/SupplyChain/GetSupplierList",
+    "params": {}
+  },
+  "POST:/SupplyChain/GetMallOrderSummary": {
+    "method": "POST",
+    "route": "/SupplyChain/GetMallOrderSummary",
+    "params": {}
+  },
+  "POST:/SupplyChain/GetWelFareSummary": {
+    "method": "POST",
+    "route": "/SupplyChain/GetWelFareSummary",
+    "params": {}
+  }
+}

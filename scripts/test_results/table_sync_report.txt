@@ -1,0 +1,119 @@
+# 数据表同步检查报告
+达梦NEWPYTHON: 97张 | C#引用: 86张 | Python引用: 26张
+
+## ✅ 已同步 (75张)
+  T_ACCOUNTRECDETAIL                       [C#]
+  T_ACCOUNTRECEIVABLE                      [C#]
+  T_ACCOUNTWARNING                         [C#]
+  T_ANALOGDATA                             [C#]
+  T_ANALYSISINS                            [C#,PY]
+  T_ANALYSISRULE                           [C#]
+  T_AUTOSTATISTICS                         [C#,PY]
+  T_BAYONETDAILY_AH                        [C#]
+  T_BAYONETHOURMONTH_AH                    [C#]
+  T_BAYONETOWMONTHLY_AH                    [C#]
+  T_BAYONETOWNERMONTH_AH                   [C#]
+  T_BAYONETPROVINCEMONTH_AH                [C#]
+  T_BAYONETWARNING                         [C#]
+  T_BEHAVIORRECORD                         [C#]
+  T_BRAND                                  [C#]
+  T_BUDGETDETAIL_AH                        [C#]
+  T_BUDGETEXPENSE                          [C#,PY]
+  T_BUDGETPROJECT_AH                       [C#,PY]
+  T_BUSINESSLOG                            [C#]
+  T_BUSINESSPROJECT                        [C#]
+  T_BUSINESSREVENUE                        [C#]
+  T_BUSINESSWARNING                        [C#]
+  T_COMMODITYSALE                          [C#]
+  T_CONSUMPTIONLEVEL                       [C#]
+  T_CUSTOMERGROUP                          [C#,PY]
+  T_CUSTOMERGROUP_AMOUNT                   [C#]
+  T_CUSTOMER_AGE                           [C#,PY]
+  T_CUSTOMER_ANALYSIS                      [PY]
+  T_CUSTOMER_CONSUME                       [C#,PY]
+  T_CUSTOMER_GAC                           [C#,PY]
+  T_CUSTOMER_SHOP                          [C#]
+  T_ENDACCOUNT                             [C#]
+  T_ENDACCOUNT_DAILY                       [C#,PY]
+  T_ENDACCOUNT_TEMP                        [C#]
+  T_EXAMINE                                [C#,PY]
+  T_EXAMINEDETAIL                          [C#,PY]
+  T_GASORDERINFO                           [C#]
+  T_GOODSDELIVER                           [C#]
+  T_HOLIDAY                                [C#]
+  T_HOLIDAYREVENUE                         [C#]
+  T_MEETING                                [C#,PY]
+  T_MERCHANTSPLIT                          [C#]
+  T_MOBILEPAYSHARE                         [C#]
+  T_MONTHLYREVENUE                         [C#]
+  T_NOTICEINFO                             [C#]
+  T_OPERATELOG                             [C#]
+  T_PATROL                                 [C#,PY]
+  T_PATROLDAILY                            [C#,PY]
+  T_PATROLDETAIL                           [C#,PY]
+  T_PAYMENTCONFIRM                         [C#,PY]
+  T_PERIODMONTHPROFIT                      [C#]
+  T_PROFITCONTRIBUTE                       [C#]
+  T_PROVINCEREVENUE                        [C#]
+  T_REGISTERCOMPACT                        [C#,PY]
+  T_REVENUEDAILY                           [C#]
+  T_REVENUEDASHBOARD                       [C#]
+  T_REVENUEMONTHLY                         [C#]
+  T_RTMEMBERSHIP                           [C#]
+  T_RTREGISTERCOMPACT                      [C#]
+  T_RTSERVERPART                           [C#,PY]
+  T_RTSERVERPARTSHOP                       [C#]
+  T_SECTIONFLOW                            [C#,PY]
+  T_SECTIONFLOWMONTH                       [C#]
+  T_SENTENCE                               [C#]
+  T_SERVERPART                             [C#,PY]
+  T_SERVERPARTINFO                         [C#]
+  T_SERVERPARTMAP                          [C#]
+  T_SERVERPARTSHOP                         [C#,PY]
+  T_SERVERPARTTYPE                         [PY]
+  T_SHOPCOUNT                              [C#]
+  T_TRANSACTIONANALYSIS                    [C#,PY]
+  T_UREAMASTER                             [C#]
+  T_WATERMASTER                            [C#]
+  T_WEATHER                                [C#]
+  T_YSSELLMASTER_YES                       [C#]
+
+## ❌ 缺失 (14张)
+  T_BAYONETOWNER_AH                        [C#]  引用: GeneralMethod\BigData\BAYONETOWNER_AHHelper.cs
+  T_BAYONETSTAYDAILY_AH                    [C#]  引用: GeneralMethod\BigData\BAYONETSTAYDAILY_AHHelper.cs
+  T_GASORDERDETAIL                         [C#]  引用: GeneralMethod\BigData\BigDataHelper.cs
+  T_GOODSDELIVERDETAIL                     [C#]  引用: GeneralMethod\Revenue\RevenuePushHelper.cs
+  T_MAPCONFIG                              [PY]  引用: 
+  T_REGISTERCOMPACTSUB                     [C#,PY]  引用: GeneralMethod\Contract\ContractAnalysisHelper.cs
+  T_RTBUSINESSLIMIT                        [C#]  引用: GeneralMethod\Revenue\RevenuePushHelper.cs
+  T_RTBUSINESSPROJECT                      [C#]  引用: GeneralMethod\BaseInfo\BrandAnalysisHelper.cs
+  T_STATEFEEDBACK                          [C#]  引用: GeneralMethod\Revenue\TransactionHelper.cs
+  T_SUGGESTION                             [C#]  引用: GeneralMethod\Suggestion\SuggestionHelper.cs
+  T_VEHICLEOWNER                           [C#]  引用: GeneralMethod\BigData\BayonetHelper.cs
+  T_YSSELLDETAILS_YES                      [C#]  引用: GeneralMethod\Revenue\TransactionHelper.cs
+  T_YSSELLMASTER                           [C#]  引用: GeneralMethod\Revenue\TransactionHelper.cs
+  T_YSSELLMASTERMONTH                      [C#]  引用: GeneralMethod\Revenue\TransactionHelper.cs
+
+## 📦 达梦中有但项目未引用 (22张)
+  T_CASHWORKER
+  T_COMMODITY
+  T_COMMODITYTYPE
+  T_COMMODITY_330200
+  T_COMMODITY_330300
+  T_COMMODITY_340000
+  T_COMMODITY_500000
+  T_COMMODITY_510000
+  T_COMMODITY_520000
+  T_COMMODITY_530000
+  T_COMMODITY_630000
+  T_COMMODITY_734100
+  T_COMMODITY_BUSINESS
+  T_COOPMERCHANTS
+  T_FIELDENUM
+  T_FIELDEXPLAIN
+  T_OWNERUNIT
+  T_RTCOMMODITYBUSINESS
+  T_RTCOOPMERCHANTS
+  T_SERVERPARTCRT
+  T_SERVERPARTSHOP_LOG
+  T_USERDEFINEDTYPE
