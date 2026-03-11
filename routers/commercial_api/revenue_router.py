@@ -6190,7 +6190,7 @@ async def get_month_inc_analysis(
             except: return 0.0
 
         # 解析bool参数
-        is_solid = str(solidType).lower() == "true"
+        is_solid = str(solidType).lower() not in ("false", "0", "")
         is_calc_yoy = str(calcYOY).lower() == "true"
         is_calc_qoq = str(calcQOQ).lower() == "true"
         is_calc_bayonet = str(calcBayonet).lower() == "true"
@@ -6354,7 +6354,7 @@ async def get_month_inc_analysis(
                         FROM T_SERVERPARTSHOP S LEFT JOIN T_BRAND B ON S.BUSINESS_BRAND = B.BRAND_ID
                         WHERE S.SERVERPARTSHOP_ID IN ({_ss_in})""") or []
                     for sr in _ss_rows:
-                        _inc_shop_info[sr["SERVERPARTSHOP_ID"]] = sr
+                        _inc_shop_info[str(sr["SERVERPARTSHOP_ID"])] = sr
                     logger.info(f"INC品牌查询: ssids={len(_all_ssids)}, 查到={len(_ss_rows)}, map_keys={list(_inc_shop_info.keys())[:5]}")
                 if _all_bpids:
                     _bp_in = ",".join(str(i) for i in _all_bpids)
@@ -6364,7 +6364,7 @@ async def get_month_inc_analysis(
                             TO_CHAR(PROJECT_ENDDATE, 'YYYY/MM/DD') AS COMPACT_END
                         FROM T_BUSINESSPROJECT WHERE BUSINESSPROJECT_ID IN ({_bp_in})""") or []
                     for br in _bp_rows:
-                        _inc_bp_info[br["BUSINESSPROJECT_ID"]] = br
+                        _inc_bp_info[str(br["BUSINESSPROJECT_ID"])] = br
             except Exception as _ex_info:
                 logger.warning(f"GetMonthINCAnalysis 门店品牌/商户信息查询失败: {_ex_info}")
             # 构建树形节点辅助函数
@@ -6384,19 +6384,19 @@ async def get_month_inc_analysis(
                         "increaseData": inc, "increaseRate": rate,
                         "QOQData": qoq_v, "increaseDataQOQ": inc_qoq, "increaseRateQOQ": rate_qoq, "rankNum": None}
 
-            def _make_bayonet_region(cur, yoy):
-                """片区/根级 BayonetINC: QOQData=0.0, 增幅为 None（旧接口行为）"""
+            def _make_bayonet_region(cur, yoy, qoq_default=0.0):
+                """BayonetINC: 片区/根级 qoq_default=0.0, 服务区级 qoq_default=None（旧接口行为）"""
                 cur = round(cur, 2) if cur else 0.0
                 yoy = round(yoy, 2) if yoy else 0.0
                 inc = round(cur - yoy, 2) if (cur or yoy) else None
                 rate = round(inc / yoy * 100, 2) if inc is not None and yoy and yoy != 0 else None
                 return {"curYearData": cur, "lYearData": yoy,
                         "increaseData": inc, "increaseRate": rate,
-                        "QOQData": 0.0, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
+                        "QOQData": qoq_default, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
 
             # 辅助：Brand_ICO 格式化
             def _format_ico(ico_raw):
-                if not ico_raw: return None
+                if not ico_raw: return ""
                 if ico_raw.startswith("http"): return ico_raw
                 if "PictureManage" in ico_raw: return "https://user.eshangtech.com" + ("/" if not ico_raw.startswith("/") else "") + ico_raw
                 return "https://api.eshangtech.com/EShangApiMain/" + ico_raw.lstrip("/")
@@ -6431,9 +6431,7 @@ async def get_month_inc_analysis(
 
             # --- 按片区分组服务区（使用 INDEX 排序）---
             from collections import OrderedDict
-            region_map = OrderedDict()  # (region_idx, SPREGIONTYPE_ID) → {name, sp_ids: []}
-
-            # 按 (SPREGIONTYPE_INDEX, SPREGIONTYPE_ID, SERVERPART_INDEX, SERVERPART_ID) 排序后收集
+            region_map = OrderedDict()
             sorted_sp_items = sorted(
                 sp_map.items(),
                 key=lambda x: (
@@ -6450,28 +6448,28 @@ async def get_month_inc_analysis(
                     region_map[rid] = {"name": rname, "sp_list": []}
                 region_map[rid]["sp_list"].append((sp_id, sp_data))
 
-            # --- 构建三层树：根 → 片区 → 服务区(ShopINCList=门店) ---
+            # --- 结果汇总与报文构造 ---
             total_rev, total_rev_yoy, total_rev_qoq = 0.0, 0.0, 0.0
             total_tic, total_tic_yoy, total_tic_qoq = 0.0, 0.0, 0.0
             total_roy, total_roy_yoy, total_roy_qoq = 0.0, 0.0, 0.0
             total_veh, total_veh_yoy = 0.0, 0.0
             total_veh_ori, total_veh_ori_yoy = 0.0, 0.0
 
-            region_children = []  # 根的 children（片区节点列表）
+            def _safe_add(old, new):
+                if new is None: return old
+                return (old or 0.0) + float(new)
+
+            region_children = []
             for rid, rinfo in region_map.items():
-                # 片区级别聚合
                 r_rev, r_rev_yoy, r_rev_qoq = 0.0, 0.0, 0.0
                 r_tic, r_tic_yoy, r_tic_qoq = 0.0, 0.0, 0.0
                 r_roy, r_roy_yoy, r_roy_qoq = 0.0, 0.0, 0.0
                 r_veh, r_veh_yoy = 0.0, 0.0
                 r_veh_ori, r_veh_ori_yoy = 0.0, 0.0
 
-                sp_children = []  # 片区的 children（服务区节点列表）
+                sp_children = []
                 for sp_id, sp_data in rinfo["sp_list"]:
-                    def _safe_add(old, new):
-                        if new is None: return old
-                        return (old or 0.0) + float(new)
-                    
+                    # 累加指标到片区
                     r_rev = _safe_add(r_rev, sp_data["REVENUE"])
                     r_rev_yoy = _safe_add(r_rev_yoy, sp_data["REVENUE_YOY"])
                     r_rev_qoq = _safe_add(r_rev_qoq, sp_data["REVENUE_QOQ"])
@@ -6486,14 +6484,11 @@ async def get_month_inc_analysis(
                     r_veh_ori = _safe_add(r_veh_ori, sp_data["VEHICLE_ORI"])
                     r_veh_ori_yoy = _safe_add(r_veh_ori_yoy, sp_data["VEHICLE_ORI_YOY"])
 
-                    # 门店级放入 ShopINCList（旧接口把门店放在服务区节点的 ShopINCList 中）
+                    # 门店级处理
                     shop_inc_list = []
-                    # 按固化 ID 排序对齐旧接口
                     _sorted_shops = sorted(sp_data["shops"], key=lambda x: int(x.get("BUSINESSWARNING_ID") or 0))
                     for shop in _sorted_shops:
-                        # 查找品牌/商户信息
                         _ssid_str = str(shop.get("SERVERPARTSHOP_ID", ""))
-                        _first_ssid = None
                         _ssid_list = [s.strip() for s in _ssid_str.split(",") if s.strip()]
                         _si = {}
                         for _s in _ssid_list:
@@ -6501,77 +6496,57 @@ async def get_month_inc_analysis(
                             if _cur_si:
                                 if not _si: _si = _cur_si.copy()
                                 else:
-                                    # 合并业态名称 (BUSINESS_TRADENAME)
-                                    _old_tn = str(_si.get("BUSINESS_TRADENAME") or "")
-                                    _new_tn = str(_cur_si.get("BUSINESS_TRADENAME") or "")
-                                    if _new_tn and _new_tn not in _old_tn:
-                                        _si["BUSINESS_TRADENAME"] = f"{_old_tn},{_new_tn}" if _old_tn else _new_tn
-                                    # 合并业态编码 (SHOPTRADE)
-                                    _old_st = str(_si.get("SHOPTRADE") or "")
-                                    _new_st = str(_cur_si.get("SHOPTRADE") or "")
-                                    if _new_st and _new_st not in _old_st:
-                                        _si["SHOPTRADE"] = f"{_old_st},{_new_st}" if _old_st else _new_st
-                                    # 合并商户信息
-                                    if not _si.get("SELLER_NAME"): _si["SELLER_NAME"] = _cur_si.get("SELLER_NAME")
-                                    if _si.get("SELLER_ID") is None: _si["SELLER_ID"] = _cur_si.get("SELLER_ID")
-                                    # 合并品牌信息
-                                    if _si.get("BRAND_ID") is None: _si["BRAND_ID"] = _cur_si.get("BRAND_ID")
-                                    if not _si.get("BRAND_NAME"): _si["BRAND_NAME"] = _cur_si.get("BRAND_NAME")
-                                    if not _si.get("BRAND_ICO"): _si["BRAND_ICO"] = _cur_si.get("BRAND_ICO")
+                                    # 合并业态、名称、商户、品牌
+                                    for key in ["BUSINESS_TRADENAME", "SHOPTRADE"]:
+                                        old_val = str(_si.get(key) or "")
+                                        new_val = str(_cur_si.get(key) or "")
+                                        if new_val and new_val not in old_val:
+                                            _si[key] = f"{old_val},{new_val}" if old_val else new_val
+                                    for key in ["SELLER_NAME", "SELLER_ID", "BRAND_ID", "BRAND_NAME", "BRAND_ICO"]:
+                                        if _si.get(key) is None or not _si.get(key):
+                                            _si[key] = _cur_si.get(key)
                         
                         _bp = _inc_bp_info.get(str(shop.get("BUSINESSPROJECT_ID")), {}) if shop.get("BUSINESSPROJECT_ID") else {}
                         _btt = int(safe_dec(shop.get("BUSINESS_TYPE", 0)))
-                        _merch_id = _bp.get("MERCHANTS_ID")
-                        _final_merch_id = _merch_id if _merch_id is not None else _si.get("SELLER_ID")
-                        _brand_id = _si.get("BRAND_ID") or _si.get("BUSINESS_BRAND")
-                        _brand_id = int(_brand_id) if _brand_id is not None else None
+                        _m_id = _bp.get("MERCHANTS_ID") or _si.get("SELLER_ID")
                         
-                        _s_rev = shop.get("REVENUE_AMOUNT")
-                        _s_tic = shop.get("TICKET_COUNT")
-                        _s_rev_yoy = shop.get("REVENUE_AMOUNT_YOY")
-                        _s_tic_yoy = shop.get("TICKET_COUNT_YOY")
-                        _s_rev_qoq = shop.get("REVENUE_AMOUNT_QOQ")
-                        _s_tic_qoq = shop.get("TICKET_COUNT_QOQ")
+                        s_rev = shop.get("REVENUE_AMOUNT"); s_tic = shop.get("TICKET_COUNT")
+                        s_rev_yoy = shop.get("REVENUE_AMOUNT_YOY"); s_tic_yoy = shop.get("TICKET_COUNT_YOY")
+                        s_rev_qoq = shop.get("REVENUE_AMOUNT_QOQ"); s_tic_qoq = shop.get("TICKET_COUNT_QOQ")
                         
-                        _s_avg_cur = round(float(_s_rev) / float(_s_tic), 2) if _s_rev is not None and _s_tic else (0 if _s_tic else None)
-                        _s_avg_yoy = round(float(_s_rev_yoy) / float(_s_tic_yoy), 2) if _s_rev_yoy is not None and _s_tic_yoy else (0 if _s_tic_yoy else None)
-                        _s_avg_qoq = round(float(_s_rev_qoq) / float(_s_tic_qoq), 2) if _s_rev_qoq is not None and _s_tic_qoq else None
+                        s_avg_cur = round(float(s_rev) / float(s_tic), 2) if s_rev is not None and s_tic and float(s_tic) != 0 else None
+                        s_avg_yoy = round(float(s_rev_yoy) / float(s_tic_yoy), 2) if s_rev_yoy is not None and s_tic_yoy and float(s_tic_yoy) != 0 else None
+                        s_avg_qoq = round(float(s_rev_qoq) / float(s_tic_qoq), 2) if s_rev_qoq is not None and s_tic_qoq and float(s_tic_qoq) != 0 else None
 
                         shop_inc_list.append({
-                            "ServerpartId": None, "ServerpartName": None,
-                            "ServerpartShopId": _ssid_str,
+                            "ServerpartId": None, "ServerpartName": None, "ServerpartShopId": _ssid_str,
                             "ServerpartShopName": shop.get("SHOPSHORTNAME", ""),
-                            "Brand_Id": _brand_id,
+                            "Brand_Id": int(safe_dec(_si.get("BRAND_ID") or 0)) or None,
                             "Brand_Name": _si.get("BRAND_NAME2") or _si.get("BRAND_NAME") or None,
-                            "BrandType_Name": None,
-                            "Brand_ICO": _format_ico(_si.get("BRAND_ICO")),
-                            "ShopTrade": _si.get("SHOPTRADE") or shop.get("BUSINESS_TRADE"),
+                            "BrandType_Name": None, "Brand_ICO": _format_ico(_si.get("BRAND_ICO")),
+                            "ShopTrade": int(_bp.get("BUSINESS_TYPE") or 0) if _bp else 0,
                             "BusinessTradeName": _si.get("BUSINESS_TRADENAME") or shop.get("SHOPSHORTNAME"),
-                            "BusinessTradeType": _btt,
-                            "BusinessProjectId": shop.get("BUSINESSPROJECT_ID"),
-                            "CompactStartDate": _format_bp_date(_bp.get("COMPACT_START")) or _format_bp_date(_bp.get("PROJECT_START")),
-                            "CompactEndDate": _format_bp_date(_bp.get("COMPACT_END")) or _format_bp_date(_bp.get("PROJECT_END")),
-                            "CompactDate": _format_bp_date(_bp.get("COMPACT_START")) or _format_bp_date(_bp.get("PROJECT_START")),
+                            "BusinessTradeType": _btt, "BusinessProjectId": shop.get("BUSINESSPROJECT_ID"),
+                            "CompactStartDate": _format_bp_date(_bp.get("COMPACT_START")) or _format_bp_date(_bp.get("PROJECT_START")) or "",
+                            "CompactEndDate": _format_bp_date(_bp.get("COMPACT_END")) or _format_bp_date(_bp.get("PROJECT_END")) or "",
+                            "CompactDate": None,
                             "SettlementModes": int(_bp.get("SETTLEMENT_MODES")) if _bp.get("SETTLEMENT_MODES") is not None else None,
-                            "BusinessType": _si.get("BUSINESS_TYPE") or (1000 if _btt < 3 else 2000),
-                            "MERCHANTS_ID": float(_final_merch_id) if _final_merch_id is not None else None,
-                            "MERCHANTS_ID_Encrypted": des_encrypt_id(_final_merch_id),
+                            "BusinessType": _bp.get("BUSINESS_TYPE") if _bp.get("BUSINESS_TYPE") is not None else None,
+                            "MERCHANTS_ID": float(_m_id) if _m_id is not None else None,
+                            "MERCHANTS_ID_Encrypted": des_encrypt_id(_m_id),
                             "MERCHANTS_NAME": _bp.get("MERCHANTS_NAME") or _si.get("SELLER_NAME"),
-                            "RevenueINC": _make_inc(shop.get("REVENUE_AMOUNT"), shop.get("REVENUE_AMOUNT_YOY"), shop.get("REVENUE_AMOUNT_QOQ")),
+                            "RevenueINC": _make_inc(s_rev, s_rev_yoy, s_rev_qoq),
                             "AccountINC": _make_inc(shop.get("ROYALTY_THEORY"), shop.get("ROYALTY_THEORY_YOY"), shop.get("ROYALTY_THEORY_QOQ")),
-                            "TicketINC": _make_inc(shop.get("TICKET_COUNT"), shop.get("TICKET_COUNT_YOY"), shop.get("TICKET_COUNT_QOQ")),
-                            "AvgTicketINC": _make_inc(_s_avg_cur, _s_avg_yoy, _s_avg_qoq),
-                            "CurTransaction": None,
-                            "Profit_Amount": None, "Cost_Amount": None, "Ca_Cost": None,
-                        }
-                        shop_inc_list.append(shop_inc)
+                            "TicketINC": _make_inc(s_tic, s_tic_yoy, s_tic_qoq),
+                            "AvgTicketINC": _make_inc(s_avg_cur, s_avg_yoy, s_avg_qoq),
+                            "CurTransaction": None, "Profit_Amount": None, "Cost_Amount": None, "Ca_Cost": None,
+                        })
 
-                    # 服务区级 AvgTicket 计算
-                    sp_avg_cur = round(sp_data["REVENUE"] / sp_data["TICKET"], 2) if sp_data["TICKET"] and sp_data["TICKET"] != 0 else (0 if sp_data["TICKET"] == 0 else None)
-                    sp_avg_yoy = round(sp_data["REVENUE_YOY"] / sp_data["TICKET_YOY"], 2) if sp_data["TICKET_YOY"] and sp_data["TICKET_YOY"] != 0 else (0 if sp_data["TICKET_YOY"] == 0 else None)
-                    sp_avg_qoq = round(sp_data["REVENUE_QOQ"] / sp_data["TICKET_QOQ"], 2) if sp_data["TICKET_QOQ"] and sp_data["TICKET_QOQ"] != 0 else (0 if sp_data["TICKET_QOQ"] == 0 else None)
+                    # 服务区节点聚合
+                    s_avg_cur = round(sp_data["REVENUE"] / sp_data["TICKET"], 2) if sp_data["TICKET"] and sp_data["TICKET"] != 0 else (0 if sp_data["TICKET"] == 0 else None)
+                    s_avg_yoy = round(sp_data["REVENUE_YOY"] / sp_data["TICKET_YOY"], 2) if sp_data["TICKET_YOY"] and sp_data["TICKET_YOY"] != 0 else (0 if sp_data["TICKET_YOY"] == 0 else None)
+                    s_avg_qoq = round(sp_data["REVENUE_QOQ"] / sp_data["TICKET_QOQ"], 2) if sp_data["TICKET_QOQ"] and sp_data["TICKET_QOQ"] != 0 else (0 if sp_data["TICKET_QOQ"] == 0 else None)
 
-                    # 服务区节点：children=null，门店在 ShopINCList
                     sp_children.append({
                         "node": _make_node(
                             sp_region_id=sp_region.get(sp_id, (None, "", 0, 0))[0],
@@ -6580,71 +6555,59 @@ async def get_month_inc_analysis(
                             rev_inc=_make_inc(sp_data["REVENUE"], sp_data["REVENUE_YOY"], sp_data["REVENUE_QOQ"]),
                             acc_inc=_make_inc(sp_data["ROYALTY"], sp_data["ROYALTY_YOY"], sp_data["ROYALTY_QOQ"]),
                             ticket=_make_inc(sp_data["TICKET"], sp_data["TICKET_YOY"], sp_data["TICKET_QOQ"]),
-                            bayonet=_make_bayonet_region(sp_data["VEHICLE"], sp_data["VEHICLE_YOY"]),
+                            bayonet=_make_bayonet_region(sp_data["VEHICLE"], sp_data["VEHICLE_YOY"], qoq_default=None),
                             bayonet_ori={"curYearData": round(sp_data["VEHICLE_ORI"], 2) if sp_data["VEHICLE_ORI"] is not None else None,
                                          "lYearData": round(sp_data["VEHICLE_ORI_YOY"], 2) if sp_data["VEHICLE_ORI_YOY"] is not None else None,
-                                         "increaseData": None, "increaseRate": None,
-                                         "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
-                            avg_ticket=_make_inc(sp_avg_cur, sp_avg_yoy, sp_avg_qoq),
+                                         "increaseData": None, "increaseRate": None, "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
+                            avg_ticket=_make_inc(s_avg_cur, s_avg_yoy, s_avg_qoq),
                             shop_list=shop_inc_list if shop_inc_list else None,
                         ),
                         "children": None
                     })
 
-                total_rev += r_rev
-                total_rev_yoy += r_rev_yoy
-                total_rev_qoq += r_rev_qoq
-                total_tic += r_tic
-                total_tic_yoy += r_tic_yoy
-                total_tic_qoq += r_tic_qoq
-                total_roy += r_roy
-                total_roy_yoy += r_roy_yoy
-                total_roy_qoq += r_roy_qoq
-                total_veh += r_veh
-                total_veh_yoy += r_veh_yoy
-                total_veh_ori += r_veh_ori
-                total_veh_ori_yoy += r_veh_ori_yoy
+                # 累加指标到根节点
+                total_rev = _safe_add(total_rev, r_rev); total_rev_yoy = _safe_add(total_rev_yoy, r_rev_yoy); total_rev_qoq = _safe_add(total_rev_qoq, r_rev_qoq)
+                total_tic = _safe_add(total_tic, r_tic); total_tic_yoy = _safe_add(total_tic_yoy, r_tic_yoy); total_tic_qoq = _safe_add(total_tic_qoq, r_tic_qoq)
+                total_roy = _safe_add(total_roy, r_roy); total_roy_yoy = _safe_add(total_roy_yoy, r_roy_yoy); total_roy_qoq = _safe_add(total_roy_qoq, r_roy_qoq)
+                total_veh = _safe_add(total_veh, r_veh); total_veh_yoy = _safe_add(total_veh_yoy, r_veh_yoy)
+                total_veh_ori = _safe_add(total_veh_ori, r_veh_ori); total_veh_ori_yoy = _safe_add(total_veh_ori_yoy, r_veh_ori_yoy)
 
-                # 片区级 AvgTicket
                 r_avg_cur = round(r_rev / r_tic, 2) if r_tic and r_tic != 0 else (0 if r_tic == 0 else None)
                 r_avg_yoy = round(r_rev_yoy / r_tic_yoy, 2) if r_tic_yoy and r_tic_yoy != 0 else (0 if r_tic_yoy == 0 else None)
                 r_avg_qoq = round(r_rev_qoq / r_tic_qoq, 2) if r_tic_qoq and r_tic_qoq != 0 else (0 if r_tic_qoq == 0 else None)
 
-                # 片区节点：ServerpartId=null, ServerpartName=null
                 region_children.append({
                     "node": _make_node(
                         sp_region_id=rid, sp_region_name=rinfo["name"],
-                        sp_id=None, sp_name=None,
                         rev_inc=_make_inc(r_rev, r_rev_yoy, r_rev_qoq),
                         acc_inc=_make_inc(r_roy, r_roy_yoy, r_roy_qoq),
                         ticket=_make_inc(r_tic, r_tic_yoy, r_tic_qoq),
                         bayonet=_make_bayonet_region(r_veh, r_veh_yoy),
-                        bayonet_ori=None,
                         avg_ticket=_make_inc(r_avg_cur, r_avg_yoy, r_avg_qoq),
                     ),
                     "children": sp_children if sp_children else None
                 })
 
-            # 根节点：ServerpartId=null
-            # 根级 AvgTicket
             t_avg_cur = round(total_rev / total_tic, 2) if total_tic and total_tic != 0 else (0 if total_tic == 0 else None)
             t_avg_yoy = round(total_rev_yoy / total_tic_yoy, 2) if total_tic_yoy and total_tic_yoy != 0 else (0 if total_tic_yoy == 0 else None)
             t_avg_qoq = round(total_rev_qoq / total_tic_qoq, 2) if total_tic_qoq and total_tic_qoq != 0 else (0 if total_tic_qoq == 0 else None)
 
             result_list = [{
                 "node": _make_node(
-                    sp_id=None, sp_name="合计",
+                    sp_name="合计",
                     rev_inc=_make_inc(total_rev, total_rev_yoy, total_rev_qoq),
                     acc_inc=_make_inc(total_roy, total_roy_yoy, total_roy_qoq),
                     ticket=_make_inc(total_tic, total_tic_yoy, total_tic_qoq),
                     bayonet=_make_bayonet_region(total_veh, total_veh_yoy),
-                    bayonet_ori=None,
                     avg_ticket=_make_inc(t_avg_cur, t_avg_yoy, t_avg_qoq),
                 ),
                 "children": region_children if region_children else None
             }]
+            json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+            return Result(Result_Code=100, Result_Desc="查询成功", Result_Data=json_list.model_dump())
 
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+        # 非固化路径（当前月或跨月段），暂未实现实时查询逻辑，返回空列表
+        json_list = JsonListData.create(data_list=[], total=0, page_size=10)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMonthINCAnalysis 查询失败: {ex}")
@@ -6760,13 +6723,13 @@ async def get_shop_sabfi_list(
             """构建 HolidayINCDetailModel — None 保持 None, QOQ 增量 0→None"""
             def _v(x):
                 if x is None: return None
-                try: return float(x)
+                try: return round(float(x), 2)
                 except: return 0.0
             def _qv(x):
                 """QOQ 值: None 和 0 都视为 None（C# 旧接口行为）"""
                 if x is None: return None
                 try:
-                    val = float(x)
+                    val = round(float(x), 2)
                     return val if val != 0.0 else None
                 except: return None
             return {
@@ -6778,6 +6741,25 @@ async def get_shop_sabfi_list(
 
         def empty_inc():
             return make_inc()
+
+        # 辅助：Brand_ICO 格式化
+        def _format_ico(ico_raw):
+            if not ico_raw: return ""
+            if ico_raw.startswith("http"): return ico_raw
+            if "PictureManage" in ico_raw: return "https://user.eshangtech.com" + ("/" if not ico_raw.startswith("/") else "") + ico_raw
+            return "https://api.eshangtech.com/EShangApiMain/" + ico_raw.lstrip("/")
+
+        # 辅助：BP 日期格式化 (C# yyyy/M/d)
+        def _format_bp_date(date_obj):
+            if not date_obj: return ""
+            from datetime import datetime as dt_internal
+            if isinstance(date_obj, dt_internal):
+                return f"{date_obj.year}/{date_obj.month}/{date_obj.day}"
+            s_date = str(date_obj).split(" ")[0].replace("-", "/")
+            parts = s_date.split("/")
+            if len(parts) == 3:
+                return f"{parts[0]}/{int(parts[1])}/{int(parts[2])}"
+            return s_date
 
         # 多服务区ID兼容
         sp_where = ""
@@ -6813,12 +6795,11 @@ async def get_shop_sabfi_list(
 
         # 查询门店盈利数据 (T_PERIODMONTHPROFIT)
         profit_map = {}
+        sp_id_list = list(set(r.get("SERVERPART_ID") for r in rows if r.get("SERVERPART_ID")))
+        last_month = str(int(stat_month) - 1) if str(stat_month).endswith(('02','03','04','05','06','07','08','09','10','11','12')) else str(int(stat_month) - 89)
         try:
-            sp_id_list = list(set(r.get("SERVERPART_ID") for r in rows if r.get("SERVERPART_ID")))
             if sp_id_list:
                 sp_in = ",".join(str(i) for i in sp_id_list)
-                # C# 用 BETWEEN lastMonth AND statMonth
-                last_month = str(int(stat_month) - 1) if str(stat_month).endswith(('02','03','04','05','06','07','08','09','10','11','12')) else str(int(stat_month) - 89)
                 profit_sql = f"""SELECT SERVERPART_ID,
                         SUM(PROFIT_AMOUNT) AS PROFIT_AMOUNT,
                         SUM(COST_AMOUNT) AS COST_AMOUNT
@@ -6888,7 +6869,7 @@ async def get_shop_sabfi_list(
                         WHERE S.SERVERPARTSHOP_ID IN ({ss_in})"""
                     ss_rows = db.execute_query(ss_sql) or []
                     for sr in ss_rows:
-                        raw_shop_map[sr["SERVERPARTSHOP_ID"]] = sr
+                        raw_shop_map[int(sr["SERVERPARTSHOP_ID"])] = sr
 
                 # 3. 对每个 ssid_str 聚合计算
                 for ssid_str, id_list in ssid_list_map.items():
@@ -7163,14 +7144,14 @@ async def get_shop_sabfi_list(
                     avg_cur if tic is not None else None, None, None, None,
                     avg_qoq, avg_inc_qoq, avg_rate_qoq),
                 "CurTransaction": None,
-                "Profit_Amount": shop_profit,
-                "Cost_Amount": shop_cost,
-                "Ca_Cost": shop_ca_cost,
+                "Profit_Amount": round(shop_profit, 2) if shop_profit is not None else None,
+                "Cost_Amount": round(shop_cost, 2) if shop_cost is not None else None,
+                "Ca_Cost": round(shop_ca_cost, 2) if shop_ca_cost is not None else None,
                 "SABFI_Score": 0.0,
                 "SABFIList": sabfi_list_empty,
                 "BusinessState": str(si.get("BUSINESS_STATE") or "1"),
-                "Revenue_SD": safe_dec(r.get("REVENUE_SD")) if r.get("REVENUE_SD") is not None else None,
-                "Revenue_AVG": safe_dec(r.get("REVENUE_AVG")) if r.get("REVENUE_AVG") is not None else None,
+                "Revenue_SD": round(safe_dec(r.get("REVENUE_SD")), 2) if r.get("REVENUE_SD") is not None else None,
+                "Revenue_AVG": round(safe_dec(r.get("REVENUE_AVG")), 2) if r.get("REVENUE_AVG") is not None else None,
             }
 
         # 汇总累加器
@@ -7274,59 +7255,52 @@ async def get_shop_sabfi_list(
                 for row in _sorted_shops:
                     # 合并 SSID 信息
                     _ss_id_str = str(row.get("SERVERPARTSHOP_ID", ""))
-                    _ssids = [s.strip() for s in _ss_id_str.split(",") if s.strip()]
-                    _si = {}
-                    for _s in _ssids:
-                        _cur_si = shop_agg_map.get(_s) # Use shop_agg_map which already has aggregated info
-                        if _cur_si:
-                            if not _si: _si = _cur_si.copy()
-                            else:
-                                # 合并业态编码 (SHOPTRADE)
-                                _old_st_list = sorted(str(_si.get("SHOPTRADE") or "").split(","))
-                                _new_st = str(_cur_si.get("SHOPTRADE") or "")
-                                if _new_st and _new_st not in _old_st_list:
-                                    _old_st_list.append(_new_st)
-                                    _si["SHOPTRADE"] = ",".join(sorted(set([x for x in _old_st_list if x])))
-                                # 合并业态名称 (BUSINESS_TRADENAME)
-                                _old_tn_list = sorted(str(_si.get("BUSINESS_TRADENAME") or "").split(","))
-                                _new_tn = str(_cur_si.get("BUSINESS_TRADENAME") or "")
-                                if _new_tn and _new_tn not in _old_tn_list:
-                                    _old_tn_list.append(_new_tn)
-                                    _si["BUSINESS_TRADENAME"] = ",".join(sorted(set([x for x in _old_tn_list if x])))
+                    _si = shop_agg_map.get(_ss_id_str) or {}
 
                     _bp = bp_info_map.get(row.get("BUSINESSPROJECT_ID")) or {}
                     _m_id = _bp.get("MERCHANTS_ID") or _si.get("SELLER_ID")
                     
-                # SABFI 门店节点 YOY 强制为 None 以对齐旧接口
-                r_rev = row.get("REVENUE_AMOUNT"); r_tic = row.get("TICKET_COUNT")
-                r_rev_qoq = row.get("REVENUE_AMOUNT_QOQ"); r_tic_qoq = row.get("TICKET_COUNT_QOQ")
-                ac = round(float(r_rev)/float(r_tic), 2) if r_rev is not None and r_tic and float(r_tic) != 0 else (0.0 if r_tic == 0 else None)
-                aq = round(float(r_rev_qoq)/float(r_tic_qoq), 2) if r_rev_qoq is not None and r_tic_qoq and float(r_tic_qoq) != 0 else (0.0 if r_tic_qoq == 0 else None)
+                    # SABFI 门店节点 YOY 强制为 None 以对齐旧接口
+                    r_rev = row.get("REVENUE_AMOUNT"); r_tic = row.get("TICKET_COUNT")
+                    r_rev_qoq = row.get("REVENUE_AMOUNT_QOQ"); r_tic_qoq = row.get("TICKET_COUNT_QOQ")
+                    ac = round(float(r_rev)/float(r_tic), 2) if r_rev is not None and r_tic and float(r_tic) != 0 else None
+                    aq = round(float(r_rev_qoq)/float(r_tic_qoq), 2) if r_rev_qoq is not None and r_tic_qoq and float(r_tic_qoq) != 0 else None
 
-                shop_node = {
-                    "SPRegionTypeId": rg["id"], "SPRegionTypeName": rg["name"],
-                    "ServerpartId": sp_id, "ServerpartName": sp_data["name"],
-                    "ServerpartShopId": _ss_id_str, "ServerpartShopName": row.get("SHOPSHORTNAME"),
-                    "RevenueINC": make_inc(r_rev, None, qoq=r_rev_qoq, inc_qoq=safe_dec(r_rev) - safe_dec(r_rev_qoq), rate_qoq=(safe_dec(r_rev) - safe_dec(r_rev_qoq)) / safe_dec(r_rev_qoq) * 100 if safe_dec(r_rev_qoq) and safe_dec(r_rev_qoq) != 0 else None),
-                    "AccountINC": make_inc(row.get("ROYALTY_THEORY"), None, qoq=row.get("ROYALTY_THEORY_QOQ"), inc_qoq=safe_dec(row.get("ROYALTY_THEORY")) - safe_dec(row.get("ROYALTY_THEORY_QOQ")), rate_qoq=(safe_dec(row.get("ROYALTY_THEORY")) - safe_dec(row.get("ROYALTY_THEORY_QOQ"))) / safe_dec(row.get("ROYALTY_THEORY_QOQ")) * 100 if safe_dec(row.get("ROYALTY_THEORY_QOQ")) and safe_dec(row.get("ROYALTY_THEORY_QOQ")) != 0 else None),
-                    "BayonetINC": make_inc(row.get("VEHICLE_COUNT"), None, qoq=row.get("VEHICLE_COUNT_QOQ"), inc_qoq=safe_dec(row.get("VEHICLE_COUNT")) - safe_dec(row.get("VEHICLE_COUNT_QOQ")), rate_qoq=(safe_dec(row.get("VEHICLE_COUNT")) - safe_dec(row.get("VEHICLE_COUNT_QOQ"))) / safe_dec(row.get("VEHICLE_COUNT_QOQ")) * 100 if safe_dec(row.get("VEHICLE_COUNT_QOQ")) and safe_dec(row.get("VEHICLE_COUNT_QOQ")) != 0 else None),
-                    "TicketINC": make_inc(r_tic, None, qoq=r_tic_qoq, inc_qoq=safe_dec(r_tic) - safe_dec(r_tic_qoq), rate_qoq=(safe_dec(r_tic) - safe_dec(r_tic_qoq)) / safe_dec(r_tic_qoq) * 100 if safe_dec(r_tic_qoq) and safe_dec(r_tic_qoq) != 0 else None),
-                    "AvgTicketINC": make_inc(ac, None, qoq=aq, inc_qoq=round(ac - aq, 2) if ac is not None and aq is not None else None, rate_qoq=round((ac - aq) / aq * 100, 2) if ac is not None and aq is not None and aq != 0 else None),
+                    # Profit_Amount: C# 自营门店=Revenue, 联营=None
+                    _btt_val = row.get("BUSINESS_TYPE")  # BusinessTradeType from BW
+                    _shop_profit = safe_dec(r_rev) if _btt_val is not None and int(safe_dec(_btt_val)) < 3 else None
+                    _shop_cost = 0.0 if _btt_val is not None and int(safe_dec(_btt_val)) < 3 else None
+
+                    shop_node = {
+                        "ServerpartId": sp_id, "ServerpartName": sp_data["name"],
+                        "ServerpartShopId": _ss_id_str, "ServerpartShopName": row.get("SHOPSHORTNAME"),
+                        "RevenueINC": make_inc(r_rev, None, qoq=r_rev_qoq, inc_qoq=round(safe_dec(r_rev) - safe_dec(r_rev_qoq), 2) if r_rev_qoq is not None else None, rate_qoq=round((safe_dec(r_rev) - safe_dec(r_rev_qoq)) / safe_dec(r_rev_qoq) * 100, 2) if safe_dec(r_rev_qoq) and safe_dec(r_rev_qoq) != 0 else None),
+                        "AccountINC": make_inc(row.get("ROYALTY_THEORY"), None, qoq=row.get("ROYALTY_THEORY_QOQ"), inc_qoq=round(safe_dec(row.get("ROYALTY_THEORY")) - safe_dec(row.get("ROYALTY_THEORY_QOQ")), 2) if row.get("ROYALTY_THEORY_QOQ") is not None else None, rate_qoq=round((safe_dec(row.get("ROYALTY_THEORY")) - safe_dec(row.get("ROYALTY_THEORY_QOQ"))) / safe_dec(row.get("ROYALTY_THEORY_QOQ")) * 100, 2) if safe_dec(row.get("ROYALTY_THEORY_QOQ")) and safe_dec(row.get("ROYALTY_THEORY_QOQ")) != 0 else None),
+                        "TicketINC": make_inc(r_tic, None, qoq=r_tic_qoq, inc_qoq=round(safe_dec(r_tic) - safe_dec(r_tic_qoq), 2) if r_tic_qoq is not None else None, rate_qoq=round((safe_dec(r_tic) - safe_dec(r_tic_qoq)) / safe_dec(r_tic_qoq) * 100, 2) if safe_dec(r_tic_qoq) and safe_dec(r_tic_qoq) != 0 else None),
+                        "AvgTicketINC": make_inc(ac, None, qoq=aq, inc_qoq=round(ac - aq, 2) if ac is not None and aq is not None else None, rate_qoq=round((ac - aq) / aq * 100, 2) if ac is not None and aq is not None and aq != 0 else None),
                         "SABFI_Score": 0.0, "SABFIList": [{"name": str(et), "value": "", "data": "", "key": ""} for et in range(1, 8)],
-                        "Brand_Id": float(_si.get("BRAND_ID")) if _si.get("BRAND_ID") is not None else None,
+                        "Brand_Id": int(_si.get("BRAND_ID")) if _si.get("BRAND_ID") is not None else None,
                         "Brand_Name": _si.get("BRAND_NAME2") or _si.get("BRAND_NAME") or row.get("SHOPSHORTNAME"),
+                        "BrandType_Name": None,
                         "Brand_ICO": _format_ico(_si.get("BRAND_ICO")),
+                        "BusinessTrade": str(_si.get("BUSINESS_TRADE") or "") if _si.get("BUSINESS_TRADE") else None,
+                        "BusinessTradeName": _si.get("BUSINESS_TRADENAME") or row.get("SHOPSHORTNAME"),
+                        "BusinessTradeType": int(safe_dec(_btt_val)) if _btt_val is not None else None,
+                        "BusinessProjectId": int(_bp["BUSINESSPROJECT_ID"]) if _bp.get("BUSINESSPROJECT_ID") else None,
+                        "BusinessProjectName": _bp.get("BUSINESSPROJECT_NAME") if _bp else None,
+                        "BusinessType": _bp.get("BUSINESS_TYPE") if _bp.get("BUSINESS_TYPE") is not None else None,
+                        "ShopTrade": int(_bp.get("BUSINESS_TYPE") or 0) if _bp else 0,
+                        "CompactStartDate": _format_bp_date(_bp.get("PROJECT_STARTDATE")) or "",
+                        "CompactEndDate": _format_bp_date(_bp.get("PROJECT_ENDDATE")) or "",
+                        "SettlementModes": int(_bp["SETTLEMENT_MODES"]) if _bp.get("SETTLEMENT_MODES") is not None else None,
+                        "StatisticsMonth": None,
                         "MERCHANTS_ID": float(_m_id) if _m_id is not None else None,
                         "MERCHANTS_ID_Encrypted": des_encrypt_id(_m_id),
                         "MERCHANTS_NAME": _bp.get("MERCHANTS_NAME") or _si.get("SELLER_NAME"),
-                        "BusinessTrade": _si.get("SHOPTRADE") or row.get("BUSINESS_TRADE"),
-                        "BusinessTradeName": _si.get("BUSINESS_TRADENAME") or row.get("SHOPSHORTNAME"),
-                        "BusinessProjectId": int(_bp["BUSINESSPROJECT_ID"]) if _bp.get("BUSINESSPROJECT_ID") else None,
-                        "BusinessType": int(safe_dec(row.get("BUSINESS_TYPE", 0))),
-                        "CompactStartDate": _format_bp_date(_bp.get("PROJECT_STARTDATE")),
-                        "CompactEndDate": _format_bp_date(_bp.get("PROJECT_ENDDATE")),
-                        "SettlementModes": int(_bp["SETTLEMENT_MODES"]) if _bp.get("SETTLEMENT_MODES") is not None else None,
-                        "StatisticsMonth": stat_month,
+                        "Profit_Amount": _shop_profit,
+                        "Cost_Amount": _shop_cost,
+                        "Ca_Cost": None,
+                        "CurTransaction": None,
                         "Revenue_SD": safe_dec(row.get("REVENUE_SD")) if row.get("REVENUE_SD") is not None else None,
                         "Revenue_AVG": safe_dec(row.get("REVENUE_AVG")) if row.get("REVENUE_AVG") is not None else None,
                     }
@@ -7350,8 +7324,8 @@ async def get_shop_sabfi_list(
                     "SectionFlowINC": None, "BayonetINC_ORI": bayonet_ori,
                     "TicketINC": make_inc(sp_ticket, None, qoq=sp_ticket_qoq, inc_qoq=round(sp_ticket - sp_ticket_qoq, 2) if sp_ticket_qoq is not None else None, rate_qoq=round((sp_ticket - sp_ticket_qoq) / sp_ticket_qoq * 100, 2) if sp_ticket_qoq is not None and sp_ticket_qoq != 0 else None),
                     "AvgTicketINC": make_inc(avg_cur, None, qoq=avg_qoq, inc_qoq=round(avg_cur - avg_qoq, 2) if avg_cur is not None and avg_qoq is not None else None, rate_qoq=round((avg_cur - avg_qoq) / avg_qoq * 100, 2) if avg_cur is not None and avg_qoq is not None and avg_qoq != 0 else None),
-                    "Profit_Amount": sp_profit, "Cost_Amount": sp_cost,
-                    "Ca_Cost": sp_ca_cost, "RankDiff": None,
+                    "Profit_Amount": round(sp_profit, 2) if sp_profit is not None else None, "Cost_Amount": round(sp_cost, 2) if sp_cost is not None else None,
+                    "Ca_Cost": sp_ca_cost, "ShopINCList": None, "RankDiff": None,
                 }
                 sp_children.append({"node": sp_node, "children": None})
 
@@ -7377,7 +7351,7 @@ async def get_shop_sabfi_list(
                 "AvgTicketINC": (lambda ac=round(reg_rev/reg_ticket,2) if reg_ticket else 0, aq=round(reg_rev_qoq/reg_ticket_qoq,2) if reg_ticket_qoq else 0:
                     make_inc(ac, None, qoq=aq, inc_qoq=round(ac - aq, 2) if ac is not None and aq is not None else None, rate_qoq=round((ac - aq) / aq * 100, 2) if ac is not None and aq is not None and aq != 0 else None))(),
                 "ShopINCList": None,
-                "Profit_Amount": reg_profit, "Cost_Amount": reg_cost,
+                "Profit_Amount": round(reg_profit, 2), "Cost_Amount": round(reg_cost, 2),
                 "Ca_Cost": round(reg_cost / reg_ticket, 2) if reg_ticket and reg_cost else 0.0,
                 "RankDiff": None,
             }
@@ -7410,7 +7384,7 @@ async def get_shop_sabfi_list(
                     round(ac - aq, 2) if total_ticket and total_ticket_qoq else None,
                     round((ac - aq) / aq * 100, 2) if total_ticket and total_ticket_qoq and aq else None))(),
             "ShopINCList": None,
-            "Profit_Amount": total_profit, "Cost_Amount": total_cost,
+            "Profit_Amount": round(total_profit, 2), "Cost_Amount": round(total_cost, 2),
             "Ca_Cost": round(total_cost / total_ticket, 2) if total_ticket and total_cost else 0.0,
             "RankDiff": None,
         }
