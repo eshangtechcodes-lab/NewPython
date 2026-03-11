@@ -110,10 +110,20 @@ ENTITIES = {
         "seq": "SEQ_CUSTOMERGROUP_AMOUNT",
         "status": "CUSTOMERGROUP_AMOUNT_STATE",
         "delete_type": "none",  # C# DeleteCUSTOMERGROUP_AMOUNT: 空实现，always return false
-        "exclude": set(),
-        "date_fields": set(),
-        "date_range": {},
-        "in_fields": {},
+        # C# L32-33: GetWhereSQL exclude 参数
+        "exclude": {"STATISTICS_MONTH_Start", "STATISTICS_MONTH_End", "SERVERPART_IDS", "SERVERPART_CODES"},
+        # C# L112: STATISTICS_MONTH 通过 TranslateDateTime 格式化
+        "date_fields": {"STATISTICS_MONTH"},
+        # C# L39-48: STATISTICS_MONTH 日期范围
+        "date_range": {"STATISTICS_MONTH": ("STATISTICS_MONTH_Start", "STATISTICS_MONTH_End", "yyyyMM")},
+        # C# L50-52: SERVERPART_ID IN (SERVERPART_IDS) 数字型
+        "in_fields": {"SERVERPART_ID": "SERVERPART_IDS"},
+        # C# L55-58: SERVERPART_CODE IN ('SERVERPART_CODES') 字符串型
+        "in_fields_str": {"SERVERPART_CODE": "SERVERPART_CODES"},
+        # C# Model 非 DB 属性（序列化时输出默认值 null）
+        "model_extra_fields": ["STATISTICS_MONTH_Start", "STATISTICS_MONTH_End", "SERVERPART_IDS", "SERVERPART_CODES"],
+        # C# BindDataRowToModel L112: TranslateDateTime 格式化 (int 202112 → str '2021/12')
+        "translate_date_fields": {"STATISTICS_MONTH": "yyyyMM"},
     },
 }
 
@@ -195,6 +205,30 @@ def _build_where(sp: dict, entity_cfg: dict, query_type: int = 0) -> str:
     return " AND ".join(conditions) if conditions else ""
 
 
+def _apply_model_transform(row: dict, entity_cfg: dict) -> dict:
+    """
+    C# BindDataRowToModel 后处理：
+    1. 补充 Model 非 DB 属性（默认 null）
+    2. TranslateDateTime 日期格式化（int → str）
+    """
+    # 补充 Model 扩展字段
+    for field in entity_cfg.get("model_extra_fields", []):
+        if field not in row:
+            row[field] = None
+    # TranslateDateTime 格式化
+    for field, fmt in entity_cfg.get("translate_date_fields", {}).items():
+        val = row.get(field)
+        if val is not None:
+            s = str(val)
+            if fmt == "yyyyMM" and len(s) >= 6:
+                # 202112 → '2021/12'
+                row[field] = f"{s[:4]}/{s[4:6]}"
+            elif fmt == "yyyyMMdd" and len(s) >= 8:
+                # 20211231 → '2021/12/31'
+                row[field] = f"{s[:4]}/{s[4:6]}/{s[6:8]}"
+    return row
+
+
 def get_entity_list(db: DatabaseHelper, entity_name: str, search_model: dict):
     """
     通用 GetXXXList — 按 C# Helper.GetXXXList 逻辑
@@ -227,6 +261,9 @@ def get_entity_list(db: DatabaseHelper, entity_name: str, search_model: dict):
             search_value in str(r.get(k, "")) for k in keys
         )]
 
+    # C# BindDataRowToModel 后处理
+    rows = [_apply_model_transform(dict(r), e) for r in rows]
+
     # 排序
     sort_str = search_model.get("SortStr", "")
     if sort_str and sort_str.strip():
@@ -257,7 +294,9 @@ def get_entity_detail(db: DatabaseHelper, entity_name: str, pk_val: int):
     e = ENTITIES[entity_name]
     sql = f"SELECT * FROM {e['table']} WHERE {e['pk']} = ?"
     rows = db.execute_query(sql, [pk_val])
-    return rows[0] if rows else {}
+    if rows:
+        return _apply_model_transform(dict(rows[0]), e)
+    return {}
 
 
 def synchro_entity(db: DatabaseHelper, entity_name: str, data: dict):

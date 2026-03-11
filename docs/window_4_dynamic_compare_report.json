@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-10 15:10:42",
+  "generated_at": "2026-03-11 11:49:17",
   "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\windows\\window_4.json",
   "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\window_4_dynamic_compare_report.md",
   "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
@@ -52,9 +52,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [

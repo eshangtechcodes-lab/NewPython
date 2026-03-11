@@ -3325,7 +3325,12 @@ def reject_lading_bill(db: DatabaseHelper, business_approval_id: int,
 
 # ==================== 42. GetAHJKtoken ====================
 def get_ahjk_token(data: dict) -> tuple[bool, dict, str]:
-    """获取安徽交控token（简化版）"""
+    """获取安徽交控token — C# AHJKHelper.GetAHJKtoken
+    依赖 Redis + 外部 HTTP 接口，Python 端简化处理
+    当 data 为 None 时，C# 会抛 NullReferenceException"""
+    if data is None:
+        # 模拟 C# 空引用异常
+        raise Exception("未将对象引用设置到对象的实例。")
     logger.info("GetAHJKtoken 被调用")
     return False, data, "功能暂未迁移"
 
@@ -3336,8 +3341,10 @@ def get_account_compare(db: DatabaseHelper, start_date: str, end_date: str,
                           compare_end_date: str = "", compare_year: int = None,
                           business_type: str = "") -> list[dict]:
     """获取经营数据对比分析表
-    原 FinanceHelper.GetAccountCompare"""
-    return []
+    完整实现 — 委托 account_compare_service"""
+    from services.finance.account_compare_service import get_account_compare as _impl
+    return _impl(db, start_date, end_date, serverpart_id,
+                 compare_start_date, compare_end_date, compare_year, business_type)
 
 
 # ==================== 44. GetAnnualAccountList ====================

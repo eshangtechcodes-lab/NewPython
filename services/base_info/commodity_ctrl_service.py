@@ -11,6 +11,7 @@ from __future__ import annotations
   - 表名按省份拆分：DefaultPCode=620000 用 T_COMMODITY，其他用 T_COMMODITY_{ProvinceCode}
 """
 from typing import Optional
+from datetime import datetime
 from loguru import logger
 from core.database import DatabaseHelper
 
@@ -43,11 +44,37 @@ def _get_table_name(province_code: str = "") -> str:
     return f"T_COMMODITY_{province_code}"
 
 
+def _format_date(val):
+    """将日期格式从 ISO 转为 C# 风格: yyyy/M/d H:mm:ss"""
+    if val is None:
+        return None
+    s = str(val)
+    try:
+        if 'T' in s:
+            dt = datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")
+        elif '-' in s and len(s) >= 10:
+            dt = datetime.strptime(s[:19], "%Y-%m-%d %H:%M:%S")
+        else:
+            return s
+        return f"{dt.year}/{dt.month}/{dt.day} {dt.hour}:{dt.minute:02d}:{dt.second:02d}"
+    except Exception:
+        return s
+
+
+# 日期字段列表（需要格式化为 C# 风格）
+# 注意：ADDTIME 是 DateTime 类型，C# 序列化保持 ISO 格式，不需要格式化
+DATE_FIELDS = ["OPERATE_DATE"]
+
+
 def _process_row(row: dict) -> dict:
-    """处理单行数据，NULL 字符串字段转空字符串"""
+    """处理单行数据：字符串 null→''、OPERATE_DATE 日期格式化"""
     for field in STR_FIELDS:
         if field in row and row[field] is None:
             row[field] = ""
+    # 日期格式化
+    for df in DATE_FIELDS:
+        if df in row:
+            row[df] = _format_date(row[df])
     return row
 
 
@@ -375,6 +402,66 @@ def get_commodity_list_by_type(db: DatabaseHelper, search_type: int, province_co
             row.pop("RN", None)
     else:
         rows = db.execute_query(sql)
+
+    # SearchType=1 后处理：解析 COMMODITY_TYPE 名称、BUSINESSTYPE→BUSINESSTYPE_NAME
+    if search_type == 1 and rows:
+        # 查询商品类型表，将类型内码转为名称
+        # C# T_COMMODITYTYPE.PROVINCE_CODE 存的是 FIELDENUM_ID（与 T_SERVERPART.PROVINCE_CODE 一致）
+        # 从 T_SERVERPART 中直接获取该省份对应的 PROVINCE_CODE（FIELDENUM_ID）
+        pcode_int = int(province_code) if province_code else 620000
+        try:
+            # 通过 T_FIELDEXPLAIN → T_FIELDENUM 将省份编码映射为 FIELDENUM_ID
+            fe_sql = ("SELECT FIELDENUM_ID FROM T_FIELDENUM "
+                      "WHERE FIELDEXPLAIN_ID = (SELECT FIELDEXPLAIN_ID FROM T_FIELDEXPLAIN WHERE FIELDEXPLAIN_FIELD = 'DIVISION_CODE') "
+                      f"AND FIELDENUM_VALUE = '{pcode_int}'")
+            fe_rows = db.execute_query(fe_sql)
+            if fe_rows:
+                province_enum_id = fe_rows[0]["FIELDENUM_ID"]
+                ct_sql = f"SELECT COMMODITYTYPE_ID, COMMODITYTYPE_NAME FROM T_COMMODITYTYPE WHERE PROVINCE_CODE = {province_enum_id}"
+                ct_rows = db.execute_query(ct_sql)
+                ct_map = {str(int(r["COMMODITYTYPE_ID"])): r["COMMODITYTYPE_NAME"] for r in ct_rows} if ct_rows else {}
+                logger.debug(f"COMMODITYTYPE: ProvinceCode={pcode_int}→ENUM_ID={province_enum_id}, 结果数={len(ct_rows) if ct_rows else 0}")
+            else:
+                logger.warning(f"COMMODITYTYPE: 找不到 ProvinceCode={pcode_int} 对应的 FIELDENUM_ID")
+                ct_map = {}
+        except Exception as e:
+            logger.error(f"COMMODITYTYPE 查询异常: {e}")
+            ct_map = {}
+        # 查询业态字典，将业态内码转为名称
+        # C# DictionaryHelper.GetDictionaryKeyValue(transaction, "BUSINESSTYPE")
+        # 两步法：先查 T_FIELDEXPLAIN 获取 FIELDEXPLAIN_ID，再查 T_FIELDENUM 子枚举
+        try:
+            fe_rows = db.execute_query(
+                "SELECT FIELDEXPLAIN_ID FROM T_FIELDEXPLAIN WHERE FIELDEXPLAIN_FIELD = 'BUSINESSTYPE'")
+            if fe_rows:
+                fe_id = fe_rows[0]["FIELDEXPLAIN_ID"]
+                bt_rows = db.execute_query(
+                    f"SELECT FIELDENUM_VALUE, FIELDENUM_NAME FROM T_FIELDENUM "
+                    f"WHERE FIELDEXPLAIN_ID = {fe_id} AND FIELDENUM_STATUS > 0")
+                bt_map = {str(r["FIELDENUM_VALUE"]): r["FIELDENUM_NAME"] for r in bt_rows} if bt_rows else {}
+                logger.debug(f"BUSINESSTYPE: FIELDEXPLAIN_ID={fe_id}, 结果数={len(bt_rows) if bt_rows else 0}")
+            else:
+                logger.warning("BUSINESSTYPE: T_FIELDEXPLAIN 未找到 BUSINESSTYPE 记录")
+                bt_map = {}
+        except Exception as e:
+            logger.error(f"BUSINESSTYPE 字典查询异常: {e}")
+            bt_map = {}
+        for row in rows:
+            # COMMODITY_TYPE: 内码→名称
+            ct_id = str(row.get("COMMODITY_TYPE") or "").strip()
+            if ct_id and ct_id in ct_map:
+                row["COMMODITY_TYPE"] = ct_map[ct_id]
+            # BUSINESSTYPE→BUSINESSTYPE_NAME
+            bt_val = str(row.get("BUSINESSTYPE") or "").strip()
+            row["BUSINESSTYPE_NAME"] = bt_map.get(bt_val)
+            row.pop("BUSINESSTYPE", None)  # C# CommodityStdModel 没有 BUSINESSTYPE 字段，只有 BUSINESSTYPE_NAME
+            # OPERATE_DATE 格式化
+            if "OPERATE_DATE" in row:
+                row["OPERATE_DATE"] = _format_date(row["OPERATE_DATE"])
+    elif search_type == 2 and rows:
+        for row in rows:
+            if "OPERATE_DATE" in row:
+                row["OPERATE_DATE"] = _format_date(row["OPERATE_DATE"])
 
     return int(total_count), rows
 

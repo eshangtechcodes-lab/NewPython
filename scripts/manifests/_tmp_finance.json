@@ -1,0 +1,36 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "ignore_paths": [],
+  "endpoints": {
+    "Finance/GetAHJKtoken": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Finance/GetAccountCompare": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-31",
+            "ServerpartId": 416,
+            "CompareStartDate": "2024-12-01",
+            "CompareEndDate": "2024-12-31"
+          }
+        }
+      ]
+    }
+  }
+}

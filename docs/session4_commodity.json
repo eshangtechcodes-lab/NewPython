@@ -1,0 +1,292 @@
+{
+  "generated_at": "2026-03-11 09:23:51",
+  "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\_tmp_commodity.json",
+  "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\session4_commodity.md",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "module_scope": [],
+  "counts": {
+    "pass": 1,
+    "fail": 2,
+    "skip": 0,
+    "total": 3
+  },
+  "cases": [
+    {
+      "endpoint": "Commodity/GetCOMMODITYDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": {
+        "COMMODITYId": 13232
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Commodity/GetCOMMODITYDetail | 新 API: http://localhost:8080/EShangApiMain/Commodity/GetCOMMODITYDetail"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": false,
+          "detail": "['ADDTIME', 'BUSINESSAPPROVAL_ID', 'BUSINESSTYPE', 'CANSALE', 'COMMODITY_ALLNAME', 'COMMODITY_BARCODE', 'COMMODITY_BRAND', 'COMMODITY_CODE', 'COMMODITY_COUNT', 'COMMODITY_CURRPRICE', 'COMMODITY_DESC', 'COMMODITY_EN', 'COMMODITY_FROZENCOUNT', 'COMMODITY_GRADE', 'COMMODITY_GROUPPRICE', 'COMMODITY_HOTKEY', 'COMMODITY_ID', 'COMMODITY_MAXPRICE', 'COMMODITY_MEMBERPRICE', 'COMMODITY_MINPRICE', 'COMMODITY_NAME', 'COMMODITY_ORI', 'COMMODITY_ORIPRICE', 'COMMODITY_PROMOTIONPRICE', 'COMMODITY_PURCHASEPRICE', 'COMMODITY_RETAILPRICE', 'COMMODITY_RULE', 'COMMODITY_SERVERCODE', 'COMMODITY_STATE', 'COMMODITY_SYMBOL', 'COMMODITY_TYPE', 'COMMODITY_UNIFORMPRICE', 'COMMODITY_UNIT', 'DUTY_PARAGRAPH', 'ISBULK', 'METERINGMETHOD', 'OPERATE_DATE', 'PROVINCE_CODE', 'RETAIL_DUTY', 'SERVERPART_ID', 'SUPPLIER_ID', 'USERDEFINEDTYPE_ID'] vs []"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 25 处差异"
+        }
+      ],
+      "diffs": [
+        "Result_Data.ADDTIME: 新 API 缺少该字段",
+        "Result_Data.BUSINESSAPPROVAL_ID: 新 API 缺少该字段",
+        "Result_Data.BUSINESSTYPE: 新 API 缺少该字段",
+        "Result_Data.CANSALE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_ALLNAME: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_BARCODE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_BRAND: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_CODE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_COUNT: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_CURRPRICE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_DESC: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_EN: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_FROZENCOUNT: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_GRADE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_GROUPPRICE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_HOTKEY: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_ID: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_MAXPRICE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_MEMBERPRICE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_MINPRICE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_NAME: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_ORI: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_ORIPRICE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_PROMOTIONPRICE: 新 API 缺少该字段",
+        "Result_Data.COMMODITY_PURCHASEPRICE: 新 API 缺少该字段"
+      ],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Commodity/GetCOMMODITYList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Commodity/GetCOMMODITYList | 新 API: http://localhost:8080/EShangApiMain/Commodity/GetCOMMODITYList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "1614 vs 1614"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 42 个"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Commodity/GetCommodityList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": {
+        "SearchType": 1,
+        "ProvinceCode": "340000",
+        "ServerpartID": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Commodity/GetCommodityList | 新 API: http://localhost:8080/EShangApiMain/Commodity/GetCommodityList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "1614 vs 1614"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "10 vs 10"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "10 vs 10"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 9 个"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 10 处差异"
+        }
+      ],
+      "diffs": [
+        "Result_Data.List[0].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')",
+        "Result_Data.List[1].COMMODITY_TYPE: 值不一致 ('锅盔' vs '906')",
+        "Result_Data.List[2].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')",
+        "Result_Data.List[3].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')",
+        "Result_Data.List[4].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')",
+        "Result_Data.List[5].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')",
+        "Result_Data.List[6].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')",
+        "Result_Data.List[7].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')",
+        "Result_Data.List[8].COMMODITY_TYPE: 值不一致 ('休闲食品类' vs '1134')",
+        "Result_Data.List[9].COMMODITY_TYPE: 值不一致 ('素菜类' vs '913')"
+      ],
+      "old_status_code": 200,
+      "new_status_code": 200
+    }
+  ]
+}

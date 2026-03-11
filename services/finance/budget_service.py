@@ -31,14 +31,42 @@ BP_STRING_FIELDS = {
     "BUDGETPROJECT_CODE", "BUDGETPROJECT_UNIT", "SERVERPART_NAME",
     "SPREGIONTYPE_NAME", "STAFF_NAME", "BUDGETPROJECT_AH_DESC"
 }
+# C# Model 回显属性（DB 没有，C# Model 有，值为 null）
+BP_EXTRA_FIELDS = {"SERVERPART_IDS": None, "OPERATE_DATE_Start": None, "OPERATE_DATE_End": None}
+
+
+def _format_date(val):
+    """将日期格式从 ISO 转为 C# 风格: 2023/3/30 14:02:47"""
+    if val is None:
+        return None
+    s = str(val)
+    try:
+        # 处理 ISO 格式：2023-03-30T14:02:47
+        if 'T' in s:
+            dt = datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")
+        elif '-' in s and len(s) >= 10:
+            dt = datetime.strptime(s[:19], "%Y-%m-%d %H:%M:%S")
+        else:
+            return s  # 已经是正确格式或其他格式
+        return f"{dt.year}/{dt.month}/{dt.day} {dt.hour}:{dt.minute:02d}:{dt.second:02d}"
+    except Exception:
+        return s
 
 
 def _convert_bp_row(row: dict) -> dict:
+    """转换 BUDGETPROJECT_AH 行：补 C# Model 回显字段 + 字符串 null→'' + 日期格式化"""
     if not row:
         return row
     for f in BP_STRING_FIELDS:
         if f in row and row[f] is None:
             row[f] = ""
+    # 补 C# Model 回显属性
+    for k, v in BP_EXTRA_FIELDS.items():
+        if k not in row:
+            row[k] = v
+    # 日期格式化
+    if "OPERATE_DATE" in row:
+        row["OPERATE_DATE"] = _format_date(row["OPERATE_DATE"])
     return row
 
 
@@ -96,9 +124,18 @@ def get_budget_project_list(db: DatabaseHelper, search_model: dict) -> Tuple[lis
 
     total = db.fetch_scalar(f"SELECT COUNT(*) FROM {BP_TABLE} WHERE {wc}", pa) or 0
     offset = (pi - 1) * ps
-    rows = db.fetch_all(
-        f"SELECT * FROM {BP_TABLE} WHERE {wc} ORDER BY {sort_str} LIMIT {ps} OFFSET {offset}", pa
-    ) or []
+    # 达梦兼容分页（用 ROWNUM 子查询替代 LIMIT OFFSET）
+    paged_sql = f"""
+        SELECT * FROM (
+            SELECT A.*, ROWNUM AS RN__ FROM (
+                SELECT * FROM {BP_TABLE} WHERE {wc} ORDER BY {sort_str}
+            ) A WHERE ROWNUM <= {offset + ps}
+        ) WHERE RN__ > {offset}
+    """
+    rows = db.fetch_all(paged_sql, pa) or []
+    # 移除辅助列
+    for r in rows:
+        r.pop("RN__", None)
     return [_convert_bp_row(r) for r in rows], total
 
 
@@ -172,6 +209,28 @@ def delete_budget_project(db: DatabaseHelper, pk_val: int) -> bool:
 # ============================================================
 BD_TABLE = "T_BUDGETDETAIL_AH"
 BD_PK = "BUDGETDETAIL_AH_ID"
+# C# BUDGETDETAIL_AHModel 回显属性（DB 没有，值为 null）
+BD_EXTRA_FIELDS = {"STATISTICS_MONTH_Start": None, "STATISTICS_MONTH_End": None}
+# C# Model 字符串字段，DBNull→''
+BD_STRING_FIELDS = {"BUDGETDETAIL_AH_DESC"}
+
+
+def _convert_bd_row(row: dict) -> dict:
+    """转换 BUDGETDETAIL_AH 行：补 C# Model 回显字段 + 字符串 null→'' + 日期格式化"""
+    if not row:
+        return row
+    # 补 C# Model 回显属性
+    for k, v in BD_EXTRA_FIELDS.items():
+        if k not in row:
+            row[k] = v
+    # 字符串字段 null→''
+    for f in BD_STRING_FIELDS:
+        if f in row and row[f] is None:
+            row[f] = ""
+    # 日期格式化
+    if "OPERATE_DATE" in row:
+        row["OPERATE_DATE"] = _format_date(row["OPERATE_DATE"])
+    return row
 
 
 # ========== 5. GetBudgetDetailList ==========
@@ -185,6 +244,10 @@ def get_budget_detail_list(db: DatabaseHelper, search_model: dict) -> Tuple[list
     sd = search_model.get("SearchData") or search_model.get("SearchParameter") or {}
 
     wp, pa = [], []
+    # BUDGETDETAIL_AH_ID 精确匹配
+    if sd.get("BUDGETDETAIL_AH_ID"):
+        wp.append("BUDGETDETAIL_AH_ID = ?")
+        pa.append(sd["BUDGETDETAIL_AH_ID"])
     if sd.get("BUDGETPROJECT_AH_ID"):
         wp.append("BUDGETPROJECT_AH_ID = ?")
         pa.append(sd["BUDGETPROJECT_AH_ID"])
@@ -200,7 +263,16 @@ def get_budget_detail_list(db: DatabaseHelper, search_model: dict) -> Tuple[list
 
     total = db.fetch_scalar(f"SELECT COUNT(*) FROM {BD_TABLE} WHERE {wc}", pa) or 0
 
-    # Summary 汇总（C# 原逻辑）
+    # Summary 汇总（C# 原逻辑：遍历列表累加 BUDGETDETAIL_AMOUNT + REVENUE_AMOUNT）
+    # C# 返回的是完整 Model 对象，除 BUDGETDETAIL_AMOUNT/REVENUE_AMOUNT 外都是 null
+    _BD_COLUMNS = [
+        "BUDGETDETAIL_AH_ID", "BUDGETPROJECT_AH_ID", "ACCOUNT_PCODE",
+        "ACCOUNT_CODE", "STATISTICS_MONTH", "STATISTICS_MONTH_Start",
+        "STATISTICS_MONTH_End", "BUDGETDETAIL_AMOUNT", "REVENUE_AMOUNT",
+        "UPDATE_TIME", "BUDGETDETAIL_AH_STATE", "STAFF_ID", "STAFF_NAME",
+        "OPERATE_DATE", "BUDGETDETAIL_AH_DESC", "ACCOMPLISH", "YEARBUDGET",
+        "YEARTOTAL", "YEARPROGRESS", "BUDGETTPE"
+    ]
     try:
         sum_sql = f"""
             SELECT COALESCE(SUM(BUDGETDETAIL_AMOUNT), 0) AS TOTAL_BUDGET,
@@ -208,24 +280,35 @@ def get_budget_detail_list(db: DatabaseHelper, search_model: dict) -> Tuple[list
             FROM {BD_TABLE} WHERE {wc}
         """
         sum_row = db.fetch_one(sum_sql, pa)
-        summary = {
-            "BUDGETDETAIL_AMOUNT": sum_row.get("TOTAL_BUDGET", 0) if sum_row else 0,
-            "REVENUE_AMOUNT": sum_row.get("TOTAL_REVENUE", 0) if sum_row else 0,
-        }
+        # 构建完整 Model（与 C# 一致）
+        summary = {col: None for col in _BD_COLUMNS}
+        summary["BUDGETDETAIL_AMOUNT"] = sum_row.get("TOTAL_BUDGET", 0) if sum_row else 0
+        summary["REVENUE_AMOUNT"] = sum_row.get("TOTAL_REVENUE", 0) if sum_row else 0
     except Exception:
-        summary = {"BUDGETDETAIL_AMOUNT": 0, "REVENUE_AMOUNT": 0}
+        summary = {col: None for col in _BD_COLUMNS}
+        summary["BUDGETDETAIL_AMOUNT"] = 0
+        summary["REVENUE_AMOUNT"] = 0
 
     sort_str = search_model.get("SortStr", f"{BD_PK} DESC")
     offset = (pi - 1) * ps
-    rows = db.fetch_all(
-        f"SELECT * FROM {BD_TABLE} WHERE {wc} ORDER BY {sort_str} LIMIT {ps} OFFSET {offset}", pa
-    ) or []
-    return rows, total, summary
+    # 达梦兼容分页
+    paged_sql = f"""
+        SELECT * FROM (
+            SELECT A.*, ROWNUM AS RN__ FROM (
+                SELECT * FROM {BD_TABLE} WHERE {wc} ORDER BY {sort_str}
+            ) A WHERE ROWNUM <= {offset + ps}
+        ) WHERE RN__ > {offset}
+    """
+    rows = db.fetch_all(paged_sql, pa, null_to_empty=False) or []
+    for r in rows:
+        r.pop("RN__", None)
+    return [_convert_bd_row(r) for r in rows], total, summary
 
 
 # ========== 6. GetBudgetDetailDetail ==========
 def get_budget_detail_detail(db: DatabaseHelper, pk_val: int) -> Optional[dict]:
-    return db.fetch_one(f"SELECT * FROM {BD_TABLE} WHERE {BD_PK} = ?", [pk_val])
+    row = db.fetch_one(f"SELECT * FROM {BD_TABLE} WHERE {BD_PK} = ?", [pk_val])
+    return _convert_bd_row(row)
 
 
 # ========== 7. SynchroBudgetDetail ==========

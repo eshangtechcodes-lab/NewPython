@@ -39,7 +39,9 @@ for _e in _A_ENTITIES:
         def _list(search_model: dict, db: DatabaseHelper = Depends(get_db), _ent=ent):
             try:
                 rows, total = analysis_service.get_entity_list(db, _ent, search_model)
-                return Result.success(JsonListData.create(rows, total))
+                pi = search_model.get("PageIndex", 1)
+                ps = search_model.get("PageSize", 9)
+                return Result.success(JsonListData.create(rows, total, page_index=pi, page_size=ps).model_dump(), msg="查询成功")
             except Exception as ex:
                 logger.error(f"Get{_ent}List 查询失败: {ex}")
                 return Result.fail(msg=f"查询失败{ex}")
@@ -48,7 +50,7 @@ for _e in _A_ENTITIES:
         def _detail(pk_val: int = Query(..., alias=_param_name),
                     db: DatabaseHelper = Depends(get_db), _ent=ent):
             try:
-                return Result.success(analysis_service.get_entity_detail(db, _ent, pk_val))
+                return Result.success(analysis_service.get_entity_detail(db, _ent, pk_val), msg="查询成功")
             except Exception as ex:
                 logger.error(f"Get{_ent}Detail 查询失败: {ex}")
                 return Result.fail(msg=f"查询失败{ex}")
@@ -80,20 +82,34 @@ for _e in _A_ENTITIES:
 @analysis_router.post("/Analysis/GetASSETSPROFITSTreeList")
 def get_assetsprofits_tree(search_model: dict, db: DatabaseHelper = Depends(get_db)):
     rows, total = analysis_service.get_assetsprofits_tree_list(db, search_model)
-    return Result.success(JsonListData.create(rows, total))
+    ps = search_model.get("PageSize") or len(rows) or 999
+    return Result.success(JsonListData.create(rows, total, page_size=ps).model_dump(), msg="查询成功")
 
 @analysis_router.post("/Analysis/GetASSETSPROFITSBusinessTreeList")
 def get_assetsprofits_biz_tree(search_model: dict, db: DatabaseHelper = Depends(get_db)):
     rows, total = analysis_service.get_assetsprofits_biz_tree_list(db, search_model)
-    return Result.success(JsonListData.create(rows, total))
+    ps = search_model.get("PageSize") or len(rows) or 999
+    return Result.success(JsonListData.create(rows, total, page_size=ps).model_dump(), msg="查询成功")
 
 @analysis_router.get("/Analysis/GetASSETSPROFITSDateDetailList")
-def get_assetsprofits_date_detail(ServerpartId: str = "", db: DatabaseHelper = Depends(get_db)):
-    return Result.success(analysis_service.get_assetsprofits_date_detail_list(db, ServerpartId=ServerpartId))
+def get_assetsprofits_date_detail(
+        serverPartId: int = 0, propertyAssetsId: int = 0,
+        startDate: str = "", endDate: str = "", shopId: str = "",
+        db: DatabaseHelper = Depends(get_db)):
+    return Result.success(analysis_service.get_assetsprofits_date_detail_list(
+        db, serverPartId=serverPartId, propertyAssetsId=propertyAssetsId,
+        startDate=startDate, endDate=endDate, shopId=shopId), msg="查询成功")
 
 @analysis_router.get("/Analysis/GetAssetsLossProfitList")
-def get_assets_loss_profit(db: DatabaseHelper = Depends(get_db)):
-    return Result.success(analysis_service.get_assets_loss_profit_list(db))
+def get_assets_loss_profit(
+        serverPartId: int = 0, propertyAssetsId: int = 0,
+        startDate: str = "", endDate: str = "", shopId: str = "",
+        db: DatabaseHelper = Depends(get_db)):
+    # C# 返回 NestingModel<AssetsProfitLossModel>
+    result = analysis_service.get_assets_loss_profit_list(
+        db, serverPartId=serverPartId, propertyAssetsId=propertyAssetsId,
+        startDate=startDate, endDate=endDate, shopId=shopId)
+    return Result.success(result, msg="查询成功")
 
 @analysis_router.post("/Analysis/SyncPROFITCONTRIBUTEList")
 def sync_profitcontribute_list(data_list: list, db: DatabaseHelper = Depends(get_db)):
@@ -107,8 +123,18 @@ def recalc_ca_cost(db: DatabaseHelper = Depends(get_db)):
     return Result.success(analysis_service.recalc_ca_cost(db))
 
 @analysis_router.get("/Analysis/GetShopSABFIList")
-def get_shop_sabfi_list(ServerpartIds: str = "", db: DatabaseHelper = Depends(get_db)):
-    return Result.success(analysis_service.get_shop_sabfi_list(db, ServerpartIds=ServerpartIds))
+def get_shop_sabfi_list(
+        ServerpartId: str = "", StatisticsMonth: str = "",
+        calcSelf: bool = True,
+        db: DatabaseHelper = Depends(get_db)):
+    try:
+        rows = analysis_service.get_shop_sabfi_list(
+            db, ServerpartId=ServerpartId, StatisticsMonth=StatisticsMonth, calcSelf=calcSelf)
+        ps = len(rows) or 1
+        return Result.success(JsonListData.create(rows, len(rows), page_size=ps).model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetShopSABFIList 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 @analysis_router.post("/Analysis/SolidProfitAnalysis")
 def solid_profit_analysis(data: dict, db: DatabaseHelper = Depends(get_db)):
@@ -118,12 +144,37 @@ def solid_profit_analysis(data: dict, db: DatabaseHelper = Depends(get_db)):
     return Result.fail(msg="固化失败")
 
 @analysis_router.get("/Analysis/GetPeriodMonthlyList")
-def get_period_monthly_list(ServerpartIds: str = "", db: DatabaseHelper = Depends(get_db)):
-    return Result.success(analysis_service.get_period_monthly_list(db, ServerpartIds=ServerpartIds))
+def get_period_monthly_list(
+        StatisticsMonth: str = "", ServerpartId: str = "",
+        ServerpartShopId: str = "", Business_Type: str = "",
+        SettlementMode: str = "", BusinessState: str = "",
+        ProjectId: str = "", ShowSelf: bool = False,
+        db: DatabaseHelper = Depends(get_db)):
+    try:
+        rows = analysis_service.get_period_monthly_list(
+            db, StatisticsMonth=StatisticsMonth, ServerpartId=ServerpartId,
+            ServerpartShopId=ServerpartShopId, ProjectId=ProjectId,
+            Business_Type=Business_Type, SettlementMode=SettlementMode,
+            BusinessState=BusinessState, ShowSelf=ShowSelf)
+        ps = len(rows) or 1
+        return Result.success(JsonListData.create(rows, len(rows), page_size=ps).model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetPeriodMonthlyList 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 @analysis_router.get("/Analysis/GetRevenueEstimateList")
-def get_revenue_estimate_list(db: DatabaseHelper = Depends(get_db)):
-    return Result.success(analysis_service.get_revenue_estimate_list(db))
+def get_revenue_estimate_list(
+        StatisticsMonth: str = "", ServerpartId: str = "",
+        ProvinceName: str = "",
+        db: DatabaseHelper = Depends(get_db)):
+    try:
+        rows = analysis_service.get_revenue_estimate_list(
+            db, StatisticsMonth=StatisticsMonth, ServerpartId=ServerpartId, ProvinceName=ProvinceName)
+        ps = len(rows) or 1
+        return Result.success(JsonListData.create(rows, len(rows), page_size=ps).model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetRevenueEstimateList 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 @analysis_router.post("/Analysis/SolidShopSABFI")
 def solid_shop_sabfi(data: dict, db: DatabaseHelper = Depends(get_db)):
@@ -140,12 +191,37 @@ def solid_investment_analysis(data: dict, db: DatabaseHelper = Depends(get_db)):
     return Result.fail(msg="固化失败")
 
 @analysis_router.get("/Analysis/GetInvestmentReport")
-def get_investment_report(ServerpartIds: str = "", db: DatabaseHelper = Depends(get_db)):
-    return Result.success(analysis_service.get_investment_report(db, ServerpartIds=ServerpartIds))
+def get_investment_report(
+        ProvinceCode: str = "", ContainHoliday: int = 0,
+        ServerpartId: str = "", ServerpartType: str = "",
+        BusinessTrade: str = "", DueStartDate: str = "", DueEndDate: str = "",
+        db: DatabaseHelper = Depends(get_db)):
+    try:
+        rows = analysis_service.get_investment_report(
+            db, ProvinceCode=ProvinceCode, ContainHoliday=ContainHoliday,
+            ServerpartId=ServerpartId)
+        ps = len(rows) or 1
+        return Result.success(JsonListData.create(rows, len(rows), page_size=ps).model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetInvestmentReport 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 @analysis_router.get("/Analysis/GetNestingIAReport")
-def get_nesting_ia_report(ServerpartIds: str = "", db: DatabaseHelper = Depends(get_db)):
-    return Result.success(analysis_service.get_nesting_ia_report(db, ServerpartIds=ServerpartIds))
+def get_nesting_ia_report(
+        ProvinceCode: str = "", ContainHoliday: int = 0,
+        ServerpartId: str = "", ServerpartType: str = "",
+        BusinessTrade: str = "", DueStartDate: str = "", DueEndDate: str = "",
+        db: DatabaseHelper = Depends(get_db)):
+    try:
+        rows = analysis_service.get_nesting_ia_report(
+            db, ProvinceCode=ProvinceCode, ContainHoliday=ContainHoliday,
+            ServerpartId=ServerpartId)
+        flat_count = sum(len(n.get("children", []) or []) for n in rows)
+        ps = flat_count or len(rows) or 1
+        return Result.success(JsonListData.create(rows, flat_count, page_size=ps).model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetNestingIAReport 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 # ============================================================
@@ -171,10 +247,14 @@ for _name, (_ent, _prefix) in _BM_CRUD.items():
         _param_name = f"{name}Id"
 
         @businessman_router.post(f"/{prefix}/Get{name}List", name=f"get_{ent.lower()}_list_bm")
-        def _list(search_model: dict, db: DatabaseHelper = Depends(get_db), _e=ent):
+        def _list(search_model: dict = None, db: DatabaseHelper = Depends(get_db), _e=ent):
             try:
+                if search_model is None:
+                    raise Exception("未将对象引用设置到对象的实例。")
                 rows, total = businessman_service.get_entity_list(db, _e, search_model)
-                return Result.success(JsonListData.create(rows, total))
+                pi = search_model.get("PageIndex", 1)
+                ps = search_model.get("PageSize", 10)
+                return Result.success(JsonListData.create(rows, total, page_index=pi, page_size=ps).model_dump(), msg="查询成功")
             except Exception as ex:
                 logger.error(f"Get{_e}List 查询失败: {ex}")
                 return Result.fail(msg=f"查询失败{ex}")
@@ -183,7 +263,7 @@ for _name, (_ent, _prefix) in _BM_CRUD.items():
         def _detail(pk_val: int = Query(..., alias=_param_name),
                     db: DatabaseHelper = Depends(get_db), _e=ent):
             try:
-                return Result.success(businessman_service.get_entity_detail(db, _e, pk_val))
+                return Result.success(businessman_service.get_entity_detail(db, _e, pk_val), msg="查询成功")
             except Exception as ex:
                 logger.error(f"Get{_e}Detail 查询失败: {ex}")
                 return Result.fail(msg=f"查询失败{ex}")
@@ -237,7 +317,7 @@ def create_businessman(data: dict, db: DatabaseHelper = Depends(get_db)):
 @businessman_router.post("/BusinessMan/GetUserList")
 def get_user_list_post(search_model: dict, db: DatabaseHelper = Depends(get_db)):
     rows, total = businessman_service.get_user_list(db, search_model)
-    return Result.success(JsonListData.create(rows, total))
+    return Result.success(JsonListData.create(rows, total).model_dump(), msg="查询成功")
 
 @businessman_router.get("/BusinessMan/GetUserList")
 def get_user_list_get(
@@ -251,7 +331,7 @@ def get_user_list_get(
         "ServerpartId": ServerpartId, "ServerpartShopId": ServerpartShopId,
         "ValidState": ValidState, "SearchName": SearchName, "SearchValue": SearchValue,
     })
-    return Result.success(JsonListData.create(rows, total))
+    return Result.success(JsonListData.create(rows, total).model_dump(), msg="查询成功")
 
 @businessman_router.post("/Supplier/GetSupplierTreeList")
 def get_supplier_tree_list(search_model: dict, db: DatabaseHelper = Depends(get_db)):
@@ -334,7 +414,31 @@ def get_supp_endaccount_list(
         ServerpartIds=ServerpartIds, ServerpartCode=ServerpartCode,
         ServerpartShopCode=ServerpartShopCode, StartDate=StartDate, EndDate=EndDate,
         EndaccountState=EndaccountState, PageIndex=PageIndex, PageSize=PageSize, SortStr=SortStr)
-    return Result.success(JsonListData.create(rows, total))
+
+    # C# 在每条记录上附加搜索回显字段 + 日期格式转换 + 排除多出字段
+    exclude_fields = {"BUSINESS_TYPE", "SHOPSHORTNAME"}
+    date_fields = {"ENDACCOUNT_DATE", "STATISTICS_DATE", "OPERATE_DATE", "AUDIT_DATE"}
+    for row in rows:
+        # 搜索回显（C# 中回显字段值为 null）
+        row["SERVERPARTCODES"] = None
+        row["SERVERPART_IDS"] = None
+        row["SearchStartDate"] = None
+        row["SearchEndDate"] = None
+        row["SearchStatisticsStartDate"] = None
+        row["SearchStatisticsEndDate"] = None
+        # 排除多出字段
+        for f in exclude_fields:
+            row.pop(f, None)
+        # 日期格式转换: ISO → yyyy/MM/dd HH:mm:ss
+        for f in date_fields:
+            v = row.get(f)
+            if v and isinstance(v, str) and "T" in v:
+                row[f] = v.replace("T", " ").replace("-", "/")
+
+    # C# 用 JsonList.Success() 仅含 List/TotalCount/PageIndex/PageSize，无 OtherData/StaticsModel
+    return Result.success(
+        data={"List": rows, "TotalCount": total, "PageIndex": PageIndex, "PageSize": PageSize},
+        msg="查询成功")
 
 @verification_router.post("/Verification/ApplyEndaccountInvalid")
 def apply_endaccount_invalid(data: dict, db: DatabaseHelper = Depends(get_db)):
@@ -366,7 +470,8 @@ def get_shop_endaccount_sum(
         db: DatabaseHelper = Depends(get_db)):
     return Result.success(verification_service.get_shop_endaccount_sum(db,
         RoleType=RoleType, ServerpartId=ServerpartId,
-        ServerpartShopCode=ServerpartShopCode, StartDate=StartDate, EndDate=EndDate))
+        ServerpartShopCode=ServerpartShopCode, StartDate=StartDate, EndDate=EndDate),
+        msg="查询成功")
 
 @verification_router.get("/Verification/GetEndAccountData")
 def get_endaccount_data(
@@ -435,13 +540,17 @@ def correct_daily_endaccount(db: DatabaseHelper = Depends(get_db)):
 
 # Sales CRUD
 @verification_router.post("/Sales/GetCOMMODITYSALEList")
-def sales_get_list(search_model: dict, db: DatabaseHelper = Depends(get_db)):
+def sales_get_list(search_model: dict = None, db: DatabaseHelper = Depends(get_db)):
+    if search_model is None:
+        return Result.fail(msg="查询失败未将对象引用设置到对象的实例。")
     rows, total = verification_service.get_entity_list(db, "COMMODITYSALE", search_model)
-    return Result.success(JsonListData.create(rows, total))
+    return Result.success(JsonListData.create(rows, total), msg="查询成功")
 
 @verification_router.get("/Sales/GetCOMMODITYSALEDetail")
-def sales_get_detail(COMMODITYSALEId: int, db: DatabaseHelper = Depends(get_db)):
-    return Result.success(verification_service.get_entity_detail(db, "COMMODITYSALE", COMMODITYSALEId))
+def sales_get_detail(request: Request, COMMODITYSALEId: int = None, db: DatabaseHelper = Depends(get_db)):
+    if COMMODITYSALEId is None:
+        return {"Message": f'找不到与请求 URI\u201c{request.url}\u201d匹配的 HTTP 资源。'}
+    return Result.success(verification_service.get_entity_detail(db, "COMMODITYSALE", COMMODITYSALEId), msg="查询成功")
 
 @verification_router.post("/Sales/SynchroCOMMODITYSALE")
 def sales_synchro(data: dict, db: DatabaseHelper = Depends(get_db)):
@@ -471,9 +580,11 @@ def record_sale_data(data: dict, db: DatabaseHelper = Depends(get_db)):
     return Result.fail(msg=result)
 
 @verification_router.post("/Sales/GetEndaccountError")
-def get_endaccount_error(search_model: dict, db: DatabaseHelper = Depends(get_db)):
+def get_endaccount_error(search_model: dict = None, db: DatabaseHelper = Depends(get_db)):
+    if search_model is None:
+        return Result.fail(msg="处理失败未将对象引用设置到对象的实例。")
     rows, total = verification_service.get_endaccount_error(db, search_model)
-    return Result.success(JsonListData.create(rows, total))
+    return Result.success(JsonListData.create(rows, total), msg="查询成功")
 
 @verification_router.post("/Sales/UpdateEndaccountError")
 def update_endaccount_error(data: dict, db: DatabaseHelper = Depends(get_db)):

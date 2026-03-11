@@ -25,9 +25,10 @@ async def get_budget_project_list(data: dict, db: DatabaseHelper = Depends(get_d
         rows, total = bud_svc.get_budget_project_list(db, data)
         page_index = data.get("PageIndex", 1)
         page_size = data.get("PageSize", 15)
-        return Result.success(JsonListData(
+        jld = JsonListData(
             List=rows, TotalCount=total,
-            PageIndex=page_index, PageSize=page_size))
+            PageIndex=page_index, PageSize=page_size)
+        return Result.success(jld.model_dump(), msg="查询成功")
     except Exception as e:
         logger.error(f"GetBudgetProjectList 失败: {e}")
         return Result.fail(f"查询失败{e}")
@@ -41,7 +42,7 @@ async def get_budget_project_detail(
     """获取安徽财务预算表明细"""
     try:
         row = bud_svc.get_budget_project_detail(db, BUDGETPROJECT_AHId)
-        return Result.success(row)
+        return Result.success(row, msg="查询成功")
     except Exception as e:
         logger.error(f"GetbudgetProjectDetail 失败: {e}")
         return Result.fail(f"查询失败{e}")
@@ -85,10 +86,11 @@ async def get_budget_detail_list(data: dict, db: DatabaseHelper = Depends(get_db
         rows, total, summary = bud_svc.get_budget_detail_list(db, data)
         page_index = data.get("PageIndex", 1)
         page_size = data.get("PageSize", 15)
-        return Result.success(JsonListData(
+        jld = JsonListData(
             List=rows, TotalCount=total,
             PageIndex=page_index, PageSize=page_size,
-            OtherData=summary))
+            OtherData=summary)
+        return Result.success(jld.model_dump(), msg="查询成功")
     except Exception as e:
         logger.error(f"GetBudgetDetailList 失败: {e}")
         return Result.fail(f"查询失败{e}")
@@ -102,7 +104,7 @@ async def get_budget_detail_detail(
     """获取安徽财务预算明细表明细"""
     try:
         row = bud_svc.get_budget_detail_detail(db, BUDGETDETAIL_AHId)
-        return Result.success(row)
+        return Result.success(row, msg="查询成功")
     except Exception as e:
         logger.error(f"GetBudgetDetailDetail 失败: {e}")
         return Result.fail(f"查询失败{e}")

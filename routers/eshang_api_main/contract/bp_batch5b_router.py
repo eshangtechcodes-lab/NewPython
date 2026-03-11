@@ -51,12 +51,19 @@ async def get_merchants_receivables(
 # 3. GetBrandReceivables
 @router.get("/BusinessProject/GetBrandReceivables")
 async def get_brand_receivables(
-    ServerpartId: str = Query(""), MerchantsId: str = Query(""),
+    BusinessTradeId: str = Query(""),
+    BusinessBrandId: str = Query(""),
+    ServerpartId: str = Query(""),
+    StartDate: str = Query(""),
+    ShowProjectSplit: bool = Query(True),
     db: DatabaseHelper = Depends(get_db)
 ):
     try:
-        data_list, other_data = bpc_svc.get_brand_receivables(db, ServerpartId, MerchantsId)
-        json_list = JsonListData.create(data_list=data_list, total=len(data_list), page_index=1, page_size=999)
+        data_list, other_data = bpc_svc.get_brand_receivables(
+            db, BusinessTradeId, BusinessBrandId, ServerpartId, StartDate, ShowProjectSplit)
+        # C# 返回 JsonList<AccountReceivablesModel, List<AccountReceivablesModel>>
+        # TotalCount = List count, PageSize = 10（C# 默认），PageIndex = 1
+        json_list = JsonListData.create(data_list=data_list, total=len(data_list), page_index=1, page_size=10)
         result_data = json_list.model_dump()
         result_data["OtherData"] = other_data
         return Result.success(data=result_data, msg="查询成功")

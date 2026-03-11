@@ -1,0 +1,229 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "ignore_paths": [],
+  "endpoints": {
+    "Audit/GetABNORMALAUDITList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetAUDITTASKSDetail": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AUDITTASKSId": 3675
+          }
+        }
+      ]
+    },
+    "Audit/GetAUDITTASKSList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "AUDITTASKS_ID": 3675
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetAbnormalAuditDetail": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AbnormalAuditId": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetAbnormalRateReport": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "2025-12-01",
+            "endDate": "2025-12-02"
+          }
+        }
+      ]
+    },
+    "Audit/GetAuditDetils": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Audit/GetAuditList": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Audit/GetAuditTasksDetailList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Audit/GetAuditTasksReport": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Audit/GetCHECKACCOUNTDetail": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CHECKACCOUNTId": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetCHECKACCOUNTList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetCheckAccountReport": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02",
+            "checkType": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetSpecialBehaviorReport": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02"
+          }
+        }
+      ]
+    },
+    "Audit/GetYSABNORMALITYDETAILList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "AbnormalityCode": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetYSABNORMALITYDetail": {
+      "module": "Audit",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "AbnormalityCode": 1
+          }
+        }
+      ]
+    },
+    "Audit/GetYSABNORMALITYList": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Audit/GetYsabnormalityReport": {
+      "module": "Audit",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "ServerpartIds": "416",
+            "startDate": "2025-01-01",
+            "endDate": "2025-01-02"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "ignore_paths": [
+    "USER_ID_Encrypted"
+  ],
+  "endpoints": {
+    "BusinessMan/GetCOMMODITY_TEMPDetail": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITY_TEMPId": 43
+          }
+        }
+      ]
+    },
+    "BusinessMan/GetCOMMODITY_TEMPList": {
+      "module": "BusinessMan",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "COMMODITY_TEMP_ID": 10459
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "BusinessMan/GetUserList": {
+      "module": "BusinessMan",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    }
+  }
+}

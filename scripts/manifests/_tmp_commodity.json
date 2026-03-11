@@ -1,0 +1,51 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "endpoints": {
+    "Commodity/GetCOMMODITYDetail": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "COMMODITYId": 13232
+          }
+        }
+      ]
+    },
+    "Commodity/GetCOMMODITYList": {
+      "module": "BaseInfo",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Commodity/GetCommodityList": {
+      "module": "BaseInfo",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SearchType": 1,
+            "ProvinceCode": "340000",
+            "ServerpartID": 416
+          }
+        }
+      ]
+    }
+  }
+}

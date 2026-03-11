@@ -1,0 +1,728 @@
+{
+  "generated_at": "2026-03-10 18:32:18",
+  "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\_tmp_budget.json",
+  "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\session4_budget.md",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "module_scope": [],
+  "counts": {
+    "pass": 4,
+    "fail": 7,
+    "skip": 0,
+    "total": 11
+  },
+  "cases": [
+    {
+      "endpoint": "Budget/GetBudgetDetailDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BUDGETDETAIL_AHId": 132
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetDetailDetail | 新 API: http://localhost:8080/EShangApiMain/Budget/GetBudgetDetailDetail"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['ACCOMPLISH', 'ACCOUNT_CODE', 'ACCOUNT_PCODE', 'BUDGETDETAIL_AH_DESC', 'BUDGETDETAIL_AH_ID', 'BUDGETDETAIL_AH_STATE', 'BUDGETDETAIL_AMOUNT', 'BUDGETPROJECT_AH_ID', 'BUDGETTPE', 'OPERATE_DATE', 'REVENUE_AMOUNT', 'STAFF_ID', 'STAFF_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'UPDATE_TIME', 'YEARBUDGET', 'YEARPROGRESS', 'YEARTOTAL'] vs ['ACCOMPLISH', 'ACCOUNT_CODE', 'ACCOUNT_PCODE', 'BUDGETDETAIL_AH_DESC', 'BUDGETDETAIL_AH_ID', 'BUDGETDETAIL_AH_STATE', 'BUDGETDETAIL_AMOUNT', 'BUDGETPROJECT_AH_ID', 'BUDGETTPE', 'OPERATE_DATE', 'REVENUE_AMOUNT', 'STAFF_ID', 'STAFF_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'UPDATE_TIME', 'YEARBUDGET', 'YEARPROGRESS', 'YEARTOTAL']"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetBudgetDetailList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "BUDGETDETAIL_AH_ID": 10518
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetDetailList | 新 API: http://localhost:8080/EShangApiMain/Budget/GetBudgetDetailList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'OtherData', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "OtherData 存在性",
+          "ok": true,
+          "detail": "True vs True"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 20 个"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetBudgetProjectList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetProjectList | 新 API: http://localhost:8080/EShangApiMain/Budget/GetBudgetProjectList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "2 vs 2"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "2 vs 2"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 18 个"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetBudgetProjectReportOfMonth",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetBudgetProjectReportOfMonth | 新 API: http://localhost:8080/EShangApiMain/Budget/GetBudgetProjectReportOfMonth"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": false,
+          "detail": "NoneType vs dict"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "BUDGETPROJECT_AHId": 128
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectDetail | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectDetail"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['BUDGETPROJECT_AH_DESC', 'BUDGETPROJECT_AH_ID', 'BUDGETPROJECT_CODE', 'BUDGETPROJECT_ENDDATE', 'BUDGETPROJECT_STATE', 'BUDGETPROJECT_TYPE', 'BUDGETPROJECT_UNIT', 'BUDGETPROJECT_YEAR', 'OPERATE_DATE', 'OPERATE_DATE_End', 'OPERATE_DATE_Start', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME', 'STAFF_ID', 'STAFF_NAME'] vs ['BUDGETPROJECT_AH_DESC', 'BUDGETPROJECT_AH_ID', 'BUDGETPROJECT_CODE', 'BUDGETPROJECT_ENDDATE', 'BUDGETPROJECT_STATE', 'BUDGETPROJECT_TYPE', 'BUDGETPROJECT_UNIT', 'BUDGETPROJECT_YEAR', 'OPERATE_DATE', 'OPERATE_DATE_End', 'OPERATE_DATE_Start', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME', 'STAFF_ID', 'STAFF_NAME']"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReport",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReport | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReport"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": false,
+          "detail": "NoneType vs str"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportDynamic",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportDynamic | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportDynamic"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_dynamic'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportIn",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportIn | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportIn"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_in'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportInDynamic",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportInDynamic | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportInDynamic"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_in_dynamic'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportOut",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportOut | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportOut"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_out'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Budget/GetbudgetProjectReportOutDynamic",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Budget/GetbudgetProjectReportOutDynamic | 新 API: http://localhost:8080/EShangApiMain/Budget/GetbudgetProjectReportOutDynamic"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": false,
+          "detail": "404 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": false,
+          "detail": "['Message'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": false,
+          "detail": "None vs 查询失败module 'services.finance.budget_service' has no attribute 'get_budget_project_report_out_dynamic'"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": false,
+          "detail": "None vs 失败"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 4 处差异"
+        }
+      ],
+      "diffs": [
+        "<root>.Message: 新 API 缺少该字段",
+        "<root>.Result_Code: 新 API 多出该字段",
+        "<root>.Result_Data: 新 API 多出该字段",
+        "<root>.Result_Desc: 新 API 多出该字段"
+      ],
+      "old_status_code": 404,
+      "new_status_code": 200
+    }
+  ]
+}

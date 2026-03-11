@@ -37,6 +37,7 @@ class JsonListData(BaseModel):
     TotalCount: int = 0
     List: list = []
     StaticsModel: Optional[dict] = None
+    OtherData: Optional[dict] = None
 
     def model_dump(self, **kwargs):
         """重写 model_dump：默认排除 None 字段（StaticsModel=None 时不输出）"""
@@ -44,11 +45,13 @@ class JsonListData(BaseModel):
         return super().model_dump(**kwargs)
 
     def to_dict(self) -> dict:
-        """转为 dict，排除 None 字段（StaticsModel=None 时不输出）"""
+        """转为 dict，排除 None 字段（StaticsModel/OtherData=None 时不输出）"""
         d = {"PageIndex": self.PageIndex, "PageSize": self.PageSize,
              "TotalCount": self.TotalCount, "List": self.List}
         if self.StaticsModel is not None:
             d["StaticsModel"] = self.StaticsModel
+        if self.OtherData is not None:
+            d["OtherData"] = self.OtherData
         return d
 
     @staticmethod

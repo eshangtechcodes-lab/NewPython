@@ -367,6 +367,42 @@ class DatabaseHelper:
         finally:
             self._return_connection(conn, error=error_occurred)
 
+    def fetch_all(self, sql: str, params=None, null_to_empty: bool = True):
+        """执行 SQL 返回所有行的 dict 列表（支持 list 位置参数）"""
+        return self.execute_query(sql, params, null_to_empty=null_to_empty)
+
+    def fetch_one(self, sql: str, params=None):
+        """执行 SQL 返回单条 dict，无数据返回 None（支持 list 位置参数）"""
+        rows = self.execute_query(sql, params, null_to_empty=False)
+        return rows[0] if rows else None
+
+    def fetch_scalar(self, sql: str, params=None):
+        """执行 SQL 返回第一行第一列的值（支持 list 位置参数）"""
+        start = time.time()
+        conn = self._get_connection()
+        error_occurred = False
+        try:
+            cursor = conn.cursor()
+            try:
+                if params:
+                    cursor.execute(sql, params)
+                else:
+                    cursor.execute(sql)
+                row = cursor.fetchone()
+                elapsed = time.time() - start
+                if elapsed > SLOW_QUERY_THRESHOLD:
+                    logger.warning(f"[慢标量查询] {elapsed:.2f}s | SQL: {sql[:200]}...")
+                return row[0] if row else None
+            finally:
+                cursor.close()
+        except Exception as ex:
+            error_occurred = True
+            elapsed = time.time() - start
+            logger.error(f"[标量查询失败] {elapsed:.2f}s | SQL: {sql[:200]}... | Error: {ex}")
+            raise
+        finally:
+            self._return_connection(conn, error=error_occurred)
+
     def test_connection(self) -> bool:
         """测试数据库连通性"""
         try:

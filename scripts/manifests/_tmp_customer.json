@@ -1,0 +1,38 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "ignore_paths": [],
+  "endpoints": {
+    "Customer/GetCUSTOMERGROUP_AMOUNTDetail": {
+      "module": "BigData",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "CUSTOMERGROUP_AMOUNTId": 296
+          }
+        }
+      ]
+    },
+    "Customer/GetCUSTOMERGROUP_AMOUNTList": {
+      "module": "BigData",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    }
+  }
+}

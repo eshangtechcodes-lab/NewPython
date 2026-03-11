@@ -12,24 +12,52 @@ CRUD 实体:
   CreateBusinessMan / GetUserList / RelateBusinessCommodity / GetSupplierTreeList
 """
 from typing import Tuple
+from datetime import datetime
+import locale
+try:
+    locale.setlocale(locale.LC_COLLATE, 'Chinese_China.936')  # Windows GBK 拼音排序
+except locale.Error:
+    try:
+        locale.setlocale(locale.LC_COLLATE, 'zh_CN.GBK')
+    except locale.Error:
+        pass  # 回退到 Unicode 排序
+
 from loguru import logger
 from core.database import DatabaseHelper
 
 
-def _crud(db, table, pk, sm, extra_fields=None):
-    pi = sm.get("PageIndex", 1); ps = sm.get("PageSize", 15)
-    sd = sm.get("SearchData") or {}
+def _crud(db, table, pk, sm, extra_fields=None, convert_fn=None):
+    pi = sm.get("PageIndex", 1); ps = sm.get("PageSize", 10)
+    sd = sm.get("SearchData") or sm.get("SearchParameter") or {}
     wp, pa = [], []
+    # 主键精确匹配
+    if sd.get(pk):
+        wp.append(f"{pk} = ?"); pa.append(sd[pk])
     for f in (extra_fields or []):
         if sd.get(f): wp.append(f"{f} = ?"); pa.append(sd[f])
     wc = " AND ".join(wp) if wp else "1=1"
     total = db.fetch_scalar(f"SELECT COUNT(*) FROM {table} WHERE {wc}", pa) or 0
     off = (pi - 1) * ps
-    rows = db.fetch_all(f"SELECT * FROM {table} WHERE {wc} ORDER BY {pk} DESC LIMIT {ps} OFFSET {off}", pa) or []
+    # 达梦兼容分页（ROWNUM 子查询）
+    paged_sql = f"""
+        SELECT * FROM (
+            SELECT A.*, ROWNUM AS RN__ FROM (
+                SELECT * FROM {table} WHERE {wc} ORDER BY {pk} DESC
+            ) A WHERE ROWNUM <= {off + ps}
+        ) WHERE RN__ > {off}
+    """
+    rows = db.fetch_all(paged_sql, pa, null_to_empty=False) or []
+    for r in rows:
+        r.pop("RN__", None)
+    if convert_fn:
+        rows = [convert_fn(r) for r in rows]
     return rows, total
 
-def _detail(db, table, pk, pk_val):
-    return db.fetch_one(f"SELECT * FROM {table} WHERE {pk} = ?", [pk_val])
+def _detail(db, table, pk, pk_val, convert_fn=None):
+    row = db.fetch_one(f"SELECT * FROM {table} WHERE {pk} = ?", [pk_val])
+    if row and convert_fn:
+        row = convert_fn(row)
+    return row
 
 def _synchro(db, table, pk, data):
     pv = data.get(pk)
@@ -72,10 +100,56 @@ ENTITIES = {
     "QUALIFICATION_HIS": {"t": "T_QUALIFICATION_HIS", "pk": "QUALIFICATION_HIS_ID", "s": "QUALIFICATION_HIS_STATE", "f": ["SUPPLIER_ID"]},
 }
 
+# C# Model 回显属性和类型转换配置
+_ENTITY_CONVERT = {
+    "COMMODITY_TEMP": {
+        "extra": {"SERVERPART_IDS": None, "SEARCH_STARTDATE": None, "SEARCH_ENDDATE": None,
+                  "OPERATE_STARTDATE": None, "OPERATE_ENDDATE": None},
+        "int_to_date": ["QUALIFICATION_DATE", "STATISTICS_DATE"],  # int(20220801) → str('2022/08/01')
+        "string_fields": {"COMMODITY_TEMP_DESC", "STAFF_NAME"},  # C# List/Detail null→''
+    },
+}
+
+def _format_int_date(val):
+    """将 int 日期转为 C# 格式: 20220801 → '2022/08/01'"""
+    if val is None:
+        return None
+    s = str(val)
+    if len(s) == 8:
+        y, m, d = int(s[:4]), int(s[4:6]), int(s[6:8])
+        return f"{y}/{m:02d}/{d:02d}"
+    return s
+
+def _make_convert(cfg, for_list=False):
+    """生成实体行转换函数"""
+    extra = cfg.get("extra", {})
+    int_to_date = cfg.get("int_to_date", [])
+    string_fields = cfg.get("string_fields", set()) if for_list else set()
+    def _convert(row):
+        if not row:
+            return row
+        for k, v in extra.items():
+            if k not in row:
+                row[k] = v
+        for f in int_to_date:
+            if f in row:
+                row[f] = _format_int_date(row[f])
+        for f in string_fields:
+            if f in row and row[f] is None:
+                row[f] = ""
+        return row
+    return _convert
+
+# 预编译转换函数（区分 list 和 detail）
+_CONVERT_LIST_FNS = {name: _make_convert(cfg, for_list=True) for name, cfg in _ENTITY_CONVERT.items()}
+_CONVERT_DETAIL_FNS = {name: _make_convert(cfg, for_list=False) for name, cfg in _ENTITY_CONVERT.items()}
+
 def get_entity_list(db, name, sm):
-    e = ENTITIES[name]; return _crud(db, e["t"], e["pk"], sm, e.get("f"))
+    e = ENTITIES[name]; fn = _CONVERT_LIST_FNS.get(name)
+    return _crud(db, e["t"], e["pk"], sm, e.get("f"), convert_fn=fn)
 def get_entity_detail(db, name, pk_val):
-    e = ENTITIES[name]; return _detail(db, e["t"], e["pk"], pk_val)
+    e = ENTITIES[name]; fn = _CONVERT_DETAIL_FNS.get(name)
+    return _detail(db, e["t"], e["pk"], pk_val, convert_fn=fn)
 def synchro_entity(db, name, data):
     e = ENTITIES[name]; return _synchro(db, e["t"], e["pk"], data)
 def delete_entity(db, name, pk_val):
@@ -129,7 +203,7 @@ def get_user_list(db, search_model: dict = None, **kwargs):
         search_name = str(params.get("SearchName", "") or params.get("keyWord", {}).get("Key", "") or "")
         search_value = str(params.get("SearchValue", "") or params.get("keyWord", {}).get("Value", "") or "")
 
-        # 1. 查询经营商户列表（OWNERUNIT_NATURE=2000 经营单位）
+        # 1. 查询经营商户列表（C# L534-576: 只取 3 字段）
         where_sql = "A.OWNERUNIT_NATURE = 2000"
         if business_man_id:
             ids = ",".join(business_man_id.split(","))
@@ -137,7 +211,7 @@ def get_user_list(db, search_model: dict = None, **kwargs):
         if province_code is not None:
             where_sql += f" AND A.PROVINCE_CODE = {province_code}"
 
-        # 如果指定了 ServerpartId / ServerpartShopId，先反查关联的 OWNERUNIT_ID
+        # 过滤服务区门店权限（C# L551-573: OWNERSERVERPARTSHOPHelper）
         if serverpart_id or serverpart_shop_id:
             shop_where = "1=1"
             if province_code is not None:
@@ -152,37 +226,64 @@ def get_user_list(db, search_model: dict = None, **kwargs):
                 owner_ids = ",".join([str(r["OWNERUNIT_ID"]) for r in owner_shops])
                 where_sql += f" AND A.OWNERUNIT_ID IN ({owner_ids})"
             else:
-                return [], 0  # 无匹配商户
+                return [], 0  # C# L572: 无匹配时返回空
 
+        # C# L575: 只查 3 个字段
         bm_sql = f"SELECT OWNERUNIT_ID, OWNERUNIT_NAME, OWNERUNIT_STATE FROM T_OWNERUNIT A WHERE {where_sql}"
         bm_rows = db.fetch_all(bm_sql) or []
         if not bm_rows:
             return [], 0
 
+        # 2. 查询经营单位用户（C# L580-595: USERHelper.GetUSERList）
+        # C# 传参: BUSINESSMAN_IDS=请求参数(非查出的bm_ids)、USER_PATTERN=2000、
+        #          USER_PROVINCE=ProvinceCode、USER_STATUS=ValidState、ServerpartIds=ServerpartId
         bm_id_list = [str(r["OWNERUNIT_ID"]) for r in bm_rows]
         bm_ids_str = ",".join(bm_id_list)
 
-        # 2. 查询经营单位用户（USER_PATTERN=2000）
-        user_where = f"USER_PATTERN = 2000 AND BUSINESSMAN_ID IN ({bm_ids_str})"
+        # 构建 USER 查询 WHERE（模拟 USERHelper L46-114）
+        user_where = "A.USER_PATTERN = 2000"
+        # BUSINESSMAN_IDS: C# 从请求参数直接传，非空时过滤；为空时不加此条件
+        # 但因为 OWNERUNIT 已用 ServerpartId 过滤，仍需限定 BUSINESSMAN_ID 在 bm_ids 中
+        user_where += f" AND A.BUSINESSMAN_ID IN ({bm_ids_str})"
         if province_code is not None:
-            user_where += f" AND USER_PROVINCE = {province_code}"
+            user_where += f" AND A.USER_PROVINCE = {province_code}"
         if valid_state is not None:
-            user_where += f" AND USER_STATUS = {valid_state}"
-        # 模糊查询
-        if search_name and search_value:
-            key_parts = []
-            for kn in search_name.split(","):
-                kn = kn.strip()
-                if kn:
-                    key_parts.append(f"{kn} LIKE '%{search_value}%'")
-            if key_parts:
-                user_where += f" AND ({' OR '.join(key_parts)})"
-        user_rows = db.fetch_all(f"SELECT * FROM T_USER WHERE {user_where}") or []
+            user_where += f" AND A.USER_STATUS = {valid_state}"
 
-        # 3. 查询用户门店权限（如果有用户数据）
+        # C# L80-103: 当 USER_PATTERN=2000 且有 ServerpartIds 时，
+        # 用 EXISTS 子查询过滤 T_USERAUTHORITY + T_SERVERPARTSHOP
+        if serverpart_id or serverpart_shop_id:
+            exists_extra = ""
+            if serverpart_id:
+                exists_extra += f" AND C.SERVERPART_ID IN ({serverpart_id})"
+            if serverpart_shop_id:
+                exists_extra += f" AND C.SERVERPARTSHOP_ID IN ({serverpart_shop_id})"
+            user_where += (
+                " AND EXISTS (SELECT 1 FROM T_USERAUTHORITY B, T_SERVERPARTSHOP C"
+                f" WHERE A.USER_ID = B.USER_ID AND B.SERVERPARTSHOP_ID = C.SERVERPARTSHOP_ID{exists_extra})"
+            )
+
+        user_sql = f"SELECT * FROM T_USER A WHERE {user_where}"
+        user_rows = db.fetch_all(user_sql) or []
+
+        # 模糊查询（C# L120-131: keyWord 过滤，在 DataTable RowFilter 层面）
+        if search_name and search_value:
+            filtered = []
+            for u in user_rows:
+                match = False
+                for kn in search_name.split(","):
+                    kn = kn.strip()
+                    if kn and search_value in str(u.get(kn, "") or ""):
+                        match = True; break
+                if match:
+                    filtered.append(u)
+            user_rows = filtered
+
+        # 3. 查询用户门店权限（C# L597-611）
         user_shop_map = {}  # user_id -> [shop_info]
         if user_rows:
             user_ids = ",".join([str(r["USER_ID"]) for r in user_rows])
+            # C# L601-609: 额外查了 SHOPSHORTNAME 和 SHOPREGION
             shop_auth_sql = f"""SELECT A.USER_ID, B.SERVERPART_ID, B.SERVERPART_CODE,
                     B.SERVERPART_NAME, B.SERVERPARTSHOP_ID, B.SHOPNAME,
                     B.SHOPTRADE, B.SHOPCODE
@@ -196,30 +297,74 @@ def get_user_list(db, search_model: dict = None, **kwargs):
                     user_shop_map[uid] = []
                 user_shop_map[uid].append(sr)
 
-        # 4. 构建树形 NestingModel：商户 → 用户列表
+        # 4. 构建树形 NestingModel（C# L613-687）
+        # C# L613: foreach (DataRow in dtBusinessMan.Select("", "OWNERUNIT_NAME"))
         result = []
-        for bm in sorted(bm_rows, key=lambda x: x.get("OWNERUNIT_NAME", "")):
+        for bm in sorted(bm_rows, key=lambda x: locale.strxfrm(str(x.get("OWNERUNIT_NAME", "") or ""))):
             bm_id = bm["OWNERUNIT_ID"]
+            # C# L618-623: parent node = new USERModel {...}
+            # 序列化时输出 USERModel 全部 38 个属性（含默认值）
             node = {
+                # 3 个赋值字段
                 "BUSINESSMAN_ID": bm_id,
                 "BUSINESSMAN_NAME": bm.get("OWNERUNIT_NAME", ""),
                 "USER_STATUS": bm.get("OWNERUNIT_STATE"),
+                # USERModel 其余 35 个字段的默认值
+                "USER_ID": None,
+                "USER_ID_Encrypted": None,
+                "USERTYPE_ID": None,
+                "USER_NAME": None,
+                "USER_PASSPORT": None,
+                "USER_PASSWORD": None,
+                "USER_TIMEOUT": None,
+                "USER_INDEX": None,
+                "USER_INDEFINIT": None,
+                "USER_EXPIRY": None,
+                "USER_CITYAUTHORITY": None,
+                "USER_REPEATLOGON": None,
+                "USER_MOBILEPHONE": None,
+                "USER_PROVINCE": None,
+                "PROVINCE_UNIT": None,
+                "USER_PATTERN": None,
+                "SUPER_ADMIN": None,
+                "STAFF_ID": None,
+                "STAFF_NAME": None,
+                "OPERATE_DATE": None,
+                "USER_DESC": None,
+                "USER_HEADIMGURL": None,
+                # 扩展属性默认值
+                "AnalysisPermission": False,
+                "BUSINESSMAN_IDS": None,
+                "IDENTITY_CODE": None,
+                "PushPermission": False,
+                "PushList": None,
+                "SYSTEMROLE_IDS": None,
+                "ServerpartIds": None,
+                "ServerpartList": None,
+                "ServerpartShopList": None,
+                "ShopNameList": None,
+                "SystemRoleList": None,
+                "USER_IDS": None,
+                "UserTypeIds": None,
             }
-            # 查找属于该商户的用户
+
+            # 查找属于该商户的用户（C# L626-663）
             bm_users = [u for u in user_rows if u.get("BUSINESSMAN_ID") == bm_id]
             children = None
             if bm_users:
                 children = []
-                # 按操作时间降序
+                # C# L632: OrderByDescending(o => o.OPERATE_DATE)
                 bm_users.sort(key=lambda x: str(x.get("OPERATE_DATE", "") or ""), reverse=True)
                 for u in bm_users:
                     uid = u["USER_ID"]
                     shops = user_shop_map.get(uid, [])
-                    # 构建门店名称列表
+                    # C# L641-642: 按 SERVERPART_CODE,SHOPTRADE,SHOPSHORTNAME,SHOPREGION,SHOPCODE 排序
                     shop_names = []
                     sp_names = []
                     for s in sorted(shops, key=lambda x: (
-                        x.get("SERVERPART_CODE", ""), x.get("SHOPCODE", ""))):
+                        str(x.get("SERVERPART_CODE", "") or ""),
+                        str(x.get("SHOPTRADE", "") or ""),
+                        str(x.get("SHOPCODE", "") or ""))):
                         sp_name = str(s.get("SERVERPART_NAME", "") or "")
                         if sp_name and sp_name not in sp_names:
                             sp_names.append(sp_name)
@@ -229,11 +374,28 @@ def get_user_list(db, search_model: dict = None, **kwargs):
                             shop_names.append(full_shop)
 
                     user_node = dict(u)
+                    # C# BindDataRowToModel (L184-272) 输出 27 个字段
+                    # 去掉 C# 不输出的多余数据库字段
+                    for _rm in ("USER_ENABLEDCITYAUTHORITY", "USER_ENABLEDLICENSE", "USER_LICENSE"):
+                        user_node.pop(_rm, None)
+                    # C# USERModel 回显属性（默认值）
+                    for _extra in ("BUSINESSMAN_IDS", "IDENTITY_CODE",
+                                   "SYSTEMROLE_IDS", "ServerpartIds",
+                                   "USER_IDS", "USER_ID_Encrypted", "UserTypeIds"):
+                        if _extra not in user_node:
+                            user_node[_extra] = None
+                    # 布尔回显字段默认 False
+                    for _bool_f in ("AnalysisPermission", "PushPermission"):
+                        if _bool_f not in user_node:
+                            user_node[_bool_f] = False
+                    for _extra_list in ("PushList", "ServerpartShopList", "SystemRoleList"):
+                        if _extra_list not in user_node:
+                            user_node[_extra_list] = None
                     user_node["ShopNameList"] = shop_names
                     user_node["ServerpartList"] = sp_names
                     children.append({"node": user_node, "children": None})
 
-            # 过滤逻辑：有子节点，或搜索值匹配商户名，或无搜索条件
+            # C# L666-683: 过滤逻辑
             should_add = (children is not None
                           or not search_value
                           or search_value in node.get("BUSINESSMAN_NAME", ""))
@@ -243,9 +405,13 @@ def get_user_list(db, search_model: dict = None, **kwargs):
             if should_add:
                 result.append({"node": node, "children": children})
 
+        # C# L687: 最终按 BUSINESSMAN_NAME 排序
+        result.sort(key=lambda x: locale.strxfrm(str(x.get("node", {}).get("BUSINESSMAN_NAME", "") or "")))
+
         return result, len(result)
     except Exception as e:
         logger.error(f"GetUserList 失败: {e}")
+        import traceback; traceback.print_exc()
         return [], 0
 
 def get_supplier_tree_list(db, search_model: dict):

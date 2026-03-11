@@ -1,0 +1,431 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "endpoints": {
+    "Analysis/GetANALYSISINSDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ANALYSISINSId": 1805
+          }
+        }
+      ]
+    },
+    "Analysis/GetANALYSISINSList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ANALYSISINS_ID": "1805"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetANALYSISRULEDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ANALYSISRULEId": 19
+          }
+        }
+      ]
+    },
+    "Analysis/GetANALYSISRULEList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "ANALYSISRULE_ID": 19
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSBusinessTreeList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 999
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSDateDetailList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "propertyAssetsId": 1,
+            "startDate": "202501",
+            "endDate": "202512",
+            "shopId": 9475
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ASSETSPROFITSId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetASSETSPROFITSTreeList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetAssetsLossProfitList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "serverPartId": 416,
+            "propertyAssetsId": 1,
+            "startDate": "202501",
+            "endDate": "202512"
+          }
+        }
+      ]
+    },
+    "Analysis/GetINVESTMENTANALYSISDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "INVESTMENTANALYSISId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetINVESTMENTANALYSISList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetINVESTMENTDETAILDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "INVESTMENTDETAILId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetINVESTMENTDETAILList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetInvestmentReport": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ContainHoliday": 0,
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Analysis/GetNestingIAReport": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ProvinceCode": "340000",
+            "ContainHoliday": 0,
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Analysis/GetPERIODMONTHPROFITDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PERIODMONTHPROFITId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetPERIODMONTHPROFITList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "PERIODMONTHPROFIT_ID": 651
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetPREFERRED_RATINGDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Analysis/GetPREFERRED_RATINGList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Analysis/GetPROFITCONTRIBUTEDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROFITCONTRIBUTEId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetPROFITCONTRIBUTEList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetPROMPTDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "PROMPTId": 5
+          }
+        }
+      ]
+    },
+    "Analysis/GetPROMPTList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {},
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Analysis/GetPeriodMonthlyList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsMonth": "202512",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Analysis/GetRevenueEstimateList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "StatisticsMonth": "202512",
+            "ServerpartId": 416
+          }
+        }
+      ]
+    },
+    "Analysis/GetSENTENCEDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "SENTENCEId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetSENTENCEList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SENTENCE_ID": 1
+            },
+            "PageIndex": 1,
+            "PageSize": 99
+          }
+        }
+      ]
+    },
+    "Analysis/GetShopSABFIList": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartId": 416,
+            "StatisticsMonth": "202511"
+          }
+        }
+      ]
+    },
+    "Analysis/GetVEHICLEAMOUNTDetail": {
+      "module": "Analysis",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "VEHICLEAMOUNTId": 1
+          }
+        }
+      ]
+    },
+    "Analysis/GetVEHICLEAMOUNTList": {
+      "module": "Analysis",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "generated_at": "2026-03-10 22:36:00",
+  "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\_tmp_businessman.json",
+  "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\session4_businessman.md",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "module_scope": [],
+  "counts": {
+    "pass": 3,
+    "fail": 0,
+    "skip": 0,
+    "total": 3
+  },
+  "cases": [
+    {
+      "endpoint": "BusinessMan/GetCOMMODITY_TEMPDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "COMMODITY_TEMPId": 43
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BusinessMan/GetCOMMODITY_TEMPDetail | 新 API: http://localhost:8080/EShangApiMain/BusinessMan/GetCOMMODITY_TEMPDetail"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['BUSINESSTYPE', 'COMMODITY_BARCODE', 'COMMODITY_ID', 'COMMODITY_NAME', 'COMMODITY_TEMP_DESC', 'COMMODITY_TEMP_ID', 'COMMODITY_TEMP_STATE', 'COMMODITY_TYPE', 'COMMODITY_TYPENAME', 'CREATE_DATE', 'DATA_TYPE', 'OPERATE_DATE', 'OPERATE_ENDDATE', 'OPERATE_STARTDATE', 'QUALIFICATION_DATE', 'QUALIFICATION_DELAYDATE', 'QUALIFICATION_ID', 'SEARCH_ENDDATE', 'SEARCH_STARTDATE', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'STAFF_ID', 'STAFF_NAME', 'STATISTICS_DATE'] vs ['BUSINESSTYPE', 'COMMODITY_BARCODE', 'COMMODITY_ID', 'COMMODITY_NAME', 'COMMODITY_TEMP_DESC', 'COMMODITY_TEMP_ID', 'COMMODITY_TEMP_STATE', 'COMMODITY_TYPE', 'COMMODITY_TYPENAME', 'CREATE_DATE', 'DATA_TYPE', 'OPERATE_DATE', 'OPERATE_ENDDATE', 'OPERATE_STARTDATE', 'QUALIFICATION_DATE', 'QUALIFICATION_DELAYDATE', 'QUALIFICATION_ID', 'SEARCH_ENDDATE', 'SEARCH_STARTDATE', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'STAFF_ID', 'STAFF_NAME', 'STATISTICS_DATE']"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "BusinessMan/GetCOMMODITY_TEMPList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "COMMODITY_TEMP_ID": 10459
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BusinessMan/GetCOMMODITY_TEMPList | 新 API: http://localhost:8080/EShangApiMain/BusinessMan/GetCOMMODITY_TEMPList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 25 个"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "BusinessMan/GetUserList",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "ProvinceCode": "340000",
+        "ServerpartId": 416
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/BusinessMan/GetUserList | 新 API: http://localhost:8080/EShangApiMain/BusinessMan/GetUserList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "16 vs 16"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "10 vs 10"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "16 vs 16"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 2 个"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "generated_at": "2026-03-10 22:43:27",
+  "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\_tmp_customer.json",
+  "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\session4_customer.md",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "module_scope": [],
+  "counts": {
+    "pass": 2,
+    "fail": 0,
+    "skip": 0,
+    "total": 2
+  },
+  "cases": [
+    {
+      "endpoint": "Customer/GetCUSTOMERGROUP_AMOUNTDetail",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "pass",
+      "query": {
+        "CUSTOMERGROUP_AMOUNTId": 296
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Customer/GetCUSTOMERGROUP_AMOUNTDetail | 新 API: http://localhost:8080/EShangApiMain/Customer/GetCUSTOMERGROUP_AMOUNTDetail"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['AMOUNT_00', 'AMOUNT_70', 'AMOUNT_80', 'AMOUNT_90', 'AMOUNT_FEMALE', 'AMOUNT_MALE', 'CUSTOMERGROUP_AMOUNT_ID', 'PROVINCE_ID', 'SERVERPART_CODE', 'SERVERPART_CODES', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'TOTAL_COUNT'] vs ['AMOUNT_00', 'AMOUNT_70', 'AMOUNT_80', 'AMOUNT_90', 'AMOUNT_FEMALE', 'AMOUNT_MALE', 'CUSTOMERGROUP_AMOUNT_ID', 'PROVINCE_ID', 'SERVERPART_CODE', 'SERVERPART_CODES', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'TOTAL_COUNT']"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Customer/GetCUSTOMERGROUP_AMOUNTList",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": {
+        "SearchParameter": {
+          "SERVERPART_IDS": "416"
+        },
+        "PageIndex": 1,
+        "PageSize": 9
+      },
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Customer/GetCUSTOMERGROUP_AMOUNTList | 新 API: http://localhost:8080/EShangApiMain/Customer/GetCUSTOMERGROUP_AMOUNTList"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "52 vs 52"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 17 个"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    }
+  ]
+}

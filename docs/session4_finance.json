@@ -1,0 +1,187 @@
+{
+  "generated_at": "2026-03-10 23:34:07",
+  "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\_tmp_finance.json",
+  "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\session4_finance.md",
+  "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
+  "new_api_base": "http://localhost:8080/EShangApiMain",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "module_scope": [],
+  "counts": {
+    "pass": 1,
+    "fail": 1,
+    "skip": 0,
+    "total": 2
+  },
+  "cases": [
+    {
+      "endpoint": "Finance/GetAHJKtoken",
+      "case_name": "default-body",
+      "method": "POST",
+      "status": "pass",
+      "query": null,
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetAHJKtoken | 新 API: http://localhost:8080/EShangApiMain/Finance/GetAHJKtoken"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "999 vs 999"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "获取失败未将对象引用设置到对象的实例。 vs 获取失败未将对象引用设置到对象的实例。"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "NoneType vs NoneType"
+        },
+        {
+          "name": "完整响应体",
+          "ok": true,
+          "detail": "完全一致"
+        }
+      ],
+      "diffs": [],
+      "old_status_code": 200,
+      "new_status_code": 200
+    },
+    {
+      "endpoint": "Finance/GetAccountCompare",
+      "case_name": "default-query",
+      "method": "GET",
+      "status": "fail",
+      "query": {
+        "StartDate": "2025-12-01",
+        "EndDate": "2025-12-31",
+        "ServerpartId": 416,
+        "CompareStartDate": "2024-12-01",
+        "CompareEndDate": "2024-12-31"
+      },
+      "json_body": null,
+      "checks": [
+        {
+          "name": "接口可达",
+          "ok": true,
+          "detail": "原 API: http://192.168.1.99:8900/EShangApiMain/Finance/GetAccountCompare | 新 API: http://localhost:8080/EShangApiMain/Finance/GetAccountCompare"
+        },
+        {
+          "name": "HTTP 状态码",
+          "ok": true,
+          "detail": "200 vs 200"
+        },
+        {
+          "name": "响应可解析 JSON",
+          "ok": true,
+          "detail": "原 API: True | 新 API: True"
+        },
+        {
+          "name": "顶层字段",
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
+        },
+        {
+          "name": "Result_Code",
+          "ok": true,
+          "detail": "100 vs 100"
+        },
+        {
+          "name": "Result_Desc",
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
+        },
+        {
+          "name": "Result_Data 类型",
+          "ok": true,
+          "detail": "dict vs dict"
+        },
+        {
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "10 vs 10"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 2 个"
+        },
+        {
+          "name": "完整响应体",
+          "ok": false,
+          "detail": "发现 25 处差异"
+        }
+      ],
+      "diffs": [
+        "Result_Data.List[0].children[0].children[0].children: 列表长度不一致 (14 vs 8)",
+        "Result_Data.List[0].children[0].children[0].children[0].node.Brand_ICO: 新 API 缺少该字段",
+        "Result_Data.List[0].children[0].children[0].children[0].node.Brand_Id: 新 API 缺少该字段",
+        "Result_Data.List[0].children[0].children[0].children[0].node.Brand_Name: 新 API 缺少该字段",
+        "Result_Data.List[0].children[0].children[0].children[0].node.ConfirmIncome.compareData: 类型不一致 (float vs int)，值为 0.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.ConfirmIncome.curIntro: 值不一致 ('保底收入(14025.33)>提成收入(6976.65)=保底收入(14025.33)' vs '保底收入(14025.33)>提成收入(0)=保底收入(14025.33)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.GuaranteeIncome.compareData: 类型不一致 (float vs int)，值为 0.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.GuaranteeIncome.curIntro: 值不一致 ('第1期保底租金(180000)/周期天数(365)/税(1 + 9%)*执行天数(31)' vs '第1期保底租金(180000.0)/周期天数(365)/税(1 + 9.0%)*执行天数(31)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.GuaranteePrice.compareData: 类型不一致 (float vs int)，值为 0.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.GuaranteePrice.curIntro: 值不一致 ('第1期保底租金(180000)' vs '第1期保底租金(180000.0)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RevenueAmount.compareData: 类型不一致 (float vs int)，值为 0.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RevenueAmount.curData: 类型不一致 (float vs int)，值为 50697.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RoyaltyIncome.compareData: 类型不一致 (float vs int)，值为 0.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RoyaltyIncome.curData: 类型不一致 (float vs int)，值为 6976.65 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RoyaltyIncome.curIntro: 类型不一致 (str vs NoneType)，值为 '营业额(50697)*提成比例(15%)/税(1 + 9%)' vs None",
+        "Result_Data.List[0].children[0].children[0].children[0].node.ServerpartShopId: 值不一致 ('5627,5626' vs '5626,5627')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.Brand_ICO: 新 API 缺少该字段",
+        "Result_Data.List[0].children[0].children[0].children[1].node.Brand_Id: 新 API 缺少该字段",
+        "Result_Data.List[0].children[0].children[0].children[1].node.Brand_Name: 新 API 缺少该字段",
+        "Result_Data.List[0].children[0].children[0].children[1].node.BusinessProjectId: 值不一致 ('1508' vs '1506')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.ConfirmIncome.compareData: 值不一致 (23311.69 vs 97909.47)",
+        "Result_Data.List[0].children[0].children[0].children[1].node.ConfirmIncome.compareIntro: 值不一致 ('保底收入(23311.69)>提成收入(14525.22)=保底收入(23311.69)' vs '保底收入(97909.47)>提成收入(0)=保底收入(97909.47)')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.ConfirmIncome.curData: 值不一致 (23375.55 vs 98177.62)",
+        "Result_Data.List[0].children[0].children[0].children[1].node.ConfirmIncome.curIntro: 值不一致 ('保底收入(23375.55)>提成收入(15521.50)=保底收入(23375.55)' vs '保底收入(98177.62)>提成收入(0)=保底收入(98177.62)')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.GuaranteeIncome.compareData: 值不一致 (23311.69 vs 97909.47)"
+      ],
+      "old_status_code": 200,
+      "new_status_code": 200
+    }
+  ]
+}

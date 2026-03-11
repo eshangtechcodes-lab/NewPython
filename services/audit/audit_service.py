@@ -22,17 +22,36 @@ from core.database import DatabaseHelper
 def _generic_list(db, table, pk, search_model, extra_fields=None):
     pi = search_model.get("PageIndex", 1)
     ps = search_model.get("PageSize", 15)
-    sd = search_model.get("SearchData") or {}
+    sd = search_model.get("SearchData") or search_model.get("SearchParameter") or {}
     wp, pa = [], []
+    # 主键精确匹配
+    if sd.get(pk):
+        wp.append(f"{pk} = ?"); pa.append(sd[pk])
     for f in (extra_fields or []):
         if sd.get(f):
             wp.append(f"{f} = ?"); pa.append(sd[f])
-    if sd.get("SERVERPART_ID"):
+    # SERVERPART_IDS 支持多个 ID（逗号分隔）
+    sp_ids = sd.get("SERVERPART_IDS", "")
+    if sp_ids:
+        ids = [s.strip() for s in str(sp_ids).split(",") if s.strip()]
+        if ids:
+            wp.append(f"SERVERPART_ID IN ({','.join(ids)})")
+    elif sd.get("SERVERPART_ID"):
         wp.append("SERVERPART_ID = ?"); pa.append(sd["SERVERPART_ID"])
     wc = " AND ".join(wp) if wp else "1=1"
     total = db.fetch_scalar(f"SELECT COUNT(*) FROM {table} WHERE {wc}", pa) or 0
     off = (pi - 1) * ps
-    rows = db.fetch_all(f"SELECT * FROM {table} WHERE {wc} ORDER BY {pk} DESC LIMIT {ps} OFFSET {off}", pa) or []
+    # 达梦兼容分页（ROWNUM 子查询）
+    paged_sql = f"""
+        SELECT * FROM (
+            SELECT A.*, ROWNUM AS RN__ FROM (
+                SELECT * FROM {table} WHERE {wc} ORDER BY {pk} DESC
+            ) A WHERE ROWNUM <= {off + ps}
+        ) WHERE RN__ > {off}
+    """
+    rows = db.fetch_all(paged_sql, pa, null_to_empty=False) or []
+    for r in rows:
+        r.pop("RN__", None)
     return rows, total
 
 def _generic_detail(db, table, pk, pk_val):
@@ -113,7 +132,7 @@ def get_audit_list(db, search_model: dict):
     logger.info("GetAuditList")
     try:
         wp = ["A.AUDITTASKS_STATE = 1"]
-        sd = search_model.get("SearchData") or {}
+        sd = search_model.get("SearchData") or search_model.get("SearchParameter") or {}
         if sd.get("SERVERPART_ID"):
             wp.append(f"A.SERVERPART_ID = {sd['SERVERPART_ID']}")
         wc = " AND ".join(wp)
@@ -142,7 +161,7 @@ def get_check_account_report(db, search_model: dict) -> list:
     logger.info("GetCheckAccountReport")
     try:
         wp = ["CHECKACCOUNT_STATE = 1"]
-        sd = search_model.get("SearchData") or {}
+        sd = search_model.get("SearchData") or search_model.get("SearchParameter") or {}
         if sd.get("SERVERPART_ID"):
             wp.append(f"SERVERPART_ID = {sd['SERVERPART_ID']}")
         wc = " AND ".join(wp)

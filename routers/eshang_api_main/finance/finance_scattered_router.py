@@ -776,16 +776,16 @@ async def reject_lading_bill(
 
 # ==================== 42. GetAHJKtoken ====================
 @router.post("/Finance/GetAHJKtoken")
-async def get_ahjk_token(data: dict):
-    """获取安徽交控token"""
+async def get_ahjk_token(data: dict = None):
+    """获取安徽交控token — C# 接收 tokenModel，null 时空引用异常"""
     try:
         ok, result, msg = fin_svc.get_ahjk_token(data)
         if ok:
             return Result.success(result, msg="获取成功！")
-        return Result.fail(msg or "获取失败")
+        return Result.fail(msg=msg or "获取失败")
     except Exception as e:
         logger.error(f"GetAHJKtoken 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg=f"获取失败{e}")
 
 
 # ==================== 43. GetAccountCompare ====================
@@ -797,15 +797,18 @@ async def get_account_compare(
     BusinessType: str = Query(""),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取经营数据对比分析表"""
+    """获取经营数据对比分析表 — C# AccountHelper.GetAccountCompare 树形嵌套"""
     try:
         data = fin_svc.get_account_compare(
             db, StartDate, EndDate, ServerpartId, CompareStartDate,
             CompareEndDate, CompareYear, BusinessType)
-        return Result.success(JsonListData(List=data, TotalCount=len(data)))
+        # C# 用 JsonList.Success() 只含 List/TotalCount/PageIndex/PageSize，无 OtherData/StaticsModel
+        return Result.success(
+            data={"List": data, "TotalCount": len(data), "PageIndex": 1, "PageSize": 10},
+            msg="查询成功")
     except Exception as e:
         logger.error(f"GetAccountCompare 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(f"获取失败{e}")
 
 
 # ==================== 44. GetAnnualAccountList ====================

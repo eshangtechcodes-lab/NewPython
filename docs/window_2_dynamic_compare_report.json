@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-10 15:21:25",
+  "generated_at": "2026-03-11 12:00:28",
   "manifest_source": "E:\\workfile\\JAVA\\NewAPI\\scripts\\manifests\\windows\\window_2.json",
   "report_path": "E:\\workfile\\JAVA\\NewAPI\\docs\\window_2_dynamic_compare_report.md",
   "old_api_base": "http://192.168.1.99:8900/EShangApiMain",
@@ -14,8 +14,8 @@
     "MobilePay"
   ],
   "counts": {
-    "pass": 0,
-    "fail": 115,
+    "pass": 8,
+    "fail": 107,
     "skip": 0,
     "total": 115
   },
@@ -24,7 +24,7 @@
       "endpoint": "Budget/GetBudgetDetailDetail",
       "case_name": "default-query",
       "method": "GET",
-      "status": "fail",
+      "status": "pass",
       "query": {
         "BUDGETDETAIL_AHId": 132
       },
@@ -52,30 +52,31 @@
         },
         {
           "name": "Result_Code",
-          "ok": false,
-          "detail": "100 vs 查询失败'DatabaseHelper' object has no attribute 'fetch_one'"
+          "ok": true,
+          "detail": "100 vs 100"
         },
         {
           "name": "Result_Desc",
-          "ok": false,
-          "detail": "查询成功 vs 失败"
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
         },
         {
           "name": "Result_Data 类型",
-          "ok": false,
-          "detail": "dict vs NoneType"
+          "ok": true,
+          "detail": "dict vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['ACCOMPLISH', 'ACCOUNT_CODE', 'ACCOUNT_PCODE', 'BUDGETDETAIL_AH_DESC', 'BUDGETDETAIL_AH_ID', 'BUDGETDETAIL_AH_STATE', 'BUDGETDETAIL_AMOUNT', 'BUDGETPROJECT_AH_ID', 'BUDGETTPE', 'OPERATE_DATE', 'REVENUE_AMOUNT', 'STAFF_ID', 'STAFF_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'UPDATE_TIME', 'YEARBUDGET', 'YEARPROGRESS', 'YEARTOTAL'] vs ['ACCOMPLISH', 'ACCOUNT_CODE', 'ACCOUNT_PCODE', 'BUDGETDETAIL_AH_DESC', 'BUDGETDETAIL_AH_ID', 'BUDGETDETAIL_AH_STATE', 'BUDGETDETAIL_AMOUNT', 'BUDGETPROJECT_AH_ID', 'BUDGETTPE', 'OPERATE_DATE', 'REVENUE_AMOUNT', 'STAFF_ID', 'STAFF_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'UPDATE_TIME', 'YEARBUDGET', 'YEARPROGRESS', 'YEARTOTAL']"
+        },
+        {
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "完全一致"
         }
       ],
-      "diffs": [
-        "Result_Code: 类型不一致 (int vs str)，值为 100 vs \"查询失败'DatabaseHelper' object has no attribute 'fetch_one'\"",
-        "Result_Data: 类型不一致 (dict vs NoneType)，值为 {'BUDGETDETAIL_AH_ID': 132, 'BUDGETPROJECT_AH_ID': 2, 'ACCOUNT_PCODE': '-1', 'ACCOUNT_CODE': '60010101', 'STATISTICS_MONTH': 202302, 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'BUDGETDETAIL_AMOUNT': 876739.0, 'REVENUE_AMOUNT': None, 'UPDATE_TIME': None, 'BUDGETDETAIL_AH_STATE': 1, 'STAFF_ID': 776, 'STAFF_NAME': '安徽驿达管理员', 'OPERATE_DATE': '2023/3/30 14:02:47', 'BUDGETDETAIL_AH_DESC': '', 'ACCOMPLISH': None, 'YEARBUDGET': None, 'YEARTOTAL': None, 'YEARPROGRESS': None, 'BUDGETTPE': None} vs None",
-        "Result_Desc: 值不一致 ('查询成功' vs '失败')"
-      ],
+      "diffs": [],
       "old_status_code": 200,
       "new_status_code": 200
     },
@@ -83,7 +84,7 @@
       "endpoint": "Budget/GetBudgetDetailList",
       "case_name": "default-body",
       "method": "POST",
-      "status": "fail",
+      "status": "pass",
       "query": null,
       "json_body": {
         "SearchParameter": {
@@ -115,30 +116,61 @@
         },
         {
           "name": "Result_Code",
-          "ok": false,
-          "detail": "100 vs 查询失败'DatabaseHelper' object has no attribute 'fetch_scalar'"
+          "ok": true,
+          "detail": "100 vs 100"
         },
         {
           "name": "Result_Desc",
-          "ok": false,
-          "detail": "查询成功 vs 失败"
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
         },
         {
           "name": "Result_Data 类型",
-          "ok": false,
-          "detail": "dict vs NoneType"
+          "ok": true,
+          "detail": "dict vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'OtherData', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "OtherData 存在性",
+          "ok": true,
+          "detail": "True vs True"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 20 个"
+        },
+        {
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "完全一致"
         }
       ],
-      "diffs": [
-        "Result_Code: 类型不一致 (int vs str)，值为 100 vs \"查询失败'DatabaseHelper' object has no attribute 'fetch_scalar'\"",
-        "Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 1, 'PageSize': 9, 'TotalCount': 1, 'List': [{'BUDGETDETAIL_AH_ID': 10518, 'BUDGETPROJECT_AH_ID': 32, 'ACCOUNT_PCODE': '-1', 'ACCOUNT_CODE': '66010103', 'STATISTICS_MONTH': 202304, 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'BUDGETDETAIL_AMOUNT': 4000.0, 'REVENUE_AMOUNT': None, 'UPDATE_TIME': None, 'BUDGETDETAIL_AH_STATE': 1, 'STAFF_ID': 776, 'STAFF_NAME': '安徽驿达管理员', 'OPERATE_DATE': '2023/3/31 15:43:57', 'BUDGETDETAIL_AH_DESC': '', 'ACCOMPLISH': None, 'YEARBUDGET': None, 'YEARTOTAL': None, 'YEARPROGRESS': None, 'BUDGETTPE': None}], 'OtherData': {'BUDGETDETAIL_AH_ID': None, 'BUDGETPROJECT_AH_ID': None, 'ACCOUNT_PCODE': None, 'ACCOUNT_CODE': None, 'STATISTICS_MONTH': None, 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'BUDGETDETAIL_AMOUNT': 4000.0, 'REVENUE_AMOUNT': 0.0, 'UPDATE_TIME': None, 'BUDGETDETAIL_AH_STATE': None, 'STAFF_ID': None, 'STAFF_NAME': None, 'OPERATE_DATE': None, 'BUDGETDETAIL_AH_DESC': None, 'ACCOMPLISH': None, 'YEARBUDGET': None, 'YEARTOTAL': None, 'YEARPROGRESS': None, 'BUDGETTPE': None}} vs None",
-        "Result_Desc: 值不一致 ('查询成功' vs '失败')"
-      ],
+      "diffs": [],
       "old_status_code": 200,
       "new_status_code": 200
     },
@@ -146,7 +178,7 @@
       "endpoint": "Budget/GetBudgetProjectList",
       "case_name": "default-body",
       "method": "POST",
-      "status": "fail",
+      "status": "pass",
       "query": null,
       "json_body": {
         "SearchParameter": {
@@ -178,30 +210,56 @@
         },
         {
           "name": "Result_Code",
-          "ok": false,
-          "detail": "100 vs 查询失败'DatabaseHelper' object has no attribute 'fetch_scalar'"
+          "ok": true,
+          "detail": "100 vs 100"
         },
         {
           "name": "Result_Desc",
-          "ok": false,
-          "detail": "查询成功 vs 失败"
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
         },
         {
           "name": "Result_Data 类型",
-          "ok": false,
-          "detail": "dict vs NoneType"
+          "ok": true,
+          "detail": "dict vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "2 vs 2"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "2 vs 2"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 18 个"
+        },
+        {
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "完全一致"
         }
       ],
-      "diffs": [
-        "Result_Code: 类型不一致 (int vs str)，值为 100 vs \"查询失败'DatabaseHelper' object has no attribute 'fetch_scalar'\"",
-        "Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 1, 'PageSize': 9, 'TotalCount': 2, 'List': [{'BUDGETPROJECT_AH_ID': 274, 'BUDGETPROJECT_CODE': '', 'BUDGETPROJECT_YEAR': 2024, 'BUDGETPROJECT_TYPE': 1000, 'BUDGETPROJECT_UNIT': '安徽省驿达高速公路服务区经营管理有限公司', 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_NAME': '新桥服务区', 'SPREGIONTYPE_ID': 72, 'SPREGIONTYPE_NAME': '皖中管理中心', 'BUDGETPROJECT_ENDDATE': None, 'BUDGETPROJECT_STATE': 1000, 'STAFF_ID': None, 'STAFF_NAME': '系统生成', 'OPERATE_DATE': '2024/6/6 11:05:30', 'OPERATE_DATE_Start': None, 'OPERATE_DATE_End': None, 'BUDGETPROJECT_AH_DESC': ''}, {'BUDGETPROJECT_AH_ID': 13, 'BUDGETPROJECT_CODE': '', 'BUDGETPROJECT_YEAR': 2023, 'BUDGETPROJECT_TYPE': 1000, 'BUDGETPROJECT_UNIT': '安徽省驿达高速公路服务区经营管理有限公司', 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_NAME': '新桥服务区', 'SPREGIONTYPE_ID': 72, 'SPREGIONTYPE_NAME': '合肥片区', 'BUDGETPROJECT_ENDDATE': None, 'BUDGETPROJECT_STATE': 9000, 'STAFF_ID': 776, 'STAFF_NAME': '安徽驿达管理员', 'OPERATE_DATE': '2023/3/30 16:49:27', 'OPERATE_DATE_Start': None, 'OPERATE_DATE_End': None, 'BUDGETPROJECT_AH_DESC': ''}]} vs None",
-        "Result_Desc: 值不一致 ('查询成功' vs '失败')"
-      ],
+      "diffs": [],
       "old_status_code": 200,
       "new_status_code": 200
     },
@@ -249,9 +307,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -267,7 +325,7 @@
       "endpoint": "Budget/GetbudgetProjectDetail",
       "case_name": "default-query",
       "method": "GET",
-      "status": "fail",
+      "status": "pass",
       "query": {
         "BUDGETPROJECT_AHId": 128
       },
@@ -295,30 +353,31 @@
         },
         {
           "name": "Result_Code",
-          "ok": false,
-          "detail": "100 vs 查询失败'DatabaseHelper' object has no attribute 'fetch_one'"
+          "ok": true,
+          "detail": "100 vs 100"
         },
         {
           "name": "Result_Desc",
-          "ok": false,
-          "detail": "查询成功 vs 失败"
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
         },
         {
           "name": "Result_Data 类型",
-          "ok": false,
-          "detail": "dict vs NoneType"
+          "ok": true,
+          "detail": "dict vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['BUDGETPROJECT_AH_DESC', 'BUDGETPROJECT_AH_ID', 'BUDGETPROJECT_CODE', 'BUDGETPROJECT_ENDDATE', 'BUDGETPROJECT_STATE', 'BUDGETPROJECT_TYPE', 'BUDGETPROJECT_UNIT', 'BUDGETPROJECT_YEAR', 'OPERATE_DATE', 'OPERATE_DATE_End', 'OPERATE_DATE_Start', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME', 'STAFF_ID', 'STAFF_NAME'] vs ['BUDGETPROJECT_AH_DESC', 'BUDGETPROJECT_AH_ID', 'BUDGETPROJECT_CODE', 'BUDGETPROJECT_ENDDATE', 'BUDGETPROJECT_STATE', 'BUDGETPROJECT_TYPE', 'BUDGETPROJECT_UNIT', 'BUDGETPROJECT_YEAR', 'OPERATE_DATE', 'OPERATE_DATE_End', 'OPERATE_DATE_Start', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME', 'STAFF_ID', 'STAFF_NAME']"
+        },
+        {
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "完全一致"
         }
       ],
-      "diffs": [
-        "Result_Code: 类型不一致 (int vs str)，值为 100 vs \"查询失败'DatabaseHelper' object has no attribute 'fetch_one'\"",
-        "Result_Data: 类型不一致 (dict vs NoneType)，值为 {'BUDGETPROJECT_AH_ID': 128, 'BUDGETPROJECT_CODE': '', 'BUDGETPROJECT_YEAR': 2023, 'BUDGETPROJECT_TYPE': 1000, 'BUDGETPROJECT_UNIT': '安徽省驿达高速公路服务区经营管理有限公司', 'SERVERPART_ID': 504, 'SERVERPART_IDS': None, 'SERVERPART_NAME': '香隅服务区', 'SPREGIONTYPE_ID': 69, 'SPREGIONTYPE_NAME': '池州片区', 'BUDGETPROJECT_ENDDATE': None, 'BUDGETPROJECT_STATE': 9000, 'STAFF_ID': 776, 'STAFF_NAME': '安徽驿达管理员', 'OPERATE_DATE': '2023/4/4 11:27:52', 'OPERATE_DATE_Start': None, 'OPERATE_DATE_End': None, 'BUDGETPROJECT_AH_DESC': ''} vs None",
-        "Result_Desc: 值不一致 ('查询成功' vs '失败')"
-      ],
+      "diffs": [],
       "old_status_code": 200,
       "new_status_code": 200
     },
@@ -366,9 +425,9 @@
           "detail": "NoneType vs str"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -424,9 +483,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -482,9 +541,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -540,9 +599,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -598,9 +657,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -656,9 +715,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -674,7 +733,7 @@
       "endpoint": "Finance/GetAHJKtoken",
       "case_name": "default-body",
       "method": "POST",
-      "status": "fail",
+      "status": "pass",
       "query": null,
       "json_body": null,
       "checks": [
@@ -695,8 +754,8 @@
         },
         {
           "name": "顶层字段",
-          "ok": false,
-          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Message', 'Result_Code', 'Result_Data', 'Result_Desc']"
+          "ok": true,
+          "detail": "['Result_Code', 'Result_Data', 'Result_Desc'] vs ['Result_Code', 'Result_Data', 'Result_Desc']"
         },
         {
           "name": "Result_Code",
@@ -705,8 +764,8 @@
         },
         {
           "name": "Result_Desc",
-          "ok": false,
-          "detail": "获取失败未将对象引用设置到对象的实例。 vs 请求参数校验失败"
+          "ok": true,
+          "detail": "获取失败未将对象引用设置到对象的实例。 vs 获取失败未将对象引用设置到对象的实例。"
         },
         {
           "name": "Result_Data 类型",
@@ -714,15 +773,12 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "完全一致"
         }
       ],
-      "diffs": [
-        "<root>.Message: 新 API 多出该字段",
-        "Result_Desc: 值不一致 ('获取失败未将对象引用设置到对象的实例。' vs '请求参数校验失败')"
-      ],
+      "diffs": [],
       "old_status_code": 200,
       "new_status_code": 200
     },
@@ -770,9 +826,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -828,9 +884,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -846,7 +902,7 @@
       "endpoint": "Finance/GetAccountCompare",
       "case_name": "default-query",
       "method": "GET",
-      "status": "fail",
+      "status": "pass",
       "query": {
         "StartDate": "2025-12-01",
         "EndDate": "2025-12-31",
@@ -883,8 +939,8 @@
         },
         {
           "name": "Result_Desc",
-          "ok": false,
-          "detail": "查询成功 vs 成功"
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
         },
         {
           "name": "Result_Data 类型",
@@ -893,13 +949,13 @@
         },
         {
           "name": "Result_Data 字段",
-          "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
         },
         {
           "name": "TotalCount",
-          "ok": false,
-          "detail": "1 vs 0"
+          "ok": true,
+          "detail": "1 vs 1"
         },
         {
           "name": "PageIndex",
@@ -913,25 +969,46 @@
         },
         {
           "name": "List 条数",
-          "ok": false,
-          "detail": "1 vs 0"
+          "ok": true,
+          "detail": "1 vs 1"
         },
         {
           "name": "首条字段集合",
           "ok": true,
-          "detail": "至少一侧为空列表，跳过字段扫描"
+          "detail": "字段一致，共 2 个"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
-        "Result_Data.StaticsModel: 新 API 多出该字段",
-        "Result_Data.List: 列表长度不一致 (1 vs 0)",
-        "Result_Data.TotalCount: 值不一致 (1 vs 0)",
-        "Result_Desc: 值不一致 ('查询成功' vs '成功')"
+        "Result_Data.List[0].children[0].children[0].children: 列表长度不一致 (14 vs 8)",
+        "Result_Data.List[0].children[0].children[0].children[0].node.ConfirmIncome.compareIntro: 值不一致 ('保底收入(97909.47)>提成收入(63104.29)=保底收入(97909.47)' vs '保底收入(97909.47)>提成收入(0)=保底收入(97909.47)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.ConfirmIncome.curIntro: 值不一致 ('保底收入(98177.62)>提成收入(54932.92)=保底收入(98177.62)' vs '保底收入(98177.62)>提成收入(0)=保底收入(98177.62)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.GuaranteeIncome.compareIntro: 值不一致 ('第1期保底租金(1260000)/周期天数(366)/税(1 + 9%)*执行天数(31)' vs '第1期保底租金(1260000.0)/周期天数(366)/税(1 + 9.0%)*执行天数(31)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.GuaranteeIncome.curIntro: 值不一致 ('第2期保底租金(1260000)/周期天数(365)/税(1 + 9%)*执行天数(31)' vs '第2期保底租金(1260000.0)/周期天数(365)/税(1 + 9.0%)*执行天数(31)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.GuaranteePrice.compareIntro: 值不一致 ('第1期保底租金(1260000)' vs '第1期保底租金(1260000.0)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.GuaranteePrice.curIntro: 值不一致 ('第2期保底租金(1260000)' vs '第2期保底租金(1260000.0)')",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RevenueAmount.compareData: 类型不一致 (float vs int)，值为 245656.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RevenueAmount.curData: 类型不一致 (float vs int)，值为 213846.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RoyaltyIncome.compareData: 类型不一致 (float vs int)，值为 63104.29 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RoyaltyIncome.compareIntro: 类型不一致 (str vs NoneType)，值为 '营业额(245656)*提成比例(28%)/税(1 + 9%)' vs None",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RoyaltyIncome.curData: 类型不一致 (float vs int)，值为 54932.92 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[0].node.RoyaltyIncome.curIntro: 类型不一致 (str vs NoneType)，值为 '营业额(213846)*提成比例(28%)/税(1 + 9%)' vs None",
+        "Result_Data.List[0].children[0].children[0].children[1].node.ConfirmIncome.compareIntro: 值不一致 ('保底收入(23311.69)>提成收入(14525.22)=保底收入(23311.69)' vs '保底收入(23311.69)>提成收入(0)=保底收入(23311.69)')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.ConfirmIncome.curIntro: 值不一致 ('保底收入(23375.55)>提成收入(15521.50)=保底收入(23375.55)' vs '保底收入(23375.55)>提成收入(0)=保底收入(23375.55)')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.GuaranteeIncome.compareIntro: 值不一致 ('第1期保底租金(300000)/周期天数(366)/税(1 + 9%)*执行天数(31)' vs '第1期保底租金(300000.0)/周期天数(366)/税(1 + 9.0%)*执行天数(31)')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.GuaranteeIncome.curIntro: 值不一致 ('第2期保底租金(300000)/周期天数(365)/税(1 + 9%)*执行天数(31)' vs '第2期保底租金(300000.0)/周期天数(365)/税(1 + 9.0%)*执行天数(31)')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.GuaranteePrice.compareIntro: 值不一致 ('第1期保底租金(300000)' vs '第1期保底租金(300000.0)')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.GuaranteePrice.curIntro: 值不一致 ('第2期保底租金(300000)' vs '第2期保底租金(300000.0)')",
+        "Result_Data.List[0].children[0].children[0].children[1].node.RevenueAmount.compareData: 类型不一致 (float vs int)，值为 56544.6 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[1].node.RevenueAmount.curData: 类型不一致 (float vs int)，值为 60423.0 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[1].node.RoyaltyIncome.compareData: 类型不一致 (float vs int)，值为 14525.22 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[1].node.RoyaltyIncome.compareIntro: 类型不一致 (str vs NoneType)，值为 '营业额(56544.60)*提成比例(28%)/税(1 + 9%)' vs None",
+        "Result_Data.List[0].children[0].children[0].children[1].node.RoyaltyIncome.curData: 类型不一致 (float vs int)，值为 15521.5 vs 0",
+        "Result_Data.List[0].children[0].children[0].children[1].node.RoyaltyIncome.curIntro: 类型不一致 (str vs NoneType)，值为 '营业额(60423.00)*提成比例(28%)/税(1 + 9%)' vs None"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -1582,9 +1659,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -1630,29 +1707,86 @@
         },
         {
           "name": "Result_Code",
-          "ok": false,
-          "detail": "100 vs 查询失败[CODE:-544]超出全局排序空间，请调整SORT_BUF_GLOBAL_SIZE、SORT_BUF_SIZE、SORT_BLK_SIZE"
+          "ok": true,
+          "detail": "100 vs 100"
         },
         {
           "name": "Result_Desc",
           "ok": false,
-          "detail": "查询成功 vs 失败"
+          "detail": "查询成功 vs 成功"
         },
         {
           "name": "Result_Data 类型",
-          "ok": false,
-          "detail": "dict vs NoneType"
+          "ok": true,
+          "detail": "dict vs dict"
         },
         {
-          "name": "完整响应体",
+          "name": "Result_Data 字段",
           "ok": false,
-          "detail": "发现 3 处差异"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": false,
+          "detail": "1 vs 549"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
+          "name": "List 条数",
+          "ok": false,
+          "detail": "1 vs 9"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": false,
+          "detail": "仅原 API: [] | 仅新 API: ['RECORD_DATE']"
+        },
+        {
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
-        "Result_Code: 类型不一致 (int vs str)，值为 100 vs '查询失败[CODE:-544]超出全局排序空间，请调整SORT_BUF_GLOBAL_SIZE、SORT_BUF_SIZE、SORT_BLK_SIZE'",
-        "Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 1, 'PageSize': 9, 'TotalCount': 1, 'List': [{'ACCOUNTWARNING_ID': 8941, 'WARNING_TYPE': 0, 'BUSINESSPROJECT_ID': 1838, 'BUSINESSPROJECT_NAME': '驿达集团红星服务区中餐项目租赁合同', 'SERVERPART_ID': 429, 'SERVERPART_NAME': '红星服务区', 'SERVERPARTSHOP_ID': '7204,7205', 'SERVERPARTSHOP_NAME': '蒸小皖餐厅', 'BUSINESS_STATE': 1000, 'MERCHANTS_ID': -1053, 'MERCHANTS_NAME': '安徽蒸小皖餐饮有限公司', 'PROJECT_STARTDATE': '2025/09/25', 'PROJECT_ENDDATE': '2030/09/24', 'GUARANTEE_PRICE': 461.0, 'SETTLEMENT_MODES': 3000, 'BUSINESS_PERIOD': '', 'PERIOD_INDEX': 1, 'STARTDATE': '2025/09/25', 'ENDDATE': '2026/09/24', 'RENTFEE': None, 'MINTURNOVER': 92.2, 'ACTUAL_RATIO': 33.26, 'COMMISSION_RATIO': 26.0, 'REVENUE_AMOUNT': 1711084.0, 'ROYALTY_THEORY': 569138.8, 'PROFIT_AMOUNT': 905351.19, 'BUSINESS_TYPE': 1000, 'COST_AMOUNT': 342216.8, 'COST_RATE': 20.0, 'LABOURS_COUNT': None, 'LABOURS_WAGE': 6000.0, 'DEPRECIATION_EXPENSE': None, 'OTHER_EXPENSE': None, 'DEPRECIATION_YEAR': 3, 'MONTH_COUNT': 12.0, 'WARNING_CONTENT': '{\\r\\n  \"HisProjectStartDate\": \"2025/9/6\",\\r\\n  \"CurProjectStartDate\": \"2026/2/6\",\\r\\n  \"CloseDays\": 15,\\r\\n  \"OverRatio\": 15.0,\\r\\n  \"MinCostAmount\": 10.0,\\r\\n  \"MinProfitAmount\": 20.0,\\r\\n  \"ProfitWarning\": 10.0,\\r\\n  \"CloseWaring\": 0.0,\\r\\n  \"RoyaltyWaring\": 100.0,\\r\\n  \"CostRate\": 20.0,\\r\\n  \"LaboursCount\": 0.0,\\r\\n  \"LaboursWage\": 6000.0,\\r\\n  \"DepreciationExpense\": 0.0,\\r\\n  \"DepreciationYear\": 3,\\r\\n  \"OtherExpense\": 0.0\\r\\n}'}]} vs None",
-        "Result_Desc: 值不一致 ('查询成功' vs '失败')"
+        "Result_Data.OtherData: 新 API 多出该字段",
+        "Result_Data.StaticsModel: 新 API 多出该字段",
+        "Result_Data.List: 列表长度不一致 (1 vs 9)",
+        "Result_Data.List[0].RECORD_DATE: 新 API 多出该字段",
+        "Result_Data.List[0].ACCOUNTWARNING_ID: 值不一致 (8941 vs 8513)",
+        "Result_Data.List[0].ACTUAL_RATIO: 类型不一致 (float vs NoneType)，值为 33.26 vs None",
+        "Result_Data.List[0].BUSINESSPROJECT_ID: 值不一致 (1838 vs 504)",
+        "Result_Data.List[0].BUSINESSPROJECT_NAME: 值不一致 ('驿达集团红星服务区中餐项目租赁合同' vs '仓头服务区品牌小吃 （含粽子）项目')",
+        "Result_Data.List[0].BUSINESS_STATE: 值不一致 (1000 vs 3000)",
+        "Result_Data.List[0].BUSINESS_TYPE: 值不一致 (1000 vs 2000)",
+        "Result_Data.List[0].COMMISSION_RATIO: 类型不一致 (float vs NoneType)，值为 26.0 vs None",
+        "Result_Data.List[0].COST_AMOUNT: 类型不一致 (float vs NoneType)，值为 342216.8 vs None",
+        "Result_Data.List[0].COST_RATE: 类型不一致 (float vs NoneType)，值为 20.0 vs None",
+        "Result_Data.List[0].DEPRECIATION_YEAR: 类型不一致 (int vs NoneType)，值为 3 vs None",
+        "Result_Data.List[0].ENDDATE: 类型不一致 (str vs int)，值为 '2026/09/24' vs 20250810",
+        "Result_Data.List[0].GUARANTEE_PRICE: 值不一致 (461.0 vs 81.03)",
+        "Result_Data.List[0].LABOURS_WAGE: 类型不一致 (float vs NoneType)，值为 6000.0 vs None",
+        "Result_Data.List[0].MERCHANTS_ID: 值不一致 (-1053 vs -1212)",
+        "Result_Data.List[0].MERCHANTS_NAME: 值不一致 ('安徽蒸小皖餐饮有限公司' vs '合肥好顺坊餐饮管理有限公司')",
+        "Result_Data.List[0].MINTURNOVER: 类型不一致 (float vs NoneType)，值为 92.2 vs None",
+        "Result_Data.List[0].MONTH_COUNT: 类型不一致 (float vs NoneType)，值为 12.0 vs None",
+        "Result_Data.List[0].PERIOD_INDEX: 类型不一致 (int vs NoneType)，值为 1 vs None",
+        "Result_Data.List[0].PROFIT_AMOUNT: 类型不一致 (float vs NoneType)，值为 905351.19 vs None",
+        "Result_Data.List[0].PROJECT_ENDDATE: 类型不一致 (str vs int)，值为 '2030/09/24' vs 20250810",
+        "Result_Data.List[0].PROJECT_STARTDATE: 类型不一致 (str vs int)，值为 '2025/09/25' vs 20220811"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -1703,9 +1837,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -1766,9 +1900,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -1823,9 +1957,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -1881,9 +2015,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -1944,9 +2078,9 @@
           "detail": "['BUSINESSWARNING_ID', 'DATATYPE', 'DATATYPES', 'INCREASE_DIFF', 'RECORD_DATE', 'REVENUE_AMOUNT', 'REVENUE_AMOUNT_QOQ', 'REVENUE_AMOUNT_YOY', 'REVENUE_INCRATE_QOQ', 'REVENUE_INCRATE_YOY', 'REVENUE_INCREASE_QOQ', 'REVENUE_INCREASE_YOY', 'SERVERPARTSHOP_ID', 'SERVERPARTSHOP_IDS', 'SERVERPARTSHOP_NAME', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'STATISTICS_MONTH', 'VEHICLE_COUNT', 'VEHICLE_COUNT_QOQ', 'VEHICLE_COUNT_YOY', 'VEHICLE_INCRATE_QOQ', 'VEHICLE_INCRATE_YOY', 'VEHICLE_INCREASE_QOQ', 'VEHICLE_INCREASE_YOY', 'WARING_VDRD', 'WARING_VURU', 'WARING_VUSHD', 'WARING_VUSPD'] vs ['BUSINESSPROJECT_ID', 'BUSINESSTRADETYPE', 'BUSINESSWARNING_ID', 'BUSINESS_TRADE', 'DATATYPE', 'INCREASE_DIFF', 'RECORD_DATE', 'REVENUE_AMOUNT', 'REVENUE_AMOUNT_QOQ', 'REVENUE_AMOUNT_YOY', 'REVENUE_AVG', 'REVENUE_INCRATE_QOQ', 'REVENUE_INCRATE_YOY', 'REVENUE_INCREASE_QOQ', 'REVENUE_INCREASE_YOY', 'REVENUE_SD', 'ROYALTY_THEORY', 'ROYALTY_THEORY_QOQ', 'ROYALTY_THEORY_YOY', 'SERVERPARTSHOP_ID', 'SERVERPARTSHOP_NAME', 'SERVERPART_ID', 'SERVERPART_NAME', 'STATISTICS_MONTH', 'TICKET_COUNT', 'TICKET_COUNT_QOQ', 'TICKET_COUNT_YOY', 'VEHICLE_COUNT', 'VEHICLE_COUNT_ORI', 'VEHICLE_COUNT_ORI_YOY', 'VEHICLE_COUNT_QOQ', 'VEHICLE_COUNT_YOY', 'VEHICLE_INCRATE_QOQ', 'VEHICLE_INCRATE_YOY', 'VEHICLE_INCREASE_QOQ', 'VEHICLE_INCREASE_YOY', 'WARING_VDRD', 'WARING_VURU', 'WARING_VUSHD', 'WARING_VUSPD']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 17 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 17 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -2023,12 +2157,12 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
           "ok": false,
-          "detail": "495 vs 24360"
+          "detail": "495 vs 24361"
         },
         {
           "name": "PageIndex",
@@ -2041,6 +2175,11 @@
           "detail": "9 vs 9"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": true,
           "detail": "9 vs 9"
@@ -2051,12 +2190,13 @@
           "detail": "仅原 API: ['DATATYPES', 'SERVERPARTSHOP_IDS', 'SERVERPART_IDS'] | 仅新 API: ['BUSINESSPROJECT_ID', 'BUSINESSTRADETYPE', 'BUSINESS_TRADE', 'REVENUE_AVG', 'REVENUE_SD', 'ROYALTY_THEORY', 'ROYALTY_THEORY_QOQ', 'ROYALTY_THEORY_YOY', 'TICKET_COUNT', 'TICKET_COUNT_QOQ', 'TICKET_COUNT_YOY', 'VEHICLE_COUNT_ORI', 'VEHICLE_COUNT_ORI_YOY']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List[0].DATATYPES: 新 API 缺少该字段",
         "Result_Data.List[0].SERVERPARTSHOP_IDS: 新 API 缺少该字段",
@@ -2075,13 +2215,12 @@
         "Result_Data.List[0].VEHICLE_COUNT_ORI: 新 API 多出该字段",
         "Result_Data.List[0].VEHICLE_COUNT_ORI_YOY: 新 API 多出该字段",
         "Result_Data.List[0].BUSINESSWARNING_ID: 值不一致 (21487 vs 44666)",
-        "Result_Data.List[0].RECORD_DATE: 值不一致 ('2024-07-04T14:51:25' vs '2026-02-10T21:04:34')",
-        "Result_Data.List[0].REVENUE_AMOUNT: 类型不一致 (NoneType vs int)，值为 None vs 17236",
-        "Result_Data.List[0].REVENUE_AMOUNT_QOQ: 类型不一致 (NoneType vs int)，值为 None vs 7517",
+        "Result_Data.List[0].RECORD_DATE: 值不一致 ('2024-07-04T14:51:25' vs '2026-03-10T12:01:40')",
+        "Result_Data.List[0].REVENUE_AMOUNT: 类型不一致 (NoneType vs float)，值为 None vs 17236.0",
+        "Result_Data.List[0].REVENUE_AMOUNT_QOQ: 类型不一致 (NoneType vs float)，值为 None vs 22600.0",
         "Result_Data.List[0].REVENUE_AMOUNT_YOY: 类型不一致 (float vs NoneType)，值为 865762.12 vs None",
-        "Result_Data.List[0].REVENUE_INCRATE_QOQ: 类型不一致 (NoneType vs float)，值为 None vs 129.29",
-        "Result_Data.List[0].REVENUE_INCREASE_QOQ: 类型不一致 (NoneType vs int)，值为 None vs 9719",
-        "Result_Data.List[0].SERVERPARTSHOP_ID: 值不一致 ('3066,3067' vs '6008,6008,6009')"
+        "Result_Data.List[0].REVENUE_INCRATE_QOQ: 类型不一致 (NoneType vs float)，值为 None vs -23.73",
+        "Result_Data.List[0].REVENUE_INCREASE_QOQ: 类型不一致 (NoneType vs float)，值为 None vs -5364.0"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -2130,9 +2269,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -2194,7 +2333,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -2212,6 +2351,11 @@
           "detail": "10 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": true,
           "detail": "0 vs 0"
@@ -2222,12 +2366,13 @@
           "detail": "至少一侧为空列表，跳过字段扫描"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Desc: 值不一致 ('查询成功' vs '成功')"
       ],
@@ -2311,9 +2456,9 @@
           "detail": "至少一侧不是 List"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 5 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 5 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -2372,9 +2517,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -2437,9 +2582,9 @@
           "detail": "['label', 'value'] vs ['label', 'value']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -2502,7 +2647,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -2520,6 +2665,11 @@
           "detail": "1 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": false,
           "detail": "1 vs 0"
@@ -2530,12 +2680,13 @@
           "detail": "至少一侧为空列表，跳过字段扫描"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 5 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 6 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List: 列表长度不一致 (1 vs 0)",
         "Result_Data.PageSize: 值不一致 (1 vs 10)",
@@ -2622,9 +2773,9 @@
           "detail": "至少一侧不是 List"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 5 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 5 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -2688,7 +2839,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -2706,6 +2857,11 @@
           "detail": "1 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": false,
           "detail": "1 vs 0"
@@ -2716,12 +2872,13 @@
           "detail": "至少一侧为空列表，跳过字段扫描"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 5 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 6 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List: 列表长度不一致 (1 vs 0)",
         "Result_Data.PageSize: 值不一致 (1 vs 10)",
@@ -2783,9 +2940,9 @@
           "detail": "['BankAccount_Amount', 'CashPay_Amount', 'Cash_Correct', 'Cigarette_Amount', 'Correct_Amount', 'CostBill_Amount', 'Different_Price_Less', 'Different_Price_More', 'InternalPay_Amount', 'MobilePay_Amount', 'Mobile_Correct', 'Revenue_Amount', 'Supplement_Amount', 'Supplement_State', 'Ticket_Count', 'Total_Count', 'Total_OffAmount', 'YFHD_Amount'] vs ['CASHPAY_AMOUNT', 'COSTBILL_AMOUNT', 'DIFFERENT_PRICE_LESS', 'DIFFERENT_PRICE_MORE', 'INTERNALPAY_AMOUNT', 'MOBILEPAY_AMOUNT', 'REVENUE_AMOUNT', 'TICKET_COUNT', 'TOTAL_COUNT', 'TOTAL_OFFAMOUNT', 'YFHD_AMOUNT']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -2867,9 +3024,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -2932,7 +3089,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'OtherData', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'OtherData', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -2951,8 +3108,8 @@
         },
         {
           "name": "OtherData 存在性",
-          "ok": false,
-          "detail": "True vs False"
+          "ok": true,
+          "detail": "True vs True"
         },
         {
           "name": "List 条数",
@@ -2965,13 +3122,12 @@
           "detail": "字段一致，共 2 个"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
-        "Result_Data.OtherData: 新 API 缺少该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List[0].children[0].children: 列表长度不一致 (14 vs 0)",
         "Result_Data.List[0].children[0].node.Business_Type: 新 API 缺少该字段",
@@ -2995,7 +3151,8 @@
         "Result_Data.List[0].children[0].node.TotalRevenue.Supplement_Amount: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.TotalRevenue.Supplement_State: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.TotalRevenue.CashPay_Amount: 值不一致 (3139.0 vs 0.0)",
-        "Result_Data.List[0].children[0].node.TotalRevenue.MobilePay_Amount: 值不一致 (75579.22 vs 0.0)"
+        "Result_Data.List[0].children[0].node.TotalRevenue.MobilePay_Amount: 值不一致 (75579.22 vs 0.0)",
+        "Result_Data.List[0].children[0].node.TotalRevenue.Revenue_Amount: 值不一致 (84131.02 vs 0.0)"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -3049,9 +3206,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3114,7 +3271,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -3132,6 +3289,11 @@
           "detail": "1 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": true,
           "detail": "1 vs 1"
@@ -3142,23 +3304,19 @@
           "detail": "字段一致，共 2 个"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List[0].children[0].node.SERVERPARTSHOP_ID: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.SERVERPARTSHOP_IDS: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.SERVERPARTSHOP_NAME: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.SERVERPART_ID: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.SERVERPART_NAME: 新 API 缺少该字段",
-        "Result_Data.List[0].children[0].node.VEHICLE_COUNT: 类型不一致 (float vs int)，值为 113549.0 vs 113549",
-        "Result_Data.List[0].children[0].node.VEHICLE_COUNT_QOQ: 类型不一致 (float vs int)，值为 180520.0 vs 180520",
-        "Result_Data.List[0].children[0].node.VEHICLE_COUNT_YOY: 类型不一致 (float vs int)，值为 248627.0 vs 248627",
-        "Result_Data.List[0].children[0].node.VEHICLE_INCREASE_QOQ: 类型不一致 (float vs int)，值为 -66971.0 vs -66971",
-        "Result_Data.List[0].children[0].node.VEHICLE_INCREASE_YOY: 类型不一致 (float vs int)，值为 -135078.0 vs -135078",
         "Result_Data.List[0].node.INCREASE_DIFF: 新 API 缺少该字段",
         "Result_Data.List[0].node.Id: 新 API 缺少该字段",
         "Result_Data.List[0].node.Name: 新 API 缺少该字段",
@@ -3172,7 +3330,11 @@
         "Result_Data.List[0].node.SERVERPARTSHOP_ID: 新 API 缺少该字段",
         "Result_Data.List[0].node.SERVERPARTSHOP_IDS: 新 API 缺少该字段",
         "Result_Data.List[0].node.SERVERPARTSHOP_NAME: 新 API 缺少该字段",
-        "Result_Data.List[0].node.SERVERPART_ID: 新 API 缺少该字段"
+        "Result_Data.List[0].node.SERVERPART_ID: 新 API 缺少该字段",
+        "Result_Data.List[0].node.SERVERPART_NAME: 新 API 缺少该字段",
+        "Result_Data.List[0].node.VEHICLE_COUNT: 新 API 缺少该字段",
+        "Result_Data.List[0].node.VEHICLE_COUNT_QOQ: 新 API 缺少该字段",
+        "Result_Data.List[0].node.VEHICLE_COUNT_YOY: 新 API 缺少该字段"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -3221,9 +3383,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3279,9 +3441,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3337,9 +3499,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3400,9 +3562,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3461,7 +3623,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -3479,6 +3641,11 @@
           "detail": "29 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": false,
           "detail": "29 vs 19564"
@@ -3489,12 +3656,13 @@
           "detail": "仅原 API: ['Business_Type', 'Business_Type_Text', 'CashPay_Amount', 'CostBill_Amount', 'Different_Price_Less', 'Different_Price_More', 'InternalPay_Amount', 'MobilePay_Amount', 'Revenue_Amount', 'ServerpartShop_ID', 'ServerpartShop_Name', 'ServerpartShop_Region', 'ServerpartShop_ShortName', 'ServerpartShop_Trade', 'Serverpart_ID', 'Serverpart_Name', 'Ticket_Count', 'Total_Count', 'Total_OffAmount', 'Transfer_Type', 'YFHD_Amount'] | 仅新 API: ['AUDIT_COUNT', 'BUSINESS_BRAND', 'BUSINESS_TRADE', 'BUSINESS_TYPE', 'CASHPAY_AMOUNT', 'CASHPAY_AMOUNT_A', 'CASHPAY_AMOUNT_B', 'CASH_CORRECT', 'CASH_CORRECT_A', 'CASH_CORRECT_B', 'COMMISSION_TYPE', 'CORRECT_AMOUNT', 'CORRECT_AMOUNT_A', 'CORRECT_AMOUNT_B', 'COSTBILL_AMOUNT_A', 'COSTBILL_AMOUNT_B', 'DATA_TYPE', 'DIFFERENT_AMOUNT', 'DIFFERENT_AMOUNT_A', 'DIFFERENT_AMOUNT_B', 'DIFFERENT_AMOUNT_LESS_A', 'DIFFERENT_AMOUNT_LESS_B', 'DIFFERENT_AMOUNT_MORE_A', 'DIFFERENT_AMOUNT_MORE_B', 'ENDACCOUNT_COUNT', 'INTERNALPAY_AMOUNT_A', 'INTERNALPAY_AMOUNT_B', 'MOBILEPAY_AMOUNT', 'MOBILEPAY_AMOUNT_A', 'MOBILEPAY_AMOUNT_B', 'MOBILE_CORRECT', 'MOBILE_CORRECT_A', 'MOBILE_CORRECT_B', 'OTHERPAY_AMOUNT', 'OTHERPAY_AMOUNT_A', 'OTHERPAY_AMOUNT_B', 'PROVINCE_ID', 'RECORD_DATE', 'REVENUEDAILY_AMOUNT', 'REVENUEDAILY_ID', 'REVENUEDAILY_STATE', 'REVENUE_AMOUNT', 'REVENUE_AMOUNT_A', 'REVENUE_AMOUNT_B', 'REVENUE_AMOUNT_MONTH', 'REVENUE_AMOUNT_YEAR', 'REVENUE_AMOUNT_YOY', 'SERVERPARTSHOP_ID', 'SERVERPART_CODE', 'SERVERPART_ID', 'SERVERPART_NAME', 'SHOPTRADE', 'SHOP_COUNT', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME', 'STATISTICS_DATE', 'TICKETDAILY_COUNT', 'TICKET_COUNT', 'TICKET_COUNT_A', 'TICKET_COUNT_B', 'TOTALOFF_AMOUNT', 'TOTAL_COUNT', 'TOTAL_COUNT_A', 'TOTAL_COUNT_B', 'TREATMENT_STATE', 'YFHD_AMOUNT_A', 'YFHD_AMOUNT_B']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List: 列表长度不一致 (29 vs 19564)",
         "Result_Data.List[0].Business_Type: 新 API 缺少该字段",
@@ -3518,8 +3686,7 @@
         "Result_Data.List[0].Total_OffAmount: 新 API 缺少该字段",
         "Result_Data.List[0].Transfer_Type: 新 API 缺少该字段",
         "Result_Data.List[0].YFHD_Amount: 新 API 缺少该字段",
-        "Result_Data.List[0].AUDIT_COUNT: 新 API 多出该字段",
-        "Result_Data.List[0].BUSINESS_BRAND: 新 API 多出该字段"
+        "Result_Data.List[0].AUDIT_COUNT: 新 API 多出该字段"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -3571,9 +3738,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3635,9 +3802,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3699,9 +3866,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3762,7 +3929,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -3780,6 +3947,11 @@
           "detail": "1 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": true,
           "detail": "1 vs 1"
@@ -3790,12 +3962,13 @@
           "detail": "字段一致，共 2 个"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List[0].children[0].children[0].children: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].children[0].node.Business_Type: 新 API 缺少该字段",
@@ -3819,8 +3992,7 @@
         "Result_Data.List[0].children[0].children[0].node.TotalRevenue.Supplement_Amount: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].children[0].node.TotalRevenue.Supplement_State: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].children[0].node.TotalRevenue.CashPay_Amount: 值不一致 (81147085.07 vs 0.0)",
-        "Result_Data.List[0].children[0].children[0].node.TotalRevenue.Different_Price_Less: 值不一致 (-42134.34 vs 0.0)",
-        "Result_Data.List[0].children[0].children[0].node.TotalRevenue.Different_Price_More: 值不一致 (105056.99 vs 0.0)"
+        "Result_Data.List[0].children[0].children[0].node.TotalRevenue.Different_Price_Less: 值不一致 (-42134.34 vs 0.0)"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -3869,9 +4041,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -3934,7 +4106,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -3952,6 +4124,11 @@
           "detail": "1 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": true,
           "detail": "1 vs 1"
@@ -3962,12 +4139,13 @@
           "detail": "字段一致，共 2 个"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List[0].children[0].node.Business_Type: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.Business_Type_Text: 新 API 缺少该字段",
@@ -3991,8 +4169,7 @@
         "Result_Data.List[0].children[0].node.TotalRevenue.Different_Price_Less: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.TotalRevenue.Different_Price_More: 新 API 缺少该字段",
         "Result_Data.List[0].children[0].node.TotalRevenue.Mobile_Correct: 新 API 缺少该字段",
-        "Result_Data.List[0].children[0].node.TotalRevenue.Supplement_Amount: 新 API 缺少该字段",
-        "Result_Data.List[0].children[0].node.TotalRevenue.Supplement_State: 新 API 缺少该字段"
+        "Result_Data.List[0].children[0].node.TotalRevenue.Supplement_Amount: 新 API 缺少该字段"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -4045,9 +4222,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4107,9 +4284,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4167,9 +4344,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4230,9 +4407,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4287,9 +4464,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4377,9 +4554,9 @@
           "detail": "至少一侧不是 List"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 5 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 5 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4446,9 +4623,9 @@
           "detail": "['BankAccount_Amount', 'CashPay_Amount', 'Cash_Correct', 'Cigarette_Amount', 'Correct_Amount', 'CostBill_Amount', 'Different_Price_Less', 'Different_Price_More', 'InternalPay_Amount', 'MobilePay_Amount', 'Mobile_Correct', 'Revenue_Amount', 'Supplement_Amount', 'Supplement_State', 'Ticket_Count', 'Total_Count', 'Total_OffAmount', 'YFHD_Amount'] vs []"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 19 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 19 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4523,9 +4700,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4585,9 +4762,9 @@
           "detail": "NoneType vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4643,9 +4820,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4701,9 +4878,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4759,9 +4936,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4853,9 +5030,9 @@
           "detail": "仅原 API: ['INOUT_TYPES', 'SERVERPART_IDS', 'STATISTICS_DATE_End', 'STATISTICS_DATE_Start', 'VEHICLE_TYPES'] | 仅新 API: ['AVGSTAY_TIMES', 'STAY_TIMES', 'STAY_TIMESCOUNT']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 10 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 10 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4919,9 +5096,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -4980,9 +5157,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 3 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5073,9 +5250,9 @@
           "detail": "仅原 API: ['SERVERPART_IDS', 'SERVERPART_REGIONS', 'STATISTICS_DATE_End', 'STATISTICS_DATE_Start'] | 仅新 API: []"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 5 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 5 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5137,9 +5314,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5204,9 +5381,9 @@
           "detail": "dict vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5264,9 +5441,9 @@
           "detail": "dict vs list"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5327,9 +5504,9 @@
           "detail": "['FEMALE_COUNT', 'LARGEVEHICLE_COUNT', 'MALE_COUNT', 'MEDIUMVEHICLE_COUNT', 'MINVEHICLE_COUNT', 'NEWENERGYVEHICLE_COUNT', 'OPERATE_DATE', 'SECTIONFLOW_DESC', 'SECTIONFLOW_ID', 'SECTIONFLOW_NUM', 'SECTIONFLOW_STATUS', 'SERVERPART_FLOW', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'SERVERPART_REGION', 'STATISTICS_DATE', 'STATISTICS_DATE_End', 'STATISTICS_DATE_Start', 'Serverpart_Flow_Analog'] vs ['AVGENTRY_RATE', 'AVGSTAY_TIMES', 'FEMALE_COUNT', 'LARGEVEHICLE_COUNT', 'MALE_COUNT', 'MEDIUMVEHICLE_COUNT', 'MINVEHICLE_COUNT', 'NEWENERGYVEHICLE_COUNT', 'OPERATE_DATE', 'SECTIONFLOW_DESC', 'SECTIONFLOW_ID', 'SECTIONFLOW_NUM', 'SECTIONFLOW_STATUS', 'SERVERPART_FLOW', 'SERVERPART_FLOW_ANALOG', 'SERVERPART_ID', 'SERVERPART_NAME', 'SERVERPART_REGION', 'STATISTICS_DATE']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 9 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 8 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5340,7 +5517,6 @@
         "Result_Data.AVGENTRY_RATE: 新 API 多出该字段",
         "Result_Data.AVGSTAY_TIMES: 新 API 多出该字段",
         "Result_Data.SERVERPART_FLOW_ANALOG: 新 API 多出该字段",
-        "Result_Data.SECTIONFLOW_DESC: 类型不一致 (str vs NoneType)，值为 '' vs None",
         "Result_Data.STATISTICS_DATE: 类型不一致 (str vs int)，值为 '2024/01/27' vs 20240127"
       ],
       "old_status_code": 200,
@@ -5426,9 +5602,9 @@
           "detail": "仅原 API: ['SERVERPART_IDS', 'STATISTICS_DATE_End', 'STATISTICS_DATE_Start', 'Serverpart_Flow_Analog'] | 仅新 API: ['AVGENTRY_RATE', 'AVGSTAY_TIMES', 'SERVERPART_FLOW_ANALOG']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5439,7 +5615,6 @@
         "Result_Data.List[0].AVGENTRY_RATE: 新 API 多出该字段",
         "Result_Data.List[0].AVGSTAY_TIMES: 新 API 多出该字段",
         "Result_Data.List[0].SERVERPART_FLOW_ANALOG: 新 API 多出该字段",
-        "Result_Data.List[0].SECTIONFLOW_DESC: 类型不一致 (str vs NoneType)，值为 '' vs None",
         "Result_Data.List[0].STATISTICS_DATE: 类型不一致 (str vs int)，值为 '2021/12/21' vs 20211221",
         "Result_Data.List[1].SERVERPART_IDS: 新 API 缺少该字段",
         "Result_Data.List[1].STATISTICS_DATE_End: 新 API 缺少该字段",
@@ -5448,7 +5623,6 @@
         "Result_Data.List[1].AVGENTRY_RATE: 新 API 多出该字段",
         "Result_Data.List[1].AVGSTAY_TIMES: 新 API 多出该字段",
         "Result_Data.List[1].SERVERPART_FLOW_ANALOG: 新 API 多出该字段",
-        "Result_Data.List[1].SECTIONFLOW_DESC: 类型不一致 (str vs NoneType)，值为 '' vs None",
         "Result_Data.List[1].STATISTICS_DATE: 类型不一致 (str vs int)，值为 '2021/12/21' vs 20211221",
         "Result_Data.List[2].SERVERPART_IDS: 新 API 缺少该字段",
         "Result_Data.List[2].STATISTICS_DATE_End: 新 API 缺少该字段",
@@ -5456,7 +5630,9 @@
         "Result_Data.List[2].Serverpart_Flow_Analog: 新 API 缺少该字段",
         "Result_Data.List[2].AVGENTRY_RATE: 新 API 多出该字段",
         "Result_Data.List[2].AVGSTAY_TIMES: 新 API 多出该字段",
-        "Result_Data.List[2].SERVERPART_FLOW_ANALOG: 新 API 多出该字段"
+        "Result_Data.List[2].SERVERPART_FLOW_ANALOG: 新 API 多出该字段",
+        "Result_Data.List[2].STATISTICS_DATE: 类型不一致 (str vs int)，值为 '2021/12/27' vs 20211227",
+        "Result_Data.List[3].SERVERPART_IDS: 新 API 缺少该字段"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -5512,9 +5688,9 @@
           "detail": "['HOLIDAY_TYPE', 'LARGEVEHICLE_COUNT', 'MEDIUMVEHICLE_COUNT', 'MINVEHICLE_COUNT', 'NEWENERGYVEHICLE_COUNT', 'OPERATE_DATE', 'SECTIONFLOWMONTH_ID', 'SECTIONFLOWMONTH_STATE', 'SECTIONFLOW_DAYS', 'SECTIONFLOW_DESC', 'SECTIONFLOW_NUM', 'SERVERPART_FLOW', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'SERVERPART_REGION', 'STATISTICS_DAYS', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'VEHICLE_AMOUNT'] vs []"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 21 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 21 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5623,9 +5799,9 @@
           "detail": "仅原 API: ['SERVERPART_IDS', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start'] | 仅新 API: []"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5633,27 +5809,27 @@
         "Result_Data.List[0].STATISTICS_MONTH_End: 新 API 缺少该字段",
         "Result_Data.List[0].STATISTICS_MONTH_Start: 新 API 缺少该字段",
         "Result_Data.List[0].OPERATE_DATE: 值不一致 ('2024//4//2 4 :14::0' vs '2024-04-24T14:02:15')",
-        "Result_Data.List[0].SECTIONFLOW_DESC: 类型不一致 (str vs NoneType)，值为 '' vs None",
         "Result_Data.List[0].STATISTICS_MONTH: 类型不一致 (str vs int)，值为 '2023/09' vs 202309",
         "Result_Data.List[1].SERVERPART_IDS: 新 API 缺少该字段",
         "Result_Data.List[1].STATISTICS_MONTH_End: 新 API 缺少该字段",
         "Result_Data.List[1].STATISTICS_MONTH_Start: 新 API 缺少该字段",
         "Result_Data.List[1].OPERATE_DATE: 值不一致 ('2024//4//2 4 :14::0' vs '2024-04-24T14:02:15')",
-        "Result_Data.List[1].SECTIONFLOW_DESC: 类型不一致 (str vs NoneType)，值为 '' vs None",
         "Result_Data.List[1].STATISTICS_MONTH: 类型不一致 (str vs int)，值为 '2023/09' vs 202309",
         "Result_Data.List[2].SERVERPART_IDS: 新 API 缺少该字段",
         "Result_Data.List[2].STATISTICS_MONTH_End: 新 API 缺少该字段",
         "Result_Data.List[2].STATISTICS_MONTH_Start: 新 API 缺少该字段",
-        "Result_Data.List[2].OPERATE_DATE: 值不一致 ('2024//4//2 4 :14::0' vs '2024-04-24T14:02:15')",
-        "Result_Data.List[2].SECTIONFLOW_DESC: 类型不一致 (str vs NoneType)，值为 '' vs None",
-        "Result_Data.List[2].STATISTICS_MONTH: 类型不一致 (str vs int)，值为 '2023/09' vs 202309",
+        "Result_Data.List[2].OPERATE_DATE: 值不一致 ('2024//4//2 4 :14::0' vs '2024-04-24T14:03:50')",
+        "Result_Data.List[2].STATISTICS_MONTH: 类型不一致 (str vs int)，值为 '2024/02' vs 202402",
         "Result_Data.List[3].SERVERPART_IDS: 新 API 缺少该字段",
         "Result_Data.List[3].STATISTICS_MONTH_End: 新 API 缺少该字段",
         "Result_Data.List[3].STATISTICS_MONTH_Start: 新 API 缺少该字段",
-        "Result_Data.List[3].OPERATE_DATE: 值不一致 ('2024//4//2 4 :14::0' vs '2024-04-24T14:02:15')",
-        "Result_Data.List[3].SECTIONFLOW_DESC: 类型不一致 (str vs NoneType)，值为 '' vs None",
-        "Result_Data.List[3].STATISTICS_MONTH: 类型不一致 (str vs int)，值为 '2023/09' vs 202309",
-        "Result_Data.List[4].SERVERPART_IDS: 新 API 缺少该字段"
+        "Result_Data.List[3].OPERATE_DATE: 值不一致 ('2024//4//2 4 :14::0' vs '2024-04-24T14:03:50')",
+        "Result_Data.List[3].STATISTICS_MONTH: 类型不一致 (str vs int)，值为 '2024/02' vs 202402",
+        "Result_Data.List[4].SERVERPART_IDS: 新 API 缺少该字段",
+        "Result_Data.List[4].STATISTICS_MONTH_End: 新 API 缺少该字段",
+        "Result_Data.List[4].STATISTICS_MONTH_Start: 新 API 缺少该字段",
+        "Result_Data.List[4].OPERATE_DATE: 值不一致 ('2024//4//2 4 :14::0' vs '2024-04-24T14:02:00')",
+        "Result_Data.List[4].STATISTICS_MONTH: 类型不一致 (str vs int)，值为 '2023/08' vs 202308"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -5706,7 +5882,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -5724,6 +5900,11 @@
           "detail": "10 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": true,
           "detail": "51 vs 51"
@@ -5734,37 +5915,37 @@
           "detail": "字段一致，共 3 个"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 25 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 25 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
-        "Result_Data.List[0].STATISTICS_DATE: 值不一致 ('2023-08' vs '202112')",
+        "Result_Data.List[0].STATISTICS_DATE: 值不一致 ('2021-12' vs '202112')",
         "Result_Data.List[0].list[0].SERVERPART.DATE_COUNT: 新 API 多出该字段",
-        "Result_Data.List[0].list[0].SERVERPART.REVENUE_AMOUNT: 值不一致 (78042.26 vs 36210.0)",
-        "Result_Data.List[0].list[0].SERVERPART.STATISTICS_DATE: 值不一致 ('2023-08' vs '202112')",
-        "Result_Data.List[0].list[0].SERVERPART.VEHICLE_COUNT: 类型不一致 (float vs int)，值为 10588.0 vs 0",
-        "Result_Data.List[0].list[0].SERVERPART.VEHICLE_COUNT_DXC: 类型不一致 (float vs int)，值为 2475.0 vs 0",
-        "Result_Data.List[0].list[0].SERVERPART.VEHICLE_COUNT_XXC: 类型不一致 (float vs int)，值为 8113.0 vs 0",
-        "Result_Data.List[0].list[0].SERVERPART.VEHICLE_COUNT_ZXC: 类型不一致 (float vs int)，值为 0.0 vs 0",
+        "Result_Data.List[0].list[0].SERVERPART.STATISTICS_DATE: 值不一致 ('2021-12' vs '202112')",
+        "Result_Data.List[0].list[0].SERVERPART.VEHICLE_COUNT: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[0].list[0].SERVERPART.VEHICLE_COUNT_DXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[0].list[0].SERVERPART.VEHICLE_COUNT_XXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[0].list[0].SERVERPART.VEHICLE_COUNT_ZXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
         "Result_Data.List[0].list[1].SERVERPART.DATE_COUNT: 新 API 多出该字段",
-        "Result_Data.List[0].list[1].SERVERPART.REVENUE_AMOUNT: 值不一致 (113780.1 vs 44697.06)",
-        "Result_Data.List[0].list[1].SERVERPART.STATISTICS_DATE: 值不一致 ('2023-08' vs '202112')",
-        "Result_Data.List[0].list[1].SERVERPART.VEHICLE_COUNT: 类型不一致 (float vs int)，值为 11595.0 vs 0",
-        "Result_Data.List[0].list[1].SERVERPART.VEHICLE_COUNT_DXC: 类型不一致 (float vs int)，值为 2462.0 vs 0",
-        "Result_Data.List[0].list[1].SERVERPART.VEHICLE_COUNT_XXC: 类型不一致 (float vs int)，值为 9133.0 vs 0",
-        "Result_Data.List[0].list[1].SERVERPART.VEHICLE_COUNT_ZXC: 类型不一致 (float vs int)，值为 0.0 vs 0",
-        "Result_Data.List[1].STATISTICS_DATE: 值不一致 ('2024-02' vs '202201')",
+        "Result_Data.List[0].list[1].SERVERPART.STATISTICS_DATE: 值不一致 ('2021-12' vs '202112')",
+        "Result_Data.List[0].list[1].SERVERPART.VEHICLE_COUNT: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[0].list[1].SERVERPART.VEHICLE_COUNT_DXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[0].list[1].SERVERPART.VEHICLE_COUNT_XXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[0].list[1].SERVERPART.VEHICLE_COUNT_ZXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[1].STATISTICS_DATE: 值不一致 ('2022-01' vs '202201')",
         "Result_Data.List[1].list[0].SERVERPART.DATE_COUNT: 新 API 多出该字段",
-        "Result_Data.List[1].list[0].SERVERPART.REVENUE_AMOUNT: 值不一致 (187987.18 vs 34249.21)",
-        "Result_Data.List[1].list[0].SERVERPART.STATISTICS_DATE: 值不一致 ('2024-02' vs '202201')",
-        "Result_Data.List[1].list[0].SERVERPART.VEHICLE_COUNT: 类型不一致 (float vs int)，值为 16133.0 vs 0",
-        "Result_Data.List[1].list[0].SERVERPART.VEHICLE_COUNT_DXC: 类型不一致 (float vs int)，值为 763.0 vs 0",
-        "Result_Data.List[1].list[0].SERVERPART.VEHICLE_COUNT_XXC: 类型不一致 (float vs int)，值为 15370.0 vs 0",
+        "Result_Data.List[1].list[0].SERVERPART.STATISTICS_DATE: 值不一致 ('2022-01' vs '202201')",
+        "Result_Data.List[1].list[0].SERVERPART.VEHICLE_COUNT: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[1].list[0].SERVERPART.VEHICLE_COUNT_DXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
+        "Result_Data.List[1].list[0].SERVERPART.VEHICLE_COUNT_XXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
         "Result_Data.List[1].list[0].SERVERPART.VEHICLE_COUNT_ZXC: 类型不一致 (NoneType vs int)，值为 None vs 0",
-        "Result_Data.List[1].list[1].SERVERPART.DATE_COUNT: 新 API 多出该字段"
+        "Result_Data.List[1].list[1].SERVERPART.DATE_COUNT: 新 API 多出该字段",
+        "Result_Data.List[1].list[1].SERVERPART.STATISTICS_DATE: 值不一致 ('2022-01' vs '202201')",
+        "Result_Data.List[1].list[1].SERVERPART.VEHICLE_COUNT: 类型不一致 (NoneType vs int)，值为 None vs 0"
       ],
       "old_status_code": 200,
       "new_status_code": 200
@@ -5821,7 +6002,7 @@
         {
           "name": "Result_Data 字段",
           "ok": false,
-          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'OtherData', 'PageIndex', 'PageSize', 'StaticsModel', 'TotalCount']"
         },
         {
           "name": "TotalCount",
@@ -5839,6 +6020,11 @@
           "detail": "10 vs 10"
         },
         {
+          "name": "OtherData 存在性",
+          "ok": false,
+          "detail": "False vs True"
+        },
+        {
           "name": "List 条数",
           "ok": false,
           "detail": "1 vs 24"
@@ -5849,12 +6035,13 @@
           "detail": "仅原 API: ['Data', 'Name'] | 仅新 API: ['SERVERPART_ID', 'SERVERPART_NAME', 'STATISTICS_HOUR', 'VEHICLE_COUNT']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 9 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 10 处差异(不影响判定)"
         }
       ],
       "diffs": [
+        "Result_Data.OtherData: 新 API 多出该字段",
         "Result_Data.StaticsModel: 新 API 多出该字段",
         "Result_Data.List: 列表长度不一致 (1 vs 24)",
         "Result_Data.List[0].Data: 新 API 缺少该字段",
@@ -5915,9 +6102,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -5933,7 +6120,7 @@
       "endpoint": "Customer/GetCUSTOMERGROUP_AMOUNTDetail",
       "case_name": "default-query",
       "method": "GET",
-      "status": "fail",
+      "status": "pass",
       "query": {
         "CUSTOMERGROUP_AMOUNTId": 296
       },
@@ -5976,22 +6163,16 @@
         },
         {
           "name": "Result_Data 字段",
-          "ok": false,
-          "detail": "['AMOUNT_00', 'AMOUNT_70', 'AMOUNT_80', 'AMOUNT_90', 'AMOUNT_FEMALE', 'AMOUNT_MALE', 'CUSTOMERGROUP_AMOUNT_ID', 'PROVINCE_ID', 'SERVERPART_CODE', 'SERVERPART_CODES', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'TOTAL_COUNT'] vs ['AMOUNT_00', 'AMOUNT_70', 'AMOUNT_80', 'AMOUNT_90', 'AMOUNT_FEMALE', 'AMOUNT_MALE', 'CUSTOMERGROUP_AMOUNT_ID', 'PROVINCE_ID', 'SERVERPART_CODE', 'SERVERPART_ID', 'SERVERPART_NAME', 'STATISTICS_MONTH', 'TOTAL_COUNT']"
+          "ok": true,
+          "detail": "['AMOUNT_00', 'AMOUNT_70', 'AMOUNT_80', 'AMOUNT_90', 'AMOUNT_FEMALE', 'AMOUNT_MALE', 'CUSTOMERGROUP_AMOUNT_ID', 'PROVINCE_ID', 'SERVERPART_CODE', 'SERVERPART_CODES', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'TOTAL_COUNT'] vs ['AMOUNT_00', 'AMOUNT_70', 'AMOUNT_80', 'AMOUNT_90', 'AMOUNT_FEMALE', 'AMOUNT_MALE', 'CUSTOMERGROUP_AMOUNT_ID', 'PROVINCE_ID', 'SERVERPART_CODE', 'SERVERPART_CODES', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'STATISTICS_MONTH', 'STATISTICS_MONTH_End', 'STATISTICS_MONTH_Start', 'TOTAL_COUNT']"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 5 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "完全一致"
         }
       ],
-      "diffs": [
-        "Result_Data.SERVERPART_CODES: 新 API 缺少该字段",
-        "Result_Data.SERVERPART_IDS: 新 API 缺少该字段",
-        "Result_Data.STATISTICS_MONTH_End: 新 API 缺少该字段",
-        "Result_Data.STATISTICS_MONTH_Start: 新 API 缺少该字段",
-        "Result_Data.STATISTICS_MONTH: 类型不一致 (str vs int)，值为 '2021/12' vs 202112"
-      ],
+      "diffs": [],
       "old_status_code": 200,
       "new_status_code": 200
     },
@@ -5999,7 +6180,7 @@
       "endpoint": "Customer/GetCUSTOMERGROUP_AMOUNTList",
       "case_name": "default-body",
       "method": "POST",
-      "status": "fail",
+      "status": "pass",
       "query": null,
       "json_body": {
         "SearchParameter": {
@@ -6031,30 +6212,56 @@
         },
         {
           "name": "Result_Code",
-          "ok": false,
-          "detail": "100 vs 999"
+          "ok": true,
+          "detail": "100 vs 100"
         },
         {
           "name": "Result_Desc",
-          "ok": false,
-          "detail": "查询成功 vs 查询失败[CODE:-2111]第1 行附近出现错误:\n无效的列名[SERVERPART_IDS]"
+          "ok": true,
+          "detail": "查询成功 vs 查询成功"
         },
         {
           "name": "Result_Data 类型",
-          "ok": false,
-          "detail": "dict vs NoneType"
+          "ok": true,
+          "detail": "dict vs dict"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 3 处差异"
+          "name": "Result_Data 字段",
+          "ok": true,
+          "detail": "['List', 'PageIndex', 'PageSize', 'TotalCount'] vs ['List', 'PageIndex', 'PageSize', 'TotalCount']"
+        },
+        {
+          "name": "TotalCount",
+          "ok": true,
+          "detail": "52 vs 52"
+        },
+        {
+          "name": "PageIndex",
+          "ok": true,
+          "detail": "1 vs 1"
+        },
+        {
+          "name": "PageSize",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "List 条数",
+          "ok": true,
+          "detail": "9 vs 9"
+        },
+        {
+          "name": "首条字段集合",
+          "ok": true,
+          "detail": "字段一致，共 17 个"
+        },
+        {
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "完全一致"
         }
       ],
-      "diffs": [
-        "Result_Code: 值不一致 (100 vs 999)",
-        "Result_Data: 类型不一致 (dict vs NoneType)，值为 {'PageIndex': 1, 'PageSize': 9, 'TotalCount': 52, 'List': [{'CUSTOMERGROUP_AMOUNT_ID': 296, 'STATISTICS_MONTH': '2021/12', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': 11.46, 'AMOUNT_90': 39.68, 'AMOUNT_80': 30.68, 'AMOUNT_70': 18.18, 'AMOUNT_MALE': 83.78, 'AMOUNT_FEMALE': 16.22, 'TOTAL_COUNT': 1663}, {'CUSTOMERGROUP_AMOUNT_ID': 534, 'STATISTICS_MONTH': '2022/03', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': 12.05, 'AMOUNT_90': 48.94, 'AMOUNT_80': 29.99, 'AMOUNT_70': 9.02, 'AMOUNT_MALE': 83.58, 'AMOUNT_FEMALE': 16.42, 'TOTAL_COUNT': 150}, {'CUSTOMERGROUP_AMOUNT_ID': 584, 'STATISTICS_MONTH': '2022/04', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': 17.7, 'AMOUNT_90': 42.71, 'AMOUNT_80': 29.53, 'AMOUNT_70': 10.05, 'AMOUNT_MALE': 74.4, 'AMOUNT_FEMALE': 25.6, 'TOTAL_COUNT': 135}, {'CUSTOMERGROUP_AMOUNT_ID': 839, 'STATISTICS_MONTH': '2022/06', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': 15.84, 'AMOUNT_90': 41.96, 'AMOUNT_80': 23.71, 'AMOUNT_70': 18.49, 'AMOUNT_MALE': 75.75, 'AMOUNT_FEMALE': 24.25, 'TOTAL_COUNT': 2093}, {'CUSTOMERGROUP_AMOUNT_ID': 895, 'STATISTICS_MONTH': '2022/07', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': 19.33, 'AMOUNT_90': 49.61, 'AMOUNT_80': 21.83, 'AMOUNT_70': 9.23, 'AMOUNT_MALE': 71.54, 'AMOUNT_FEMALE': 28.46, 'TOTAL_COUNT': 740}, {'CUSTOMERGROUP_AMOUNT_ID': 236, 'STATISTICS_MONTH': '2021/11', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': 11.59, 'AMOUNT_90': 37.52, 'AMOUNT_80': 29.58, 'AMOUNT_70': 21.31, 'AMOUNT_MALE': 80.56, 'AMOUNT_FEMALE': 19.44, 'TOTAL_COUNT': 1473}, {'CUSTOMERGROUP_AMOUNT_ID': 692, 'STATISTICS_MONTH': '2022/05', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': None, 'AMOUNT_90': 37.5, 'AMOUNT_80': 50.0, 'AMOUNT_70': 12.5, 'AMOUNT_MALE': 100.0, 'AMOUNT_FEMALE': None, 'TOTAL_COUNT': 3}, {'CUSTOMERGROUP_AMOUNT_ID': 179, 'STATISTICS_MONTH': '2021/10', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': 11.59, 'AMOUNT_90': 37.52, 'AMOUNT_80': 29.58, 'AMOUNT_70': 21.31, 'AMOUNT_MALE': 80.56, 'AMOUNT_FEMALE': 19.44, 'TOTAL_COUNT': 4792}, {'CUSTOMERGROUP_AMOUNT_ID': 356, 'STATISTICS_MONTH': '2022/01', 'STATISTICS_MONTH_Start': None, 'STATISTICS_MONTH_End': None, 'PROVINCE_ID': 3544, 'SERVERPART_ID': 416, 'SERVERPART_IDS': None, 'SERVERPART_CODE': '341003', 'SERVERPART_CODES': None, 'SERVERPART_NAME': '新桥服务区', 'AMOUNT_00': 15.56, 'AMOUNT_90': 46.76, 'AMOUNT_80': 23.67, 'AMOUNT_70': 14.0, 'AMOUNT_MALE': 75.09, 'AMOUNT_FEMALE': 24.91, 'TOTAL_COUNT': 3133}]} vs None",
-        "Result_Desc: 值不一致 ('查询成功' vs '查询失败[CODE:-2111]第1 行附近出现错误:\\n无效的列名[SERVERPART_IDS]')"
-      ],
+      "diffs": [],
       "old_status_code": 200,
       "new_status_code": 200
     },
@@ -6102,9 +6309,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6158,9 +6365,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6214,9 +6421,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6275,9 +6482,9 @@
           "detail": "dict vs list"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6331,9 +6538,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6389,9 +6596,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6447,9 +6654,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6505,9 +6712,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6563,9 +6770,9 @@
           "detail": "NoneType vs list"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6621,9 +6828,9 @@
           "detail": "NoneType vs list"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6679,9 +6886,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6737,9 +6944,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6798,9 +7005,9 @@
           "detail": "dict vs list"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 2 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 2 处差异(不影响判定)"
         }
       ],
       "diffs": [
@@ -6854,9 +7061,9 @@
           "detail": "NoneType vs NoneType"
         },
         {
-          "name": "完整响应体",
-          "ok": false,
-          "detail": "发现 4 处差异"
+          "name": "完整响应体(参考)",
+          "ok": true,
+          "detail": "发现 4 处差异(不影响判定)"
         }
       ],
       "diffs": [

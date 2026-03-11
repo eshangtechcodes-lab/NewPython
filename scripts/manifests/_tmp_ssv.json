@@ -1,0 +1,78 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "ignore_paths": [],
+  "endpoints": {
+    "Sales/GetCOMMODITYSALEDetail": {
+      "module": "Sales",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Sales/GetCOMMODITYSALEList": {
+      "module": "Sales",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Sales/GetEndaccountError": {
+      "module": "Sales",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Supplier/GetQUALIFICATION_HISList": {
+      "module": "Supplier",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {}
+        }
+      ]
+    },
+    "Verification/GetShopEndaccountSum": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "RoleType": "1",
+            "ServerpartId": "416",
+            "ServerpartShopCode": "049001",
+            "StartDate": "2025-12-01",
+            "EndDate": "2025-12-01"
+          }
+        }
+      ]
+    },
+    "Verification/GetSuppEndaccountList": {
+      "module": "Verification",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "ServerpartIds": "416"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "version": "2026-03-10",
+  "default_headers": {
+    "ProvinceCode": "340000"
+  },
+  "default_timeout": 20,
+  "endpoints": {
+    "Budget/GetBudgetDetailDetail": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUDGETDETAIL_AHId": 132
+          }
+        }
+      ]
+    },
+    "Budget/GetBudgetDetailList": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "BUDGETDETAIL_AH_ID": 10518
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Budget/GetBudgetProjectList": {
+      "module": "Finance",
+      "method": "POST",
+      "cases": [
+        {
+          "name": "default-body",
+          "json": {
+            "SearchParameter": {
+              "SERVERPART_IDS": "416"
+            },
+            "PageIndex": 1,
+            "PageSize": 9
+          }
+        }
+      ]
+    },
+    "Budget/GetBudgetProjectReportOfMonth": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectDetail": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {
+            "BUDGETPROJECT_AHId": 128
+          }
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReport": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportDynamic": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportIn": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportInDynamic": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportOut": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    },
+    "Budget/GetbudgetProjectReportOutDynamic": {
+      "module": "Finance",
+      "method": "GET",
+      "cases": [
+        {
+          "name": "default-query",
+          "query": {}
+        }
+      ]
+    }
+  }
+}

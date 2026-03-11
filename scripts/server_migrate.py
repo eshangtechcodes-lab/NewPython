@@ -95,6 +95,18 @@ MIGRATE_TABLES = [
     {"oracle_schema": "HIGHWAY_EXCHANGE", "table": "T_VIDEOLOG", "sequence": "SEQ_VIDEOLOG"},
     # PictureController 相关表
     {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_IMAGE", "sequence": "SEQ_IMAGE"},
+    # BusinessManController 相关表
+    {"oracle_schema": "PLATFORM_FRAMEWORK", "table": "T_USER", "sequence": "SEQ_USER"},
+    {"oracle_schema": "PLATFORM_FRAMEWORK", "table": "T_USERAUTHORITY", "sequence": "SEQ_USERAUTHORITY"},
+    {"oracle_schema": "HIGHWAY_STORAGE", "table": "T_COMMODITY_TEMP", "sequence": "SEQ_COMMODITY_TEMP"},
+    # AnalysisController 相关表
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_ASSETSPROFITS", "sequence": "SEQ_ASSETSPROFITS"},
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_INVESTMENTANALYSIS", "sequence": "SEQ_INVESTMENTANALYSIS"},
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_INVESTMENTDETAIL", "sequence": "SEQ_INVESTMENTDETAIL"},
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_PROMPT", "sequence": "SEQ_PROMPT"},
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_VEHICLEAMOUNT", "sequence": "SEQ_VEHICLEAMOUNT"},
+    # GetBrandReceivables 接口 — 经营品牌应收拆分表
+    {"oracle_schema": "PLATFORM_DASHBOARD", "table": "T_BRANDRECEIVABLE", "sequence": "SEQ_BRANDRECEIVABLE"},
 ]
 
 # 运行配置

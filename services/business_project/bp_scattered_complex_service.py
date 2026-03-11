@@ -104,13 +104,232 @@ def get_merchants_receivables(db: DatabaseHelper, merchants_id: str = "",
 
 
 # ==================== 3. GetBrandReceivables ====================
-def get_brand_receivables(db: DatabaseHelper, serverpart_id: str = "",
-                            merchants_id: str = "") -> tuple[list[dict], list[dict]]:
-    """获取品牌应收账款（DataList + OtherData）"""
-    data_list = []
-    other_data = []
-    # 简化版：返回空列表
-    return data_list, other_data
+def get_brand_receivables(db: DatabaseHelper, business_trade_id: str = "",
+                            business_brand_id: str = "", serverpart_id: str = "",
+                            start_date: str = "", show_project_split: bool = True) -> tuple[list[dict], list[dict]]:
+    """
+    获取经营品牌关联应收账款信息（List + OtherData）
+    对应原 COOPMERCHANTSHelper.GetBrandReceivables (行 1137-1326)
+    数据源: PLATFORM_DASHBOARD.T_BRANDRECEIVABLE (通过 BRANDRECEIVABLEHelper 查询)
+
+    返回值:
+    - data_list: 活跃经营项目列表（AccountReceivablesList）
+    - his_project_list: 历史经营项目列表（HisProjectList → OtherData）
+    """
+    # === 1. 构建 WHERE 条件 ===
+    conditions = []
+
+    # DATA_TYPE: 有 StartDate 时为 1（本年累计），否则为 2（项目累计）
+    data_type = 1 if start_date else 2
+    conditions.append(f"DATA_TYPE = {data_type}")
+
+    # 服务区过滤
+    if serverpart_id:
+        conditions.append(f"SERVERPART_ID IN ({serverpart_id})")
+
+    # 品牌过滤
+    if business_brand_id:
+        conditions.append(f"BRAND_ID IN ({business_brand_id})")
+
+    # 业态过滤（C# 中有展开子类型的逻辑，此处简化直接过滤）
+    if business_trade_id and not business_brand_id:
+        if business_trade_id == "0":
+            conditions.append("BUSINESS_TRADEID IS NULL")
+        else:
+            conditions.append(f"BUSINESS_TRADEID IN ({business_trade_id})")
+
+    where_sql = " WHERE " + " AND ".join(conditions) if conditions else ""
+
+    # === 2. 查询 T_BRANDRECEIVABLE 表（对应 BRANDRECEIVABLEHelper.GetBRANDRECEIVABLEList） ===
+    sql = f"SELECT * FROM T_BRANDRECEIVABLE{where_sql}"
+    rows = db.execute_query(sql)
+
+    # === 3. 将数据库行映射为 AccountReceivablesModel 格式 ===
+    data_list = []        # 活跃项目
+    his_project_list = []  # 历史项目
+    null_list = []         # 无服务区类型的数据
+
+    now_date_num = int(datetime.now().strftime("%Y%m%d"))
+
+    for r in rows:
+        # 日期转换辅助函数（存储为 NUMBER 如 20231025，显示为字符串 2023/10/25）
+        project_start = _translate_date_number(r.get("PROJECT_STARTDATE"))
+        project_end = _translate_date_number(r.get("PROJECT_ENDDATE"))
+
+        # 提成比例处理（C# 行 1463-1469）
+        commission_ratio = r.get("COMMISSION_RATIO", "")
+        business_type_val = r.get("BUSINESS_TYPE")
+        if business_type_val == 2000:
+            commission_ratio = "固定租金"
+        elif commission_ratio:
+            if not str(commission_ratio).endswith("%"):
+                commission_ratio = str(commission_ratio) + "%"
+
+        # 图标 URL 处理
+        ico = r.get("BUSINESSPROJECT_ICO", "") or ""
+
+        model = {
+            "COOPMERCHANTS_ID": str(r.get("COOPMERCHANTS_ID", "")) if r.get("COOPMERCHANTS_ID") is not None else None,
+            "COOPMERCHANTS_ID_Encrypted": _safe_encrypt(r.get("COOPMERCHANTS_ID")),
+            "COOPMERCHANTS_NAME": r.get("COOPMERCHANTS_NAME", ""),
+            "THREEPART_NAME": None,
+            "SERVERPART_IDS": str(r.get("SERVERPART_ID", "")) if r.get("SERVERPART_ID") is not None else "",
+            "SERVERPART_TYPE": r.get("SERVERPART_TYPE", ""),
+            "SERVERPART_NAME": r.get("SERVERPART_NAME", ""),
+            "SECTIONFLOW_NUM": _safe_int(r.get("SECTIONFLOW_NUM")),
+            "REGISTERCOMPACT_ID": str(r.get("REGISTERCOMPACT_ID", "")) if r.get("REGISTERCOMPACT_ID") is not None else "",
+            "BUSINESSPROJECT_ID": _safe_int(r.get("BUSINESSPROJECT_ID")),
+            "BUSINESSPROJECT_NAME": r.get("BUSINESSPROJECT_NAME", ""),
+            "BUSINESSPROJECT_ICO": ico,
+            "BRAND_NAME": r.get("BRAND_NAME", ""),
+            "BUSINESSTRADE_NAME": r.get("BUSINESS_TRADENAME", ""),
+            "BRAND_TYPENAME": r.get("BRAND_TYPENAME", ""),
+            "BUSINESS_TRADE": _safe_int(r.get("COMPACT_TRADE")),
+            "BUSINESS_TYPE": _safe_int(r.get("BUSINESS_TYPE")),
+            "SETTLEMENT_MODES": _safe_int(r.get("SETTLEMENT_MODES")),
+            "PROJECT_STARTDATE": project_start,
+            "PROJECT_ENDDATE": project_end,
+            "PROJECT_AMOUNT": _safe_decimal(r.get("PROJECT_AMOUNT")),
+            "COMPACT_DURATION": _safe_int(r.get("COMPACT_DURATION")),
+            "PROJECT_DAYS": _safe_int(r.get("PROJECT_DAYS")),
+            "BUSINESSDAYS": _safe_int(r.get("BUSINESSDAYS")),
+            "DAILY_AMOUNT": _safe_decimal(r.get("DAILY_AMOUNT")),
+            "SERVERPARTSHOP_ID": r.get("SERVERPARTSHOP_ID", ""),
+            "SERVERPARTSHOP_NAME": r.get("BUSINESSPROJECT_NAME", ""),  # C# 行 1215: 门店名称用项目名称
+            "BUSINESS_STATE": _safe_int(r.get("BUSINESS_STATE")),
+            "COMMISSION_RATIO": commission_ratio if commission_ratio else None,
+            "ACCOUNT_DATE": None,
+            "PAYABLE_AMOUNT": None,
+            "COMPACT_NAME": r.get("COMPACT_NAME", ""),
+            "COMMODITY_COUNT": None,
+            "REVENUE_AMOUNT": _safe_decimal(r.get("REVENUE_AMOUNT")),
+            "ROYALTY_PRICE": _safe_decimal(r.get("ROYALTY_PRICE")),
+            "SUBROYALTY_PRICE": _safe_decimal(r.get("SUBROYALTY_PRICE")),
+            "CompactWarning": False,
+            "ProjectWarning": False,
+            "ProjectAccountDetailList": None,
+        }
+
+        # === 4. 分组：历史项目 vs 活跃项目（C# 行 1252-1288） ===
+        project_end_num = r.get("PROJECT_ENDDATE") or 0
+        # 转换为可比较的 int
+        try:
+            project_end_num = int(project_end_num) if project_end_num else 0
+        except (ValueError, TypeError):
+            project_end_num = 0
+
+        brand_id = r.get("BRAND_ID")
+
+        if project_end_num > 0 and project_end_num < now_date_num:
+            # 历史项目
+            his_project_list.append(model)
+            # 如果当前项目是该门店的唯一一个，也添加到经营列表中（C# 行 1256-1260）
+            if brand_id is None or sum(1 for x in rows
+                if x.get("SERVERPART_ID") == r.get("SERVERPART_ID") and x.get("BRAND_ID") == brand_id) == 1:
+                data_list.append(model)
+        else:
+            # 活跃项目分类
+            if not serverpart_id:
+                # 没有按服务区筛选时
+                if not model["SERVERPART_TYPE"]:
+                    null_list.append(model)
+                else:
+                    data_list.append(model)
+            else:
+                # 按服务区筛选时
+                if model["BUSINESS_TYPE"] is None and model["REVENUE_AMOUNT"] is None:
+                    null_list.append(model)
+                else:
+                    data_list.append(model)
+
+    # === 5. 排序（C# 行 1291-1322） ===
+    if data_list:
+        if serverpart_id:
+            # 按服务区查询：日均营收倒序 → 经营模式正序 → 提成比例倒序
+            def _sort_key_by_sp(item):
+                # 日均营收（倒序 → 取负值）
+                bdays = item.get("BUSINESSDAYS") or 0
+                rev = item.get("REVENUE_AMOUNT") or 0
+                daily_rev = (rev / bdays) if bdays > 0 else 0
+
+                # 提成比例（倒序 → 取负值）
+                ratio_str = str(item.get("COMMISSION_RATIO") or "0").rstrip("%")
+                try:
+                    ratio = float(ratio_str)
+                except (ValueError, TypeError):
+                    ratio = 0
+
+                # 经营模式（正序）
+                btype = item.get("BUSINESS_TYPE") or 0
+
+                return (-daily_rev, btype, -ratio)
+
+            data_list.sort(key=_sort_key_by_sp)
+
+            # 追加空数据组
+            if null_list:
+                def _sort_null(item):
+                    name = item.get("SERVERPARTSHOP_NAME") or ""
+                    parts = name.split(",")
+                    first_part = parts[0] if parts else ""
+                    if "区" in first_part:
+                        after = first_part.split("区", 1)[1] if "区" in first_part else first_part
+                        return after
+                    return first_part
+                null_list.sort(key=_sort_null, reverse=True)
+                data_list.extend(null_list)
+        else:
+            # 非服务区查询：按断面流量倒序 → 服务区类型正序
+            data_list.sort(key=lambda x: (x.get("SERVERPART_TYPE") or "", -(x.get("SECTIONFLOW_NUM") or 0)))
+            if null_list:
+                null_list.sort(key=lambda x: -(x.get("SECTIONFLOW_NUM") or 0))
+                data_list.extend(null_list)
+
+    return data_list, his_project_list
+
+
+def _translate_date_number(val) -> str | None:
+    """将日期数字（如 20231025）转为显示字符串（2023/10/25），模拟 C# 的 TranslateDateTime"""
+    if val is None:
+        return None
+    s = str(int(val)) if val else ""
+    if len(s) == 8:
+        return f"{s[:4]}/{s[4:6]}/{s[6:8]}"
+    if len(s) == 14:
+        return f"{s[:4]}/{s[4:6]}/{s[6:8]} {s[8:10]}:{s[10:12]}:{s[12:14]}"
+    return None if not s else s
+
+
+def _safe_int(val):
+    """安全转 int，None 返回 None"""
+    if val is None:
+        return None
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return None
+
+
+def _safe_decimal(val):
+    """安全转 float，None 返回 None"""
+    if val is None:
+        return None
+    try:
+        return float(val)
+    except (ValueError, TypeError):
+        return None
+
+
+def _safe_encrypt(val) -> str | None:
+    """模拟 C# 加密（简化版：返回固定格式或空）"""
+    if val is None:
+        return None
+    # C# 使用 ToEncrypt() 方法加密内码，这里简化处理
+    try:
+        from utils.aes_helper import encrypt_id
+        return encrypt_id(int(val))
+    except Exception:
+        return str(val)
 
 
 # ==================== 4. GetMerchantsReceivablesReport ====================

@@ -1,0 +1,80 @@
+
+============================================================
+接口: GetPeriodMonthlyList
+============================================================
+  OLD Result_Code: 100
+  NEW Result_Code: 100
+  OLD Result_Data type: dict
+  NEW Result_Data type: dict
+  OLD keys: ['List', 'PageIndex', 'PageSize', 'TotalCount']
+  NEW keys: ['List', 'PageIndex', 'PageSize', 'TotalCount']
+  OLD List len: 1
+  NEW List len: 1
+  NestingModel 结构!
+  OLD[0].node keys: ['ACTUAL_RATIO', 'BUSINESSPROJECT_ID', 'BUSINESSPROJECT_NAME', 'BUSINESS_ENDDATE', 'BUSINESS_PERIOD', 'BUSINESS_STARTDATE', 'BUSINESS_STATE', 'BUSINESS_TRADE', 'BUSINESS_TYPE', 'Brand_ICO', 'CA_COST', 'COMMISSION_RATIO', 'COST_AMOUNT', 'COST_RATE', 'DEPRECIATION_EXPENSE', 'DEPRECIATION_YEAR', 'ENDDATE', 'GUARANTEERATIO', 'GUARANTEE_PRICE', 'LABOURS_COUNT', 'LABOURS_WAGE', 'MERCHANTS_ID', 'MERCHANTS_ID_Encrypted', 'MERCHANTS_NAME', 'MINTURNOVER', 'MONTH_COUNT', 'OTHER_EXPENSE', 'PERIOD_INDEX', 'PROFIT_AMOUNT', 'PROFIT_AVG', 'PROFIT_RATE', 'PROFIT_SD', 'PROJECT_ENDDATE', 'PROJECT_STARTDATE', 'PaymentProgress', 'ProjectProgress', 'RENTFEE', 'REVENUE_AMOUNT', 'ROYALTY_PRICE', 'ROYALTY_THEORY', 'SERVERPARTSHOP_ID', 'SERVERPARTSHOP_NAME', 'SERVERPART_ID', 'SERVERPART_NAME', 'SETTLEMENT_MODES', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME', 'STARTDATE', 'SUBROYALTY_THEORY', 'TICKET_COUNT', 'WARNING_CONTENT', 'WARNING_TYPE']
+  NEW[0].node keys: ['SERVERPART_ID']
+  OLD独有字段: {'SERVERPART_NAME', 'ProjectProgress', 'SPREGIONTYPE_ID', 'BUSINESSPROJECT_ID', 'COST_RATE', 'SUBROYALTY_THEORY', 'PROFIT_SD', 'ROYALTY_PRICE', 'SERVERPARTSHOP_ID', 'BUSINESS_STATE', 'BUSINESS_ENDDATE', 'PERIOD_INDEX', 'ENDDATE', 'PaymentProgress', 'DEPRECIATION_YEAR', 'LABOURS_WAGE', 'PROJECT_ENDDATE', 'BUSINESS_STARTDATE', 'BUSINESS_TRADE', 'DEPRECIATION_EXPENSE', 'SERVERPARTSHOP_NAME', 'PROJECT_STARTDATE', 'BUSINESS_TYPE', 'OTHER_EXPENSE', 'WARNING_CONTENT', 'GUARANTEE_PRICE', 'MERCHANTS_NAME', 'RENTFEE', 'ROYALTY_THEORY', 'TICKET_COUNT', 'PROFIT_AMOUNT', 'PROFIT_AVG', 'MONTH_COUNT', 'COMMISSION_RATIO', 'GUARANTEERATIO', 'WARNING_TYPE', 'MINTURNOVER', 'Brand_ICO', 'CA_COST', 'SPREGIONTYPE_NAME', 'BUSINESSPROJECT_NAME', 'LABOURS_COUNT', 'SETTLEMENT_MODES', 'BUSINESS_PERIOD', 'ACTUAL_RATIO', 'MERCHANTS_ID', 'PROFIT_RATE', 'REVENUE_AMOUNT', 'STARTDATE', 'MERCHANTS_ID_Encrypted', 'COST_AMOUNT'}
+  node 值差异: 1
+    node.SERVERPART_ID: OLD=None NEW=416
+  OLD[0].children len: 1
+  NEW[0].children len: 8
+  child OLD独有: {'Brand_ICO', 'SPREGIONTYPE_NAME', 'BUSINESS_STARTDATE', 'ProjectProgress', 'SPREGIONTYPE_ID', 'PROFIT_RATE', 'MERCHANTS_ID_Encrypted', 'BUSINESS_ENDDATE', 'PaymentProgress'}
+  child NEW独有: {'SHOPROYALTY_ID', 'STAFF_ID', 'STAFF_NAME', 'PERIODMONTHPROFIT_ID', 'RECORD_DATE', 'STATISTICS_MONTH'}
+  child[0] 值差异: 42
+    child.ACTUAL_RATIO: OLD=24.87 NEW=15.0
+    child.BUSINESSPROJECT_ID: OLD=None NEW=1706
+    child.BUSINESSPROJECT_NAME: OLD=None NEW='新桥服务区361服饰项目'
+    child.BUSINESS_PERIOD: OLD=None NEW=''
+    child.BUSINESS_STATE: OLD=None NEW=1000
+    child.BUSINESS_TRADE: OLD=None NEW=247
+    child.BUSINESS_TYPE: OLD=None NEW=1000
+    child.CA_COST: OLD=7.04 NEW=None
+    child.COST_AMOUNT: OLD=766723.11 NEW=30473.62
+    child.COST_RATE: OLD=None NEW=20.0
+
+============================================================
+接口: GetRevenueEstimateList
+============================================================
+  OLD Result_Code: 100
+  NEW Result_Code: 100
+  OLD Result_Data type: dict
+  NEW Result_Data type: dict
+  OLD keys: ['List', 'PageIndex', 'PageSize', 'TotalCount']
+  NEW keys: ['List', 'PageIndex', 'PageSize', 'TotalCount']
+  OLD List len: 1
+  NEW List len: 0
+
+============================================================
+接口: GetShopSABFIList
+============================================================
+  OLD Result_Code: 100
+  NEW Result_Code: 100
+  OLD Result_Data type: dict
+  NEW Result_Data type: dict
+  OLD keys: ['List', 'PageIndex', 'PageSize', 'TotalCount']
+  NEW keys: ['List', 'PageIndex', 'PageSize', 'TotalCount']
+  OLD List len: 1
+  NEW List len: 1
+  NestingModel 结构!
+  OLD[0].node keys: ['BUSINESSPROJECT_ID', 'BUSINESSPROJECT_IDS', 'BUSINESSPROJECT_NAME', 'BUSINESSTRADETYPE', 'CALCULATE_SELFSHOP', 'EVALUATE_SCORE', 'EVALUATE_TYPE', 'EVALUATE_TYPES', 'PROFITCONTRIBUTE_DESC', 'PROFITCONTRIBUTE_ID', 'PROFITCONTRIBUTE_PID', 'PROFITCONTRIBUTE_STATE', 'RECORD_DATE', 'SABFI_SCORE', 'SABFI_TYPE', 'SERVERPARTSHOP_ID', 'SERVERPARTSHOP_IDS', 'SERVERPARTSHOP_NAME', 'SERVERPART_ID', 'SERVERPART_IDS', 'SERVERPART_NAME', 'SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME', 'STAFF_ID', 'STAFF_NAME', 'STATISTICS_DATE', 'STATISTICS_DATE_End', 'STATISTICS_DATE_Start']
+  NEW[0].node keys: ['SPREGIONTYPE_ID', 'SPREGIONTYPE_NAME']
+  OLD独有字段: {'SERVERPART_NAME', 'EVALUATE_TYPES', 'SERVERPARTSHOP_IDS', 'BUSINESSPROJECT_ID', 'STAFF_ID', 'SERVERPARTSHOP_ID', 'SABFI_SCORE', 'CALCULATE_SELFSHOP', 'PROFITCONTRIBUTE_STATE', 'RECORD_DATE', 'PROFITCONTRIBUTE_DESC', 'EVALUATE_SCORE', 'STATISTICS_DATE', 'SABFI_TYPE', 'SERVERPARTSHOP_NAME', 'STATISTICS_DATE_Start', 'BUSINESSPROJECT_NAME', 'SERVERPART_IDS', 'PROFITCONTRIBUTE_PID', 'BUSINESSTRADETYPE', 'STAFF_NAME', 'BUSINESSPROJECT_IDS', 'STATISTICS_DATE_End', 'EVALUATE_TYPE', 'SERVERPART_ID', 'PROFITCONTRIBUTE_ID'}
+  node 值差异: 0
+  OLD[0].children len: 1
+  NEW[0].children len: 1
+  child OLD独有: {'EVALUATE_TYPES', 'SERVERPARTSHOP_IDS', 'BUSINESSPROJECT_ID', 'STAFF_ID', 'SERVERPARTSHOP_ID', 'SABFI_SCORE', 'CALCULATE_SELFSHOP', 'PROFITCONTRIBUTE_STATE', 'RECORD_DATE', 'PROFITCONTRIBUTE_DESC', 'EVALUATE_SCORE', 'STATISTICS_DATE', 'SABFI_TYPE', 'SERVERPARTSHOP_NAME', 'STATISTICS_DATE_Start', 'BUSINESSPROJECT_NAME', 'SERVERPART_IDS', 'PROFITCONTRIBUTE_PID', 'BUSINESSTRADETYPE', 'STAFF_NAME', 'BUSINESSPROJECT_IDS', 'STATISTICS_DATE_End', 'EVALUATE_TYPE', 'PROFITCONTRIBUTE_ID'}
+  child[0] 值差异: 0
+
+============================================================
+接口: GetInvestmentReport
+============================================================
+  OLD Result_Code: None
+  NEW Result_Code: 100
+  >>> C# 端异常，跳过数据对比
+
+============================================================
+接口: GetNestingIAReport
+============================================================
+  OLD Result_Code: None
+  NEW Result_Code: 100
+  >>> C# 端异常，跳过数据对比

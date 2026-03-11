@@ -1,6 +1,6 @@
 # 多窗口动态测试执行计划
 
-- 日期：2026-03-10
+- 日期：2026-03-11
 - 路由真源：`docs/full_audit_baseline_20260309.json`
 - 入参总配置：`scripts/manifests/endpoint_case_library.json`
 - 业务范围：以 `docs/collaboration_plan.md` 中 15 个模块为准，实际可执行数量按机器基线收口。

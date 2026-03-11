@@ -4,7 +4,7 @@
 替代原 CommonModel.cs / SearchModel<T>
 """
 from typing import Any, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 # 全局排除字段：前端分页/UI 参数，非数据库字段
 # 原 C# 使用强类型 Model 反序列化时会自动忽略这些字段
@@ -43,3 +43,31 @@ class SearchModel(BaseModel):
     SortStr: Optional[str] = None         # 排序条件
     ShowWholePower: Optional[bool] = None # 是否按省份显示
     Province_Code: Optional[str] = None   # 省份编码
+
+    @model_validator(mode='before')
+    @classmethod
+    def _case_insensitive_fields(cls, values):
+        """
+        模拟 C# Newtonsoft.Json 的大小写不敏感反序列化。
+        前端可能传 pagesize/pageindex（全小写）或其他大小写变体，
+        需要映射到正确的字段名（PageSize/PageIndex 等）。
+        """
+        if not isinstance(values, dict):
+            return values
+        # 构建已知字段名的小写→原名映射
+        field_map = {}
+        for field_name in cls.model_fields:
+            field_map[field_name.lower()] = field_name
+        # 遍历传入值，做大小写不敏感匹配
+        normalized = {}
+        for key, val in values.items():
+            key_lower = key.lower()
+            if key_lower in field_map:
+                canonical = field_map[key_lower]
+                # 优先保留精确匹配（如已有 PageSize 则不用 pagesize 覆盖）
+                if canonical not in normalized:
+                    normalized[canonical] = val
+            else:
+                # 未知字段原样保留
+                normalized[key] = val
+        return normalized

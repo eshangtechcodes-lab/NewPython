@@ -25,8 +25,8 @@ def _build_where_sql(search_param: dict, query_type: int = 0) -> str:
     排除非数据库字段：INELASTIC_DEMAND
     """
     conditions = []
-    # 排除非数据库字段
-    exclude_fields = {"INELASTIC_DEMAND"}
+    # 排除非数据库字段（INELASTIC_DEMAND 是前端计算字段，SEARCH_PARAM_SKIP_FIELDS 是前端分页/UI 参数）
+    exclude_fields = {"INELASTIC_DEMAND"} | SEARCH_PARAM_SKIP_FIELDS
 
     for key, value in search_param.items():
         if key in exclude_fields:

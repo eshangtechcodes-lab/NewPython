@@ -113,9 +113,13 @@ def upload_audit_explain(data: dict, db: DatabaseHelper = Depends(get_db)):
         return Result.success(result)
     return Result.fail(msg="上传失败")
 
-@audit_router.post("/Audit/GetCheckAccountReport")
-def get_check_account_report(search_model: dict, db: DatabaseHelper = Depends(get_db)):
-    return Result.success(audit_service.get_check_account_report(db, search_model))
+@audit_router.api_route("/Audit/GetCheckAccountReport", methods=["GET", "POST"])
+async def get_check_account_report(request: Request, db: DatabaseHelper = Depends(get_db)):
+    if request.method == "POST":
+        search_model = await request.json()
+    else:
+        search_model = dict(request.query_params)
+    return Result.success(audit_service.get_check_account_report(db, search_model), msg="查询成功")
 
 @audit_router.post("/Audit/GetYsabnormalityReport")
 def get_ysabnormality_report(search_model: dict, db: DatabaseHelper = Depends(get_db)):
@@ -125,9 +129,13 @@ def get_ysabnormality_report(search_model: dict, db: DatabaseHelper = Depends(ge
 def get_special_behavior_report(search_model: dict, db: DatabaseHelper = Depends(get_db)):
     return Result.success(audit_service.get_special_behavior_report(db, search_model))
 
-@audit_router.post("/Audit/GetAbnormalRateReport")
-def get_abnormal_rate_report(search_model: dict, db: DatabaseHelper = Depends(get_db)):
-    return Result.success(audit_service.get_abnormal_rate_report(db, search_model))
+@audit_router.api_route("/Audit/GetAbnormalRateReport", methods=["GET", "POST"])
+async def get_abnormal_rate_report(request: Request, db: DatabaseHelper = Depends(get_db)):
+    if request.method == "POST":
+        search_model = await request.json()
+    else:
+        search_model = dict(request.query_params)
+    return Result.success(audit_service.get_abnormal_rate_report(db, search_model), msg="查询成功")
 
 @audit_router.post("/Audit/GetAuditTasksReport")
 def get_audit_tasks_report(search_model: dict, db: DatabaseHelper = Depends(get_db)):

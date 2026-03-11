@@ -1,0 +1,24 @@
+
+=== GetPeriodMonthlyList ===
+  OLD: code=100, List len=1
+  NEW: code=100, desc=查询成功, List len=1
+  OLD[0].node fields: 52
+  NEW[0].node fields: 12
+  OLD[0].children: 1
+  NEW[0].children: 1
+  OLD child[0].node fields: 52
+  NEW child[0].node fields: 14
+  OLD child[0].children: 8
+  NEW child[0].children: 8
+  OLD grandchild[0].node fields: 52
+  NEW grandchild[0].node fields: 28
+
+=== GetRevenueEstimateList ===
+  OLD: code=100, List len=1
+  NEW: code=100, desc=查询成功, List len=0
+  >>> NEW 返回空列表!
+
+=== GetShopSABFIList ===
+  OLD: code=100, List len=1
+  NEW: code=999, desc=查询失败[CODE:-6128]无效的数字, List len=0
+  >>> NEW 返回空列表!
