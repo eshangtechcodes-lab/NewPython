@@ -6198,6 +6198,28 @@ async def get_month_inc_analysis(
         wt = int(warningType) if warningType else None
         now_month = __import__("datetime").datetime.now().strftime("%Y%m")
 
+        # C# 对齐第655行: GetSubType 递归展开业态子类型
+        expanded_shop_trade = shopTrade
+        if shopTrade:
+            try:
+                _bt_ids = [s.strip() for s in shopTrade.split(",") if s.strip()]
+                _expanded = set(_bt_ids)
+                _sub_rows = db.execute_query(
+                    "SELECT AUTOSTATISTICS_ID, AUTOSTATISTICS_PID FROM T_AUTOSTATISTICS WHERE AUTOSTATISTICS_TYPE = 2000"
+                ) or []
+                _changed = True
+                while _changed:
+                    _changed = False
+                    for sr in _sub_rows:
+                        sid = str(sr.get("AUTOSTATISTICS_ID") or "")
+                        pid = str(sr.get("AUTOSTATISTICS_PID") or "")
+                        if pid in _expanded and sid not in _expanded:
+                            _expanded.add(sid)
+                            _changed = True
+                expanded_shop_trade = ",".join(_expanded)
+            except Exception as ex_st:
+                logger.warning(f"GetMonthINCAnalysis GetSubType 展开失败: {ex_st}")
+
         # --- C# BusinessTradeType 映射逻辑 ---
         # BusinessTradeType=1 → 自营餐饮: BUSINESS_TYPE=4000 AND SHOPTRADE=2
         # BusinessTradeType=2 → 自营非餐饮: BUSINESS_TYPE=4000 AND SHOPTRADE<>2
@@ -6239,6 +6261,9 @@ async def get_month_inc_analysis(
                 where_parts += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
             if BusinessTradeType:
                 where_parts += f' AND A."BUSINESSTRADETYPE" IN ({BusinessTradeType})'
+            # C# 对齐第746行: 过滤展开后的经营业态
+            if expanded_shop_trade:
+                where_parts += f' AND A."BUSINESS_TRADE" IN ({expanded_shop_trade})'
 
             solid_sql = f"""SELECT
                     A."SERVERPART_ID", A."SERVERPART_NAME", A."SERVERPARTSHOP_ID",
@@ -6407,7 +6432,7 @@ async def get_month_inc_analysis(
                 from datetime import datetime as dt_internal
                 if isinstance(date_obj, dt_internal):
                     return f"{date_obj.year}/{date_obj.month}/{date_obj.day}"
-                s_date = str(date_obj).split(" ")[0].replace("-", "/")
+                s_date = str(date_obj).replace("T", " ").split(" ")[0].replace("-", "/")
                 # 去除月份和日期的前导零
                 parts = s_date.split("/")
                 if len(parts) == 3:
@@ -6635,8 +6660,28 @@ async def get_month_inc_analysis_summary(
         shop_sql = ""
         if BusinessTradeType:
             shop_sql += f' AND B."BUSINESSTRADETYPE" IN ({BusinessTradeType})'
+        # C# 对齐第3678-3683行: GetSubType 递归展开业态子类型
+        _expanded_trade = shopTrade
         if shopTrade:
-            shop_sql += f' AND B."BUSINESS_TRADE" IN ({shopTrade})'
+            try:
+                _bt_ids = [s.strip() for s in shopTrade.split(",") if s.strip()]
+                _expanded = set(_bt_ids)
+                _sub_rows = db.execute_query(
+                    "SELECT AUTOSTATISTICS_ID, AUTOSTATISTICS_PID FROM T_AUTOSTATISTICS WHERE AUTOSTATISTICS_TYPE = 2000"
+                ) or []
+                _changed = True
+                while _changed:
+                    _changed = False
+                    for sr in _sub_rows:
+                        sid = str(sr.get("AUTOSTATISTICS_ID") or "")
+                        pid = str(sr.get("AUTOSTATISTICS_PID") or "")
+                        if pid in _expanded and sid not in _expanded:
+                            _expanded.add(sid)
+                            _changed = True
+                _expanded_trade = ",".join(_expanded)
+            except Exception as ex_st:
+                logger.warning(f"GetMonthINCAnalysisSummary GetSubType 展开失败: {ex_st}")
+            shop_sql += f' AND B."BUSINESS_TRADE" IN ({_expanded_trade})'
         if shop_sql:
             shop_sql = f''' AND EXISTS (SELECT 1 FROM "T_BUSINESSWARNING" B
                 WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND B."DATATYPE" = 2
@@ -6755,7 +6800,7 @@ async def get_shop_sabfi_list(
             from datetime import datetime as dt_internal
             if isinstance(date_obj, dt_internal):
                 return f"{date_obj.year}/{date_obj.month}/{date_obj.day}"
-            s_date = str(date_obj).split(" ")[0].replace("-", "/")
+            s_date = str(date_obj).replace("T", " ").split(" ")[0].replace("-", "/")
             parts = s_date.split("/")
             if len(parts) == 3:
                 return f"{parts[0]}/{int(parts[1])}/{int(parts[2])}"
@@ -6770,6 +6815,30 @@ async def get_shop_sabfi_list(
         btt_where = ""
         if BusinessTradeType:
             btt_where = f' AND A."BUSINESSTRADETYPE" IN ({BusinessTradeType})'
+        # C# 对齐: BusinessTrade 不在 SQL 中过滤，而是在遍历门店时用 T_SERVERPARTSHOP.BUSINESS_TRADE 做内存过滤
+        # 先通过 GetSubType 递归展开业态子类型（查 T_AUTOSTATISTICS 树形结构）
+        expanded_trades = set()
+        if BusinessTrade:
+            for bt_id in str(BusinessTrade).split(","):
+                bt_id = bt_id.strip()
+                if bt_id:
+                    expanded_trades.add(bt_id)
+                    # 递归查询子类型 (AUTOSTATISTICS_TYPE=2000 为经营业态分类)
+                    queue = [bt_id]
+                    while queue:
+                        pid = queue.pop(0)
+                        try:
+                            sub_rows = db.execute_query(
+                                f'SELECT "AUTOSTATISTICS_ID" FROM "T_AUTOSTATISTICS" '
+                                f'WHERE "AUTOSTATISTICS_PID" = {pid} AND "AUTOSTATISTICS_TYPE" = 2000'
+                            ) or []
+                            for sr in sub_rows:
+                                sid = str(sr.get("AUTOSTATISTICS_ID", ""))
+                                if sid and sid not in expanded_trades:
+                                    expanded_trades.add(sid)
+                                    queue.append(sid)
+                        except Exception:
+                            pass
 
         # 从 T_BUSINESSWARNING 查固化数据（对齐 C#）
         sql = f"""SELECT
@@ -6938,14 +7007,17 @@ async def get_shop_sabfi_list(
         sabfi_projects_map = {}  # { SERVERPART_ID: [ { BusinessProjectId, SABFIList, ... } ] }
         try:
             if sp_id_list:
-                sp_in = ",".join(str(i) for i in sp_id_list)
+                # C# 对齐第3888行: CALCULATE_SELFSHOP 条件（联营=2, 非联营=1）
+                selfshop_val = 2 if BusinessTradeType == "3" else 1
                 project_sql = f"""SELECT A.SERVERPART_ID, A.BUSINESSPROJECT_ID, B.BUSINESSPROJECT_NAME,
-                                         A.EVALUATE_TYPE, A.EVALUATE_SCORE, A.PROFITCONTRIBUTE_ID, A.PROFITCONTRIBUTE_PID
+                                         A.EVALUATE_TYPE, A.EVALUATE_SCORE, A.PROFITCONTRIBUTE_ID, A.PROFITCONTRIBUTE_PID,
+                                         A.SERVERPARTSHOP_NAME
                                   FROM T_PROFITCONTRIBUTE A
-                                  JOIN T_BUSINESSPROJECT B ON A.BUSINESSPROJECT_ID = B.BUSINESSPROJECT_ID
+                                  LEFT JOIN T_BUSINESSPROJECT B ON A.BUSINESSPROJECT_ID = B.BUSINESSPROJECT_ID
                                   WHERE A.STATISTICS_DATE = {stat_month}
                                     AND A.PROFITCONTRIBUTE_STATE = 1
                                     AND A.SERVERPART_ID IN ({sp_in})
+                                    AND A.CALCULATE_SELFSHOP = {selfshop_val}
                                   ORDER BY A.SERVERPART_ID, A.BUSINESSPROJECT_ID, A.EVALUATE_TYPE"""
                 project_rows = db.execute_query(project_sql) or []
 
@@ -6953,23 +7025,32 @@ async def get_shop_sabfi_list(
                 for pr in project_rows:
                     sid = pr["SERVERPART_ID"]
                     pid = pr["BUSINESSPROJECT_ID"]
-                    key = (sid, pid)
+                    shop_name = pr.get("SERVERPARTSHOP_NAME", "")
+                    # C# 对齐: 用 (SERVERPART_ID, BUSINESSPROJECT_ID 或 SERVERPARTSHOP_NAME) 分组
+                    key = (sid, pid) if pid is not None else (sid, f"_name_{shop_name}")
                     if key not in temp_sp_projects:
                         temp_sp_projects[key] = {
                             "BusinessProjectId": pid,
-                            "BusinessProjectName": pr["BUSINESSPROJECT_NAME"],
+                            "BusinessProjectName": pr.get("BUSINESSPROJECT_NAME") or shop_name,
                             "SABFI_Score": 0.0,
                             "SABFIList": [{"name": str(et), "value": "", "key": "", "data": ""} for et in range(1, 8)],
-                            "StatisticsMonth": f"{stat_month[:4]}/{stat_month[4:]}"
+                            "StatisticsMonth": f"{stat_month[:4]}/{stat_month[4:]}",
+                            "Overall_Score": 0.0,
                         }
 
                     et = int(pr["EVALUATE_TYPE"])
                     score = pr["EVALUATE_SCORE"]
                     if et == 0:
                         temp_sp_projects[key]["SABFI_Score"] = safe_dec(score)
+                        temp_sp_projects[key]["Overall_Score"] = safe_dec(score)
                     elif 1 <= et <= 7:
                         idx = et - 1
-                        temp_sp_projects[key]["SABFIList"][idx]["value"] = str(score or "")
+                        # C# 对齐: TryParseToDecimal().ToString()，整数显示无小数位，None 显示为空
+                        _score_str = ""
+                        if score is not None:
+                            _sv = float(score)
+                            _score_str = str(int(_sv)) if _sv == int(_sv) else str(_sv)
+                        temp_sp_projects[key]["SABFIList"][idx]["value"] = _score_str
                         temp_sp_projects[key]["SABFIList"][idx]["key"] = str(pr["PROFITCONTRIBUTE_ID"] or "")
                         temp_sp_projects[key]["SABFIList"][idx]["data"] = str(pr["PROFITCONTRIBUTE_PID"] or "")
 
@@ -7199,6 +7280,15 @@ async def get_shop_sabfi_list(
 
                 shop_children = []
                 for r in sp_data["shops"]:
+                    # C# 对齐: BusinessTrade 内存过滤 (BindSABFISPINCAnalysis 第4247行)
+                    # 用 T_SERVERPARTSHOP.BUSINESS_TRADE 字段判断是否匹配
+                    if expanded_trades:
+                        ssid_str = str(r.get("SERVERPARTSHOP_ID") or "")
+                        si_bt = shop_agg_map.get(ssid_str) or {}
+                        shop_bt_val = str(si_bt.get("BUSINESS_TRADE") or "")
+                        shop_bt_ids = {b.strip() for b in shop_bt_val.split(",") if b.strip()}
+                        if not shop_bt_ids.intersection(expanded_trades):
+                            continue
                     rev = safe_dec(r.get("REVENUE_AMOUNT"))
                     sp_rev += rev
                     sp_rev_yoy += safe_dec(r.get("REVENUE_AMOUNT_YOY"))
@@ -7224,20 +7314,8 @@ async def get_shop_sabfi_list(
                 reg_ticket += sp_ticket; reg_ticket_yoy += sp_ticket_yoy; reg_ticket_qoq += sp_ticket_qoq
                 reg_flow += sp_flow; reg_flow_yoy += sp_flow_yoy; reg_flow_qoq += sp_flow_qoq
 
-                # Profit 数据 — C# 行4355: 无 Profit 数据时自营门店 Profit=Revenue
-                pr = profit_map.get(sp_id, {})
-                if pr.get("PROFIT_AMOUNT") is not None:
-                    sp_profit = safe_dec(pr.get("PROFIT_AMOUNT"))
-                    sp_cost = safe_dec(pr.get("COST_AMOUNT"))
-                else:
-                    # C# fallback: BusinessTradeType < 3 的门店 Profit=Revenue
-                    sp_profit = 0.0
-                    for r in sp_data["shops"]:
-                        btt = safe_dec(r.get("BUSINESS_TYPE", 0))
-                        if btt < 3:
-                            sp_profit += safe_dec(r.get("REVENUE_AMOUNT"))
-                    sp_cost = 0.0
-                sp_ca_cost = round(sp_cost / sp_ticket, 2) if sp_ticket and sp_ticket != 0 and sp_cost is not None else 0.0
+                # C# 对齐第4437行: 利润/成本从已过滤的 ShopSABFIList 求和，移到 node_shop_list 构建后计算
+                # (保留位置但不计算，实际计算在 node_shop_list 构建后)
 
                 # AvgTicket 中间值对齐 C# Round
                 avg_cur = round(sp_rev / sp_ticket, 2) if sp_ticket and sp_ticket != 0 else (0 if sp_ticket == 0 else None)
@@ -7253,6 +7331,15 @@ async def get_shop_sabfi_list(
                 # 对齐旧接口排序：按 BUSINESSWARNING_ID
                 _sorted_shops = sorted(sp_data["shops"], key=lambda x: int(x.get("BUSINESSWARNING_ID") or 0))
                 for row in _sorted_shops:
+                    # C# 对齐: ShopSABFIList 中也要过滤 BusinessTrade (与服务区汇总一致)
+                    if expanded_trades:
+                        _ss_filter = str(row.get("SERVERPARTSHOP_ID", ""))
+                        _si_filter = shop_agg_map.get(_ss_filter) or {}
+                        _bt_filter_val = str(_si_filter.get("BUSINESS_TRADE") or "")
+                        _bt_filter_ids = {b.strip() for b in _bt_filter_val.split(",") if b.strip()}
+                        if not _bt_filter_ids.intersection(expanded_trades):
+                            continue
+
                     # 合并 SSID 信息
                     _ss_id_str = str(row.get("SERVERPARTSHOP_ID", ""))
                     _si = shop_agg_map.get(_ss_id_str) or {}
@@ -7271,6 +7358,25 @@ async def get_shop_sabfi_list(
                     _shop_profit = safe_dec(r_rev) if _btt_val is not None and int(safe_dec(_btt_val)) < 3 else None
                     _shop_cost = 0.0 if _btt_val is not None and int(safe_dec(_btt_val)) < 3 else None
 
+                    # C# 对齐: SABFIList 从 T_PROFITCONTRIBUTE 按 BUSINESSPROJECT_ID 查各 EVALUATE_TYPE 的评分
+                    _bp_id = row.get("BUSINESSPROJECT_ID")
+                    _shop_sabfi_list = [{"name": str(et), "value": "", "data": "", "key": ""} for et in range(1, 8)]
+                    _shop_sabfi_score = 0.0
+                    if _bp_id is not None:
+                        for p_data in sabfi_projects_map.get(sp_id, []):
+                            if p_data.get("BusinessProjectId") == _bp_id:
+                                _shop_sabfi_list = p_data.get("SABFIList", _shop_sabfi_list)
+                                _shop_sabfi_score = safe_dec(p_data.get("SABFI_Score", 0))
+                                break
+                    elif row.get("SHOPSHORTNAME"):
+                        # C# fallback: 没有 BUSINESSPROJECT_ID 时用 SERVERPARTSHOP_NAME 匹配
+                        _shop_name_match = row.get("SHOPSHORTNAME")
+                        for p_data in sabfi_projects_map.get(sp_id, []):
+                            if p_data.get("BusinessProjectName") == _shop_name_match:
+                                _shop_sabfi_list = p_data.get("SABFIList", _shop_sabfi_list)
+                                _shop_sabfi_score = safe_dec(p_data.get("SABFI_Score", 0))
+                                break
+
                     shop_node = {
                         "ServerpartId": sp_id, "ServerpartName": sp_data["name"],
                         "ServerpartShopId": _ss_id_str, "ServerpartShopName": row.get("SHOPSHORTNAME"),
@@ -7278,7 +7384,7 @@ async def get_shop_sabfi_list(
                         "AccountINC": make_inc(row.get("ROYALTY_THEORY"), None, qoq=row.get("ROYALTY_THEORY_QOQ"), inc_qoq=round(safe_dec(row.get("ROYALTY_THEORY")) - safe_dec(row.get("ROYALTY_THEORY_QOQ")), 2) if row.get("ROYALTY_THEORY_QOQ") is not None else None, rate_qoq=round((safe_dec(row.get("ROYALTY_THEORY")) - safe_dec(row.get("ROYALTY_THEORY_QOQ"))) / safe_dec(row.get("ROYALTY_THEORY_QOQ")) * 100, 2) if safe_dec(row.get("ROYALTY_THEORY_QOQ")) and safe_dec(row.get("ROYALTY_THEORY_QOQ")) != 0 else None),
                         "TicketINC": make_inc(r_tic, None, qoq=r_tic_qoq, inc_qoq=round(safe_dec(r_tic) - safe_dec(r_tic_qoq), 2) if r_tic_qoq is not None else None, rate_qoq=round((safe_dec(r_tic) - safe_dec(r_tic_qoq)) / safe_dec(r_tic_qoq) * 100, 2) if safe_dec(r_tic_qoq) and safe_dec(r_tic_qoq) != 0 else None),
                         "AvgTicketINC": make_inc(ac, None, qoq=aq, inc_qoq=round(ac - aq, 2) if ac is not None and aq is not None else None, rate_qoq=round((ac - aq) / aq * 100, 2) if ac is not None and aq is not None and aq != 0 else None),
-                        "SABFI_Score": 0.0, "SABFIList": [{"name": str(et), "value": "", "data": "", "key": ""} for et in range(1, 8)],
+                        "SABFI_Score": _shop_sabfi_score, "SABFIList": _shop_sabfi_list,
                         "Brand_Id": int(_si.get("BRAND_ID")) if _si.get("BRAND_ID") is not None else None,
                         "Brand_Name": _si.get("BRAND_NAME2") or _si.get("BRAND_NAME") or row.get("SHOPSHORTNAME"),
                         "BrandType_Name": None,
@@ -7313,6 +7419,11 @@ async def get_shop_sabfi_list(
                 # 获取 SABFI 评分项目列表（用于 SABFI_Score 汇总）
                 sp_sabfi_projects = sabfi_projects_map.get(sp_id, [])
                 sp_overall_score = round(sum(p["Overall_Score"] for p in sp_sabfi_projects if p.get("Overall_Score")) / len(sp_sabfi_projects), 2) if sp_sabfi_projects else 0.0
+
+                # C# 对齐第4437行: 服务区利润/成本从 node_shop_list 求和
+                sp_profit = sum(safe_dec(s.get("Profit_Amount")) for s in node_shop_list)
+                sp_cost = sum(safe_dec(s.get("Cost_Amount")) for s in node_shop_list)
+                sp_ca_cost = round(sp_cost / sp_ticket, 2) if sp_ticket and sp_ticket > 0 and sp_cost else 0.0
 
                 sp_node = {
                     "SABFI_Score": sp_overall_score, "ShopSABFIList": node_shop_list,
@@ -7379,13 +7490,13 @@ async def get_shop_sabfi_list(
             "TicketINC": make_inc(total_ticket, None, None, None,
                 total_ticket_qoq, total_ticket - total_ticket_qoq if total_ticket_qoq else None,
                 round((total_ticket - total_ticket_qoq) / total_ticket_qoq * 100, 2) if total_ticket_qoq else None),
-            "AvgTicketINC": (lambda ac=round(total_rev/total_ticket,2) if total_ticket else 0, aq=round(total_rev_qoq/total_ticket_qoq,2) if total_ticket_qoq else 0:
+            "AvgTicketINC": (lambda ac=round(total_rev/total_ticket,2) if total_ticket else None, aq=round(total_rev_qoq/total_ticket_qoq,2) if total_ticket_qoq else None:
                 make_inc(ac, None, None, None, aq,
-                    round(ac - aq, 2) if total_ticket and total_ticket_qoq else None,
-                    round((ac - aq) / aq * 100, 2) if total_ticket and total_ticket_qoq and aq else None))(),
+                    round(ac - aq, 2) if ac is not None and aq is not None else None,
+                    round((ac - aq) / aq * 100, 2) if ac is not None and aq is not None and aq else None))(),
             "ShopINCList": None,
-            "Profit_Amount": round(total_profit, 2), "Cost_Amount": round(total_cost, 2),
-            "Ca_Cost": round(total_cost / total_ticket, 2) if total_ticket and total_cost else 0.0,
+            "Profit_Amount": round(total_profit, 2) if region_children else None, "Cost_Amount": round(total_cost, 2) if region_children else None,
+            "Ca_Cost": round(total_cost / total_ticket, 2) if total_ticket and total_cost else (None if not region_children else 0.0),
             "RankDiff": None,
         }
         result_list = [{"node": root_node, "children": region_children}]
