@@ -17,7 +17,7 @@ class QueryParamCleanupMiddleware(BaseHTTPMiddleware):
     # Some migrated routers use different casing for the same logical parameter.
     # Add aliases instead of rewriting to a single target name.
     PARAM_ALIAS_MAP = {
-        "serverpartid": ["ServerpartId", "serverpartId", "serverPartId"],
+        "serverpartid": ["ServerpartId", "serverpartId", "serverPartId", "ServerpartID"],
         "provincecode": ["ProvinceCode", "provinceCode"],
         "pageindex": ["PageIndex", "pageIndex"],
         "pagesize": ["PageSize", "pageSize"],
