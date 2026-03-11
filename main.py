@@ -52,7 +52,43 @@ app.add_exception_handler(Exception, global_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)
 
+# 查询参数清洗中间件（兼容 C# ASP.NET 的空字符串参数行为）
+from middleware.query_cleanup import QueryParamCleanupMiddleware
+app.add_middleware(QueryParamCleanupMiddleware)
+
 # === 注册路由 ===
+
+# CommercialApi 路由（前缀 /CommercialApi 与原 C# API 路径一致）
+from routers.commercial_api.base_info_router import router as commercial_baseinfo_router
+app.include_router(commercial_baseinfo_router, prefix="/CommercialApi", tags=["CommercialApi - 基础信息"])
+
+from routers.commercial_api.contract_router import router as commercial_contract_router
+app.include_router(commercial_contract_router, prefix="/CommercialApi", tags=["CommercialApi - 经营合同分析"])
+
+from routers.commercial_api.analysis_router import router as commercial_analysis_router
+app.include_router(commercial_analysis_router, prefix="/CommercialApi", tags=["CommercialApi - 分析说明"])
+
+from routers.commercial_api.bigdata_router import router as commercial_bigdata_router
+app.include_router(commercial_bigdata_router, prefix="/CommercialApi", tags=["CommercialApi - 大数据分析"])
+
+from routers.commercial_api.customer_router import router as commercial_customer_router
+app.include_router(commercial_customer_router, prefix="/CommercialApi", tags=["CommercialApi - 客群分析"])
+
+from routers.commercial_api.revenue_router import router as commercial_revenue_router
+app.include_router(commercial_revenue_router, prefix="/CommercialApi", tags=["CommercialApi - 营收管理"])
+
+from routers.commercial_api.abnormal_audit_router import router as commercial_abnormal_router
+app.include_router(commercial_abnormal_router, prefix="/CommercialApi", tags=["CommercialApi - 异常稽查"])
+
+from routers.commercial_api.budget_router import router as commercial_budget_router
+app.include_router(commercial_budget_router, prefix="/CommercialApi", tags=["CommercialApi - 财务预算"])
+
+from routers.commercial_api.examine_router import router as commercial_examine_router
+app.include_router(commercial_examine_router, prefix="/CommercialApi", tags=["CommercialApi - 考核管理"])
+
+from routers.commercial_api.business_process_router import router as commercial_bp_router
+app.include_router(commercial_bp_router, prefix="/CommercialApi", tags=["CommercialApi - 业务审批"])
+
 # EShangApiMain - BaseInfo 路由（前缀 /EShangApiMain 与原 C# API 路径一致）
 from routers.eshang_api_main.base_info.ownerunit_router import router as ownerunit_router
 app.include_router(ownerunit_router, prefix="/EShangApiMain", tags=["业主单位管理 (OWNERUNIT)"])
