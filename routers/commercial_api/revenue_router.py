@@ -1932,12 +1932,23 @@ async def get_transaction_time_analysis(
         stat_date = dt.strptime(Statistics_Date, "%Y-%m-%d") if "-" in Statistics_Date else dt.strptime(Statistics_Date, "%Y%m%d")
         month_str = stat_date.strftime("%Y%m")
 
+        # C#对齐: TransactionHelper 第372-383行过滤逻辑
         where_sql = ""
         _sp_ids = parse_multi_ids(Serverpart_ID)
         if _sp_ids:
             where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
         elif SPRegionType_ID:
             where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
+        else:
+            # C#对齐: else 分支 → 按省份过滤（FieldEnum 转换）
+            if Province_Code:
+                pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                    WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID"
+                    AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
+                pc_rows = db.execute_query(pc_sql, {"pc": Province_Code})
+                if pc_rows:
+                    province_id = pc_rows[0]["FIELDENUM_ID"]
+                    where_sql += f' AND B."PROVINCE_CODE" = {province_id}'
 
         # 按小时查时段交易
         sql = f"""SELECT A."STATISTICS_HOUR",
@@ -2900,12 +2911,13 @@ async def get_salable_commodity(
 @router.get("/Revenue/GetSPRevenueRank")
 async def get_sp_revenue_rank(
     pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
-    Statistics_StartDate: Optional[str] = Query(None, description="统计开始日期"),
-    Statistics_Date: Optional[str] = Query(None, description="统计结束日期"),
-    Revenue_Include: int = Query(1, description="是否纳入营收"),
+    Statistics_Date: Optional[str] = Query(None, description="统计日期"),
+    Serverpart_ID: Optional[int] = Query(None, description="服务区内码"),
+    SPRegionType_ID: Optional[int] = Query(None, description="区域内码"),
+    Revenue_Include: Optional[int] = Query(None, description="是否纳入营收(0否1是)"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取近日服务区营收排行 (SQL平移完成)"""
+    """获取近日服务区营收排行（C#对齐：RevenuePushHelper.GetSPRevenueRank → GetRevenuePushList）"""
     try:
         from datetime import datetime as dt
 
@@ -2913,63 +2925,128 @@ async def get_sp_revenue_rank(
             json_list = JsonListData.create(data_list=[], total=0)
             return Result.success(data=json_list.model_dump(), msg="查询成功")
 
-        start_str = dt.strptime(Statistics_StartDate, "%Y-%m-%d").strftime("%Y%m%d") if Statistics_StartDate and "-" in Statistics_StartDate else (Statistics_StartDate or "")
-        end_str = dt.strptime(Statistics_Date, "%Y-%m-%d").strftime("%Y%m%d") if "-" in Statistics_Date else Statistics_Date
-
         def safe_dec(v):
             try: return float(v) if v is not None else 0.0
             except: return 0.0
+        def safe_int(v):
+            try: return int(v) if v is not None else 0
+            except: return 0
 
-        date_where = ""
-        if start_str:
-            date_where += f' AND A."STATISTICS_DATE" >= {start_str}'
+        # === C#对齐: GetRevenuePushList 中的 WhereSQL 构建 ===
+        where_sql = ""
+
+        # 1. 服务区/区域/省份 过滤（C# 第44-87行 if/elif/elif 分支）
+        if Serverpart_ID is not None:
+            where_sql += f' AND B."SERVERPART_ID" = {Serverpart_ID}'
+        elif SPRegionType_ID is not None:
+            # C#: 通过 SERVERPART_ID 反查 SPREGIONTYPE_ID
+            sp_res = db.execute_query(
+                'SELECT "SPREGIONTYPE_ID" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = :sid',
+                {"sid": SPRegionType_ID})
+            if sp_res:
+                where_sql += f' AND B."SPREGIONTYPE_ID" = {sp_res[0]["SPREGIONTYPE_ID"]}'
+            else:
+                where_sql = " AND 1 = 2"
+        elif pushProvinceCode:
+            # C#: DictionaryHelper.GetFieldEnum("DIVISION_CODE", pushProvinceCode)
+            pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID"
+                AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
+            pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
+            if pc_rows:
+                province_id = pc_rows[0]["FIELDENUM_ID"]
+                where_sql += f' AND B."PROVINCE_CODE" = {province_id}'
+            else:
+                json_list = JsonListData.create(data_list=[], total=0)
+                return Result.success(data=json_list.model_dump(), msg="查询成功")
         else:
-            # 旧API行为：无开始日期时默认只查当天
-            date_where += f' AND A."STATISTICS_DATE" >= {end_str}'
-        date_where += f' AND A."STATISTICS_DATE" <= {end_str}'
+            json_list = JsonListData.create(data_list=[], total=0)
+            return Result.success(data=json_list.model_dump(), msg="查询成功")
 
-        sql = f"""SELECT A."SERVERPART_ID", B."SERVERPART_NAME", B."SPREGIONTYPE_NAME",
+        # 2. 日期（C# Controller 传 Statistics_Date, Statistics_Date → StartDate == EndDate → 走"时间段"分支）
+        # C#: 因为 Start==End，实际走的是 if (Statistics_StartDate != Statistics_EndDate) 分支的 else
+        # 但注意: C# Controller 第1882行传了 Statistics_Date, Statistics_Date 两次
+        # 即 Start==End, 走第199行 else 分支("当日"逻辑，涉及扫码门店等复杂逻辑)
+        # 简化处理: 用 T_REVENUEDAILY 的日期范围查询（Start==End时只查当天）
+        stat_date_str = Statistics_Date
+        if "-" in Statistics_Date:
+            stat_date_str = dt.strptime(Statistics_Date, "%Y-%m-%d").strftime("%Y%m%d")
+        elif "/" in Statistics_Date:
+            stat_date_str = dt.strptime(Statistics_Date, "%Y/%m/%d").strftime("%Y%m%d")
+        where_sql += f' AND A."STATISTICS_DATE" >= {stat_date_str} AND A."STATISTICS_DATE" <= {stat_date_str}'
+
+        # 3. Revenue_Include 过滤（C# 第238-241行：REVENUE_INCLUDE = 1 的门店）
+        exists_where = ""
+        if Revenue_Include == 1:
+            exists_where = ' AND C."REVENUE_INCLUDE" = 1'
+
+        # 4. 构建主查询 SQL（C# 第114-131行 时间段分支的SQL）
+        # C#: 按 SERVERPART_ID + SHOPTRADE 分组，查 T_REVENUEDAILY
+        # 然后 GetSPRevenueRank 再按 SERVERPART_ID GroupBy Sum
+        # 这里合并为一步：直接按 SERVERPART_ID 分组
+        sql = f"""SELECT
+                A."SERVERPART_ID", B."SERVERPART_NAME", B."SPREGIONTYPE_NAME",
                 SUM(A."REVENUE_AMOUNT") AS "CASHPAY",
                 SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
                 SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
                 SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
                 SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
                 SUM(NVL(A."DIFFERENT_AMOUNT_LESS_A",0) + NVL(A."DIFFERENT_AMOUNT_LESS_B",0)) AS "DIFFERENT_PRICE_LESS",
-                SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE",
-                SUM(A."REVENUE_AMOUNT_YOY") AS "REVENUE_AMOUNT_YOY"
-            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-                AND A."REVENUEDAILY_STATE" = 1 AND B."STATISTIC_TYPE" = 1000
-                AND A."BUSINESS_TYPE" = 1000
-                {date_where}
+                SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE"
+            FROM
+                "T_REVENUEDAILY" A,
+                "T_SERVERPART" B
+            WHERE
+                A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
+                AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
+                AND B."SERVERPART_CODE" NOT IN ('AH0000','AH9999','test001')
+                {where_sql}"""
+
+        # 添加 Revenue_Include EXISTS 子查询（C# 第238-241行）
+        if Revenue_Include == 1:
+            sql += f"""
+                AND EXISTS (SELECT 1 FROM "T_SERVERPARTSHOP" C
+                    WHERE A."SHOPTRADE" = C."SHOPTRADE" AND B."SERVERPART_ID" = C."SERVERPART_ID"
+                    AND C."ISVALID" = 1{exists_where})"""
+
+        sql += """
             GROUP BY A."SERVERPART_ID", B."SERVERPART_NAME", B."SPREGIONTYPE_NAME"
             ORDER BY SUM(A."REVENUE_AMOUNT") DESC"""
+
         rows = db.execute_query(sql) or []
 
+        # 5. 构建结果列表
         result_list = []
         for r in rows:
             result_list.append({
                 "Serverpart_ID": r.get("SERVERPART_ID"),
                 "Serverpart_Name": r.get("SERVERPART_NAME", ""),
                 "SPRegionType_Name": r.get("SPREGIONTYPE_NAME", ""),
-                "TicketCount": safe_dec(r.get("TICKETCOUNT")),
+                "TicketCount": safe_int(r.get("TICKETCOUNT")),
                 "TotalCount": round(safe_dec(r.get("TOTALCOUNT")), 2),
                 "TotalOffAmount": round(safe_dec(r.get("TOTALOFFAMOUNT")), 2),
                 "MobilePayment": round(safe_dec(r.get("MOBILEPAYMENT")), 2),
                 "CashPay": round(safe_dec(r.get("CASHPAY")), 2),
                 "Different_Price_Less": round(safe_dec(r.get("DIFFERENT_PRICE_LESS")), 2),
                 "Different_Price_More": round(safe_dec(r.get("DIFFERENT_PRICE_MORE")), 2),
-                "RevenueYOY": round(safe_dec(r.get("REVENUE_AMOUNT_YOY")), 2),
+                "RevenueYOY": None,
+                "YearAccountRoyalty": 0.0,
+                "YearAccountRoyaltyYOY": 0.0,
             })
 
-        # C#对齐: sumCashpay = REVENUEPUSHList.Sum(o => o.CashPay)
+        # 6. C#对齐: sumCashpay = REVENUEPUSHList.Sum(o => o.CashPay)
         sum_cashpay = float(round(sum(item.get("CashPay", 0.0) for item in result_list), 2))
-        # C#对齐: REVENUEPUSHList.FindAll(o => o.SPRegionType_Name != "万佳商贸")
+
+        # 7. C#对齐: 默认不显示万佳商贸
         result_list = [item for item in result_list if item.get("SPRegionType_Name") != "万佳商贸"]
 
-        # C#对齐: JsonList<T1,T2>.Success(list, sumCashpay) PageSize默认=10
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list),
-                                        page_size=10, other_data=sum_cashpay)
+        # 8. C#对齐: OrderByDescending(CashPay) — SQL 已按 CashPay DESC 排序
+
+        # 9. C#对齐: JsonList<T1,T2>.Success(list, sumCashpay)
+        json_list = JsonListData(
+            List=result_list, TotalCount=len(result_list),
+            PageIndex=1, PageSize=10, OtherData=sum_cashpay
+        )
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSPRevenueRank 查询失败: {ex}")
@@ -6243,6 +6320,79 @@ async def get_month_inc_analysis(
                 return f' AND (({prefix}."BUSINESS_TYPE" = 4000 AND {prefix}."SHOPTRADE" <> 2) OR {prefix}."BUSINESS_TYPE" <> 4000)'
             return ""
 
+        # 构建树形节点辅助函数（固化和非固化路径共用）
+        def _make_inc(cur, yoy, qoq=None):
+            """构建同比/环比增长结构，对齐旧接口 HolidayINCDetailModel"""
+            cur_v = round(float(cur), 2) if cur is not None else None
+            yoy_v = round(float(yoy), 2) if yoy is not None else None
+            qoq_v = round(float(qoq), 2) if qoq is not None else None
+            # C# 在 curYearData.TryParseToDecimal() != 0 时才算增长
+            inc = None; rate = None; inc_qoq = None; rate_qoq = None
+            if cur_v is not None and cur_v != 0:
+                if yoy_v is not None and yoy_v != 0:
+                    inc = round(cur_v - yoy_v, 2)
+                    rate = round(inc / yoy_v * 100, 2)
+                if qoq_v is not None and qoq_v != 0:
+                    inc_qoq = round(cur_v - qoq_v, 2)
+                    rate_qoq = round(inc_qoq / qoq_v * 100, 2)
+            return {"curYearData": cur_v, "lYearData": yoy_v,
+                    "increaseData": inc, "increaseRate": rate,
+                    "QOQData": qoq_v, "increaseDataQOQ": inc_qoq, "increaseRateQOQ": rate_qoq, "rankNum": None}
+
+        def _make_bayonet_region(cur, yoy, qoq=None, calc_yoy_flag=True, calc_qoq_flag=False):
+            """BayonetINC: 对齐 C# BindMonthlySPINCAnalysis L2174-2246"""
+            cur_v = round(float(cur), 2) if cur and float(cur) != 0 else (0.0 if cur is not None else None)
+            yoy_v = round(float(yoy), 2) if yoy and float(yoy) != 0 else (0.0 if yoy is not None else None)
+            qoq_v = round(float(qoq), 2) if qoq and float(qoq) != 0 else (0.0 if qoq is not None else None)
+            can_calc = cur_v is not None and cur_v != 0
+            inc = None; rate = None
+            if can_calc and calc_yoy_flag and yoy_v is not None and yoy_v != 0:
+                inc = round(cur_v - yoy_v, 2)
+                rate = round(inc / yoy_v * 100, 2)
+            inc_qoq = None; rate_qoq = None
+            if can_calc and calc_qoq_flag and qoq_v is not None and qoq_v != 0:
+                inc_qoq = round(cur_v - qoq_v, 2)
+                rate_qoq = round(inc_qoq / qoq_v * 100, 2)
+            return {"curYearData": cur_v if cur_v is not None else None,
+                    "lYearData": yoy_v if calc_yoy_flag and yoy_v is not None else None,
+                    "increaseData": inc, "increaseRate": rate,
+                    "QOQData": qoq_v if calc_qoq_flag else None,
+                    "increaseDataQOQ": inc_qoq, "increaseRateQOQ": rate_qoq, "rankNum": None}
+
+        def _format_ico(ico_raw):
+            if not ico_raw: return ""
+            if ico_raw.startswith("http"): return ico_raw
+            if "PictureManage" in ico_raw: return "https://user.eshangtech.com" + ("/" if not ico_raw.startswith("/") else "") + ico_raw
+            return "https://api.eshangtech.com/EShangApiMain/" + ico_raw.lstrip("/")
+
+        def _format_bp_date(date_obj):
+            if not date_obj: return ""
+            from datetime import datetime as dt_internal
+            if isinstance(date_obj, dt_internal):
+                return f"{date_obj.year}/{date_obj.month}/{date_obj.day}"
+            s_date = str(date_obj).replace("T", " ").split(" ")[0].replace("-", "/")
+            parts = s_date.split("/")
+            if len(parts) == 3:
+                return f"{parts[0]}/{int(parts[1])}/{int(parts[2])}"
+            return s_date
+
+        _BAYONET_NULL = _make_inc(None, None)  # C# new HolidayINCDetailModel() 默认全 null
+
+        def _make_node(sp_region_id=None, sp_region_name=None, sp_id=None, sp_name=None,
+                       rev_inc=None, acc_inc=None, bayonet=_BAYONET_NULL, bayonet_ori=None,
+                       ticket=None, avg_ticket=None, shop_list=None):
+            """构造与旧接口一致的 node 结构"""
+            return {
+                "SPRegionTypeId": sp_region_id, "SPRegionTypeName": sp_region_name,
+                "ServerpartId": sp_id, "ServerpartName": sp_name,
+                "RevenueINC": rev_inc or _make_inc(0, 0),
+                "AccountINC": acc_inc or _make_inc(0, 0),
+                "BayonetINC": bayonet, "TicketINC": ticket, "AvgTicketINC": avg_ticket,
+                "BayonetINC_ORI": bayonet_ori, "SectionFlowINC": None,
+                "ShopINCList": shop_list, "RankDiff": None,
+                "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
+            }
+
         # --- 固化数据路径 ---
         if is_solid and StatisticsStartMonth == StatisticsEndMonth and StatisticsEndMonth != now_month:
             # C#: 查 T_BUSINESSWARNING 表
@@ -6299,7 +6449,7 @@ async def get_month_inc_analysis(
                         "REVENUE": 0.0, "REVENUE_YOY": 0.0, "REVENUE_QOQ": 0.0,
                         "TICKET": 0.0, "TICKET_YOY": 0.0, "TICKET_QOQ": 0.0,
                         "ROYALTY": 0.0, "ROYALTY_YOY": 0.0, "ROYALTY_QOQ": 0.0,
-                        "VEHICLE": 0.0, "VEHICLE_YOY": 0.0,
+                        "VEHICLE": 0.0, "VEHICLE_YOY": 0.0, "VEHICLE_QOQ": 0.0,
                         "VEHICLE_ORI": 0.0, "VEHICLE_ORI_YOY": 0.0,
                         "shops": []
                     }
@@ -6336,23 +6486,37 @@ async def get_month_inc_analysis(
             else:
                 sp_region = {}
 
-            # 查服务区级车流数据（DATATYPE=1）— 旧 C# 的 BayonetINC 来自服务区级，不是门店级累加
+            # 查服务区级车流数据（DATATYPE=ServerpartDataType）
+            # C# 固化路径: dtCurBayonet 总是加载, dtQOQBayonet 由 calcQOQ 控制, dtYOYBayonet 由 calcYOY 控制
+            has_analog = str(hasAnalog).lower() != "false"
+            _sp_data_type = 1 if has_analog else 3  # C# L738
             if sp_map:
                 _sp_in_flow = ",".join(str(k) for k in sp_map.keys())
                 _flow_sql = f"""SELECT "SERVERPART_ID",
                         "VEHICLE_COUNT", "VEHICLE_COUNT_YOY", "VEHICLE_COUNT_QOQ",
                         "VEHICLE_COUNT_ORI", "VEHICLE_COUNT_ORI_YOY"
                     FROM "T_BUSINESSWARNING"
-                    WHERE "DATATYPE" = 1 AND "STATISTICS_MONTH" = {StatisticsEndMonth}
+                    WHERE "DATATYPE" = {_sp_data_type} AND "STATISTICS_MONTH" = {StatisticsEndMonth}
                         AND "SERVERPART_ID" IN ({_sp_in_flow})"""
                 _flow_rows = db.execute_query(_flow_sql) or []
                 for fr in _flow_rows:
                     _sid = fr.get("SERVERPART_ID")
                     if _sid in sp_map:
+                        # 当前车流（总是加载）
                         sp_map[_sid]["VEHICLE"] = safe_dec(fr.get("VEHICLE_COUNT"))
-                        sp_map[_sid]["VEHICLE_YOY"] = safe_dec(fr.get("VEHICLE_COUNT_YOY"))
                         sp_map[_sid]["VEHICLE_ORI"] = safe_dec(fr.get("VEHICLE_COUNT_ORI"))
-                        sp_map[_sid]["VEHICLE_ORI_YOY"] = safe_dec(fr.get("VEHICLE_COUNT_ORI_YOY"))
+                        # 同比车流（仅 calcYOY 时有效）
+                        if is_calc_yoy:
+                            sp_map[_sid]["VEHICLE_YOY"] = safe_dec(fr.get("VEHICLE_COUNT_YOY"))
+                            sp_map[_sid]["VEHICLE_ORI_YOY"] = safe_dec(fr.get("VEHICLE_COUNT_ORI_YOY"))
+                        else:
+                            sp_map[_sid]["VEHICLE_YOY"] = 0.0
+                            sp_map[_sid]["VEHICLE_ORI_YOY"] = 0.0
+                        # 环比车流（仅 calcQOQ 时有效）
+                        if is_calc_qoq:
+                            sp_map[_sid]["VEHICLE_QOQ"] = safe_dec(fr.get("VEHICLE_COUNT_QOQ"))
+                        else:
+                            sp_map[_sid]["VEHICLE_QOQ"] = 0.0
             # 批量查询门店品牌信息（T_SERVERPARTSHOP JOIN T_BRAND）和商户信息（T_BUSINESSPROJECT）
             _inc_shop_info = {}  # SERVERPARTSHOP_ID(int) → {品牌信息}
             _inc_bp_info = {}    # BUSINESSPROJECT_ID → {项目/商户信息}
@@ -6392,67 +6556,6 @@ async def get_month_inc_analysis(
                         _inc_bp_info[str(br["BUSINESSPROJECT_ID"])] = br
             except Exception as _ex_info:
                 logger.warning(f"GetMonthINCAnalysis 门店品牌/商户信息查询失败: {_ex_info}")
-            # 构建树形节点辅助函数
-            def _make_inc(cur, yoy, qoq=None):
-                """构建同比/环比增长结构，对齐旧接口 HolidayINCDetailModel"""
-                cur_v = round(float(cur), 2) if cur is not None else None
-                yoy_v = round(float(yoy), 2) if yoy is not None else None
-                qoq_v = round(float(qoq), 2) if qoq is not None else None
-                
-                inc = round(cur_v - yoy_v, 2) if cur_v is not None and yoy_v is not None else None
-                rate = round(inc / yoy_v * 100, 2) if inc is not None and yoy_v and yoy_v != 0 else None
-                
-                inc_qoq = round(cur_v - qoq_v, 2) if cur_v is not None and qoq_v is not None else None
-                rate_qoq = round(inc_qoq / qoq_v * 100, 2) if inc_qoq is not None and qoq_v and qoq_v != 0 else None
-                
-                return {"curYearData": cur_v, "lYearData": yoy_v,
-                        "increaseData": inc, "increaseRate": rate,
-                        "QOQData": qoq_v, "increaseDataQOQ": inc_qoq, "increaseRateQOQ": rate_qoq, "rankNum": None}
-
-            def _make_bayonet_region(cur, yoy, qoq_default=0.0):
-                """BayonetINC: 片区/根级 qoq_default=0.0, 服务区级 qoq_default=None（旧接口行为）"""
-                cur = round(cur, 2) if cur else 0.0
-                yoy = round(yoy, 2) if yoy else 0.0
-                inc = round(cur - yoy, 2) if (cur or yoy) else None
-                rate = round(inc / yoy * 100, 2) if inc is not None and yoy and yoy != 0 else None
-                return {"curYearData": cur, "lYearData": yoy,
-                        "increaseData": inc, "increaseRate": rate,
-                        "QOQData": qoq_default, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
-
-            # 辅助：Brand_ICO 格式化
-            def _format_ico(ico_raw):
-                if not ico_raw: return ""
-                if ico_raw.startswith("http"): return ico_raw
-                if "PictureManage" in ico_raw: return "https://user.eshangtech.com" + ("/" if not ico_raw.startswith("/") else "") + ico_raw
-                return "https://api.eshangtech.com/EShangApiMain/" + ico_raw.lstrip("/")
-
-            # 辅助：BP 日期格式化 (C# yyyy/M/d)
-            def _format_bp_date(date_obj):
-                if not date_obj: return ""
-                from datetime import datetime as dt_internal
-                if isinstance(date_obj, dt_internal):
-                    return f"{date_obj.year}/{date_obj.month}/{date_obj.day}"
-                s_date = str(date_obj).replace("T", " ").split(" ")[0].replace("-", "/")
-                # 去除月份和日期的前导零
-                parts = s_date.split("/")
-                if len(parts) == 3:
-                    return f"{parts[0]}/{int(parts[1])}/{int(parts[2])}"
-                return s_date
-
-            def _make_node(sp_region_id=None, sp_region_name=None, sp_id=None, sp_name=None,
-                           rev_inc=None, acc_inc=None, bayonet=None, bayonet_ori=None,
-                           ticket=None, avg_ticket=None, shop_list=None):
-                """构造与旧接口一致的 node 结构"""
-                return {
-                    "SPRegionTypeId": sp_region_id, "SPRegionTypeName": sp_region_name,
-                    "ServerpartId": sp_id, "ServerpartName": sp_name,
-                    "RevenueINC": rev_inc or _make_inc(0, 0),
-                    "AccountINC": acc_inc or _make_inc(0, 0),
-                    "BayonetINC": bayonet, "TicketINC": ticket, "AvgTicketINC": avg_ticket,
-                    "BayonetINC_ORI": bayonet_ori, "SectionFlowINC": None,
-                    "ShopINCList": shop_list, "RankDiff": None,
-                    "Cost_Amount": None, "Ca_Cost": None, "Profit_Amount": None,
-                }
 
             # --- 按片区分组服务区（使用 INDEX 排序）---
             from collections import OrderedDict
@@ -6477,7 +6580,7 @@ async def get_month_inc_analysis(
             total_rev, total_rev_yoy, total_rev_qoq = 0.0, 0.0, 0.0
             total_tic, total_tic_yoy, total_tic_qoq = 0.0, 0.0, 0.0
             total_roy, total_roy_yoy, total_roy_qoq = 0.0, 0.0, 0.0
-            total_veh, total_veh_yoy = 0.0, 0.0
+            total_veh, total_veh_yoy, total_veh_qoq = 0.0, 0.0, 0.0
             total_veh_ori, total_veh_ori_yoy = 0.0, 0.0
 
             def _safe_add(old, new):
@@ -6485,11 +6588,14 @@ async def get_month_inc_analysis(
                 return (old or 0.0) + float(new)
 
             region_children = []
+            _show_rev = int(showRevenue) if showRevenue else 0
+            _show_bay = int(showBayonet) if showBayonet else 0
+            _show_lvl = int(showLevel) if showLevel else 1
             for rid, rinfo in region_map.items():
                 r_rev, r_rev_yoy, r_rev_qoq = 0.0, 0.0, 0.0
                 r_tic, r_tic_yoy, r_tic_qoq = 0.0, 0.0, 0.0
                 r_roy, r_roy_yoy, r_roy_qoq = 0.0, 0.0, 0.0
-                r_veh, r_veh_yoy = 0.0, 0.0
+                r_veh, r_veh_yoy, r_veh_qoq = 0.0, 0.0, 0.0
                 r_veh_ori, r_veh_ori_yoy = 0.0, 0.0
 
                 sp_children = []
@@ -6506,6 +6612,7 @@ async def get_month_inc_analysis(
                     r_roy_qoq = _safe_add(r_roy_qoq, sp_data["ROYALTY_QOQ"])
                     r_veh = _safe_add(r_veh, sp_data["VEHICLE"])
                     r_veh_yoy = _safe_add(r_veh_yoy, sp_data["VEHICLE_YOY"])
+                    r_veh_qoq = _safe_add(r_veh_qoq, sp_data.get("VEHICLE_QOQ", 0.0))
                     r_veh_ori = _safe_add(r_veh_ori, sp_data["VEHICLE_ORI"])
                     r_veh_ori_yoy = _safe_add(r_veh_ori_yoy, sp_data["VEHICLE_ORI_YOY"])
 
@@ -6554,7 +6661,7 @@ async def get_month_inc_analysis(
                             "BusinessTradeType": _btt, "BusinessProjectId": shop.get("BUSINESSPROJECT_ID"),
                             "CompactStartDate": _format_bp_date(_bp.get("COMPACT_START")) or _format_bp_date(_bp.get("PROJECT_START")) or "",
                             "CompactEndDate": _format_bp_date(_bp.get("COMPACT_END")) or _format_bp_date(_bp.get("PROJECT_END")) or "",
-                            "CompactDate": None,
+
                             "SettlementModes": int(_bp.get("SETTLEMENT_MODES")) if _bp.get("SETTLEMENT_MODES") is not None else None,
                             "BusinessType": _bp.get("BUSINESS_TYPE") if _bp.get("BUSINESS_TYPE") is not None else None,
                             "MERCHANTS_ID": float(_m_id) if _m_id is not None else None,
@@ -6572,50 +6679,135 @@ async def get_month_inc_analysis(
                     s_avg_yoy = round(sp_data["REVENUE_YOY"] / sp_data["TICKET_YOY"], 2) if sp_data["TICKET_YOY"] and sp_data["TICKET_YOY"] != 0 else (0 if sp_data["TICKET_YOY"] == 0 else None)
                     s_avg_qoq = round(sp_data["REVENUE_QOQ"] / sp_data["TICKET_QOQ"], 2) if sp_data["TICKET_QOQ"] and sp_data["TICKET_QOQ"] != 0 else (0 if sp_data["TICKET_QOQ"] == 0 else None)
 
+                    # 构建服务区级 BayonetINC (对齐 C# 签名)
+                    _sp_bayonet = _make_bayonet_region(
+                        sp_data["VEHICLE"], sp_data["VEHICLE_YOY"],
+                        qoq=sp_data.get("VEHICLE_QOQ", 0.0),
+                        calc_yoy_flag=is_calc_yoy, calc_qoq_flag=is_calc_qoq
+                    )
+                    _sp_bayonet_ori = {
+                        "curYearData": round(sp_data["VEHICLE_ORI"], 2) if sp_data["VEHICLE_ORI"] else None,
+                        "lYearData": round(sp_data["VEHICLE_ORI_YOY"], 2) if is_calc_yoy and sp_data["VEHICLE_ORI_YOY"] else None,
+                        "increaseData": None, "increaseRate": None,
+                        "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None
+                    }
+                    _sp_rev_inc = _make_inc(sp_data["REVENUE"], sp_data["REVENUE_YOY"], sp_data["REVENUE_QOQ"])
+
+                    # --- C# showBayonet 过滤 (L2248-2262) ---
+                    if _show_bay == 1:
+                        if not ((_sp_bayonet.get("increaseData") or 0) > 0 or (_sp_bayonet.get("increaseDataQOQ") or 0) > 0):
+                            continue
+                    elif _show_bay == 2:
+                        if not ((_sp_bayonet.get("increaseData") or 0) < 0 or (_sp_bayonet.get("increaseDataQOQ") or 0) < 0):
+                            continue
+
+                    # --- C# showRevenue 过滤 (L2774-2788) ---
+                    if _show_rev == 1:
+                        if not ((_sp_rev_inc.get("increaseData") or 0) > 0 or (_sp_rev_inc.get("increaseDataQOQ") or 0) > 0):
+                            continue
+                    elif _show_rev == 2:
+                        if not ((_sp_rev_inc.get("increaseData") or 0) < 0 or (_sp_rev_inc.get("increaseDataQOQ") or 0) < 0):
+                            continue
+
                     sp_children.append({
                         "node": _make_node(
                             sp_region_id=sp_region.get(sp_id, (None, "", 0, 0))[0],
                             sp_region_name=sp_region.get(sp_id, (None, "", 0, 0))[1],
                             sp_id=sp_id, sp_name=sp_data["SERVERPART_NAME"],
-                            rev_inc=_make_inc(sp_data["REVENUE"], sp_data["REVENUE_YOY"], sp_data["REVENUE_QOQ"]),
+                            rev_inc=_sp_rev_inc,
                             acc_inc=_make_inc(sp_data["ROYALTY"], sp_data["ROYALTY_YOY"], sp_data["ROYALTY_QOQ"]),
                             ticket=_make_inc(sp_data["TICKET"], sp_data["TICKET_YOY"], sp_data["TICKET_QOQ"]),
-                            bayonet=_make_bayonet_region(sp_data["VEHICLE"], sp_data["VEHICLE_YOY"], qoq_default=None),
-                            bayonet_ori={"curYearData": round(sp_data["VEHICLE_ORI"], 2) if sp_data["VEHICLE_ORI"] is not None else None,
-                                         "lYearData": round(sp_data["VEHICLE_ORI_YOY"], 2) if sp_data["VEHICLE_ORI_YOY"] is not None else None,
-                                         "increaseData": None, "increaseRate": None, "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None},
+                            bayonet=_sp_bayonet,
+                            bayonet_ori=_sp_bayonet_ori,
                             avg_ticket=_make_inc(s_avg_cur, s_avg_yoy, s_avg_qoq),
                             shop_list=shop_inc_list if shop_inc_list else None,
                         ),
                         "children": None
                     })
 
-                # 累加指标到根节点
-                total_rev = _safe_add(total_rev, r_rev); total_rev_yoy = _safe_add(total_rev_yoy, r_rev_yoy); total_rev_qoq = _safe_add(total_rev_qoq, r_rev_qoq)
-                total_tic = _safe_add(total_tic, r_tic); total_tic_yoy = _safe_add(total_tic_yoy, r_tic_yoy); total_tic_qoq = _safe_add(total_tic_qoq, r_tic_qoq)
-                total_roy = _safe_add(total_roy, r_roy); total_roy_yoy = _safe_add(total_roy_yoy, r_roy_yoy); total_roy_qoq = _safe_add(total_roy_qoq, r_roy_qoq)
-                total_veh = _safe_add(total_veh, r_veh); total_veh_yoy = _safe_add(total_veh_yoy, r_veh_yoy)
-                total_veh_ori = _safe_add(total_veh_ori, r_veh_ori); total_veh_ori_yoy = _safe_add(total_veh_ori_yoy, r_veh_ori_yoy)
+                # C# L1798: 片区聚合从 filtered children (sp_children) 求和
+                if sp_children:
+                    def _sum_field(items, *keys):
+                        """从 sp_children[i]['node'][key1][key2] 求和"""
+                        t = 0.0
+                        for item in items:
+                            v = item.get("node", {})
+                            for k in keys:
+                                v = v.get(k) if isinstance(v, dict) else None
+                                if v is None: break
+                            if v is not None:
+                                t += float(v)
+                        return t if t != 0 else None
 
-                r_avg_cur = round(r_rev / r_tic, 2) if r_tic and r_tic != 0 else (0 if r_tic == 0 else None)
-                r_avg_yoy = round(r_rev_yoy / r_tic_yoy, 2) if r_tic_yoy and r_tic_yoy != 0 else (0 if r_tic_yoy == 0 else None)
-                r_avg_qoq = round(r_rev_qoq / r_tic_qoq, 2) if r_tic_qoq and r_tic_qoq != 0 else (0 if r_tic_qoq == 0 else None)
+                    r_rev = _sum_field(sp_children, "RevenueINC", "curYearData")
+                    r_rev_yoy = _sum_field(sp_children, "RevenueINC", "lYearData")
+                    r_rev_qoq = _sum_field(sp_children, "RevenueINC", "QOQData")
+                    r_tic = _sum_field(sp_children, "TicketINC", "curYearData")
+                    r_tic_yoy = _sum_field(sp_children, "TicketINC", "lYearData")
+                    r_tic_qoq = _sum_field(sp_children, "TicketINC", "QOQData")
+                    r_roy = _sum_field(sp_children, "AccountINC", "curYearData")
+                    r_roy_yoy = _sum_field(sp_children, "AccountINC", "lYearData")
+                    r_roy_qoq = _sum_field(sp_children, "AccountINC", "QOQData")
 
-                region_children.append({
-                    "node": _make_node(
-                        sp_region_id=rid, sp_region_name=rinfo["name"],
-                        rev_inc=_make_inc(r_rev, r_rev_yoy, r_rev_qoq),
-                        acc_inc=_make_inc(r_roy, r_roy_yoy, r_roy_qoq),
-                        ticket=_make_inc(r_tic, r_tic_yoy, r_tic_qoq),
-                        bayonet=_make_bayonet_region(r_veh, r_veh_yoy),
-                        avg_ticket=_make_inc(r_avg_cur, r_avg_yoy, r_avg_qoq),
-                    ),
-                    "children": sp_children if sp_children else None
-                })
+                    r_avg_cur = round(r_rev / r_tic, 2) if r_rev and r_tic and r_tic != 0 else None
+                    r_avg_yoy = round(r_rev_yoy / r_tic_yoy, 2) if r_rev_yoy and r_tic_yoy and r_tic_yoy != 0 else None
+                    r_avg_qoq = round(r_rev_qoq / r_tic_qoq, 2) if r_rev_qoq and r_tic_qoq and r_tic_qoq != 0 else None
 
-            t_avg_cur = round(total_rev / total_tic, 2) if total_tic and total_tic != 0 else (0 if total_tic == 0 else None)
-            t_avg_yoy = round(total_rev_yoy / total_tic_yoy, 2) if total_tic_yoy and total_tic_yoy != 0 else (0 if total_tic_yoy == 0 else None)
-            t_avg_qoq = round(total_rev_qoq / total_tic_qoq, 2) if total_tic_qoq and total_tic_qoq != 0 else (0 if total_tic_qoq == 0 else None)
+                    # C# L1909: 片区级 BayonetINC 仅 calcBayonet 时聚合，否则为全 null 对象
+                    _r_bayonet = _make_inc(None, None)
+                    if is_calc_bayonet:
+                        _r_bay_cur = _sum_field(sp_children, "BayonetINC", "curYearData")
+                        _r_bay_yoy = _sum_field(sp_children, "BayonetINC", "lYearData")
+                        _r_bay_qoq = _sum_field(sp_children, "BayonetINC", "QOQData")
+                        _r_bayonet = _make_bayonet_region(_r_bay_cur or 0, _r_bay_yoy or 0,
+                            qoq=_r_bay_qoq or 0, calc_yoy_flag=is_calc_yoy, calc_qoq_flag=is_calc_qoq)
+
+                    region_children.append({
+                        "node": _make_node(
+                            sp_region_id=rid, sp_region_name=rinfo["name"],
+                            rev_inc=_make_inc(r_rev, r_rev_yoy, r_rev_qoq),
+                            acc_inc=_make_inc(r_roy, r_roy_yoy, r_roy_qoq),
+                            ticket=_make_inc(r_tic, r_tic_yoy, r_tic_qoq),
+                            bayonet=_r_bayonet,
+                            avg_ticket=_make_inc(r_avg_cur, r_avg_yoy, r_avg_qoq),
+                        ),
+                        "children": sp_children if sp_children else None
+                    })
+
+            # C# L1948: 根节点 summaryModel 从 region_children 求和
+            def _sum_region(items, *keys):
+                t = 0.0
+                for item in items:
+                    v = item.get("node", {})
+                    for k in keys:
+                        v = v.get(k) if isinstance(v, dict) else None
+                        if v is None: break
+                    if v is not None:
+                        t += float(v)
+                return t
+
+            total_rev = _sum_region(region_children, "RevenueINC", "curYearData")
+            total_rev_yoy = _sum_region(region_children, "RevenueINC", "lYearData")
+            total_rev_qoq = _sum_region(region_children, "RevenueINC", "QOQData")
+            total_tic = _sum_region(region_children, "TicketINC", "curYearData")
+            total_tic_yoy = _sum_region(region_children, "TicketINC", "lYearData")
+            total_tic_qoq = _sum_region(region_children, "TicketINC", "QOQData")
+            total_roy = _sum_region(region_children, "AccountINC", "curYearData")
+            total_roy_yoy = _sum_region(region_children, "AccountINC", "lYearData")
+            total_roy_qoq = _sum_region(region_children, "AccountINC", "QOQData")
+
+            t_avg_cur = round(total_rev / total_tic, 2) if total_rev and total_tic and total_tic != 0 else None
+            t_avg_yoy = round(total_rev_yoy / total_tic_yoy, 2) if total_rev_yoy and total_tic_yoy and total_tic_yoy != 0 else None
+            t_avg_qoq = round(total_rev_qoq / total_tic_qoq, 2) if total_rev_qoq and total_tic_qoq and total_tic_qoq != 0 else None
+
+            # C# L2068: 根节点 BayonetINC 仅 calcBayonet 时聚合，否则为全 null 对象
+            _t_bayonet = _make_inc(None, None)
+            if is_calc_bayonet:
+                _t_bay_cur = _sum_region(region_children, "BayonetINC", "curYearData")
+                _t_bay_yoy = _sum_region(region_children, "BayonetINC", "lYearData")
+                _t_bay_qoq = _sum_region(region_children, "BayonetINC", "QOQData")
+                _t_bayonet = _make_bayonet_region(_t_bay_cur or 0, _t_bay_yoy or 0,
+                    qoq=_t_bay_qoq or 0, calc_yoy_flag=is_calc_yoy, calc_qoq_flag=is_calc_qoq)
 
             result_list = [{
                 "node": _make_node(
@@ -6623,17 +6815,154 @@ async def get_month_inc_analysis(
                     rev_inc=_make_inc(total_rev, total_rev_yoy, total_rev_qoq),
                     acc_inc=_make_inc(total_roy, total_roy_yoy, total_roy_qoq),
                     ticket=_make_inc(total_tic, total_tic_yoy, total_tic_qoq),
-                    bayonet=_make_bayonet_region(total_veh, total_veh_yoy),
+                    bayonet=_t_bayonet,
                     avg_ticket=_make_inc(t_avg_cur, t_avg_yoy, t_avg_qoq),
                 ),
-                "children": region_children if region_children else None
+                "children": region_children
             }]
             json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
             return Result(Result_Code=100, Result_Desc="查询成功", Result_Data=json_list.model_dump())
 
-        # 非固化路径（当前月或跨月段），暂未实现实时查询逻辑，返回空列表
-        json_list = JsonListData.create(data_list=[], total=0, page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
+        # === 非固化路径（跨月或当前月）===
+        # 从 T_BUSINESSWARNING(DATATYPE=2) 按 STATISTICS_MONTH BETWEEN start AND end 聚合
+        _sp_ids = parse_multi_ids(ServerpartId)
+        _nf_where = f' AND A."STATISTICS_MONTH" BETWEEN {StatisticsStartMonth} AND {StatisticsEndMonth}'
+        if _sp_ids:
+            _nf_where += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
+        if BusinessTradeType:
+            _nf_where += f' AND A."BUSINESSTRADETYPE" IN ({BusinessTradeType})'
+        if expanded_shop_trade:
+            _nf_where += f' AND A."BUSINESS_TRADE" IN ({expanded_shop_trade})'
+
+        # 按服务区聚合本期营收/收入
+        _nf_sql = f"""SELECT A."SERVERPART_ID", A."SERVERPART_NAME",
+                SUM(A."REVENUE_AMOUNT") AS "REVENUE",
+                SUM(A."ROYALTY_THEORY") AS "ROYALTY",
+                SUM(A."TICKET_COUNT") AS "TICKET"
+            FROM "T_BUSINESSWARNING" A
+            WHERE A."DATATYPE" = 2{_nf_where}
+            GROUP BY A."SERVERPART_ID", A."SERVERPART_NAME" """
+        _nf_rows = db.execute_query(_nf_sql) or []
+
+        sp_map = {}
+        for r in _nf_rows:
+            sp_id = r.get("SERVERPART_ID")
+            sp_map[sp_id] = {
+                "SERVERPART_ID": sp_id, "SERVERPART_NAME": r.get("SERVERPART_NAME", ""),
+                "REVENUE": safe_dec(r.get("REVENUE")),
+                "REVENUE_YOY": 0.0, "REVENUE_QOQ": 0.0,
+                "TICKET": safe_dec(r.get("TICKET")),
+                "TICKET_YOY": 0.0, "TICKET_QOQ": 0.0,
+                "ROYALTY": safe_dec(r.get("ROYALTY")),
+                "ROYALTY_YOY": 0.0, "ROYALTY_QOQ": 0.0,
+                "VEHICLE": 0.0, "VEHICLE_YOY": 0.0, "VEHICLE_QOQ": 0.0,
+                "VEHICLE_ORI": 0.0, "VEHICLE_ORI_YOY": 0.0,
+                "shops": []
+            }
+
+        # 查服务区所属片区
+        if sp_map:
+            _sp_ids_str = ",".join(str(k) for k in sp_map.keys())
+            _sp_info_sql = f"""SELECT "SERVERPART_ID", "SERVERPART_NAME", "SPREGIONTYPE_ID",
+                    "SPREGIONTYPE_NAME", "SPREGIONTYPE_INDEX", "SERVERPART_INDEX"
+                FROM "T_SERVERPART" WHERE "SERVERPART_ID" IN ({_sp_ids_str})"""
+            _sp_info_rows = db.execute_query(_sp_info_sql) or []
+            sp_region = {r["SERVERPART_ID"]: (
+                r.get("SPREGIONTYPE_ID"), r.get("SPREGIONTYPE_NAME", ""),
+                r.get("SPREGIONTYPE_INDEX", 0), r.get("SERVERPART_INDEX", 0)
+            ) for r in _sp_info_rows}
+            for r in _sp_info_rows:
+                sid = r["SERVERPART_ID"]
+                if sid in sp_map:
+                    sp_map[sid]["SERVERPART_NAME"] = r.get("SERVERPART_NAME", "")
+        else:
+            sp_region = {}
+
+        # 构建树形（对齐 C# BindMonthlySPINCAnalysis）
+        from collections import OrderedDict as _OD
+        region_map = _OD()
+        sorted_sp = sorted(sp_map.items(), key=lambda x: (
+            sp_region.get(x[0], (None,"",0,0))[2] or 0,
+            sp_region.get(x[0], (None,"",0,0))[0] or 0,
+            sp_region.get(x[0], (None,"",0,0))[3] or 0, x[0]))
+        for sp_id, sp_data in sorted_sp:
+            ri = sp_region.get(sp_id, (None,"",0,0))
+            rid, rname = ri[0], ri[1]
+            if rid not in region_map:
+                region_map[rid] = {"name": rname, "sp_list": []}
+            region_map[rid]["sp_list"].append((sp_id, sp_data))
+
+        region_children = []
+        for rid, rinfo in region_map.items():
+            sp_children = []
+            for sp_id, sp_data in rinfo["sp_list"]:
+                _ri = sp_region.get(sp_id, (None,"",0,0))
+                _sp_avg = round(sp_data["REVENUE"] / sp_data["TICKET"], 2) if sp_data["TICKET"] and sp_data["TICKET"] != 0 else None
+                sp_children.append({
+                    "node": _make_node(
+                        sp_region_id=_ri[0], sp_region_name=_ri[1],
+                        sp_id=sp_id, sp_name=sp_data["SERVERPART_NAME"],
+                        rev_inc=_make_inc(sp_data["REVENUE"], sp_data["REVENUE_YOY"], sp_data["REVENUE_QOQ"]),
+                        acc_inc=_make_inc(sp_data["ROYALTY"], sp_data["ROYALTY_YOY"], sp_data["ROYALTY_QOQ"]),
+                        ticket=_make_inc(sp_data["TICKET"], sp_data["TICKET_YOY"], sp_data["TICKET_QOQ"]),
+                        bayonet=None,  # 非固化路径旧接口服务区级 BayonetINC=null
+                        avg_ticket=_make_inc(_sp_avg, None),
+                    ), "children": None
+                })
+            # 片区聚合从 sp_children
+            if sp_children:
+                def _nf_sum(items, *keys):
+                    t = 0.0
+                    for item in items:
+                        v = item.get("node", {})
+                        for k in keys:
+                            v = v.get(k) if isinstance(v, dict) else None
+                            if v is None: break
+                        if v is not None: t += float(v)
+                    return t if t != 0 else None
+
+                _r_rev = _nf_sum(sp_children, "RevenueINC", "curYearData")
+                _r_roy = _nf_sum(sp_children, "AccountINC", "curYearData")
+                _r_tic = _nf_sum(sp_children, "TicketINC", "curYearData")
+                _r_avg = round(_r_rev / _r_tic, 2) if _r_rev and _r_tic and _r_tic != 0 else None
+                region_children.append({
+                    "node": _make_node(
+                        sp_region_id=rid, sp_region_name=rinfo["name"],
+                        rev_inc=_make_inc(_r_rev, 0.0, 0.0),
+                        acc_inc=_make_inc(_r_roy, 0.0, 0.0),
+                        ticket=_make_inc(_r_tic, 0.0, 0.0),
+                        avg_ticket=_make_inc(_r_avg, None),
+                    ), "children": sp_children if sp_children else None
+                })
+
+        # 根节点聚合从 region_children
+        def _nf_sum_r(items, *keys):
+            t = 0.0
+            for item in items:
+                v = item.get("node", {})
+                for k in keys:
+                    v = v.get(k) if isinstance(v, dict) else None
+                    if v is None: break
+                if v is not None: t += float(v)
+            return t if t != 0 else None
+
+        t_rev = _nf_sum_r(region_children, "RevenueINC", "curYearData")
+        t_roy = _nf_sum_r(region_children, "AccountINC", "curYearData")
+        t_tic = _nf_sum_r(region_children, "TicketINC", "curYearData")
+        t_avg = round(t_rev / t_tic, 2) if t_rev and t_tic and t_tic != 0 else None
+
+        result_list = [{
+            "node": _make_node(
+                sp_name="\u5408\u8ba1",
+                rev_inc=_make_inc(t_rev, 0.0, 0.0),
+                acc_inc=_make_inc(t_roy, 0.0, 0.0),
+                ticket=_make_inc(t_tic, 0.0, 0.0),
+                avg_ticket=_make_inc(t_avg, None),
+            ),
+            "children": region_children if region_children else None
+        }]
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+        return Result(Result_Code=100, Result_Desc="查询成功", Result_Data=json_list.model_dump())
     except Exception as ex:
         logger.error(f"GetMonthINCAnalysis 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
