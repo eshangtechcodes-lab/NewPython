@@ -1,0 +1,993 @@
+{
+  "/Revenue/GetMonthINCAnalysis": [
+    {
+      "case": "默认(416+单月)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "ServerpartId": "416",
+        "statisticsType": "1"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseData",
+          "None (NoneType)",
+          "-306695.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseRate",
+          "None (NoneType)",
+          "-72.5 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.lYearData",
+          "None (NoneType)",
+          "423018.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC_ORI.lYearData",
+          "None (NoneType)",
+          "423018.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[0].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[1].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[2].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[3].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[4].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].node.BayonetINC.QOQData",
+          "None",
+          "0.0 (空值口径)"
+        ]
+      ]
+    },
+    {
+      "case": "跨月(01-02)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsStartMonth": "202601",
+        "StatisticsEndMonth": "202602",
+        "ServerpartId": "416",
+        "statisticsType": "1"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 0,
+      "old_list": 1,
+      "new_list": 0,
+      "status": "❌DIFF(2)",
+      "diff_count": 2,
+      "diff_details": [
+        [
+          "$.List.__len__",
+          "1",
+          "0"
+        ],
+        [
+          "$.TotalCount",
+          "1",
+          "0"
+        ]
+      ]
+    },
+    {
+      "case": "空ServerpartId(全省)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "statisticsType": "1"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseData",
+          "None (NoneType)",
+          "-306695.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseRate",
+          "None (NoneType)",
+          "-72.5 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.lYearData",
+          "None (NoneType)",
+          "423018.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC_ORI.lYearData",
+          "None (NoneType)",
+          "423018.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[0].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[1].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[2].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[3].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[4].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.BayonetINC.increaseData",
+          "None (NoneType)",
+          "-202058.0 (float)"
+        ]
+      ]
+    },
+    {
+      "case": "showRevenue=1,showBayonet=1",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "ServerpartId": "416",
+        "statisticsType": "1",
+        "showRevenue": "1",
+        "showBayonet": "1"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children.__len__",
+          "0",
+          "1"
+        ],
+        [
+          "$.List[0].node.AccountINC.QOQData",
+          "0.0",
+          "1601051.65"
+        ],
+        [
+          "$.List[0].node.AccountINC.curYearData",
+          "0.0",
+          "661945.17"
+        ],
+        [
+          "$.List[0].node.AccountINC.increaseData",
+          "None (NoneType)",
+          "-3600224.86 (float)"
+        ],
+        [
+          "$.List[0].node.AccountINC.increaseDataQOQ",
+          "None (NoneType)",
+          "-939106.48 (float)"
+        ],
+        [
+          "$.List[0].node.AccountINC.increaseRate",
+          "None (NoneType)",
+          "-84.47 (float)"
+        ],
+        [
+          "$.List[0].node.AccountINC.increaseRateQOQ",
+          "None (NoneType)",
+          "-58.66 (float)"
+        ],
+        [
+          "$.List[0].node.AccountINC.lYearData",
+          "0.0",
+          "4262170.03"
+        ],
+        [
+          "$.List[0].node.AvgTicketINC.QOQData",
+          "None (NoneType)",
+          "30.59 (float)"
+        ],
+        [
+          "$.List[0].node.AvgTicketINC.curYearData",
+          "None (NoneType)",
+          "26.71 (float)"
+        ]
+      ]
+    },
+    {
+      "case": "calcQOQ=true,calcYOY=true",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "ServerpartId": "416",
+        "statisticsType": "1",
+        "calcQOQ": "true",
+        "calcYOY": "true"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.QOQData",
+          "198601.0 (float)",
+          "None (NoneType)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseDataQOQ",
+          "-82278.0 (float)",
+          "None (NoneType)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseRateQOQ",
+          "-41.43 (float)",
+          "None (NoneType)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[0].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[1].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[2].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[3].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[4].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].node.BayonetINC.QOQData",
+          "None",
+          "0.0 (空值口径)"
+        ],
+        [
+          "$.List[0].children[0].node.BayonetINC.curYearData",
+          "None (NoneType)",
+          "116323.0 (float)"
+        ]
+      ]
+    },
+    {
+      "case": "statisticsType=3",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "ServerpartId": "416",
+        "statisticsType": "3"
+      },
+      "old_code": 999,
+      "new_code": 100,
+      "old_tc": null,
+      "new_tc": 1,
+      "old_list": null,
+      "new_list": 1,
+      "status": "❌DIFF(1)",
+      "diff_count": 1,
+      "diff_details": [
+        [
+          "$.Result_Code",
+          "999",
+          "100"
+        ]
+      ]
+    },
+    {
+      "case": "calcBayonet=true,hasAnalog=false",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "ServerpartId": "416",
+        "statisticsType": "1",
+        "calcBayonet": "true",
+        "hasAnalog": "false"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.curYearData",
+          "None (NoneType)",
+          "116323.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseData",
+          "None (NoneType)",
+          "-306695.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseRate",
+          "None (NoneType)",
+          "-72.5 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.lYearData",
+          "None (NoneType)",
+          "423018.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC_ORI.curYearData",
+          "None (NoneType)",
+          "116323.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC_ORI.lYearData",
+          "None (NoneType)",
+          "423018.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[0].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[1].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[2].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[3].CompactDate",
+          "⚠️缺失",
+          "None"
+        ]
+      ]
+    },
+    {
+      "case": "showLevel=0(隐藏层级)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "ServerpartId": "416",
+        "statisticsType": "1",
+        "showLevel": "0"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseData",
+          "None (NoneType)",
+          "-306695.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.increaseRate",
+          "None (NoneType)",
+          "-72.5 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC.lYearData",
+          "None (NoneType)",
+          "423018.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.BayonetINC_ORI.lYearData",
+          "None (NoneType)",
+          "423018.0 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[0].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[1].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[2].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[3].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopINCList[4].CompactDate",
+          "⚠️缺失",
+          "None"
+        ],
+        [
+          "$.List[0].children[0].node.BayonetINC.QOQData",
+          "None",
+          "0.0 (空值口径)"
+        ]
+      ]
+    }
+  ],
+  "/Revenue/GetShopSABFIList": [
+    {
+      "case": "默认(416+单月)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602",
+        "ServerpartId": "416"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "空ServerpartId",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602",
+        "ServerpartId": ""
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList.__len__",
+          "12",
+          "14"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AccountINC.QOQData",
+          "None (NoneType)",
+          "4874.64 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AccountINC.curYearData",
+          "None (NoneType)",
+          "251.36 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AccountINC.increaseDataQOQ",
+          "None (NoneType)",
+          "-4623.28 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AccountINC.increaseRateQOQ",
+          "None (NoneType)",
+          "-94.84 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AvgTicketINC.QOQData",
+          "None (NoneType)",
+          "90.49 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AvgTicketINC.curYearData",
+          "278.6",
+          "92.33"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AvgTicketINC.increaseDataQOQ",
+          "None (NoneType)",
+          "1.84 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AvgTicketINC.increaseRateQOQ",
+          "None (NoneType)",
+          "2.03 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].Brand_ICO",
+          "",
+          "https://api.eshangtech.com/EShangApiMain/UploadImageDir/BRAND/202304172217189305"
+        ]
+      ]
+    },
+    {
+      "case": "不同月份(01)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202601",
+        "ServerpartId": "416"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "多服务区(416,417)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602",
+        "ServerpartId": "416,417"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList.__len__",
+          "12",
+          "14"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AccountINC.QOQData",
+          "None (NoneType)",
+          "4874.64 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AccountINC.curYearData",
+          "None (NoneType)",
+          "251.36 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AccountINC.increaseDataQOQ",
+          "None (NoneType)",
+          "-4623.28 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AccountINC.increaseRateQOQ",
+          "None (NoneType)",
+          "-94.84 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AvgTicketINC.QOQData",
+          "None (NoneType)",
+          "90.49 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AvgTicketINC.curYearData",
+          "278.6",
+          "92.33"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AvgTicketINC.increaseDataQOQ",
+          "None (NoneType)",
+          "1.84 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].AvgTicketINC.increaseRateQOQ",
+          "None (NoneType)",
+          "2.03 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[1].node.ShopSABFIList[2].Brand_ICO",
+          "",
+          "https://api.eshangtech.com/EShangApiMain/UploadImageDir/BRAND/202304172217189305"
+        ]
+      ]
+    },
+    {
+      "case": "BusinessTradeType=1",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602",
+        "ServerpartId": "416",
+        "BusinessTradeType": "1"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "BusinessTradeType=3",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602",
+        "ServerpartId": "416",
+        "BusinessTradeType": "3"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "❌DIFF(15)",
+      "diff_count": 15,
+      "diff_details": [
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].AccountINC.QOQData",
+          "None (NoneType)",
+          "45418.87 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].AccountINC.curYearData",
+          "None (NoneType)",
+          "2513.5 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].AccountINC.increaseDataQOQ",
+          "None (NoneType)",
+          "-42905.37 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].AccountINC.increaseRateQOQ",
+          "None (NoneType)",
+          "-94.47 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].AvgTicketINC.QOQData",
+          "None (NoneType)",
+          "12.72 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].AvgTicketINC.curYearData",
+          "None (NoneType)",
+          "12.92 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].AvgTicketINC.increaseDataQOQ",
+          "None (NoneType)",
+          "0.2 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].AvgTicketINC.increaseRateQOQ",
+          "None (NoneType)",
+          "1.57 (float)"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].Brand_Id",
+          "9210",
+          "2377"
+        ],
+        [
+          "$.List[0].children[0].children[0].node.ShopSABFIList[4].Brand_Name",
+          "年货节",
+          "同庆楼鲜肉大包"
+        ]
+      ]
+    }
+  ],
+  "/Revenue/GetShopMonthSABFIList": [
+    {
+      "case": "默认(416)",
+      "params": {
+        "calcSelf": "true",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "BusinessProjectId": "416",
+        "ServerpartId": "416"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "calcSelf=false",
+      "params": {
+        "calcSelf": "false",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "BusinessProjectId": "416",
+        "ServerpartId": "416"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "跨月(01-02)",
+      "params": {
+        "calcSelf": "true",
+        "StatisticsStartMonth": "202601",
+        "StatisticsEndMonth": "202602",
+        "BusinessProjectId": "416",
+        "ServerpartId": "416"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 2,
+      "new_tc": 2,
+      "old_list": 2,
+      "new_list": 2,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "无ServerpartId",
+      "params": {
+        "calcSelf": "true",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 0,
+      "new_tc": 0,
+      "old_list": 0,
+      "new_list": 0,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "ServerpartId=417",
+      "params": {
+        "calcSelf": "true",
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "BusinessProjectId": "417",
+        "ServerpartId": "417"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 1,
+      "new_tc": 1,
+      "old_list": 1,
+      "new_list": 1,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    }
+  ],
+  "/Revenue/GetMonthINCAnalysisSummary": [
+    {
+      "case": "默认(单月)",
+      "params": {
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 4,
+      "new_tc": 4,
+      "old_list": 4,
+      "new_list": 4,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "跨月(01-02)",
+      "params": {
+        "StatisticsStartMonth": "202601",
+        "StatisticsEndMonth": "202602"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 4,
+      "new_tc": 4,
+      "old_list": 4,
+      "new_list": 4,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "跨月(12-02)",
+      "params": {
+        "StatisticsStartMonth": "202512",
+        "StatisticsEndMonth": "202602"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 4,
+      "new_tc": 4,
+      "old_list": 4,
+      "new_list": 4,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "BusinessTradeType=1",
+      "params": {
+        "StatisticsStartMonth": "202602",
+        "StatisticsEndMonth": "202602",
+        "BusinessTradeType": "1"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": 4,
+      "new_tc": 4,
+      "old_list": 4,
+      "new_list": 4,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    }
+  ],
+  "/Revenue/StorageMonthINCAnalysis": [
+    {
+      "case": "默认(416)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602",
+        "ServerpartId": "416"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": null,
+      "new_tc": null,
+      "old_list": null,
+      "new_list": null,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "空ServerpartId(全省)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": null,
+      "new_tc": null,
+      "old_list": null,
+      "new_list": null,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "不同月份(01)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202601",
+        "ServerpartId": "416"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": null,
+      "new_tc": null,
+      "old_list": null,
+      "new_list": null,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "多服务区(416,417)",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602",
+        "ServerpartId": "416,417"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": null,
+      "new_tc": null,
+      "old_list": null,
+      "new_list": null,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    },
+    {
+      "case": "hasAnalog=false",
+      "params": {
+        "pushProvinceCode": "340000",
+        "StatisticsMonth": "202602",
+        "ServerpartId": "416",
+        "hasAnalog": "false"
+      },
+      "old_code": 100,
+      "new_code": 100,
+      "old_tc": null,
+      "new_tc": null,
+      "old_list": null,
+      "new_list": null,
+      "status": "✅PASS",
+      "diff_count": 0,
+      "diff_details": []
+    }
+  ]
+}

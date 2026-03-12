@@ -38,7 +38,7 @@ class JsonListData(BaseModel):
     TotalCount: int = 0
     List: list = []
     StaticsModel: Optional[dict] = None
-    OtherData: Optional[dict] = None
+    OtherData: Optional[Any] = None
 
     def model_dump(self, **kwargs):
         """重写 model_dump：默认排除 None 字段（StaticsModel=None 时不输出）"""
