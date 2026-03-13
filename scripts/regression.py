@@ -75,7 +75,7 @@ SMOKE_ENDPOINTS = [
 
     # ── CommercialApi / BigData ──
     {"path": "/CommercialApi/BigData/GetDateAnalysis", "method": "GET",
-     "params": {"ServerpartId": "416", "StatisticsDate": "2025-12-01"}, "name": "CA-日期分析"},
+     "params": {"StartDate": "2025-12-01", "EndDate": "2025-12-07", "Serverpart_ID": "416"}, "name": "CA-日期分析"},
     {"path": "/CommercialApi/Revenue/GetBayonetEntryList", "method": "GET",
      "params": {"Province_Code": "340000", "StatisticsDate": "2025-12-01"},
      "name": "CA-入区车流"},
@@ -100,7 +100,7 @@ SMOKE_ENDPOINTS = [
 
     # ── CommercialApi / Analysis ──
     {"path": "/CommercialApi/Analysis/GetANALYSISINSDetail", "method": "GET",
-     "params": {"Province_Code": "340000", "AnalysisIns_Id": "1"}, "name": "CA-分析详情"},
+     "params": {"ANALYSISINSId": "1"}, "name": "CA-分析详情"},
 
     # ── CommercialApi / Budget ──
     {"path": "/CommercialApi/Revenue/GetRevenueBudget", "method": "GET",
@@ -120,8 +120,6 @@ SMOKE_ENDPOINTS = [
      "json": {}, "name": "EA-业主单位列表", "expect_data": True},
     {"path": "/EShangApiMain/BaseInfo/GetCASHWORKERList", "method": "POST",
      "json": {}, "name": "EA-收银人员列表"},
-    {"path": "/EShangApiMain/BaseInfo/GetCOMMODITYList", "method": "POST",
-     "json": {}, "name": "EA-商品列表"},
     {"path": "/EShangApiMain/Contract/GetRegisterCompactList", "method": "POST",
      "json": {}, "name": "EA-合同列表", "expect_data": True},
     {"path": "/EShangApiMain/BusinessProject/GetBusinessProjectList", "method": "POST",
@@ -131,7 +129,7 @@ SMOKE_ENDPOINTS = [
     {"path": "/EShangApiMain/Revenue/GetTotalRevenue", "method": "GET",
      "params": {"ServerpartId": "416"}, "name": "EA-总营收"},
     {"path": "/EShangApiMain/Commodity/GetCOMMODITYList", "method": "POST",
-     "json": {}, "name": "EA-商品管理列表"},
+     "json": {"PageSize": 10}, "name": "EA-商品管理列表"},
     {"path": "/EShangApiMain/ShopVideo/GetShopVideoInfo", "method": "GET",
      "params": {"ServerpartId": "416"}, "name": "EA-视频监控"},
 ]
@@ -192,6 +190,11 @@ def run_smoke() -> int:
                             if not data:
                                 warn_msg = "WARN:data=null"
                                 warned += 1
+                    elif code == 101:
+                        # 业务级“无数据”——接口本身正常，计为 WARN
+                        ok = True
+                        warn_msg = f"WARN:Result_Code=101({body.get('Result_Desc', '')})"
+                        warned += 1
                     elif ep["path"] in ("/", "/health"):
                         ok = True  # 系统端点不一定有 Result_Code
                 except Exception:

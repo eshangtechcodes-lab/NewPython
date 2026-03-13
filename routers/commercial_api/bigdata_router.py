@@ -2253,6 +2253,9 @@ async def get_date_analysis(
     try:
         from datetime import datetime, timedelta
 
+        if not StartDate or not EndDate:
+            return Result.fail("查询失败：StartDate 和 EndDate 参数不能为空")
+
         start_dt = datetime.strptime(StartDate.split(" ")[0], "%Y-%m-%d")
         end_dt = datetime.strptime(EndDate.split(" ")[0], "%Y-%m-%d")
         start_str = start_dt.strftime("%Y%m%d")
