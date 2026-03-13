@@ -18,6 +18,7 @@ from services.commercial import revenue_transaction_service
 from services.commercial import revenue_push_service
 from services.commercial import revenue_brand_service
 from services.commercial import revenue_budget_service
+from services.commercial import revenue_business_service
 
 router = APIRouter()
 
@@ -624,142 +625,14 @@ async def get_business_trade_level(
     ShowWholeTrade: bool = Query(False, description="是否显示全部业态"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取业态消费水平占比 (按C#逻辑重写)"""
+    """获取业态消费水平占比 — 业务逻辑见 revenue_business_service.get_business_trade_level()"""
     try:
-        from datetime import datetime as dt
-        from collections import defaultdict
-
         if not ProvinceCode:
             ProvinceCode = request.headers.get("ProvinceCode", "")
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        if not StatisticsDate:
-            return Result.success(data={"ColumnList": [], "legend": None}, msg="查询成功")
-
-        stat_date = dt.strptime(StatisticsDate, "%Y-%m-%d") if "-" in StatisticsDate else dt.strptime(StatisticsDate, "%Y%m%d")
-        month_str = stat_date.strftime("%Y%m")
-
-        # 查省份ID
-        fe_rows = db.execute_query(
-            """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
-            {"pc": ProvinceCode})
-        province_id = fe_rows[0]["FIELDENUM_ID"] if fe_rows else ProvinceCode
-
-        where_sql = f' AND A."PROVINCE_ID" = {province_id} AND A."STATISTICS_MONTH" = {month_str}'
-        if ServerpartId:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', [ServerpartId]).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-
-        # 按业态+消费等级分组
-        sql = f"""SELECT C."BUSINESS_TRADE", A."AMOUNT_RANGE",
-                ROUND(SUM(A."TICKET_COUNT") / MAX(A."STATISTICS_DAYS"), 0) AS "AVGTICKET_COUNT"
-            FROM "T_CONSUMPTIONLEVEL" A, "T_SERVERPART" B, "T_SERVERPARTSHOP" C
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."CONSUMPTIONLEVEL_STATE" = 1
-                AND A."SERVERPARTSHOP_ID" = C."SERVERPARTSHOP_ID"
-                AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
-                AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999'){where_sql}
-            GROUP BY C."BUSINESS_TRADE", A."AMOUNT_RANGE" """
-        rows = db.execute_query(sql) or []
-
-        if not rows:
-            return Result.success(data=None, msg="查询成功")
-
-        # 查业态名称
-        trade_name_sql = """SELECT "AUTOSTATISTICS_ID", "AUTOSTATISTICS_PID", "AUTOSTATISTICS_NAME"
-            FROM "T_AUTOSTATISTICS" WHERE "AUTOSTATISTICS_TYPE" = 2000"""
-        trade_rows = db.execute_query(trade_name_sql) or []
-        trade_name_map = {}
-        trade_parent_map = {}
-        for t in trade_rows:
-            tid = str(t.get("AUTOSTATISTICS_ID", ""))
-            trade_name_map[tid] = t.get("AUTOSTATISTICS_NAME", "")
-            trade_parent_map[tid] = str(t.get("AUTOSTATISTICS_PID", ""))
-
-        # 查找一级业态（ShowFirstTrade默认True）
-        def get_parent_trade(trade_id):
-            """递归查找一级业态ID"""
-            visited = set()
-            tid = str(trade_id)
-            while tid in trade_parent_map and trade_parent_map[tid] != "-1" and tid not in visited:
-                visited.add(tid)
-                tid = trade_parent_map[tid]
-            return tid
-
-        # 按具体业态+消费等级分组（C#不递归到一级,直接用具体业态）
-        ptrade_total = defaultdict(float)
-        ptrade_range = defaultdict(lambda: defaultdict(float))
-        for r in rows:
-            trade = str(r.get("BUSINESS_TRADE") or "")
-            ar = int(safe_dec(r.get("AMOUNT_RANGE")))
-            tc = safe_dec(r.get("AVGTICKET_COUNT"))
-            ptrade_total[trade] += tc
-            ptrade_range[trade][ar] += tc
-
-        # 按客单量降序排序
-        show_count = 5  # C#默认 ShowTradeCount=5
-        sorted_trades = sorted(
-            [(t, v) for t, v in ptrade_total.items() if t and t in trade_name_map],
-            key=lambda x: x[1], reverse=True
+        data = revenue_business_service.get_business_trade_level(
+            db, ProvinceCode, StatisticsDate, ServerpartId, ShowWholeTrade
         )
-        if ShowWholeTrade:
-            show_count = min(show_count, len(sorted_trades)) + 1
-        else:
-            show_count = min(show_count, len(sorted_trades))
-
-        if show_count == 0:
-            return Result.success(data=None, msg="查询成功")
-
-        legend = [None] * show_count
-        amount_ranges = [("1", "低消费"), ("2", "普通消费"), ("3,4", "高消费")]
-        col_list = []
-        for ar_key, ar_name in amount_ranges:
-            col_list.append({"name": ar_name, "value": [ar_key], "data": [0.0] * show_count})
-
-        idx = 0
-        for trade_id, total in sorted_trades:
-            if idx >= (show_count - 1 if ShowWholeTrade else show_count):
-                break
-            legend[idx] = trade_name_map.get(trade_id, "其他业态")
-            r1 = ptrade_range[trade_id].get(1, 0)
-            pct1 = round(r1 / total * 100, 2) if total > 0 else 0
-            col_list[0]["data"][idx] = pct1
-            r2 = ptrade_range[trade_id].get(2, 0)
-            pct2 = round(r2 / total * 100, 2) if total > 0 else 0
-            col_list[1]["data"][idx] = pct2
-            col_list[2]["data"][idx] = round(100 - pct1 - pct2, 2)
-            idx += 1
-
-        # 其他业态
-        other_trades = [(t, v) for t, v in ptrade_total.items() if not t or t not in trade_name_map]
-        if idx < (show_count - 1 if ShowWholeTrade else show_count) and other_trades:
-            legend[idx] = "其他业态"
-            total = sum(v for _, v in other_trades)
-            r1 = sum(ptrade_range[t].get(1, 0) for t, _ in other_trades)
-            pct1 = round(r1 / total * 100, 2) if total > 0 else 0
-            col_list[0]["data"][idx] = pct1
-            r2 = sum(ptrade_range[t].get(2, 0) for t, _ in other_trades)
-            pct2 = round(r2 / total * 100, 2) if total > 0 else 0
-            col_list[1]["data"][idx] = pct2
-            col_list[2]["data"][idx] = round(100 - pct1 - pct2, 2)
-            idx += 1
-
-        # 全业态汇总
-        if ShowWholeTrade:
-            legend[show_count - 1] = "全业态"
-            all_total = sum(ptrade_total.values())
-            if all_total > 0:
-                all_r1 = sum(ptrade_range[t].get(1, 0) for t in ptrade_total)
-                pct1 = round(all_r1 / all_total * 100, 2)
-                col_list[0]["data"][show_count - 1] = pct1
-                all_r2 = sum(ptrade_range[t].get(2, 0) for t in ptrade_total)
-                pct2 = round(all_r2 / all_total * 100, 2)
-                col_list[1]["data"][show_count - 1] = pct2
-                col_list[2]["data"][show_count - 1] = round(100 - pct1 - pct2, 2)
-
-        return Result.success(data={"ColumnList": col_list, "legend": legend}, msg="查询成功")
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeLevel 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -777,132 +650,18 @@ async def get_business_brand_level(
     BusinessTradeIds: Optional[str] = Query(None, description="业态ID"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取品牌消费水平占比 (按C#逻辑重写)"""
+    """获取品牌消费水平占比 — 业务逻辑见 revenue_business_service.get_business_brand_level()"""
     try:
-        from datetime import datetime as dt
-        from collections import defaultdict
-
         if not ProvinceCode:
             ProvinceCode = request.headers.get("ProvinceCode", "")
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        if not StatisticsDate:
-            return Result.success(data={"ColumnList": [], "legend": None}, msg="查询成功")
-
-        stat_date = dt.strptime(StatisticsDate, "%Y-%m-%d") if "-" in StatisticsDate else dt.strptime(StatisticsDate, "%Y%m%d")
-        month_str = stat_date.strftime("%Y%m")
-
-        # 查省份ID
-        fe_rows = db.execute_query(
-            """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
-            {"pc": ProvinceCode})
-        province_id = fe_rows[0]["FIELDENUM_ID"] if fe_rows else ProvinceCode
-
-        where_sql = f' AND A."PROVINCE_ID" = {province_id} AND A."STATISTICS_MONTH" = {month_str}'
-        if ServerpartId:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', [ServerpartId]).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-
-        # 查T_CONSUMPTIONLEVEL按品牌+消费等级分组
-        sql = f"""SELECT C."BRAND_NAME", A."AMOUNT_RANGE",
-                ROUND(SUM(A."TICKET_COUNT") / MAX(A."STATISTICS_DAYS"), 0) AS "AVGTICKET_COUNT"
-            FROM "T_CONSUMPTIONLEVEL" A, "T_SERVERPART" B, "T_SERVERPARTSHOP" C
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."CONSUMPTIONLEVEL_STATE" = 1
-                AND A."SERVERPARTSHOP_ID" = C."SERVERPARTSHOP_ID"
-                AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
-                AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999'){where_sql}
-            GROUP BY C."BRAND_NAME", A."AMOUNT_RANGE" """
-        rows = db.execute_query(sql) or []
-
-        if not rows:
-            return Result.success(data=None, msg="查询成功")
-
-        # 按品牌汇总客单总量
-        brand_total = defaultdict(float)
-        brand_range = defaultdict(lambda: defaultdict(float))
-        for r in rows:
-            brand = r.get("BRAND_NAME") or ""
-            ar = int(safe_dec(r.get("AMOUNT_RANGE")))
-            tc = safe_dec(r.get("AVGTICKET_COUNT"))
-            brand_total[brand] += tc
-            brand_range[brand][ar] += tc
-
-        # 按客单量降序
-        try:
-            brand_count = int(ShowBrandCount) if ShowBrandCount and ShowBrandCount.isdigit() else 5
-        except:
-            brand_count = 5
-        show_count = brand_count
-        sorted_brands = sorted(
-            [(b, t) for b, t in brand_total.items() if b],
-            key=lambda x: x[1], reverse=True
+        data = revenue_business_service.get_business_brand_level(
+            db, ProvinceCode, StatisticsDate, ServerpartId, ShowWholeBrand, ShowBrandCount
         )
-        if ShowWholeBrand:
-            # 显示全品牌时多一列
-            show_count = min(show_count, len(sorted_brands)) + 1
-        else:
-            show_count = min(show_count, len(sorted_brands))
-
-        if show_count == 0:
-            return Result.success(data=None, msg="查询成功")
-
-        legend = [None] * show_count
-        # 消费等级定义: 1=低消费, 2=普通消费, 3,4=高消费
-        amount_ranges = [("1", "低消费"), ("2", "普通消费"), ("3,4", "高消费")]
-        col_list = []
-        for ar_key, ar_name in amount_ranges:
-            col_list.append({"name": ar_name, "value": [ar_key], "data": [0.0] * show_count})
-
-        idx = 0
-        for brand, total in sorted_brands:
-            if idx >= (show_count - 1 if ShowWholeBrand else show_count):
-                break
-            legend[idx] = brand
-            # 低消费
-            r1 = brand_range[brand].get(1, 0)
-            pct1 = round(r1 / total * 100, 2) if total > 0 else 0
-            col_list[0]["data"][idx] = pct1
-            # 普通消费
-            r2 = brand_range[brand].get(2, 0)
-            pct2 = round(r2 / total * 100, 2) if total > 0 else 0
-            col_list[1]["data"][idx] = pct2
-            # 高消费 = 100 - 低 - 普通
-            col_list[2]["data"][idx] = round(100 - pct1 - pct2, 2)
-            idx += 1
-
-        # 无品牌的归为"其他品牌"
-        if idx < (show_count - 1 if ShowWholeBrand else show_count) and "" in brand_total:
-            legend[idx] = "其他品牌"
-            total = brand_total[""]
-            r1 = brand_range[""].get(1, 0)
-            pct1 = round(r1 / total * 100, 2) if total > 0 else 0
-            col_list[0]["data"][idx] = pct1
-            r2 = brand_range[""].get(2, 0)
-            pct2 = round(r2 / total * 100, 2) if total > 0 else 0
-            col_list[1]["data"][idx] = pct2
-            col_list[2]["data"][idx] = round(100 - pct1 - pct2, 2)
-            idx += 1
-
-        # 全品牌汇总
-        if ShowWholeBrand:
-            legend[show_count - 1] = "全品牌"
-            all_total = sum(brand_total.values())
-            if all_total > 0:
-                all_r1 = sum(brand_range[b].get(1, 0) for b in brand_total)
-                pct1 = round(all_r1 / all_total * 100, 2)
-                col_list[0]["data"][show_count - 1] = pct1
-                all_r2 = sum(brand_range[b].get(2, 0) for b in brand_total)
-                pct2 = round(all_r2 / all_total * 100, 2)
-                col_list[1]["data"][show_count - 1] = pct2
-                col_list[2]["data"][show_count - 1] = round(100 - pct1 - pct2, 2)
-
-        return Result.success(data={"ColumnList": col_list, "legend": legend}, msg="查询成功")
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessBrandLevel 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
+
 
 
 # ===== 营收趋势 =====
