@@ -65,7 +65,7 @@ view_file docs/collaboration_plan.md
 先在接口文档中搜索，快速了解该实体有哪些接口：
 
 ```
-grep_search 搜索路径="E:\workfile\JAVA\NewAPI\EShangApiMain接口文档.md" 关键词="实体名"
+grep_search 搜索路径="D:\AISpace\EShangPython\EShangApiMain接口文档.md" 关键词="实体名"
 ```
 
 > ⚠️ 接口文档很大（60万字节），文件编码可能不标准，搜索时用**大小写不敏感**模式。
@@ -209,7 +209,7 @@ python -c "import dmPython; conn=dmPython.connect(user='NEWPYTHON',password='New
 
 ### 3.3 添加到迁移脚本
 
-如果表还未迁移，编辑 `scripts/server_migrate.py`，在 `MIGRATE_TABLES` 列表中添加：
+如果表还未迁移，编辑 `scripts/migrate/server_migrate.py`，在 `MIGRATE_TABLES` 列表中添加：
 
 ```python
 # 在 MIGRATE_TABLES 列表末尾追加
@@ -223,13 +223,13 @@ python -c "import dmPython; conn=dmPython.connect(user='NEWPYTHON',password='New
 ### 3.4 执行迁移
 
 > [!CAUTION]
-> **禁止不带参数运行 `python scripts/server_migrate.py`！** 不带参数会全量重跑所有旧表，耗时极长且无意义。
+> **禁止不带参数运行 `python scripts/migrate/server_migrate.py`！** 不带参数会全量重跑所有旧表，耗时极长且无意义。
 > 必须指定当前接口需要的表名：
 
 ```powershell
 # 只迁移当前接口需要的表（可指定多张）
-python scripts/server_migrate.py T_XXX
-python scripts/server_migrate.py T_XXX T_YYY
+python scripts/migrate/server_migrate.py T_XXX
+python scripts/migrate/server_migrate.py T_XXX T_YYY
 ```
 
 脚本会自动：
@@ -618,7 +618,7 @@ Invoke-RestMethod -Uri "http://localhost:8080/EShangApiMain/BaseInfo/GetXXXList"
 
 ### 5.3 修改对比脚本
 
-编辑 `scripts/compare_api.py`，修改 `ENDPOINT` 变量：
+编辑 `scripts/compare/compare_api.py`，修改 `ENDPOINT` 变量：
 
 ```python
 ENDPOINT = "BaseInfo/GetXXXList"    # ⬅️ 改为当前接口路由
@@ -785,18 +785,18 @@ git commit -m "feat: 迁移 {实体名} {接口数}接口 - 对比验证通过"
 
 | 类型 | 路径 |
 |------|------|
-| Python 项目根目录 | `E:\workfile\JAVA\NewAPI\` |
+| Python 项目根目录 | `D:\AISpace\EShangPython\` |
 | C# 原项目根目录 | `E:\workfile\JAVA\API\CSharp\` |
 | C# Controller 目录 | `E:\workfile\JAVA\API\CSharp\EShangApiMain\Controllers\` |
 | C# Helper 目录 | `E:\workfile\JAVA\API\CSharp\EShangApi.Common\GeneralMethod\` |
 | C# Model 目录 | `E:\workfile\JAVA\API\CSharp\EShangApi.Common\Model\` |
-| Service 目录 | `E:\workfile\JAVA\NewAPI\services\base_info\` |
-| Router 目录 | `E:\workfile\JAVA\NewAPI\routers\eshang_api_main\base_info\` |
-| 迁移脚本 | `E:\workfile\JAVA\NewAPI\scripts\server_migrate.py` |
-| 对比脚本 | `E:\workfile\JAVA\NewAPI\scripts\compare_api.py` |
-| 工作流（进度表） | `E:\workfile\JAVA\NewAPI\.agent\workflows\api-migration.md` |
-| 总计划 | `E:\workfile\JAVA\NewAPI\docs\collaboration_plan.md` |
-| 接口文档 | `E:\workfile\JAVA\NewAPI\EShangApiMain接口文档.md` |
+| Service 目录 | `D:\AISpace\EShangPython\services\base_info\` |
+| Router 目录 | `D:\AISpace\EShangPython\routers\eshang_api_main\base_info\` |
+| 迁移脚本 | `D:\AISpace\EShangPython\scripts\server_migrate.py` |
+| 对比脚本 | `D:\AISpace\EShangPython\scripts\compare_api.py` |
+| 工作流（进度表） | `D:\AISpace\EShangPython\.agent\workflows\api-migration.md` |
+| 总计划 | `D:\AISpace\EShangPython\docs\collaboration_plan.md` |
+| 接口文档 | `D:\AISpace\EShangPython\EShangApiMain接口文档.md` |
 
 ## 附录B：已知问题速查（迁移前必读）
 
@@ -807,7 +807,7 @@ git commit -m "feat: 迁移 {实体名} {接口数}接口 - 对比验证通过"
 | P3 | 默认分页 | 不传参时 `rows[:10]` 限制 10 条 |
 | P4 | 路由大小写 | 看原 `[Route()]` 注解，不要猜 |
 | P7 | Oracle→达梦语法 | `(+)` → LEFT JOIN |
-| P10 | Python 3.8 类型 | 文件头 `from __future__ import annotations` |
+| P10 | Python 3.11 类型 | 文件头 `from __future__ import annotations` |
 | P11 | 无序列权限 | `MAX(ID)+1` 降级 |
 | P14 | 软/真删除 | 看原 Helper Delete 方法体 |
 | P16 | Header 参数遗漏 | 原 C# 用 `GetIntHeader`/`GetStringHeader` 从请求头读 ProvinceCode 等参数，Python 必须用 `get_int_header` 复现 |

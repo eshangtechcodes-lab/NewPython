@@ -15,9 +15,9 @@ description: C# API 接口平移到 Python FastAPI 的标准工作流
 - 原项目代码路径：`E:\workfile\JAVA\API\CSharp`
 - Helper 层代码路径：`E:\workfile\JAVA\API\CSharp\EShangApi.Common\GeneralMethod\`
 - Model 代码路径：`E:\workfile\JAVA\API\CSharp\EShangApi.Common\Model\`
-- Python 版本：3.8（注意类型注解兼容性，需 `from __future__ import annotations`）
+- Python 版本：3.11（注意类型注解兼容性，需 `from __future__ import annotations`）
 - 达梦用户 NEWPYTHON 无 CREATE SEQUENCE 权限（新增时使用 MAX(ID)+1 降级方案）
-- Oracle 可从本机直连（Thick 模式，Instant Client 路径：`E:\workfile\JAVA\NewAPI\oracle_client`）
+- Oracle 可从本机直连（Thick 模式，Instant Client 路径：`D:\AISpace\EShangPython\oracle_client`）
 - 已知 Oracle schema：`COOP_MERCHANT`（业主相关）、`HIGHWAY_STORAGE`（服务区相关）
 
 ---
@@ -97,7 +97,7 @@ Invoke-RestMethod -Uri "http://localhost:8900/EShangApiMain/BaseInfo/GetXxxList"
 
 ### 3.1 修改迁移脚本
 
-修改 `scripts/server_migrate.py` 中的 MIGRATE_TABLES 列表，添加要迁移的表：
+修改 `scripts/migrate/server_migrate.py` 中的 MIGRATE_TABLES 列表，添加要迁移的表：
 
 ```python
 # 已知 Oracle schema 映射：
@@ -117,8 +117,8 @@ MIGRATE_TABLES = [
 // turbo
 ```powershell
 # 只迁移当前接口需要的表（可指定多张）
-python scripts/server_migrate.py T_XXX
-python scripts/server_migrate.py T_XXX T_YYY
+python scripts/migrate/server_migrate.py T_XXX
+python scripts/migrate/server_migrate.py T_XXX T_YYY
 ```
 
 脚本会自动：
@@ -143,7 +143,7 @@ python scripts/server_migrate.py T_XXX T_YYY
 
 规范：
 - 使用 Pydantic BaseModel
-- 文件头加 `from __future__ import annotations`（Python 3.8 兼容）
+- 文件头加 `from __future__ import annotations`（Python 3.11 兼容）
 - 字段名与原 C# Model 完全一致
 - 所有字段使用 `Optional[类型] = None`
 - 中文注释标注字段含义
@@ -152,7 +152,7 @@ python scripts/server_migrate.py T_XXX T_YYY
 
 文件：`services/{模块名}/xxx_service.py`
 
-- 文件头加 `from __future__ import annotations`（Python 3.8 兼容）
+- 文件头加 `from __future__ import annotations`（Python 3.11 兼容）
 - **SQL 必须参考原 Helper 中的查询**，不能自己猜测
 - 包含 JOIN、默认排序、默认分页逻辑
 - 保持与原 Helper 完全一致的业务行为
@@ -185,7 +185,7 @@ python scripts/server_migrate.py T_XXX T_YYY
 使用 Python `requests` 库同时调原 API 和新 API，每组参数逐条逐字段对比：
 
 ```powershell
-python scripts/compare_api.py
+python scripts/compare/compare_api.py
 ```
 
 ### 5.2 对比清单（**3 组数据全部** ✅ 才算通过）
@@ -327,13 +327,13 @@ git push
 **现象**: oracledb thin 模式报 `DPY-4011`，Thick 模式报 `ORA-12537: TNS:connection closed`
 **根因**: Oracle 服务端限制了来源 IP（sqlnet.ora 白名单或防火墙策略）
 **最终解决**: 用户在服务器端开放了访问限制，现在本机可直连 Oracle
-**连接方式**: Thick 模式，Instant Client 路径 `E:\workfile\JAVA\NewAPI\oracle_client`
+**连接方式**: Thick 模式，Instant Client 路径 `D:\AISpace\EShangPython\oracle_client`
 **当前状态**: ✅ 已解决，迁移脚本可直接在本机执行
 
-### 🟡 P10: Python 3.8 类型注解不兼容
+### 🟡 P10: Python 3.11 类型注解不兼容
 
 **现象**: `list[dict]`、`tuple[int, list]` 报 `TypeError: 'type' object is not subscriptable`
-**根因**: Python 3.8 不支持内置类型的泛型标注（3.9+ 才支持）
+**根因**: Python 3.11 不支持内置类型的泛型标注（3.9+ 才支持）
 **解决方案**: 在每个 .py 文件头添加 `from __future__ import annotations`
 **影响范围**: 所有使用 `list[xxx]`、`tuple[xxx]`、`dict[xxx]` 类型标注的文件
 **检查时机**: 第四步（创建新文件时）

@@ -1,0 +1,27 @@
+# .dockerignore
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.env
+.git/
+.gitignore
+.vscode/
+.idea/
+.agent/
+.agents/
+
+# 文档和脚本（运行时不需要）
+docs/
+scripts/
+workLog/
+oracle_client/
+csharp_source/
+tmp_compare/
+
+# 开发文件
+README.md
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore

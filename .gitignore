@@ -29,4 +29,18 @@ Thumbs.db
 # 运行环境及自动生成文件 (大文件)
 oracle_client/
 models/auto_build/
-scripts/compare_result.txt
+
+# C# 参考源码（仅本地查阅，不提交）
+csharp_source/
+
+# 临时对比数据和结果
+tmp_compare/
+scripts/test_results/
+scripts/compare/*.txt
+scripts/compare/*.json
+scripts/manifests/_tmp_*
+
+# 临时文件
+/tmp/
+*.tmp
+

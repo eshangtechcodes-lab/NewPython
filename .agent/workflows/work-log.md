@@ -49,7 +49,7 @@ description: 每次会话结束时自动保存工作日志到 workLog 目录
 
 ### 3. 保存日志文件
 // turbo
-- 将日志保存到 `D:\Projects\Python\eshang_api\workLog\YYYY-MM-DD.md`
+- 将日志保存到 `D:\AISpace\EShangPython\workLog\YYYY-MM-DD.md`
 - 文件名格式：`YYYY-MM-DD.md`（如 `2026-03-07.md`）
 - 如果文件已存在，追加内容而不是覆盖
 
