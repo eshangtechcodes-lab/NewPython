@@ -15,6 +15,7 @@ from core.des_helper import des_encrypt_id
 # Service 层导入 — 逐步将 Router 中的内联逻辑迁移到 Service
 from services.commercial import revenue_trend_service
 from services.commercial import revenue_transaction_service
+from services.commercial import revenue_push_service
 
 router = APIRouter()
 
@@ -640,59 +641,11 @@ async def get_wechat_push_sales_list(
     RankNum: int = Query(10, description="排行数量"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取单品销售排行榜数据 (SQL平移完成)"""
+    """获取单品销售排行榜数据 — 业务逻辑见 revenue_push_service.get_wechat_push_sales_list()"""
     try:
-        from datetime import datetime
-        stat_date_str = Statistics_Date.split(" ")[0] if Statistics_Date else datetime.now().strftime("%Y-%m-%d")
-
-        # 1. 区域过滤映射
-        pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-        pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
-        province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else pushProvinceCode
-
-        # 2. 查询汇总单品数据
-        sql = f"""SELECT 
-                    CASE WHEN BUSINESSTYPE IN ('1000','1005') THEN 1000 
-                         WHEN BUSINESSTYPE LIKE '2%' THEN 2000 
-                         WHEN BUSINESSTYPE LIKE '3%' THEN 3000 ELSE 1000 END AS BUSINESSTYPE_GROUP,
-                    A.COMMODITY_NAME,
-                    SUM(A.TOTALCOUNT) AS TOTALCOUNT,
-                    SUM(A.TOTALSELLAMOUNT) AS TOTALSELLAMOUNT 
-                FROM 
-                    T_COMMODITYSALE A 
-                WHERE 
-                    A.ENDDATE >= TO_DATE('{stat_date_str}', 'YYYY-MM-DD') AND 
-                    A.ENDDATE < TO_DATE('{stat_date_str}', 'YYYY-MM-DD') + 1 AND 
-                    A.SERVERPARTCODE NOT IN ('888888','899999') AND 
-                    EXISTS (SELECT 1 FROM T_SERVERPART B 
-                        WHERE A.SERVERPART_ID = B.SERVERPART_ID AND B.PROVINCE_CODE = '{province_id}')
-                GROUP BY 
-                    CASE WHEN BUSINESSTYPE IN ('1000','1005') THEN 1000 
-                         WHEN BUSINESSTYPE LIKE '2%' THEN 2000 
-                         WHEN BUSINESSTYPE LIKE '3%' THEN 3000 ELSE 1000 END,
-                    A.COMMODITY_NAME"""
-        
-        rows = db.execute_query(sql)
-        from collections import defaultdict
-        groups = defaultdict(list)
-        for r in rows:
-            groups[int(r["BUSINESSTYPE_GROUP"])].append({
-                "Commodity_Name": r["COMMODITY_NAME"],
-                "SellCount": float(r["TOTALCOUNT"] or 0),
-                "TotalPrice": float(r["TOTALSELLAMOUNT"] or 0)
-            })
-            
-        result_list = []
-        for b_type in [1000, 2000, 3000]:
-            if b_type not in groups: continue
-            sorted_goods = sorted(groups[b_type], key=lambda x: x["SellCount"], reverse=True)[:RankNum]
-            for i, g in enumerate(sorted_goods): g["Rank_ID"] = i + 1
-            result_list.append({
-                "Data_Type": b_type,
-                "TotalCount": len(groups[b_type]),
-                "GoodsList": sorted_goods
-            })
+        result_list = revenue_push_service.get_wechat_push_sales_list(
+            db, pushProvinceCode, Statistics_Date, RankNum
+        )
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
@@ -709,79 +662,12 @@ async def get_un_upload_shops(
     Revenue_Include: int = Query(1, description="是否纳入营收"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """查询服务区未上传结账信息的门店列表"""
+    """查询服务区未上传结账信息的门店列表 — 业务逻辑见 revenue_push_service.get_un_upload_shops()"""
     try:
-        from datetime import datetime as dt
-
-        # 确定使用 T_ENDACCOUNT 还是 T_ENDACCOUNT_TEMP
-        stat_date = Statistics_Date or dt.now().strftime("%Y-%m-%d")
-        stat_dt = dt.strptime(stat_date.split(" ")[0], "%Y-%m-%d")
-        table_suffix = "" if stat_dt < dt.now().replace(hour=0, minute=0, second=0, microsecond=0) - __import__("datetime").timedelta(days=9) else "_TEMP"
-
-        # 省份条件
-        where_sql = ""
-        if Serverpart_ID:
-            where_sql += f' AND B."SERVERPART_ID" = {Serverpart_ID}'
-        elif SPRegionType_ID:
-            where_sql += f' AND B."SPREGIONTYPE_ID" = {SPRegionType_ID}'
-        elif pushProvinceCode:
-            fe_rows = db.execute_query(
-                """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
-                {"pc": pushProvinceCode})
-            if fe_rows:
-                where_sql += f' AND B."PROVINCE_CODE" = {fe_rows[0]["FIELDENUM_ID"]}'
-        if Revenue_Include == 1:
-            where_sql += f' AND A."REVENUE_INCLUDE" = 1'
-
-        date_str = stat_date.split(" ")[0]
-
-        sql = f"""SELECT B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_INDEX", B."SERVERPART_CODE",
-                A."SERVERPARTSHOP_ID", A."SHOPREGION", A."SHOPTRADE", A."SHOPCODE", A."SHOPNAME"
-            FROM "T_SERVERPARTSHOP" A, "T_SERVERPART" B
-            WHERE COALESCE(A."BUSINESS_DATE", TO_DATE('{date_str}','YYYY-MM-DD')) < TO_DATE('{date_str}','YYYY-MM-DD') + 1
-                AND COALESCE(A."BUSINESS_ENDDATE", TO_DATE('{date_str}','YYYY-MM-DD')) >= TO_DATE('{date_str}','YYYY-MM-DD')
-                AND COALESCE(A."STATISTIC_TYPE", 1000) = 1000
-                AND COALESCE(A."BUSINESS_STATE", 1000) = 1000
-                AND A."SERVERPART_ID" = B."SERVERPART_ID"
-                AND A."SHOPTRADE" NOT IN ('9032','9999')
-                AND A."ISVALID" = 1
-                AND NOT EXISTS (SELECT 1 FROM "T_ENDACCOUNT{table_suffix}" C
-                    WHERE A."SERVERPART_ID" = C."SERVERPART_ID" AND A."SHOPCODE" = C."SHOPCODE"
-                        AND C."VALID" = 1 AND TRUNC(C."STATISTICS_DATE") = TO_DATE('{date_str}','YYYY-MM-DD')){where_sql}
-            UNION ALL
-            SELECT B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_INDEX", B."SERVERPART_CODE",
-                A."SERVERPARTSHOP_ID", A."SHOPREGION", A."SHOPTRADE", A."SHOPCODE", A."SHOPNAME"
-            FROM "T_SERVERPARTSHOP" A, "T_SERVERPART" B
-            WHERE COALESCE(A."STATISTIC_TYPE", 1000) = 1000
-                AND COALESCE(A."BUSINESS_STATE", 1000) = 1000
-                AND A."SERVERPART_ID" = B."SERVERPART_ID"
-                AND A."SHOPTRADE" NOT IN ('9032','9999')
-                AND A."ISVALID" = 1
-                AND EXISTS (SELECT 1 FROM "T_ENDACCOUNT{table_suffix}" C
-                    WHERE A."SERVERPART_ID" = C."SERVERPART_ID" AND A."SHOPCODE" = C."SHOPCODE"
-                        AND C."VALID" = 1 AND TRUNC(C."STATISTICS_DATE") = TO_DATE('{date_str}','YYYY-MM-DD')
-                        AND C."DIFFERENCE_REASON" = '无结账信息' AND C."CASHPAY" = 0){where_sql}"""
-
-        rows = db.execute_query(sql)
-        def safe_sort_int(v):
-            try: return int(v) if v is not None else 0
-            except: return 0
-        rows = sorted(rows or [], key=lambda x: (
-            safe_sort_int(x.get("SERVERPART_INDEX")),
-            safe_sort_int(x.get("SERVERPART_CODE")),
-            str(x.get("SHOPREGION") or ""),
-            str(x.get("SHOPTRADE") or ""),
-        ))
-        result_list = []
-        for r in rows:
-            result_list.append({
-                "Serverpart_ID": r.get("SERVERPART_ID"),
-                "Serverpart_Name": r.get("SERVERPART_NAME", ""),
-                "ServerpartShop_ID": r.get("SERVERPARTSHOP_ID"),
-                "ServerpartShop_Name": r.get("SHOPNAME", ""),
-                "Statistics_Date": stat_date,
-            })
+        result_list = revenue_push_service.get_un_upload_shops(
+            db, pushProvinceCode, Statistics_Date, Serverpart_ID,
+            SPRegionType_ID, Revenue_Include
+        )
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
