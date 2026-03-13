@@ -342,3 +342,145 @@ def get_business_trade_revenue(db: DatabaseHelper, province_code, statistics_dat
 # ===== 7-8. GetBusinessTradeLevel & GetBusinessBrandLevel =====
 # 这两个路由各约 150 行, 含复杂消费等级聚合, 暂保留在 Router 层
 # 后续重写 Router 时整体迁移
+
+
+# ===== 7. GetTransactionConvert =====
+def get_transaction_convert(db: DatabaseHelper, province_code, statistics_date,
+                             serverpart_id, sp_region_type_id, time_span) -> dict:
+    """获取消费转化对比分析（时段客单+车流）"""
+    from datetime import datetime as dt
+
+    if not statistics_date:
+        return None
+
+    stat_date = dt.strptime(statistics_date, "%Y-%m-%d") if "-" in statistics_date else dt.strptime(statistics_date, "%Y%m%d")
+    month_str = stat_date.strftime("%Y%m")
+
+    where_sql = ""
+    _sp_ids = _parse_multi_ids(serverpart_id)
+    if _sp_ids:
+        where_sql += ' AND ' + _build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
+    elif sp_region_type_id:
+        where_sql += f' AND B."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+
+    # 时段客单
+    t_sql = f"""SELECT A."STATISTICS_HOUR",
+            FLOOR(SUM(A."TICKET_COUNT") * 1.0 / MAX(A."STATISTICS_DAYS") + 0.5) AS "TICKET_COUNT"
+        FROM "T_YSSELLMASTERMONTH" A, "T_SERVERPART" B
+        WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
+            AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = {month_str}{where_sql}
+        GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
+    t_rows = db.execute_query(t_sql) or []
+    t_data = [[float(h), 0] for h in range(24)]
+    for r in t_rows:
+        h = int(_sf(r.get("STATISTICS_HOUR")))
+        if 0 <= h < 24:
+            t_data[h] = [float(h), _sf(r.get("TICKET_COUNT"))]
+
+    # 时段车流
+    b_sql = f"""SELECT A."STATISTICS_HOUR",
+            FLOOR(SUM(A."VEHICLE_COUNT") * 1.0 / MAX(A."STATISTICS_DAYS") + 0.5) AS "TICKET_COUNT"
+        FROM "T_BAYONETHOURMONTH_AH" A, "T_SERVERPART" B
+        WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
+            AND A."INOUT_TYPE" = 0 AND A."DATA_TYPE" IN (0,1)
+            AND A."STATISTICS_MONTH" = {month_str}{where_sql}
+        GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
+    b_rows = db.execute_query(b_sql) or []
+    b_data = [[float(h), 0] for h in range(24)]
+    for r in b_rows:
+        h = int(_sf(r.get("STATISTICS_HOUR")))
+        if 0 <= h < 24:
+            b_data[h] = [float(h), _sf(r.get("TICKET_COUNT"))]
+
+    return {
+        "TransactionList": {"name": "客单数" if t_rows else None, "data": t_data if t_rows else None, "value": None, "CommonScatterList": None},
+        "BayonetList": {"name": "车流量", "data": b_data, "value": None, "CommonScatterList": None},
+    }
+
+
+# ===== 8. GetTransactionDetailList =====
+def get_transaction_detail_list(db: DatabaseHelper, province_code, serverpart_id,
+                                  serverpart_shop_id, start_time, end_time) -> list:
+    """获取实时交易明细（4表关联+商品明细解析）"""
+    from datetime import datetime as dt
+    from collections import OrderedDict
+
+    where_sql = ""
+    if serverpart_shop_id:
+        where_sql = f' AND C."SERVERPARTSHOP_ID" IN ({serverpart_shop_id})'
+    elif serverpart_id:
+        _sp_ids = _parse_multi_ids(serverpart_id)
+        if _sp_ids:
+            where_sql = ' AND ' + _build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
+    elif province_code:
+        where_sql = f' AND B."PROVINCE_CODE" = {province_code}'
+    else:
+        return []
+
+    if start_time:
+        try:
+            st = dt.strptime(start_time, "%Y-%m-%d %H:%M:%S") if " " in start_time else dt.strptime(start_time, "%Y-%m-%d")
+            where_sql += f' AND A."SELLMASTER_DATE" >= {st.strftime("%Y%m%d")}000000'
+        except:
+            pass
+    if end_time:
+        try:
+            et = dt.strptime(end_time, "%Y-%m-%d %H:%M:%S") if " " in end_time else dt.strptime(end_time, "%Y-%m-%d")
+            where_sql += f' AND A."SELLMASTER_DATE" <= {et.strftime("%Y%m%d")}235959'
+        except:
+            pass
+
+    sql = f"""SELECT B."SERVERPART_ID", B."SERVERPART_NAME", C."SERVERPARTSHOP_ID", C."SHOPNAME",
+            C."SHOPTRADE", A."SELLMASTER_DATE", A."SELLMASTER_AMOUNT",
+            WM_CONCAT(D."COMMODITY_NAME" || '|' || D."COMMODITY_BARCODE" || '|' || D."SELLDETAILS_COUNT" ||
+                '|' || D."SELLDETAILS_PRICE" || '|' || D."SELLDETAILS_AMOUNT") AS "DETAIL_LIST"
+        FROM "T_YSSELLMASTER_YES" A, "T_SERVERPART" B, "T_SERVERPARTSHOP" C, "T_YSSELLDETAILS_YES" D
+        WHERE A."SERVERPARTCODE" = B."SERVERPART_CODE"
+            AND A."SHOPCODE" = C."SHOPCODE"
+            AND A."SELLMASTER_CODE" = D."SELLMASTER_CODE"
+            AND B."SERVERPART_ID" = C."SERVERPART_ID"
+            AND A."SELLMASTER_STATE" > 0{where_sql}
+        GROUP BY B."SERVERPART_ID", B."SERVERPART_NAME", C."SERVERPARTSHOP_ID", C."SHOPNAME",
+            C."SHOPTRADE", A."SELLMASTER_DATE", A."SELLMASTER_AMOUNT" """
+    rows = db.execute_query(sql) or []
+
+    sp_map = OrderedDict()
+    for r in rows:
+        sp_id = r.get("SERVERPART_ID")
+        if sp_id not in sp_map:
+            sp_map[sp_id] = {
+                "Serverpart_ID": sp_id,
+                "Serverpart_Name": r.get("SERVERPART_NAME", ""),
+                "CurRevenueAmount": 0.0,
+                "LastTradeTime": None,
+                "TimeList": [],
+            }
+        sp_map[sp_id]["CurRevenueAmount"] += _sf(r.get("SELLMASTER_AMOUNT"))
+        trade_time = str(r.get("SELLMASTER_DATE", ""))
+        if trade_time and (sp_map[sp_id]["LastTradeTime"] is None or trade_time > str(sp_map[sp_id]["LastTradeTime"])):
+            sp_map[sp_id]["LastTradeTime"] = trade_time
+
+        sell_list = []
+        detail_str = str(r.get("DETAIL_LIST", "") or "")
+        if detail_str:
+            for item in detail_str.split(","):
+                parts = item.split("|")
+                if len(parts) >= 5:
+                    sell_list.append({
+                        "CommodityName": parts[0],
+                        "CommodityBarcode": parts[1],
+                        "SellCount": _sf(parts[2]),
+                        "SellPrice": _sf(parts[3]),
+                        "SellAmount": _sf(parts[4]),
+                    })
+
+        sp_map[sp_id]["TimeList"].append({
+            "ServerpartShop_ID": str(r.get("SERVERPARTSHOP_ID", "")),
+            "ServerpartShop_Name": r.get("SHOPNAME", ""),
+            "ShopTrade": str(r.get("SHOPTRADE", "")),
+            "TicketAmount": _sf(r.get("SELLMASTER_AMOUNT")),
+            "TradeTime": trade_time,
+            "sellList": sell_list,
+        })
+
+    return list(sp_map.values())
