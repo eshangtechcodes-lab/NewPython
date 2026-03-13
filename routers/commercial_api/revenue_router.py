@@ -16,6 +16,8 @@ from core.des_helper import des_encrypt_id
 from services.commercial import revenue_trend_service
 from services.commercial import revenue_transaction_service
 from services.commercial import revenue_push_service
+from services.commercial import revenue_brand_service
+from services.commercial import revenue_budget_service
 
 router = APIRouter()
 
@@ -516,251 +518,14 @@ async def get_serverpart_brand(
     pushProvinceCode: Optional[str] = Query(None, description="省份编号"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取服务区品牌营收 (SQL平移完成)"""
+    """获取服务区品牌营收 — 业务逻辑见 revenue_brand_service.get_serverpart_brand()"""
     try:
-        from datetime import datetime
-        stat_time = statictics_Time or datetime.now().strftime("%Y-%m-%d")
-        stat_dt = datetime.strptime(stat_time.split(" ")[0], "%Y-%m-%d")
-        
-        # 0. 确定表名后缀 (9天规则)
-        from datetime import timedelta
-        table_suffix = "" if stat_dt < datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=9) else "_TEMP"
-
-        # 1. 获取基础数据字典 (业态和品牌)
-        # 获取品牌详情
-        brand_sql = f"""SELECT "BRAND_ID", "BRAND_INTRO" FROM "T_BRAND" 
-                       WHERE "BRAND_STATE" = 1 AND "PROVINCE_CODE" = :pc"""
-        brand_rows = db.execute_query(brand_sql, {"pc": pushProvinceCode})
-        brand_intro_map = {str(r["BRAND_ID"]): r["BRAND_INTRO"] for r in brand_rows}
-
-        # 获取业态字典
-        auto_sql = f"""SELECT "AUTOSTATISTICS_ID", "AUTOSTATISTICS_NAME", "AUTOSTATISTICS_PID" 
-                      FROM "T_AUTOSTATISTICS" 
-                      WHERE "AUTOSTATISTICS_TYPE" = 2000 AND "PROVINCE_CODE" = :pc"""
-        auto_rows = db.execute_query(auto_sql, {"pc": pushProvinceCode})
-        auto_map = {str(r["AUTOSTATISTICS_ID"]): r for r in auto_rows}
-
-        # 2. 查询营收数据 (ShopBrandRevenueTable)
-        # 对应 BaseInfoHelper.GetBusinessBrandList
-        where_sql = ""
-        if Serverpart_Id:
-            where_sql += f" AND A.SERVERPART_ID = {Serverpart_Id}"
-            
-        revenue_sql = f"""
-            SELECT 
-                A.SERVERPARTSHOP_ID,
-                NVL(A.BUSINESS_TRADE, -1) AS BUSINESS_TRADE,
-                NVL(A.BUSINESS_BRAND, -1) AS BUSINESS_BRAND,
-                NVL(A.BRAND_NAME, '其他') AS BRAND_NAME,
-                NVL(A.BUSINESS_TRADENAME, '其他') AS BUSINESS_TRADENAME,
-                SUM(NVL(B.CASHPAY, 0)) AS FACTAMOUNT,
-                A.SERVERPART_ID,
-                A.SERVERPART_NAME 
-            FROM 
-                T_SERVERPARTSHOP A,
-                T_ENDACCOUNT{table_suffix} B 
-            WHERE 
-                A.SERVERPART_ID = B.SERVERPART_ID AND A.SHOPCODE = B.SHOPCODE AND 
-                A.STATISTIC_TYPE = 1000 AND A.ISVALID = 1 AND B.VALID = 1 AND 
-                A.SHOPTRADE IS NOT NULL 
-                AND B.STATISTICS_DATE >= TO_DATE('{stat_dt.strftime("%Y/%m/%d")}', 'YYYY/MM/DD')
-                AND B.STATISTICS_DATE < TO_DATE('{stat_dt.strftime("%Y/%m/%d")}', 'YYYY/MM/DD') + 1
-                {where_sql}
-            GROUP BY 
-                A.SERVERPARTSHOP_ID, NVL(A.BUSINESS_TRADE, -1), NVL(A.BUSINESS_BRAND, -1), NVL(A.BRAND_NAME, '其他'),
-                NVL(A.BUSINESS_TRADENAME, '其他'), A.SERVERPART_ID, A.SERVERPART_NAME
-        """
-        rev_rows = db.execute_query(revenue_sql)
-        if not rev_rows:
-            return Result.success(data={"Serverpart_Id": None, "Serverpart_Name": None, "Revenue_Amount": None, "listCurBusinessModel": None, "listBusinessModel": None}, msg="查询成功")
-
-        # 3. 内存聚合与构建嵌套模型
-        from collections import defaultdict
-        
-        # 服务区汇总信息
-        sp_id = rev_rows[0]["SERVERPART_ID"]
-        sp_name = rev_rows[0]["SERVERPART_NAME"]
-        total_revenue = sum(float(r["FACTAMOUNT"] or 0) for r in rev_rows)
-
-        # 按父级业态聚合
-        parent_trade_groups = defaultdict(list)
-        for r in rev_rows:
-            trade_id = str(r["BUSINESS_TRADE"])
-            trade_info = auto_map.get(trade_id)
-            pid = str(trade_info["AUTOSTATISTICS_PID"]) if trade_info and str(trade_info["AUTOSTATISTICS_PID"]) != "-1" else trade_id
-            p_name = auto_map[pid]["AUTOSTATISTICS_NAME"] if pid in auto_map else "其他"
-            parent_trade_groups[(pid, p_name)].append(r)
-
-        listBusinessModel = []
-        for (pid, pname), items in parent_trade_groups.items():
-            p_rev = sum(float(it["FACTAMOUNT"] or 0) for it in items)
-            
-            listShopBrandModel = []
-            for it in items:
-                brand_id = str(it["BUSINESS_BRAND"])
-                ico = brand_intro_map.get(brand_id, "")
-                # 简单补全OSS/CDN前缀 (假设 legacy logic)
-                brand_ico = ico if (not ico or ico.startswith("http")) else f"http://img.eshang.com{ico}" # 示例前缀
-
-                listShopBrandModel.append({
-                    "ServerpartShop_Id": str(it["SERVERPARTSHOP_ID"]),
-                    "Brand_Id": int(it["BUSINESS_BRAND"]),
-                    "Brand_Name": it["BRAND_NAME"],
-                    "Revenue_Amount": round(float(it["FACTAMOUNT"] or 0), 2),
-                    "Business_Trade": str(it["BUSINESS_TRADE"]),
-                    "Bussiness_Name": it["BUSINESS_TRADENAME"],
-                    "Brand_ICO": brand_ico
-                })
-            
-            listBusinessModel.append({
-                "Business_Trade": pid,
-                "Bussiness_Name": pname,
-                "Revenue_Amount": round(p_rev, 2),
-                "listShopBrandModel": listShopBrandModel
-            })
-
-        return Result.success(data={
-            "Revenue_Amount": round(total_revenue, 2),
-            "Serverpart_Id": int(sp_id),
-            "Serverpart_Name": sp_name,
-            "listBusinessModel": listBusinessModel,
-            "listCurBusinessModel": [] # C# 中此项通常为空或重复
-        }, msg="查询成功")
-
+        data = revenue_brand_service.get_serverpart_brand(
+            db, Serverpart_Id, statictics_Time, pushProvinceCode
+        )
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartBrand 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
-
-
-# ===== 内部辅助函数：获取结账数据逻辑 =====
-async def _get_end_account_data(db: DatabaseHelper, Serverpart_ID: int, Statistics_Date: str, ServerpartShop_Ids: str = None):
-    from datetime import datetime, timedelta
-    stat_date_str = Statistics_Date.split(" ")[0] if Statistics_Date else datetime.now().strftime("%Y-%m-%d")
-    st_date = datetime.strptime(stat_date_str, "%Y-%m-%d")
-    
-    # 确定表名：历史表 T_ENDACCOUNT vs 实时表 T_ENDACCOUNT_TEMP
-    is_history = st_date < (datetime.now() - timedelta(days=9))
-    table_name = "T_ENDACCOUNT" if is_history else "T_ENDACCOUNT_TEMP"
-    
-    where_sql = f" AND A.SERVERPART_ID = {Serverpart_ID}"
-    if ServerpartShop_Ids:
-        ids_str = ",".join([str(i.strip()) for i in ServerpartShop_Ids.split(",") if i.strip().isdigit()])
-        if ids_str:
-            where_sql += f" AND B.SERVERPARTSHOP_ID IN ({ids_str})"
-            
-    sql = f"""SELECT 
-                A.*, B.SERVERPARTSHOP_ID, B.SHOPREGION, B.SHOPTRADE, B.SHOPNAME,
-                B.BUSINESS_BRAND, NVL(B.BRAND_NAME, B.SHOPSHORTNAME) AS BRAND_NAME_FIX,
-                B.SERVERPART_NAME AS SERVERPART_NAME_FIX
-              FROM 
-                {table_name} A
-                JOIN T_SERVERPARTSHOP B ON A.SERVERPART_ID = B.SERVERPART_ID AND A.SHOPCODE = B.SHOPCODE
-              WHERE 
-                A.VALID = 1 {where_sql}
-                AND A.STATISTICS_DATE >= TO_DATE('{stat_date_str}', 'YYYY-MM-DD')
-                AND A.STATISTICS_DATE < TO_DATE('{stat_date_str}', 'YYYY-MM-DD') + 1
-              ORDER BY B.SERVERPART_NAME, B.SHOPREGION, B.SHOPTRADE, B.SHOPCODE, A.ENDACCOUNT_DATE"""
-              
-    rows = db.execute_query(sql)
-    if not rows:
-        return None, []
-        
-    # 按门店分组聚合
-    from collections import defaultdict
-    shop_groups = defaultdict(list)
-    common_info = {
-        "Serverpart_ID": rows[0]["SERVERPART_ID"],
-        "Serverpart_Name": rows[0]["SERVERPART_NAME_FIX"],
-        "TotalAmount": sum(float(r["CASHPAY"] or 0) for r in rows)
-    }
-    
-    for r in rows:
-        shop_groups[r["SERVERPARTSHOP_ID"]].append(r)
-        
-    shop_end_account_list = []
-    upload_count = 0
-    
-    for shop_id, s_rows in shop_groups.items():
-        first_r = s_rows[0]
-        biz_type = int(first_r["BUSINESS_TYPE"] or 1000)
-        
-        # 门店基础信息及标识位计算 (对应 C# 逻辑)
-        shop_model = {
-            "SERVERPARTSHOP_ID": int(shop_id),
-            "SHOPNAME": first_r["SHOPNAME"],
-            "SERVERPART_ID": int(first_r["SERVERPART_ID"]),
-            "SERVERPART_NAME": first_r["SERVERPART_NAME_FIX"],
-            "BUSINESS_TYPE": biz_type,
-            "BUSINESS_TYPENAME": {1000: "自营", 2000: "合作经营", 3000: "固定租金", 4000: "展销"}.get(biz_type, "其他"),
-            "SHOWABNORMAL_SIGN": 0,
-            "SHOWSCAN_SIGN": 0,
-            "INTERFACE_SIGN": 0,
-            "SHOWSSUPPLY_SIGN": 0,
-            "SHOWCHECK_SIGN": 0,
-            "SHOWDEAL_SIGN": 0,
-            "UNACCOUNT_SIGN": 0,
-            "CASHPAY_TOTAL": sum(float(r["CASHPAY"] or 0) for r in s_rows),
-            "ShopEndAccountList": []
-        }
-        
-        # 特殊标识计算
-        for r in s_rows:
-            # 异常标识 (CHECK_INFO 不为空且 实收不符)
-            check_info = r.get("CHECK_INFO")
-            sell_amt = float(r.get("TOTALSELLAMOUNT") or 0)
-            cash_pay = float(r.get("CASHPAY") or 0)
-            diff_price = float(r.get("DIFFERENT_PRICE") or 0)
-            if check_info and (sell_amt > cash_pay or (sell_amt + diff_price) > cash_pay):
-                shop_model["SHOWABNORMAL_SIGN"] = 1
-                
-            # 传输方式标识 (扫码/接口)
-            worker = str(r.get("WORKER_NAME") or "")
-            if "【扫】" in worker or "【扫码】" in worker:
-                shop_model["SHOWSCAN_SIGN"] = 1
-            elif "【接口】" in worker:
-                shop_model["INTERFACE_SIGN"] = 1
-            
-            # 手工补录标识
-            desc_staff = str(r.get("DESCRIPTION_STAFF") or "")
-            if "【补】" in desc_staff:
-                shop_model["SHOWSSUPPLY_SIGN"] = 1
-                
-            # 核销/处理状态
-            if int(r.get("CHECK_COUNT") or 0) > 0: shop_model["SHOWCHECK_SIGN"] = 1
-            if check_info: shop_model["SHOWDEAL_SIGN"] = 1
-            
-            # 结账状态
-            diff_reason = r.get("DIFFERENCE_REASON")
-            if not diff_reason or diff_reason != "无结账信息":
-                shop_model["UNACCOUNT_SIGN"] = 1
-            
-            # 绑定结账清单明细
-            transfer_type = 0
-            if "【扫】" in worker: transfer_type = 1
-            elif "【补】" in desc_staff: transfer_type = 2
-            elif "接口" in worker or "扫码" in worker: transfer_type = 3
-            
-            shop_model["ShopEndAccountList"].append({
-                "TRANSFER_TYPE": transfer_type,
-                "ENDACCOUNT_STARTDATE": str(r.get("ENDACCOUNT_STARTDATE") or ""),
-                "ENDACCOUNT_DATE": str(r.get("ENDACCOUNT_DATE") or ""),
-                "DESCRIPTION_STAFF": desc_staff,
-                "DIFFERENCE_REASON": diff_reason,
-                "DESCRIPTION_DATE": str(r.get("DESCRIPTION_DATE") or ""),
-                "CASHPAY": cash_pay,
-                "CASH": float(r.get("CASH") or 0),
-                "DIFFERENT_PRICE": diff_price,
-                "CHECK_COUNT": int(r.get("CHECK_COUNT") or 0)
-            })
-            
-        if shop_model["UNACCOUNT_SIGN"] == 1:
-            upload_count += 1
-            
-        shop_end_account_list.append(shop_model)
-        
-    common_info["UploadShopCount"] = upload_count
-    common_info["TotalShopCount"] = len(shop_end_account_list)
-    return common_info, shop_end_account_list
 
 
 # ===== 结账数据接口 =====
@@ -773,7 +538,7 @@ async def get_serverpart_end_account_list(
 ):
     """查询服务区结账数据列表 (SQL平移完成)"""
     try:
-        common_info, shop_list = await _get_end_account_data(db, Serverpart_ID, Statistics_Date)
+        common_info, shop_list = revenue_brand_service.get_end_account_data(db, Serverpart_ID, Statistics_Date)
         if not common_info:
             return Result.success(data={"Serverpart_Id": None, "Serverpart_Name": None, "Revenue_Amount": None, "UploadShopCount": None, "TotalShopCount": None, "ShopEndaccountList": None}, msg="查询成功")
             
@@ -800,7 +565,7 @@ async def get_shop_end_account_list(
 ):
     """查询门店结账数据列表 (SQL平移完成)"""
     try:
-        common_info, shop_list = await _get_end_account_data(db, Serverpart_ID, Statistics_Date, ServerpartShop_Ids)
+        common_info, shop_list = revenue_brand_service.get_end_account_data(db, Serverpart_ID, Statistics_Date, ServerpartShop_Ids)
         if not common_info:
             return Result.success(data={
                 "ServerpartShop_Id": None, "Brand_Id": None, "Brand_Name": None,
@@ -829,57 +594,17 @@ async def get_shop_end_account_list(
 # ===== 预算费用 =====
 @router.post("/Revenue/GetBudgetExpenseList")
 async def get_budget_expense_list_post(searchModel: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """获取预算费用表列表（POST）"""
+    """获取预算费用表列表（POST） — 业务逻辑见 revenue_budget_service.get_budget_expense_list_post()"""
     try:
-        if not searchModel:
-            # C# 在参数为空时查询TotalCount但返回空列表
-            try:
-                count_rows = db.execute_query('SELECT COUNT(*) AS CNT FROM "T_BUDGETEXPENSE"')
-                total = count_rows[0]["CNT"] if count_rows else 0
-            except Exception:
-                total = 0
-            json_list = JsonListData.create(data_list=[], total=total, page_index=0, page_size=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-        searchModel = searchModel or {}
-        page_index = searchModel.get("PageIndex", 1) or 1
-        page_size = searchModel.get("PageSize", 20) or 20
-        search_param = searchModel.get("SearchParameter") or {}
-
-        conditions = []
-        params = []
-
-        # 通用字段过滤
-        for field in ["STATISTICS_MONTH", "PROVINCE_CODE", "SERVERPART_ID"]:
-            val = search_param.get(field)
-            if val is not None and str(val).strip():
-                conditions.append(f'"{field}" = ?')
-                params.append(val)
-
-        where_sql = (" WHERE " + " AND ".join(conditions)) if conditions else ""
-
-        # 查询总数
-        count_sql = f'SELECT COUNT(*) AS CNT FROM "T_BUDGETEXPENSE"{where_sql}'
-        count_rows = db.execute_query(count_sql, params if params else None)
-        total = count_rows[0]["CNT"] if count_rows else 0
-
-        # 分页查询
-        offset = (page_index - 1) * page_size
-        data_sql = f'SELECT * FROM "T_BUDGETEXPENSE"{where_sql} ORDER BY "BUDGETEXPENSE_ID" DESC LIMIT ? OFFSET ?'
-        page_params = (params if params else []) + [page_size, offset]
-        page_rows = db.execute_query(data_sql, page_params)
-
-        # 格式化日期
-        for r in page_rows:
-            if r.get("OPERATE_DATE"):
-                r["OPERATE_DATE"] = str(r["OPERATE_DATE"])
-
-        json_list = JsonListData.create(data_list=page_rows, total=total,
+        rows, total = revenue_budget_service.get_budget_expense_list_post(db, searchModel)
+        page_index = (searchModel or {}).get("PageIndex", 1) or 1
+        page_size = (searchModel or {}).get("PageSize", 20) or 20
+        json_list = JsonListData.create(data_list=rows, total=total,
                                         page_index=page_index, page_size=page_size)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBudgetExpenseList POST 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
-
 
 
 @router.get("/Revenue/GetBudgetExpenseList")
@@ -889,28 +614,11 @@ async def get_budget_expense_list_get(
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取预算费用表列表（GET）(SQL平移完成)"""
+    """获取预算费用表列表（GET） — 业务逻辑见 revenue_budget_service.get_budget_expense_list_get()"""
     try:
-        conditions = []
-        params = {}
-        if Province_Code:
-            conditions.append('"PROVINCE_CODE" = :pc')
-            params["pc"] = Province_Code
-        if Statistics_Month:
-            conditions.append('"STATISTICS_MONTH" = :sm')
-            params["sm"] = Statistics_Month
-        _sp_ids = parse_multi_ids(Serverpart_ID)
-        if _sp_ids:
-            conditions.append(build_in_condition('SERVERPART_ID', _sp_ids))
-
-        where_sql = (" WHERE " + " AND ".join(conditions)) if conditions else ""
-        sql = f'SELECT * FROM "T_BUDGETEXPENSE"{where_sql} ORDER BY "BUDGETEXPENSE_ID" DESC'
-        rows = db.execute_query(sql, params if params else None) or []
-
-        for r in rows:
-            if r.get("OPERATE_DATE"):
-                r["OPERATE_DATE"] = str(r["OPERATE_DATE"])
-
+        rows = revenue_budget_service.get_budget_expense_list_get(
+            db, Province_Code, Statistics_Month, Serverpart_ID
+        )
         json_list = JsonListData.create(data_list=rows, total=len(rows))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
@@ -918,7 +626,6 @@ async def get_budget_expense_list_get(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-# ===== 计划营收 =====
 @router.get("/Revenue/GetRevenueBudget")
 async def get_revenue_budget(
     Statistics_Date: Optional[str] = Query(None, description="统计日期"),
@@ -928,158 +635,20 @@ async def get_revenue_budget(
     Revenue_Include: int = Query(1, description="是否纳入营收"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取计划营收数据 (SQL平移完成)"""
+    """获取计划营收数据 — 业务逻辑见 revenue_budget_service.get_revenue_budget()"""
     try:
-        from datetime import datetime as dt
-        import calendar
-
-        if Province_Code != "340000":
-            return Result.success(data={
-                "RevenueMonth_Amount": 0, "RevenueYear_Amount": 0,
-                "BudgetMonth_Amount": 0, "BudgetYear_Amount": 0,
-                "RevenueYear_PlanAmount": 0,
-                "MonthBudget_Degree": 0, "MonthGrowth_Rate": 0,
-                "YearBudget_Degree": 0, "YearGrowth_Rate": 0,
-                "MonthYOY_Rate": None, "YearYOY_Rate": None,
-            }, msg="查询成功")
-
-        if not Statistics_Date:
+        data = revenue_budget_service.get_revenue_budget(
+            db, Statistics_Date, Province_Code, Serverpart_ID,
+            SPRegionType_ID, Revenue_Include
+        )
+        if data is None:
             return Result.fail(code=101, msg="查询失败，未录入预算数据！")
-
-        stat_date = dt.strptime(Statistics_Date, "%Y-%m-%d") if "-" in Statistics_Date else dt.strptime(Statistics_Date, "%Y%m%d")
-        year_str = stat_date.strftime("%Y")
-        month_str = stat_date.strftime("%Y%m")
-        month_days = calendar.monthrange(stat_date.year, stat_date.month)[1]
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        budget_month = 0.0
-        budget_year = 0.0
-        plan_amount = 0.0
-
-        sp_id = int(Serverpart_ID) if Serverpart_ID else None
-
-        if sp_id:
-            # 有服务区：查安徽财务预算表
-            bsql = f"""SELECT B."STATISTICS_MONTH", B."BUDGETDETAIL_AMOUNT" AS "BUDGET_AMOUNT"
-                FROM "T_BUDGETPROJECT_AH" A, "T_BUDGETDETAIL_AH" B
-                WHERE A."BUDGETPROJECT_AH_ID" = B."BUDGETPROJECT_AH_ID"
-                    AND B."ACCOUNT_CODE" = 1000
-                    AND B."STATISTICS_MONTH" >= {year_str}01 AND B."STATISTICS_MONTH" <= {year_str}12
-                    AND A."SERVERPART_ID" = {sp_id}"""
-            rows = db.execute_query(bsql) or []
-            for r in rows:
-                sm = str(int(safe_dec(r.get("STATISTICS_MONTH"))))
-                ba = safe_dec(r.get("BUDGET_AMOUNT"))
-                if sm == month_str:
-                    budget_month = ba
-                    budget_year += ba
-                    plan_amount += round(ba / month_days * stat_date.day, 2)
-                else:
-                    budget_year += ba
-                    if int(sm) < int(month_str):
-                        plan_amount += ba
-        else:
-            # 全省：查预算费用表(BUDGET_AMOUNT是日均值)
-            bsql = f"""SELECT * FROM "T_BUDGETEXPENSE"
-                WHERE "PROVINCE_CODE" = {Province_Code} AND "SERVERPART_ID" = 0
-                    AND "STATISTICS_MONTH" >= {year_str}01 AND "STATISTICS_MONTH" <= {year_str}12"""
-            rows = db.execute_query(bsql) or []
-            for r in rows:
-                sm = str(int(safe_dec(r.get("STATISTICS_MONTH"))))
-                ba = safe_dec(r.get("BUDGET_AMOUNT"))
-                sm_date = dt.strptime(sm + "01", "%Y%m%d")
-                sm_days = calendar.monthrange(sm_date.year, sm_date.month)[1]
-                if sm == month_str:
-                    budget_month = ba * sm_days
-                    budget_year += budget_month
-                    plan_amount += ba * stat_date.day
-                else:
-                    m_total = ba * sm_days
-                    budget_year += m_total
-                    if int(sm) < int(month_str):
-                        plan_amount += m_total
-
-        if not rows:
-            return Result.fail(code=101, msg="查询失败，未录入预算数据！")
-
-        # 查实际营收
-        rev_month = 0.0
-        rev_year = 0.0
-        month_yoy = None
-        year_yoy = None
-
-        if not sp_id and not SPRegionType_ID:
-            # 全省汇总：查T_REVENUEDAILY SERVERPART_ID=0
-            date_str = stat_date.strftime("%Y%m%d")
-            rsql = f"""SELECT SUM("REVENUE_AMOUNT_MONTH") AS "REVENUE_AMOUNT_MONTH",
-                    SUM("REVENUE_AMOUNT_YEAR") AS "REVENUE_AMOUNT_YEAR"
-                FROM "T_REVENUEDAILY"
-                WHERE "REVENUEDAILY_STATE" = 1 AND "BUSINESS_TYPE" = 1000
-                    AND "SERVERPART_ID" = 0 AND "STATISTICS_DATE" = {date_str}"""
-            rr = db.execute_query(rsql) or []
-            if rr:
-                rev_month = safe_dec(rr[0].get("REVENUE_AMOUNT_MONTH"))
-                rev_year = safe_dec(rr[0].get("REVENUE_AMOUNT_YEAR"))
-
-            # 去年同期
-            ly_date = stat_date.replace(year=stat_date.year - 1).strftime("%Y%m%d")
-            rsql_ly = rsql.replace(f"= {date_str}", f"= {ly_date}")
-            rr_ly = db.execute_query(rsql_ly) or []
-            if rr_ly:
-                ly_month = safe_dec(rr_ly[0].get("REVENUE_AMOUNT_MONTH"))
-                ly_year = safe_dec(rr_ly[0].get("REVENUE_AMOUNT_YEAR"))
-                if ly_month > 0:
-                    month_yoy = round((rev_month / ly_month - 1) * 100, 2)
-                if ly_year > 0:
-                    year_yoy = round((rev_year / ly_year - 1) * 100, 2)
-        else:
-            # 按服务区/片区：查月度营收
-            where2 = ""
-            if sp_id:
-                where2 += f' AND B."SERVERPART_ID" = {sp_id}'
-            elif SPRegionType_ID:
-                where2 += f' AND B."SPREGIONTYPE_ID" = {SPRegionType_ID}'
-            date_str = stat_date.strftime("%Y%m%d")
-            rsql = f"""SELECT SUBSTR(A."STATISTICS_DATE",1,6) AS "STATISTICS_MONTH",
-                    SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
-                FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-                WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                    AND B."STATISTIC_TYPE" = 1000 AND A."BUSINESS_TYPE" = 1000
-                    AND A."STATISTICS_DATE" >= {year_str}0101 AND A."STATISTICS_DATE" <= {date_str}{where2}
-                GROUP BY SUBSTR(A."STATISTICS_DATE",1,6)"""
-            rr = db.execute_query(rsql) or []
-            for r in rr:
-                ra = safe_dec(r.get("REVENUE_AMOUNT"))
-                rm = str(int(safe_dec(r.get("STATISTICS_MONTH"))))
-                rev_year += ra
-                if rm == month_str:
-                    rev_month = ra
-
-        # 计算完成度
-        month_degree = round(rev_month / budget_month * 100, 2) if budget_month > 0 else 0
-        month_growth = round(month_degree - (stat_date.day * 100.0 / month_days), 2) if budget_month > 0 else 0
-        year_degree = round(rev_year / budget_year * 100, 2) if budget_year > 0 else 0
-        year_growth = round((rev_year - plan_amount) / budget_year * 100, 2) if budget_year > 0 else 0
-
-        return Result.success(data={
-            "RevenueMonth_Amount": rev_month,
-            "RevenueYear_Amount": rev_year,
-            "BudgetMonth_Amount": budget_month,
-            "BudgetYear_Amount": budget_year,
-            "RevenueYear_PlanAmount": plan_amount,
-            "MonthBudget_Degree": month_degree,
-            "MonthGrowth_Rate": month_growth,
-            "YearBudget_Degree": year_degree,
-            "YearGrowth_Rate": year_growth,
-            "MonthYOY_Rate": month_yoy,
-            "YearYOY_Rate": year_yoy,
-        }, msg="查询成功")
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueBudget 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
+
+
 
 
 @router.get("/Revenue/GetProvinceRevenueBudget")
