@@ -661,3 +661,107 @@ def get_summary_revenue_month(db: DatabaseHelper, push_province_code, statistics
         "RevenuePushModel": None,  # Router 层负责嵌套调用 get_summary_revenue
         "SPRegionList": sp_region_list,
     }
+
+
+# ===== 8. GetRevenuePushList =====
+def get_revenue_push_list(db: DatabaseHelper, push_province_code, statistics_date,
+                           serverpart_id, sp_region_type_id, revenue_include) -> list:
+    """获取营收推送数据表列表（历史表/实时表两路径）"""
+    from datetime import datetime, timedelta
+
+    # 省份映射
+    province_id = _get_province_id(db, push_province_code)
+
+    where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
+    if serverpart_id:
+        where_sql += f' AND B."SERVERPART_ID" = {serverpart_id}'
+    elif sp_region_type_id:
+        sp_res = db.execute_query(
+            'SELECT "SPREGIONTYPE_ID" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = :sid',
+            {"sid": sp_region_type_id})
+        if sp_res:
+            where_sql += f' AND B."SPREGIONTYPE_ID" = {sp_res[0]["SPREGIONTYPE_ID"]}'
+
+    # 日期确定
+    st_date_str = statistics_date.split(" ")[0] if statistics_date else datetime.now().strftime("%Y-%m-%d")
+    st_date = datetime.strptime(st_date_str, "%Y-%m-%d")
+    is_history = st_date < (datetime.now() - timedelta(days=9))
+
+    if is_history:
+        sql = f"""SELECT
+                    B."SPREGIONTYPE_NAME", B."SERVERPART_NAME", A."SERVERPART_ID",
+                    C."SHOPNAME", C."SHOPREGION" AS "SHOPREGIONNAME",
+                    C."BUSINESS_TRADENAME" AS "BUSINESSTRADE_NAME", C."BRAND_NAME" AS "BUSINESSBRAND_NAME",
+                    SUM(A."TICKET_COUNT") AS "TICKETCOUNT", SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
+                    SUM(A."REVENUE_AMOUNT") AS "CASHPAY", SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
+                    SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
+                    SUM(CASE WHEN A."DIFFERENT_AMOUNT" < 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_LESS",
+                    SUM(CASE WHEN A."DIFFERENT_AMOUNT" > 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_MORE",
+                    CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME",
+                    C."REVENUE_INCLUDE", 1 AS "REVENUE_UPLOAD"
+                  FROM
+                    "T_REVENUEDAILY" A
+                    JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
+                    LEFT JOIN "T_SERVERPARTSHOP" C ON A."SERVERPART_ID" = C."SERVERPART_ID"
+                  WHERE
+                    A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
+                    AND A."STATISTICS_DATE" = {st_date.strftime('%Y%m%d')}
+                    AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999')
+                    {where_sql}
+                  GROUP BY
+                    B."SPREGIONTYPE_NAME", B."SERVERPART_NAME", A."SERVERPART_ID", C."SHOPNAME", C."SHOPREGION",
+                    C."BUSINESS_TRADENAME", C."BRAND_NAME", A."BUSINESS_TYPE", C."REVENUE_INCLUDE" """
+    else:
+        sql = f"""SELECT
+                    B.SPREGIONTYPE_NAME, B.SERVERPART_NAME, A.SERVERPART_ID,
+                    C.SHOPNAME, C.SHOPREGION AS SHOPREGIONNAME,
+                    C.BUSINESS_TRADENAME AS BUSINESSTRADE_NAME, C.BRAND_NAME AS BUSINESSBRAND_NAME,
+                    SUM(A.TICKETCOUNT) AS TICKETCOUNT, SUM(A.TOTALCOUNT) AS TOTALCOUNT,
+                    SUM(A.CASHPAY) AS CASHPAY, SUM(A.CASHPAY - A.CASH) AS MOBILEPAYMENT,
+                    SUM(A.TOTALOFFAMOUNT) AS TOTALOFFAMOUNT,
+                    SUM(CASE WHEN A.DIFFERENT_PRICE < 0 THEN A.DIFFERENT_PRICE ELSE 0 END) AS DIFFERENT_PRICE_LESS,
+                    SUM(CASE WHEN A.DIFFERENT_PRICE > 0 THEN A.DIFFERENT_PRICE ELSE 0 END) AS DIFFERENT_PRICE_MORE,
+                    CASE WHEN A.BUSINESS_TYPE = 1000 THEN '自营' ELSE '外包' END AS BUSINESS_TYPENAME,
+                    C.REVENUE_INCLUDE, 1 AS REVENUE_UPLOAD
+                  FROM
+                    T_ENDACCOUNT_TEMP A
+                    JOIN T_SERVERPART B ON A.SERVERPART_ID = B.SERVERPART_ID
+                    JOIN T_SERVERPARTSHOP C ON A.SERVERPART_ID = C.SERVERPART_ID AND A.SHOPCODE = C.SHOPCODE
+                  WHERE
+                    A.VALID = 1 AND B.STATISTIC_TYPE = 1000 AND C.ISVALID = 1
+                    AND A.STATISTICS_DATE >= TO_DATE('{st_date_str}', 'YYYY-MM-DD')
+                    AND A.STATISTICS_DATE < TO_DATE('{st_date_str}', 'YYYY-MM-DD') + 1
+                    AND B.SERVERPART_CODE NOT IN ('348888','349999','638888','888888','899999')
+                    {where_sql}
+                  GROUP BY
+                    B.SPREGIONTYPE_NAME, B.SERVERPART_NAME, A.SERVERPART_ID, C.SHOPNAME, C.SHOPREGION,
+                    C.BUSINESS_TRADENAME, C.BRAND_NAME, A.BUSINESS_TYPE, C.REVENUE_INCLUDE"""
+
+    rows = db.execute_query(sql) or []
+    results = []
+    for row in rows:
+        results.append({
+            "Serverpart_ID": row.get("SERVERPART_ID"),
+            "Serverpart_Name": row.get("SERVERPART_NAME", ""),
+            "SPRegionType_Name": row.get("SPREGIONTYPE_NAME", ""),
+            "ShopName": row.get("SHOPNAME", ""),
+            "ShopRegionName": row.get("SHOPREGIONNAME", ""),
+            "Business_TypeName": row.get("BUSINESS_TYPENAME", ""),
+            "BusinessTrade_Name": row.get("BUSINESSTRADE_NAME", ""),
+            "BusinessBrand_Name": row.get("BUSINESSBRAND_NAME", ""),
+            "Statistics_Date": st_date.strftime("%Y-%m-%d 00:00:00"),
+            "TicketCount": _si(row.get("TICKETCOUNT")),
+            "TotalCount": _sf(row.get("TOTALCOUNT")),
+            "TotalOffAmount": _sf(row.get("TOTALOFFAMOUNT")),
+            "MobilePayment": _sf(row.get("MOBILEPAYMENT")),
+            "CashPay": _sf(row.get("CASHPAY")),
+            "Different_Price_Less": _sf(row.get("DIFFERENT_PRICE_LESS")),
+            "Different_Price_More": _sf(row.get("DIFFERENT_PRICE_MORE")),
+            "Revenue_Include": _si(row.get("REVENUE_INCLUDE")) if revenue_include == 1 else 0,
+            "BusinessType": None, "Revenue_Upload": row.get("REVENUE_UPLOAD"),
+            "TotalShopCount": None, "RevenueQOQ": None, "RevenueYOY": None,
+            "YearRevenueAmount": None, "YearRevenueYOY": None, "BudgetRevenue": None,
+            "CurAccountRoyalty": None, "AccountRoyaltyQOQ": None,
+            "YearAccountRoyalty": 0.0, "YearAccountRoyaltyYOY": 0.0, "UnUpLoadShopList": None,
+        })
+    return results
