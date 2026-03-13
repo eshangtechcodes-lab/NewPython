@@ -45,7 +45,6 @@ CommercialApi - 节日/INC分析/SABFI Service
                       GetCompanyRevenueReport, GetRevenueCompare
   - sabfi: GetShopSABFIList, GetShopMonthSABFIList
 """
-from core.database import DatabaseHelper
 
 
 # ===== 以下路由暂保留在 Router 层，待后续按子组逐步迁移 =====

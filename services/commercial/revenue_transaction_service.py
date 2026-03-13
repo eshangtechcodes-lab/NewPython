@@ -12,7 +12,6 @@ CommercialApi - 交易分析 Service
 """
 from __future__ import annotations
 from typing import Optional
-from collections import defaultdict
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
 from services.commercial.service_utils import (

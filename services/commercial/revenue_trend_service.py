@@ -10,12 +10,10 @@ CommercialApi - 营收趋势/报表/排行/同比 Service
       暂保留在 Router 层; 此处抽取较简洁的趋势/畅销/排行/同比
 """
 from __future__ import annotations
-from typing import Optional
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
 from services.commercial.service_utils import (
-    safe_float as _sf, safe_int as _si,
-    get_province_id as _get_province_id,
+    safe_float as _sf,
 )
 
 
