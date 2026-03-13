@@ -12,6 +12,9 @@ from models.base import Result, JsonListData
 from routers.deps import get_db, parse_multi_ids, build_in_condition
 from core.database import DatabaseHelper
 from core.des_helper import des_encrypt_id
+# Service 层导入 — 逐步将 Router 中的内联逻辑迁移到 Service
+from services.commercial import revenue_trend_service
+from services.commercial import revenue_transaction_service
 
 router = APIRouter()
 
@@ -1648,6 +1651,7 @@ async def get_province_revenue_budget(
 
 
 # ===== 支付/配送 =====
+# 业务逻辑已迁移至 revenue_transaction_service
 @router.get("/Revenue/GetMobileShare")
 async def get_mobile_share(
     Province_Code: Optional[str] = Query(None, description="推送省份"),
@@ -1656,60 +1660,16 @@ async def get_mobile_share(
     StatisticsEndDate: Optional[str] = Query("", description="结束日期"),
     Serverpart_ID: Optional[str] = Query("", description="服务区内码"),
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
-    ShowCompareRate: bool = Query(False, description="是否计算增长率"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取移动支付分账数据 (SQL平移完成)"""
+    """获取移动支付分账数据 — 业务逻辑见 revenue_transaction_service.get_mobile_share()"""
     try:
-        from datetime import datetime as dt
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def safe_int(v):
-            try: return int(float(v)) if v is not None else 0
-            except: return 0
-
-        where_sql = ""
-        if Serverpart_ID:
-            where_sql += f' AND A."SERVERPART_ID" = {Serverpart_ID}'
-        elif SPRegionType_ID:
-            where_sql += f' AND A."SERVERPART_ID" IN (SELECT "SERVERPART_ID" FROM "T_SERVERPART" WHERE "SPREGIONTYPE_ID" = {SPRegionType_ID})'
-        if Province_Code:
-            where_sql += f' AND A."PROVINCE_CODE" = {Province_Code}'
-
-        if StatisticsStartDate:
-            sd = dt.strptime(StatisticsStartDate, "%Y-%m-%d").strftime("%Y%m%d") if "-" in StatisticsStartDate else StatisticsStartDate
-            where_sql += f' AND A."STATISTICS_DATE" >= {sd}'
-        if StatisticsEndDate:
-            ed = dt.strptime(StatisticsEndDate, "%Y-%m-%d").strftime("%Y%m%d") if "-" in StatisticsEndDate else StatisticsEndDate
-            where_sql += f' AND A."STATISTICS_DATE" <= {ed}'
-
-        sql = f"""SELECT COUNT(DISTINCT "SERVERPARTSHOP_ID") AS "SHOP_COUNT",
-                SUM("TICKET_PRICE") AS "TICKET_PRICE", SUM("TICKET_FEE") AS "TICKET_FEE",
-                SUM("ROYALTY_PRICE") AS "ROYALTY_PRICE", SUM("SUBROYALTY_PRICE") AS "SUBROYALTY_PRICE",
-                SUM("TICKET_PRICE" - "TICKET_FEE") AS "ACCOUNT_PRICE"
-            FROM "T_MOBILEPAYSHARE" A WHERE A."MOBILEPAYSHARE_STATE" = 1{where_sql}"""
-        rows = db.execute_query(sql) or []
-
-        if not rows or not rows[0].get("SHOP_COUNT"):
-            return Result.success(data=None, msg="查询成功")
-
-        r = rows[0]
-        return Result.success(data={
-            "Statistics_Date": StatisticsEndDate,
-            "Serverpart_ID": None,
-            "Serverpart_Name": None,
-            "ShareShop_Count": safe_int(r.get("SHOP_COUNT")),
-            "Royalty_Price": safe_dec(r.get("ROYALTY_PRICE")),
-            "SubRoyalty_Price": safe_dec(r.get("SUBROYALTY_PRICE")),
-            "Ticket_Fee": safe_dec(r.get("TICKET_FEE")),
-            "Ticket_Price": safe_dec(r.get("TICKET_PRICE")),
-            "Account_Price": safe_dec(r.get("ACCOUNT_PRICE")),
-            "ShareShopGrowth_Count": None,
-            "RoyaltyGrowth_Price": None,
-            "MonthRoyalty_Price": None,
-        }, msg="查询成功")
+        start_d = StatisticsStartDate or Statistics_Date
+        end_d = StatisticsEndDate or Statistics_Date
+        data = revenue_transaction_service.get_mobile_share(
+            db, Province_Code, start_d, end_d, Serverpart_ID, SPRegionType_ID
+        )
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMobileShare 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -1724,55 +1684,21 @@ async def get_mall_deliver(
     ShowCompareRate: bool = Query(False, description="是否计算增长率"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取商城配送数据 (SQL平移完成)"""
+    """获取商城配送数据 — 业务逻辑见 revenue_transaction_service.get_mall_deliver()"""
     try:
-        if Province_Code != "340000":
-            return Result.success(data=None, msg="查询成功")
-
-        # C#对齐: 如果只传了Statistics_Date, 用它补充Start/End
-        if Statistics_Date:
-            if not StatisticsStartDate:
-                StatisticsStartDate = Statistics_Date
-            if not StatisticsEndDate:
-                StatisticsEndDate = Statistics_Date
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def safe_int(v):
-            try: return int(float(v)) if v is not None else 0
-            except: return 0
-
-        where_sql = ' AND A."SELLER_ID" = 9'
-        date_sql = ""
-        if StatisticsStartDate:
-            date_sql += f" AND A.\"DELIVER_DATE\" >= TO_DATE('{StatisticsStartDate.split(' ')[0]}','YYYY-MM-DD')"
-        if StatisticsEndDate:
-            date_sql += f" AND A.\"DELIVER_DATE\" < TO_DATE('{StatisticsEndDate.split(' ')[0]}','YYYY-MM-DD') + 1"
-
-        sql = f"""SELECT COUNT(DISTINCT A."GOODSDELIVER_ID") AS "DELIVERBILL_COUNT",
-                SUM(B."DELIVER_PRICE") AS "DELIVER_PRICE"
-            FROM "T_GOODSDELIVER" A, "T_GOODSDELIVERDETAIL" B
-            WHERE A."DELIVER_STATE" > 0 AND A."DELIVER_STATE" < 9000
-                AND A."GOODSDELIVER_ID" = B."GOODSDELIVER_ID"{where_sql}{date_sql}"""
-        rows = db.execute_query(sql) or []
-
-        r = rows[0] if rows else {}
-        return Result.success(data={
-            "Statistics_Date": StatisticsEndDate,
-            "DeliverBill_Count": safe_int(r.get("DELIVERBILL_COUNT")),
-            "Deliver_Price": safe_dec(r.get("DELIVER_PRICE")),
-            "DeliverBillGrowth_Count": None,
-            "DeliverGrowth_Price": None,
-            "Deliver_Rate": None,
-            "MonthDeliver_Price": None,
-        }, msg="查询成功")
+        start_d = StatisticsStartDate or Statistics_Date
+        end_d = StatisticsEndDate or Statistics_Date
+        data = revenue_transaction_service.get_mall_deliver(
+            db, Province_Code, start_d, end_d, ShowCompareRate
+        )
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMallDeliver 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
 
 
 # ===== 客单交易分析 =====
+# 业务逻辑已迁移至 revenue_transaction_service
 @router.get("/Revenue/GetTransactionAnalysis")
 async def get_transaction_analysis(
     Province_Code: Optional[str] = Query(None, description="省份编码"),
@@ -1782,128 +1708,13 @@ async def get_transaction_analysis(
     ShowConvertRate: bool = Query(False, description="是否显示消费转化率"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取服务区客单交易分析 (SQL平移完成)"""
+    """获取服务区客单交易分析 — 业务逻辑见 revenue_transaction_service.get_transaction_analysis()"""
     try:
-        from datetime import datetime as dt
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def safe_int(v):
-            try: return int(float(v)) if v is not None else 0
-            except: return 0
-
-        if not Statistics_Date:
-            return Result.success(data=None, msg="查询成功")
-
-        stat_date = dt.strptime(Statistics_Date, "%Y-%m-%d") if "-" in Statistics_Date else dt.strptime(Statistics_Date, "%Y%m%d")
-        date_str = stat_date.strftime("%Y%m%d")
-        month_start = stat_date.strftime("%Y%m01")
-        sp_id = int(Serverpart_ID) if Serverpart_ID else None
-
-        # 查当日数据
-        if sp_id:
-            day_sql = f"""SELECT SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
-                    SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
-                    SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
-                FROM "T_REVENUEDAILY" A
-                WHERE A."REVENUEDAILY_STATE" = 1
-                    AND A."STATISTICS_DATE" = {date_str} AND A."SERVERPART_ID" = {sp_id}"""
-        else:
-            day_sql = f"""SELECT SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
-                    SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
-                    SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
-                FROM "T_REVENUEDAILY" A
-                WHERE A."REVENUEDAILY_STATE" = 1 AND A."SERVERPART_ID" = 0
-                    AND A."STATISTICS_DATE" = {date_str}"""
-        day_rows = db.execute_query(day_sql) or []
-
-        ticket_count = 0
-        total_count = 0.0
-        revenue_amount = 0.0
-        avg_ticket_price = None
-        if day_rows and day_rows[0].get("TICKETCOUNT") is not None:
-            ticket_count = safe_int(day_rows[0].get("TICKETCOUNT"))
-            total_count = safe_dec(day_rows[0].get("TOTALCOUNT"))
-            revenue_amount = safe_dec(day_rows[0].get("CASHPAY"))
-            if ticket_count > 0:
-                avg_ticket_price = round(revenue_amount / ticket_count, 2)
-
-        # 查月均数据
-        # 转换Province_Code到内码
-        province_id = None
-        if Province_Code:
-            pid_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-            pid_rows = db.execute_query(pid_sql, {"pc": Province_Code})
-            province_id = pid_rows[0]["FIELDENUM_ID"] if pid_rows else None
-
-        sp_filter = f'= {sp_id}' if sp_id else '> 0'
-        prov_where = f' AND A."PROVINCE_ID" = {province_id}' if province_id else ''
-        month_sql = f"""SELECT
-                COUNT(DISTINCT CASE WHEN A."SERVERPART_ID" {sp_filter} THEN A."STATISTICS_DATE" END) AS "SP_DAYS",
-                SUM(CASE WHEN A."SERVERPART_ID" {sp_filter} THEN A."TICKET_COUNT" ELSE 0 END) AS "SP_TICKET",
-                SUM(CASE WHEN A."SERVERPART_ID" {sp_filter} THEN A."TOTAL_COUNT" ELSE 0 END) AS "SP_TOTAL",
-                SUM(CASE WHEN A."SERVERPART_ID" {sp_filter} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "SP_REVENUE",
-                COUNT(DISTINCT A."STATISTICS_DATE") AS "ALL_DAYS",
-                SUM(A."TICKET_COUNT") AS "ALL_TICKET",
-                SUM(A."TOTAL_COUNT") AS "ALL_TOTAL",
-                SUM(A."REVENUE_AMOUNT") AS "ALL_REVENUE"
-            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."TICKET_COUNT" > 0
-                AND A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
-                AND B."SERVERPART_CODE" NOT IN ('S000','S092','S093','S094'){prov_where}
-                AND A."STATISTICS_DATE" >= {month_start} AND A."STATISTICS_DATE" <= {date_str}"""
-        m_rows = db.execute_query(month_sql) or []
-
-        ticket_avg = 0
-        total_avg = 0.0
-        avg_rev = 0.0
-        month_avg_price = 0.0
-        province_ticket = 0
-        province_total = 0.0
-        province_rev = 0.0
-        province_avg_price = 0.0
-        if m_rows:
-            mr = m_rows[0]
-            sp_days = safe_int(mr.get("SP_DAYS"))
-            all_days = safe_int(mr.get("ALL_DAYS"))
-            if sp_days > 0:
-                ticket_avg = safe_int(mr.get("SP_TICKET")) // sp_days
-                total_avg = round(safe_dec(mr.get("SP_TOTAL")) / sp_days, 2)
-                avg_rev = round(safe_dec(mr.get("SP_REVENUE")) / sp_days, 2)
-                month_avg_price = round(avg_rev / ticket_avg, 2) if ticket_avg > 0 else 0
-            if all_days > 0:
-                province_ticket = safe_int(mr.get("ALL_TICKET")) // all_days
-                province_total = round(safe_dec(mr.get("ALL_TOTAL")) / all_days, 2)
-                province_rev = round(safe_dec(mr.get("ALL_REVENUE")) / all_days, 2)
-                province_avg_price = round(province_rev / province_ticket, 2) if province_ticket > 0 else 0
-
-        # 查服务区名
-        sp_name = None
-        if sp_id:
-            sp_name_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
-            sp_name = sp_name_rows[0].get("SERVERPART_NAME", "") if sp_name_rows else ""
-
-        result = {
-            "Serverpart_ID": sp_id,
-            "Serverpart_Name": sp_name or "",
-            "SPRegionType_Name": None,
-            "Statistics_Date": None,
-            "TicketCount": ticket_count, "TotalCount": total_count,
-            "RevenueAmount": revenue_amount, "AvgTicketPrice": avg_ticket_price,
-            "VehicleCount": None, "AvgVehicleAmount": None,
-            "TicketAvgCount": ticket_avg, "TotalAvgCount": total_avg,
-            "AvgRevenueAmount": avg_rev, "MonthAvgTicketPrice": month_avg_price,
-            "MonthVehicleCount": None, "MonthVehicleAmount": None,
-            "ConvertRate": None,
-            "TicketProvinceCount": province_ticket, "TotalProvinceCount": province_total,
-            "ProvinceRevenueAmount": province_rev, "ProvinceAvgTicketPrice": province_avg_price,
-            "ConvertProvinceRate": None,
-            "transactionLevel": None,
-        }
-
-        return Result.success(data=result, msg="查询成功")
+        data = revenue_transaction_service.get_transaction_analysis(
+            db, Province_Code, Statistics_Date, Serverpart_ID,
+            ShowConsumptionLevel, ShowConvertRate
+        )
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionAnalysis 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -1918,78 +1729,12 @@ async def get_transaction_time_analysis(
     TimeSpan: int = Query(4, description="时间间隔，默认4h"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取服务区时段消费分析 (SQL平移完成)"""
+    """获取服务区时段消费分析 — 业务逻辑见 revenue_transaction_service.get_transaction_time_analysis()"""
     try:
-        from datetime import datetime as dt
-
-        if not Statistics_Date:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        stat_date = dt.strptime(Statistics_Date, "%Y-%m-%d") if "-" in Statistics_Date else dt.strptime(Statistics_Date, "%Y%m%d")
-        month_str = stat_date.strftime("%Y%m")
-
-        # C#对齐: TransactionHelper 第372-383行过滤逻辑
-        where_sql = ""
-        _sp_ids = parse_multi_ids(Serverpart_ID)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-        elif SPRegionType_ID:
-            where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
-        else:
-            # C#对齐: else 分支 → 按省份过滤（FieldEnum 转换）
-            if Province_Code:
-                pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                    WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID"
-                    AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-                pc_rows = db.execute_query(pc_sql, {"pc": Province_Code})
-                if pc_rows:
-                    province_id = pc_rows[0]["FIELDENUM_ID"]
-                    where_sql += f' AND B."PROVINCE_CODE" = {province_id}'
-
-        # 按小时查时段交易
-        sql = f"""SELECT A."STATISTICS_HOUR",
-                ROUND(SUM(A."TICKET_COUNT") / MAX(A."STATISTICS_DAYS"),0) AS "TICKET_COUNT",
-                ROUND(SUM(A."SELLMASTER_AMOUNT") / MAX(A."STATISTICS_DAYS"),2) AS "SELLMASTER_AMOUNT"
-            FROM "T_YSSELLMASTERMONTH" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-                AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = {month_str}{where_sql}
-            GROUP BY A."STATISTICS_HOUR"
-            ORDER BY A."STATISTICS_HOUR" """
-        rows = db.execute_query(sql) or []
-        if not rows:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-
-        hour_map = {}
-        for r in rows:
-            h = int(safe_dec(r.get("STATISTICS_HOUR")))
-            hour_map[h] = {"ticket": safe_dec(r.get("TICKET_COUNT")), "amount": safe_dec(r.get("SELLMASTER_AMOUNT"))}
-
-        total_ticket = sum(v["ticket"] for v in hour_map.values())
-        total_amount = sum(v["amount"] for v in hour_map.values())
-
-        scatter_list = []
-        slots = 24 // TimeSpan
-        for i in range(slots + 1):
-            h_start = i * TimeSpan
-            h_end = min((i + 1) * TimeSpan, 24)
-            slot_ticket = sum(hour_map.get(h, {}).get("ticket", 0) for h in range(h_start, h_end))
-            slot_amount = sum(hour_map.get(h, {}).get("amount", 0) for h in range(h_start, h_end))
-            pct = round(slot_ticket / total_ticket * 100, 2) if total_ticket > 0 else 0
-            scatter_list.append({
-                "name": str(min(h_start, 24)),
-                "value": str(pct),
-                "data": str(round(slot_ticket)),
-                "key": str(round(slot_amount)),
-            })
-
-        return Result.success(data={
-            "name": "时段交易",
-            "CommonScatterList": scatter_list,
-        }, msg="查询成功")
+        data = revenue_transaction_service.get_transaction_time_analysis(
+            db, Province_Code, Statistics_Date, Serverpart_ID, SPRegionType_ID, TimeSpan
+        )
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionTimeAnalysis 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -2064,6 +1809,7 @@ async def get_transaction_convert(
 
 
 # ===== 业态分析 =====
+# 业务逻辑已迁移至 revenue_transaction_service
 @router.get("/Revenue/GetBusinessTradeRevenue")
 async def get_business_trade_revenue(
     request: Request,
@@ -2075,83 +1821,14 @@ async def get_business_trade_revenue(
     DataType: int = Query(1, description="数据类型"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取业态营收占比 (SQL平移完成)"""
+    """获取业态营收占比 — 业务逻辑见 revenue_transaction_service.get_business_trade_revenue()"""
     try:
-        from datetime import datetime as dt
-
         if not ProvinceCode:
             ProvinceCode = request.headers.get("ProvinceCode", "")
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        if not StatisticsDate:
-            return Result.success(data=None, msg="查询成功")
-
-        stat_date = dt.strptime(StatisticsDate, "%Y-%m-%d") if "-" in StatisticsDate else dt.strptime(StatisticsDate, "%Y%m%d")
-        month_start = stat_date.strftime("%Y%m01")
-        date_str = stat_date.strftime("%Y%m%d")
-
-        where_sql = f' AND A."STATISTICS_DATE" >= {month_start} AND A."STATISTICS_DATE" <= {date_str}'
-        _sp_ids = parse_multi_ids(ServerpartId)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-        elif SPRegionTypeID:
-            where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
-
-        sql = f"""SELECT A."BUSINESS_TRADE",
-                SUM(A."TICKET_COUNT") AS "TICKET_COUNT",
-                SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
-            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                AND B."STATISTIC_TYPE" = 1000{where_sql}
-            GROUP BY A."BUSINESS_TRADE"
-            ORDER BY SUM(A."TICKET_COUNT") DESC"""
-        rows = db.execute_query(sql) or []
-
-        if not rows:
-            return Result.success(data=None, msg="查询成功")
-
-        total_ticket = sum(safe_dec(r.get("TICKET_COUNT")) for r in rows)
-        total_rev = sum(safe_dec(r.get("REVENUE_AMOUNT")) for r in rows)
-
-        # 查询业态名称字典：T_AUTOSTATISTICS
-        trade_name_map = {}
-        try:
-            trade_sql = """SELECT "AUTOSTATISTICS_ID", "AUTOSTATISTICS_NAME" FROM "T_AUTOSTATISTICS" WHERE "AUTOSTATISTICS_TYPE" = 2000"""
-            trade_rows = db.execute_query(trade_sql) or []
-            for tr in trade_rows:
-                tid = str(tr.get("AUTOSTATISTICS_ID", ""))
-                trade_name_map[tid] = tr.get("AUTOSTATISTICS_NAME", "其他业态")
-        except Exception:
-            pass
-
-        rank_list = []
-        for r in rows:
-            tc = safe_dec(r.get("TICKET_COUNT"))
-            ra = safe_dec(r.get("REVENUE_AMOUNT"))
-            trade_id = str(r.get("BUSINESS_TRADE", "") or "")
-            trade_name = trade_name_map.get(trade_id, "其他业态") if trade_id else "其他业态"
-            if DataType == 1:
-                pct = round(tc / total_ticket * 100, 2) if total_ticket > 0 else 0
-            else:
-                pct = round(ra / total_rev * 100, 2) if total_rev > 0 else 0
-            rank_list.append({
-                "name": trade_name,
-                "value": f"{pct:.2f}",
-                "data": f"客单 {int(tc)}笔,金额 {ra:,.2f}元",
-                "key": trade_id if trade_id else "0",
-            })
-
-        return Result.success(data={
-            "Serverpart_ID": None,
-            "Serverpart_Name": None,
-            "SPRegionType_Name": None,
-            "Rigid_Demand": False,
-            "Abundant": True,
-            "BusinessTradeRank": rank_list,
-        }, msg="查询成功")
+        data = revenue_transaction_service.get_business_trade_revenue(
+            db, ProvinceCode, StatisticsDate, ServerpartId, SPRegionTypeID, DataType
+        )
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeRevenue 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
@@ -2448,8 +2125,8 @@ async def get_business_brand_level(
 
 
 # ===== 营收趋势 =====
-# 注意：C# 中有两个 GetRevenueTrend，一个路由到 GetRevenueCompare(GET)，一个路由到 GetRevenueTrend(GET)
-# 这里只保留 GetRevenueTrend 的 GET 版本（下方已有 GET 定义）
+# 业务逻辑已迁移至 revenue_trend_service.get_revenue_trend()
+# Router 只负责：参数解析 → 调用 Service → Result 包装
 
 
 @router.get("/Revenue/GetRevenueTrend")
@@ -2462,117 +2139,14 @@ async def get_revenue_trend_get(
     SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取营收趋势图（GET）(SQL平移完成)"""
+    """获取营收趋势图（GET）— 业务逻辑见 revenue_trend_service.get_revenue_trend()"""
     try:
-        from datetime import datetime as dt
-        import calendar
-
         if not ProvinceCode:
             ProvinceCode = request.headers.get("ProvinceCode", "")
 
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        where_sql = ""
-        _sp_ids = parse_multi_ids(ServerpartId)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-        elif SPRegionTypeID:
-            where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
-
-        result_list = []
-
-        if StatisticsType == 1:
-            # 月度 — C#: DateSQL += " AND A.STATISTICS_MONTH >= " + StatisticsDate + "01"
-            # C#在Oracle中: 2026-02-1301 = 723, 2026-02-1312 = 712, 范围[723,712]为空集
-            # 旧API对此场景返回 TotalCount=0, List=[]
-            date_sql = ""
-            valid_year = True
-            if StatisticsDate:
-                sd_clean = StatisticsDate.replace("-", "").replace("/", "")
-                if not sd_clean.isdigit() or len(StatisticsDate) > 4:
-                    # 非纯年份格式（如2026-02-13），C#中会因SQL异常/空范围返回空
-                    valid_year = False
-                else:
-                    date_sql = f' AND A."STATISTICS_MONTH" >= {StatisticsDate}01 AND A."STATISTICS_MONTH" <= {StatisticsDate}12'
-            if valid_year:
-                sql = f"""SELECT A."STATISTICS_MONTH" AS "STATISTICS",
-                        SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT",
-                        SUM(A."TICKET_COUNT") AS "TICKET_COUNT"
-                    FROM "T_REVENUEMONTHLY" A, "T_SERVERPART" B
-                    WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-                        AND A."REVENUEMONTHLY_STATE" = 1 AND B."STATISTIC_TYPE" = 1000{where_sql}{date_sql}
-                    GROUP BY A."STATISTICS_MONTH" """
-                rows = db.execute_query(sql) or []
-                stat_map = {}
-                for r in rows:
-                    v = int(r.get("STATISTICS", 0))
-                    stat_map[v % 100] = r
-                for m in range(1, 13):
-                    r = stat_map.get(m)
-                    result_list.append({
-                        "name": f"{m}月",
-                        "value": str(safe_dec(r.get("REVENUE_AMOUNT"))) if r else "0",
-                    })
-
-        elif StatisticsType == 2:
-            # 日度
-            date_sql = ""
-            if StatisticsDate:
-                stat_d = dt.strptime(StatisticsDate, "%Y-%m-%d") if "-" in StatisticsDate else dt.strptime(StatisticsDate, "%Y%m%d")
-                m_start = stat_d.strftime("%Y%m01")
-                m_end = stat_d.strftime("%Y%m%d")
-                date_sql = f' AND A."STATISTICS_DATE" >= {m_start} AND A."STATISTICS_DATE" <= {m_end}'
-                days_in_month = calendar.monthrange(stat_d.year, stat_d.month)[1]
-            else:
-                days_in_month = 31
-            sql = f"""SELECT A."STATISTICS_DATE" AS "STATISTICS",
-                    SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT",
-                    SUM(A."TICKET_COUNT") AS "TICKET_COUNT"
-                FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-                WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-                    AND A."REVENUEDAILY_STATE" = 1 AND B."STATISTIC_TYPE" = 1000{where_sql}{date_sql}
-                GROUP BY A."STATISTICS_DATE" """
-            rows = db.execute_query(sql) or []
-            stat_map = {str(int(r.get("STATISTICS", 0))): r for r in rows}
-            for d in range(1, days_in_month + 1):
-                if StatisticsDate:
-                    key = f"{stat_d.strftime('%Y%m')}{d:02d}"
-                else:
-                    key = str(d)
-                r = stat_map.get(key)
-                result_list.append({
-                    "name": str(d),
-                    "value": str(safe_dec(r.get("REVENUE_AMOUNT"))) if r else "0",
-                })
-
-        elif StatisticsType == 4:
-            # 季度 — 同样检查StatisticsDate是否为纯年份
-            date_sql = ""
-            valid_year = True
-            if StatisticsDate:
-                sd_clean = StatisticsDate.replace("-", "").replace("/", "")
-                if not sd_clean.isdigit() or len(StatisticsDate) > 4:
-                    valid_year = False
-                else:
-                    date_sql = f' AND A."STATISTICS_MONTH" >= {StatisticsDate}01 AND A."STATISTICS_MONTH" <= {StatisticsDate}12'
-            if valid_year:
-                sql = f"""SELECT CEIL(MOD(A."STATISTICS_MONTH", {StatisticsDate}00) / 3) AS "STATISTICS",
-                        SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
-                    FROM "T_REVENUEMONTHLY" A, "T_SERVERPART" B
-                    WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-                        AND A."REVENUEMONTHLY_STATE" = 1 AND B."STATISTIC_TYPE" = 1000{where_sql}{date_sql}
-                    GROUP BY CEIL(MOD(A."STATISTICS_MONTH", {StatisticsDate}00) / 3)"""
-                rows = db.execute_query(sql) or []
-                stat_map = {str(int(safe_dec(r.get("STATISTICS")))): r for r in rows}
-                for q in range(1, 5):
-                    r = stat_map.get(str(q))
-                    result_list.append({
-                        "name": f"第{q}季度",
-                        "value": str(safe_dec(r.get("REVENUE_AMOUNT"))) if r else "0",
-                    })
-
+        result_list = revenue_trend_service.get_revenue_trend(
+            db, ProvinceCode, StatisticsDate, StatisticsType, ServerpartId, SPRegionTypeID
+        )
         json_list = JsonListData.create(data_list=result_list, total=len(result_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
@@ -2877,6 +2451,7 @@ async def get_revenue_report_detail(
 
 
 # ===== 畅销商品 =====
+# 业务逻辑已迁移至 revenue_trend_service.get_salable_commodity()
 @router.get("/Revenue/GetSalableCommodity")
 async def get_salable_commodity(
     statisticsDate: Optional[str] = Query(None, description="统计日期"),
@@ -2885,26 +2460,8 @@ async def get_salable_commodity(
     SPRegionType_ID: Optional[str] = Query("", description="片区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取商超畅销商品 — 旧 C# 接口为写死数据，此处完全对齐"""
-    # 旧 C# 接口返回固定数据，不依赖任何数据库查询
-    return Result.success(data={
-        "SalableCommodity": 24.7,
-        "SalableCommodityList": [
-            {"Commodity_name": "红牛", "Proportion": 9.3},
-            {"Commodity_name": "农夫山泉", "Proportion": 5.3},
-            {"Commodity_name": "康师傅牛肉面", "Proportion": 4.5},
-            {"Commodity_name": "面条", "Proportion": 3.3},
-            {"Commodity_name": "其他", "Proportion": 2.3},
-        ],
-        "UnSalableCommodity": 10.6,
-        "UnSalableCommodityList": [
-            {"Commodity_name": "水杯", "Proportion": 0.13},
-            {"Commodity_name": "吸油纸", "Proportion": 0.06},
-            {"Commodity_name": "女儿红", "Proportion": 0.05},
-            {"Commodity_name": "消毒纸巾", "Proportion": 0.02},
-            {"Commodity_name": "其他", "Proportion": 0.15},
-        ],
-    }, msg="查询成功")
+    """获取商超畅销商品 — 业务逻辑见 revenue_trend_service.get_salable_commodity()"""
+    return Result.success(data=revenue_trend_service.get_salable_commodity(), msg="查询成功")
 
 
 # ===== 排行/同比 =====
@@ -3064,104 +2621,13 @@ async def get_revenue_yoy(
     SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取每日营收同比数据 (SQL平移完成)"""
+    """获取每日营收同比数据 — 业务逻辑见 revenue_trend_service.get_revenue_yoy()"""
     try:
-        from datetime import datetime as dt, timedelta
-
-        if not pushProvinceCode or not StatisticsStartDate or not StatisticsEndDate:
-            _ckm = {"data": None, "key": None, "name": None, "value": None}
-            return Result.success(data={
-                "curRevenue": None, "curList": [_ckm],
-                "compareRevenue": None, "compareList": [_ckm],
-            }, msg="查询成功")
-
-        def parse_d(s):
-            return dt.strptime(s, "%Y-%m-%d") if "-" in s else dt.strptime(s, "%Y%m%d")
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        s_date = parse_d(StatisticsStartDate)
-        e_date = parse_d(StatisticsEndDate)
-        cs_date = parse_d(CompareStartDate) if CompareStartDate else s_date.replace(year=s_date.year - 1)
-        ce_date = parse_d(CompareEndDate) if CompareEndDate else e_date.replace(year=e_date.year - 1)
-
-        # 构建WHERE
-        where_sql = ""
-        _sp_ids = parse_multi_ids(ServerpartId)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-        elif SPRegionTypeID:
-            where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
-
-        # 查当前期营收
-        cur_sql = f"""SELECT A."STATISTICS_DATE",
-                SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
-                SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
-                SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
-            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                AND B."STATISTIC_TYPE" = 1000
-                AND A."STATISTICS_DATE" >= {s_date.strftime('%Y%m%d')}
-                AND A."STATISTICS_DATE" <= {e_date.strftime('%Y%m%d')}{where_sql}
-            GROUP BY A."STATISTICS_DATE" """
-        cur_rows = db.execute_query(cur_sql) or []
-        cur_map = {}
-        for r in cur_rows:
-            d = str(int(safe_dec(r.get("STATISTICS_DATE"))))
-            cur_map[d] = safe_dec(r.get("CASHPAY"))
-
-        # 查对比期
-        cmp_sql = f"""SELECT A."STATISTICS_DATE",
-                SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
-                SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
-                SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
-            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                AND B."STATISTIC_TYPE" = 1000
-                AND A."STATISTICS_DATE" >= {cs_date.strftime('%Y%m%d')}
-                AND A."STATISTICS_DATE" <= {ce_date.strftime('%Y%m%d')}{where_sql}
-            GROUP BY A."STATISTICS_DATE" """
-        cmp_rows = db.execute_query(cmp_sql) or []
-        cmp_map = {}
-        for r in cmp_rows:
-            d = str(int(safe_dec(r.get("STATISTICS_DATE"))))
-            cmp_map[d] = safe_dec(r.get("CASHPAY"))
-
-        # 逐天遍历
-        cur_days = (e_date - s_date).days + 1
-        cmp_days = (ce_date - cs_date).days + 1
-        max_days = max(cur_days, cmp_days)
-
-        from decimal import Decimal
-        cur_acc = Decimal('0')
-        cmp_acc = Decimal('0')
-        cur_list = []
-        cmp_list = []
-
-        for i in range(max_days):
-            cur_d = s_date + timedelta(days=i)
-            cmp_d = cs_date + timedelta(days=i)
-            cv = cur_map.get(cur_d.strftime("%Y%m%d"), 0)
-            lv = cmp_map.get(cmp_d.strftime("%Y%m%d"), 0)
-            cur_acc += Decimal(str(cv))
-            cmp_acc += Decimal(str(lv))
-
-            cur_list.append({
-                "name": date_no_pad(cur_d),
-                "value": str(cv), "data": str(cur_acc), "key": None,
-            })
-            cmp_list.append({
-                "name": date_no_pad(cmp_d),
-                "value": str(lv), "data": str(cmp_acc), "key": None,
-            })
-
-        return Result.success(data={
-            "curRevenue": float(cur_acc), "curList": cur_list,
-            "compareRevenue": float(cmp_acc), "compareList": cmp_list,
-            "curHoliday": None, "curHolidayDays": 0,
-            "compareHoliday": None, "compareHolidayDays": 0,
-        }, msg="查询成功")
+        data = revenue_trend_service.get_revenue_yoy(
+            db, pushProvinceCode, StatisticsStartDate, StatisticsEndDate,
+            CompareStartDate, CompareEndDate, ServerpartId, SPRegionTypeID
+        )
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueYOY 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
