@@ -20,7 +20,9 @@ from services.commercial import revenue_brand_service
 from services.commercial import revenue_budget_service
 from services.commercial import revenue_business_service
 from services.commercial import revenue_report_service
-from services.commercial import revenue_holiday_service
+from services.commercial import revenue_holiday_service
+from services.commercial import revenue_account_service
+
 
 
 router = APIRouter()
@@ -691,367 +693,121 @@ async def get_revenue_yoy(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetHolidayCompare")
-async def get_holiday_compare(
-    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
-    curYear: Optional[str] = Query(None, description="本年年份"),
-    compareYear: Optional[str] = Query(None, description="历年年份"),
-    holidayType: int = Query(0, description="节日类型"),
+@router.get("/Revenue/GetHolidayCompare")
+
+async def get_holiday_compare(
+
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+
+    curYear: Optional[str] = Query(None, description="本年年份"),
+
+    compareYear: Optional[str] = Query(None, description="历年年份"),
+
+    holidayType: int = Query(0, description="节日类型"),
+
+    StatisticsDate: Optional[str] = Query("", description="统计日期"),
+
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取节日营收同比数据 -- 业务逻辑见 revenue_holiday_service.get_holiday_compare()"""
+
+    try:
+
+        data = revenue_holiday_service.get_holiday_compare(
+
+            db, pushProvinceCode, curYear, compareYear,
+
+            holidayType, StatisticsDate, ServerpartId, SPRegionTypeID
+
+        )
+
+        if data is None:
+
+            return Result.fail(code=200, msg="查询失败，无数据返回！")
+
+        return Result.success(data=data, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetHolidayCompare (Revenue) 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+
+# ===== 实时交易 =====
+# 业务逻辑已迁移至 revenue_account_service
+@router.get("/Revenue/GetAccountReceivable")
+async def get_account_receivable(
+    calcType: int = Query(1, description="计算方式：1当月 2累计"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsMonth: Optional[str] = Query(None, description="统计结束月份"),
+    StatisticsStartMonth: Optional[str] = Query("", description="统计开始月份"),
     StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取节日营收同比数据 -- 业务逻辑见 revenue_holiday_service.get_holiday_compare()"""
+    """获取营收统计明细数据 -- 业务逻辑见 revenue_account_service.get_account_receivable()"""
     try:
-        data = revenue_holiday_service.get_holiday_compare(
-            db, pushProvinceCode, curYear, compareYear,
-            holidayType, StatisticsDate, ServerpartId, SPRegionTypeID
+        data = revenue_account_service.get_account_receivable(
+            db, calcType, pushProvinceCode, StatisticsMonth,
+            StatisticsStartMonth, StatisticsDate
         )
-        if data is None:
-            return Result.fail(code=200, msg="查询失败，无数据返回！")
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
-        logger.error(f"GetHolidayCompare (Revenue) 查询失败: {ex}")
+        logger.error(f"GetAccountReceivable 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
 
 
-# ===== 实时交易 =====
-@router.get("/Revenue/GetAccountReceivable")
-async def get_account_receivable(
-    calcType: int = Query(1, description="计算方式：1当月 2累计"),
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsMonth: Optional[str] = Query(None, description="统计结束月份"),
-    StatisticsStartMonth: Optional[str] = Query("", description="统计开始月份"),
-    StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取营收统计明细数据 (SQL平移完成)"""
-    try:
-        from datetime import datetime as dt
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        if not StatisticsMonth:
-            return Result.success(data=None, msg="查询成功")
-
-        # 经营模式枚举映射
-        bt_names = {4000: "业主自营", 3000: "自营提成", 1000: "合作分成", 2000: "固定租金"}
-
-        # 1. 查 T_ACCOUNTRECDETAIL
-        sm = StatisticsStartMonth if StatisticsStartMonth else f"{StatisticsMonth[:4]}01"
-        if StatisticsDate and dt.strptime(StatisticsDate.split(" ")[0], "%Y-%m-%d").strftime("%Y%m") == StatisticsMonth:
-            # 统计月份截止本月，计算到结算日
-            date_sql = f' AND "STATISTICS_DATE" >= {sm}01 AND "STATISTICS_DATE" <= {dt.strptime(StatisticsDate.split(" ")[0], "%Y-%m-%d").strftime("%Y%m%d")}'
-            detail_sql = f'''SELECT * FROM "T_ACCOUNTRECDETAIL" 
-                WHERE "PROVINCE_ID" = 3544 AND "SERVERPART_ID" = 0 AND "DATE_TYPE" = 1 AND "ACCOUNTRECDETAIL_STATE" = 1{date_sql}'''
-            date_sql_rev = f' AND "STATISTICS_DATE" BETWEEN {sm}01 AND {StatisticsMonth}31'
-        else:
-            if calcType == 1:
-                date_sql = f' AND "STATISTICS_DATE" = {StatisticsMonth}'
-            else:
-                date_sql = f' AND "STATISTICS_DATE" >= {sm} AND "STATISTICS_DATE" <= {StatisticsMonth}'
-            detail_sql = f'''SELECT * FROM "T_ACCOUNTRECDETAIL" 
-                WHERE "PROVINCE_ID" = 3544 AND "SERVERPART_ID" = 0 AND "DATE_TYPE" = 2 AND "ACCOUNTRECDETAIL_STATE" = 1{date_sql}'''
-            date_sql_rev = f' AND "STATISTICS_DATE" BETWEEN {sm}01 AND {StatisticsMonth}31'
-
-        detail_rows = db.execute_query(detail_sql) or []
-
-        # 2. 查 T_PROVINCEREVENUE 获取业主营业收入
-        account_sql = f'''SELECT 
-                SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT", A."BUSINESS_TYPE",
-                SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
-                CASE WHEN A."BUSINESS_TYPE" = 4000 AND "SHOPTRADE" = 2 THEN 1 
-                    WHEN A."BUSINESS_TYPE" = 4000 AND "SHOPTRADE" <> 2 THEN 2 ELSE 3 END AS "SHOPTRADE" 
-            FROM "T_PROVINCEREVENUE" A 
-            WHERE A."PROVINCEREVENUE_STATE" = 1{date_sql_rev}
-            GROUP BY A."BUSINESS_TYPE", 
-                CASE WHEN A."BUSINESS_TYPE" = 4000 AND "SHOPTRADE" = 2 THEN 1 
-                    WHEN A."BUSINESS_TYPE" = 4000 AND "SHOPTRADE" <> 2 THEN 2 ELSE 3 END'''
-        account_rows = db.execute_query(account_sql) or []
-
-        # 3. 汇总detail数据
-        def sum_detail(stat_type, biz_type=None):
-            total = 0.0
-            for r in detail_rows:
-                st = int(safe_dec(r.get("STATISTICS_TYPE")))
-                bt = int(safe_dec(r.get("BUSINESS_TYPE")))
-                if st == stat_type:
-                    if biz_type is not None:
-                        if bt == biz_type:
-                            total += safe_dec(r.get("DATA_VALUE"))
-                    else:
-                        total += safe_dec(r.get("DATA_VALUE"))
-            return total
-
-        def sum_detail_lt(stat_type, biz_lt):
-            """SUM where BUSINESS_TYPE < biz_lt"""
-            total = 0.0
-            for r in detail_rows:
-                st = int(safe_dec(r.get("STATISTICS_TYPE")))
-                bt = int(safe_dec(r.get("BUSINESS_TYPE")))
-                if st == stat_type and bt < biz_lt:
-                    total += safe_dec(r.get("DATA_VALUE"))
-            return total
-
-        def max_detail(stat_type, biz_type=None):
-            vals = []
-            for r in detail_rows:
-                st = int(safe_dec(r.get("STATISTICS_TYPE")))
-                bt = int(safe_dec(r.get("BUSINESS_TYPE")))
-                if st == stat_type:
-                    if biz_type is not None:
-                        if bt == biz_type:
-                            vals.append(safe_dec(r.get("DATA_VALUE")))
-                    else:
-                        vals.append(safe_dec(r.get("DATA_VALUE")))
-            return max(vals) if vals else 0.0
-
-        def sum_account(biz_type):
-            total = 0.0
-            for r in account_rows:
-                bt = int(safe_dec(r.get("BUSINESS_TYPE")))
-                if bt == biz_type:
-                    total += safe_dec(r.get("ACCOUNT_AMOUNT"))
-            return total
-
-        owner_rev = sum_detail(1000)
-        merchant_rev = sum_detail(2000)
-        project_count = int(sum_detail(3001)) if sum_detail(3001) == 0 else int(max_detail(3001))
-        # 重新计算 project_count: 按 BUSINESS_TYPE 分组取 max 再求和
-        pc_map = {}
-        for r in detail_rows:
-            st = int(safe_dec(r.get("STATISTICS_TYPE")))
-            bt = int(safe_dec(r.get("BUSINESS_TYPE")))
-            if st == 3001:
-                dv = safe_dec(r.get("DATA_VALUE"))
-                pc_map[bt] = max(pc_map.get(bt, 0), dv)
-        project_count = int(sum(pc_map.values()))
-
-        # CommissionRatio = SUM(1004, BT<4000) / SUM(3003, BT<4000) * 100
-        s1004 = sum_detail_lt(1004, 4000)
-        s3003 = sum_detail_lt(3003, 4000)
-        commission_ratio = round(s1004 / s3003 * 100, 2) if s3003 > 0 else 0.0
-
-        # 4. 按经营模式遍历
-        bt_list = [4000, 3000, 1000, 2000]
-        owner_acount = []
-        owner_entry = []
-        owner_recv = []
-        merchant_acount = []
-        merchant_entry = []
-        merchant_recv = []
-        proj_count_list = []
-        proj_ratio_list = []
-        rev_ratio_list = []
-        commission_list = []
-
-        def fmt_val(v):
-            """C# decimal.ToString()保留尾零到2位小数"""
-            v = round(v, 2)
-            if v == 0:
-                return "0"
-            # 保留2位小数（含尾零），匹配C# decimal.ToString()
-            return f"{v:.2f}"
-
-        for bt in bt_list:
-            name = bt_names.get(bt, str(bt))
-            # OwnerList
-            owner_acount.append({"name": name, "value": fmt_val(sum_detail(1001, bt))})
-            owner_entry.append({"name": name, "value": fmt_val(sum_account(bt))})
-            owner_recv.append({"name": name, "value": fmt_val(sum_detail(1003, bt))})
-            # MerchantList
-            merchant_acount.append({"name": name, "value": fmt_val(sum_detail(2001, bt))})
-            merchant_entry.append({"name": name, "value": fmt_val(sum_detail(2002, bt))})
-            merchant_recv.append({"name": name, "value": fmt_val(sum_detail(2003, bt))})
-            # ProjectCountList
-            pc_val = max_detail(3001, bt)
-            proj_count_list.append({"name": name, "value": str(int(pc_val))})
-            # ProjectRatioList
-            proj_ratio_list.append({"name": name, "value": str(round(pc_val / project_count * 100, 2) if project_count > 0 else 0)})
-            # RevenueRatioList
-            s3003_bt = sum_detail(3003, bt)
-            rev_ratio_list.append({"name": name, "value": str(round(s3003_bt / owner_rev * 100, 2) if owner_rev > 0 else 0)})
-            # CommissionList
-            if bt == 4000:
-                commission_list.append({"name": name, "value": "0"})
-            else:
-                s1004_bt = sum_detail(1004, bt)
-                s3003_bt2 = sum_detail(3003, bt)
-                commission_list.append({"name": name, "value": str(round(s1004_bt / s3003_bt2 * 100, 2) if s3003_bt2 > 0 else 0)})
-
-        return Result.success(data={
-            "OwnerRevenue": round(owner_rev, 2),
-            "MerchantRevenue": round(merchant_rev, 2),
-            "OwnerList": {"AcountList": owner_acount, "EntryList": owner_entry, "ReceivableList": owner_recv},
-            "MerchantList": {"AcountList": merchant_acount, "EntryList": merchant_entry, "ReceivableList": merchant_recv},
-            "ProjectCount": project_count,
-            "ProjectCountList": proj_count_list,
-            "ProjectRatioList": proj_ratio_list,
-            "RevenueRatioList": rev_ratio_list,
-            "CommissionRatio": commission_ratio,
-            "CommissionList": commission_list,
-        }, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetAccountReceivable 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+@router.get("/Revenue/GetCurRevenue")
+async def get_cur_revenue(
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+    serverPartId: Optional[str] = Query("", description="服务区内码"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取实时营收交易数据 -- 业务逻辑见 revenue_account_service.get_cur_revenue()"""
+    try:
+        data = revenue_account_service.get_cur_revenue(db, pushProvinceCode, StatisticsDate, serverPartId)
+        return Result.success(data=data, msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetCurRevenue 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetCurRevenue")
-async def get_cur_revenue(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
-    serverPartId: Optional[str] = Query("", description="服务区内码"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取实时营收交易数据 (SQL平移完成)"""
-    try:
-        from datetime import datetime as dt
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def safe_int(v):
-            try: return int(float(v)) if v is not None else 0
-            except: return 0
-
-        if not StatisticsDate:
-            return Result.success(data=None, msg="查询成功")
-
-        stat_date = dt.strptime(StatisticsDate, "%Y-%m-%d") if "-" in StatisticsDate else dt.strptime(StatisticsDate, "%Y%m%d")
-        where_sql = ""
-        _sp_ids = parse_multi_ids(serverPartId)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
-
-        sql = f"""SELECT SUM(A."CASHPAY") AS "CASHPAY",
-                SUM(A."TICKETCOUNT") AS "TICKETCOUNT",
-                SUM(A."TOTALCOUNT") AS "TOTALCOUNT"
-            FROM "T_ENDACCOUNT_TEMP" A
-            WHERE A."VALID" = 1
-                AND A."STATISTICS_DATE" >= TO_DATE('{stat_date.strftime('%Y-%m-%d')}','YYYY-MM-DD')
-                AND A."STATISTICS_DATE" < TO_DATE('{stat_date.strftime('%Y-%m-%d')}','YYYY-MM-DD') + 1{where_sql}"""
-        rows = db.execute_query(sql) or []
-
-        cashpay = safe_dec(rows[0].get("CASHPAY")) if rows else 0
-        ticketcount = safe_int(rows[0].get("TICKETCOUNT")) if rows else 0
-        totalcount = safe_dec(rows[0].get("TOTALCOUNT")) if rows else 0
-        avg_ticket = round(cashpay / ticketcount, 2) if ticketcount > 0 else None
-        avg_sell = round(cashpay / totalcount, 2) if totalcount > 0 else None
-
-        return Result.success(data={
-            "AnnualRevenue": None,
-            "CurRevenueAmount": cashpay, "CurTicketCount": ticketcount,
-            "CurTotalCount": totalcount,
-            "CurAvgTicketAmount": avg_ticket, "CurAvgSellAmount": avg_sell,
-            "AddRevenueAmount": None, "AddTicketCount": None, "AddTotalCount": None,
-        }, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetCurRevenue 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+@router.get("/Revenue/GetShopCurRevenue")
+async def get_shop_cur_revenue(
+    serverPartId: Optional[str] = Query(None, description="服务区内码"),
+    statisticsDate: Optional[str] = Query(None, description="统计日期"),
+    groupByShop: bool = Query(False, description="是否合并双侧同业态门店"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取实时门店营收交易数据 -- 业务逻辑见 revenue_account_service.get_shop_cur_revenue()"""
+    try:
+        data = revenue_account_service.get_shop_cur_revenue(db, serverPartId, statisticsDate, groupByShop)
+        if data is None:
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+        json_list = JsonListData.create(data_list=data, total=len(data), page_size=10)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetShopCurRevenue 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetShopCurRevenue")
-async def get_shop_cur_revenue(
-    serverPartId: Optional[str] = Query(None, description="服务区内码"),
-    statisticsDate: Optional[str] = Query(None, description="统计日期"),
-    groupByShop: bool = Query(False, description="是否合并双侧同业态门店"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取实时门店营收交易数据 (SQL平移完成)"""
-    try:
-        from datetime import datetime as dt
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-
-        if not serverPartId or not statisticsDate:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-
-        stat_date = dt.strptime(statisticsDate, "%Y-%m-%d") if "-" in statisticsDate else dt.strptime(statisticsDate, "%Y%m%d")
-
-        # 多服务区ID兼容
-        _sp_ids = parse_multi_ids(serverPartId)
-        if not _sp_ids:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-        sp_condition = build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
-
-        sql = f"""SELECT A."BUSINESS_TYPE", A."SHOPNAME",
-                SUM(A."CASHPAY") AS "CASHPAY",
-                SUM(A."TICKETCOUNT") AS "TICKETCOUNT",
-                SUM(A."TOTALCOUNT") AS "TOTALCOUNT"
-            FROM "T_ENDACCOUNT_TEMP" A
-            WHERE A."VALID" = 1 AND {sp_condition}
-                AND A."STATISTICS_DATE" >= TO_DATE('{stat_date.strftime('%Y-%m-%d')}','YYYY-MM-DD')
-                AND A."STATISTICS_DATE" < TO_DATE('{stat_date.strftime('%Y-%m-%d')}','YYYY-MM-DD') + 1
-            GROUP BY A."BUSINESS_TYPE", A."SHOPNAME"
-            ORDER BY SUM(A."CASHPAY") DESC"""
-        rows = db.execute_query(sql) or []
-
-        if not rows:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-
-        data_list = []
-        for r in rows:
-            data_list.append({
-                "ShopTrade": r.get("BUSINESS_TYPE", ""),
-                "ShopName": r.get("SHOPNAME", ""),
-                "CashPay": safe_dec(r.get("CASHPAY")),
-                "TicketCount": safe_dec(r.get("TICKETCOUNT")),
-                "TotalCount": safe_dec(r.get("TOTALCOUNT")),
-            })
-
-        json_list = JsonListData.create(data_list=data_list, total=len(data_list), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetShopCurRevenue 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
-@router.get("/Revenue/GetLastSyncDateTime")
-async def get_last_sync_date_time(db: DatabaseHelper = Depends(get_db)):
-    """获取最新的同步日期 (SQL平移完成)"""
-    try:
-        from datetime import datetime, timedelta
-        now = datetime.now()
-        # C#对齐: DateTime.Now.AddDays(-1).ToString("yyyyMM01")
-        yesterday = now - timedelta(days=1)
-        month_start = yesterday.strftime("%Y%m") + "01"
-        today_str = now.strftime("%Y%m%d")
-
-        sql = f"""
-            SELECT 
-                STATISTICS_DATE, MAX(RECORD_DATE) AS RECORD_DATE
-            FROM 
-                T_PROVINCEREVENUE 
-            WHERE 
-                PROVINCEREVENUE_STATE = 1 AND 
-                DATA_TYPE = 1 AND HOLIDAY_TYPE > 0 AND 
-                STATISTICS_DATE >= {month_start} AND 
-                STATISTICS_DATE < {today_str} 
-            GROUP BY 
-                STATISTICS_DATE
-            ORDER BY STATISTICS_DATE DESC
-        """
-        rows = db.execute_query(sql)
-        for r in rows:
-            stat_date_str = str(r["STATISTICS_DATE"])
-            record_dt = r["RECORD_DATE"]
-            
-            # C# 逻辑：判断 RECORD_DATE >= STATISTICS_DATE + 1天 + 8小时30分
-            stat_dt = datetime.strptime(stat_date_str, "%Y%m%d")
-            threshold_dt = stat_dt + timedelta(days=1, hours=8, minutes=30)
-            
-            if record_dt and record_dt >= threshold_dt:
-                return Result.success(data=stat_dt.strftime("%Y-%m-%d"), msg="查询成功")
-                
-        return Result.success(data="", msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetLastSyncDateTime 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+@router.get("/Revenue/GetLastSyncDateTime")
+async def get_last_sync_date_time(db: DatabaseHelper = Depends(get_db)):
+    """获取最新的同步日期 -- 业务逻辑见 revenue_account_service.get_last_sync_date_time()"""
+    try:
+        data = revenue_account_service.get_last_sync_date_time(db)
+        return Result.success(data=data, msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetLastSyncDateTime 失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 # ===== 节日分析 =====
@@ -3165,34 +2921,62 @@ async def get_holiday_spr_analysis(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-# ===== GetHolidayDailyAnalysis =====
-# 业务逻辑已迁移至 revenue_holiday_service
-@router.get("/Revenue/GetHolidayDailyAnalysis")
-async def get_holiday_daily_analysis(
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    curYear: int = Query(..., description="本年年份"),
-    compareYear: int = Query(..., description="历年年份"),
-    HolidayType: int = Query(..., description="节日类型"),
-    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
-    SPRegionTypeId: Optional[str] = Query("", description="片区内码"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    businessType: Optional[str] = Query("", description="经营模式"),
-    businessTrade: Optional[str] = Query("", description="经营业态"),
-    businessRegion: Optional[str] = Query("", description="经营区域"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取节假日各类项目所有天数对客分析 -- 业务逻辑见 revenue_holiday_service.get_holiday_daily_analysis()"""
-    try:
-        result_list = revenue_holiday_service.get_holiday_daily_analysis(
-            db, pushProvinceCode, curYear, compareYear,
-            HolidayType, StatisticsDate, SPRegionTypeId, ServerpartId,
-            businessType, businessTrade, businessRegion
-        )
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetHolidayDailyAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+# ===== GetHolidayDailyAnalysis =====
+
+# 业务逻辑已迁移至 revenue_holiday_service
+
+@router.get("/Revenue/GetHolidayDailyAnalysis")
+
+async def get_holiday_daily_analysis(
+
+    pushProvinceCode: str = Query(..., description="省份编码"),
+
+    curYear: int = Query(..., description="本年年份"),
+
+    compareYear: int = Query(..., description="历年年份"),
+
+    HolidayType: int = Query(..., description="节日类型"),
+
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+
+    SPRegionTypeId: Optional[str] = Query("", description="片区内码"),
+
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+
+    businessType: Optional[str] = Query("", description="经营模式"),
+
+    businessTrade: Optional[str] = Query("", description="经营业态"),
+
+    businessRegion: Optional[str] = Query("", description="经营区域"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取节假日各类项目所有天数对客分析 -- 业务逻辑见 revenue_holiday_service.get_holiday_daily_analysis()"""
+
+    try:
+
+        result_list = revenue_holiday_service.get_holiday_daily_analysis(
+
+            db, pushProvinceCode, curYear, compareYear,
+
+            HolidayType, StatisticsDate, SPRegionTypeId, ServerpartId,
+
+            businessType, businessTrade, businessRegion
+
+        )
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetHolidayDailyAnalysis 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
+
 
 
 # ===== GetMonthINCAnalysis =====
