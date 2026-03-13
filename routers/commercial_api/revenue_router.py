@@ -172,186 +172,20 @@ async def get_summary_revenue(
     ShowYearRevenue: bool = Query(False, description="是否显示年度营收额"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取营收推送汇总数据"""
+    """获取营收推送汇总数据 — 业务逻辑见 revenue_push_service.get_summary_revenue()"""
     try:
-        from datetime import datetime, timedelta
-        from collections import defaultdict
-
-        # 1. 查省份ID
-        pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-        pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
-        province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else pushProvinceCode
-
-        where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
-        _sp_ids = parse_multi_ids(Serverpart_ID)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-        elif SPRegionType_ID:
-            where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionType_ID})'
-
-        # 2. 日期范围
-        end_str = Statistics_Date.split(" ")[0] if Statistics_Date else datetime.now().strftime("%Y-%m-%d")
-        start_str = Statistics_StartDate.split(" ")[0] if Statistics_StartDate else end_str
-        end_date = datetime.strptime(end_str, "%Y-%m-%d")
-        start_date = datetime.strptime(start_str, "%Y-%m-%d")
-        sd_start = start_date.strftime("%Y%m%d")
-        sd_end = end_date.strftime("%Y%m%d")
-
-        # 3. 查询T_REVENUEDAILY（日期范围）
-        sql = f"""SELECT
-                    B."SPREGIONTYPE_NAME", B."SERVERPART_NAME", A."SERVERPART_ID",
-                    SUM(A."TICKET_COUNT") AS "TICKETCOUNT", SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
-                    SUM(A."REVENUE_AMOUNT") AS "CASHPAY", SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
-                    SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
-                    SUM(CASE WHEN A."DIFFERENT_AMOUNT" < 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_LESS",
-                    SUM(CASE WHEN A."DIFFERENT_AMOUNT" > 0 THEN A."DIFFERENT_AMOUNT" ELSE 0 END) AS "DIFFERENT_PRICE_MORE",
-                    CASE WHEN A."BUSINESS_TYPE" = 1000 THEN '自营' ELSE '外包' END AS "BUSINESS_TYPENAME",
-                    A."SHOPTRADE", SUM(A."REVENUE_AMOUNT_YOY") AS "REVENUE_AMOUNT_YOY"
-                  FROM "T_REVENUEDAILY" A
-                    JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
-                  WHERE A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
-                    AND A."STATISTICS_DATE" BETWEEN {sd_start} AND {sd_end}
-                    AND B."SERVERPART_CODE" NOT IN ('348888','349999','638888','888888','899999')
-                    {where_sql}
-                  GROUP BY B."SPREGIONTYPE_NAME", B."SERVERPART_NAME", A."SERVERPART_ID",
-                    A."BUSINESS_TYPE", A."SHOPTRADE" """
-        rows = db.execute_query(sql) or []
-
-        if not rows:
-            return Result.success(data={
-                "RevenuePushModel": None, "GrowthRate": 0.0,
-                "MonthRevenueAmount": 0.0, "YearRevenueAmount": 0.0,
-                "BusinessTypeList": [], "BusinessTradeList": [], "SPRegionList": [],
-            }, msg="查询成功")
-
-        # 4. 辅助函数
-        def sf(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def si(v):
-            try: return int(v) if v is not None else 0
-            except: return 0
-
-        # 5. 直接从REVENUE_AMOUNT_YOY获取去年同期 (C# SUM(A.REVENUE_AMOUNT_YOY))
-        revenue_yoy = round(sum(sf(r.get("REVENUE_AMOUNT_YOY")) for r in rows), 2)
-
-        # 6. 构造汇总
-        total_cashpay = round(sum(sf(r.get("CASHPAY")) for r in rows), 2)
-        total_ticket = sum(si(r.get("TICKETCOUNT")) for r in rows)
-        summary_model = {
-            "Serverpart_ID": int(Serverpart_ID) if Serverpart_ID else None,
-            "Serverpart_Name": rows[0].get("SERVERPART_NAME", "") if Serverpart_ID else "",
-            "CashPay": total_cashpay,
-            "TicketCount": total_ticket,
-            "TotalCount": round(sum(sf(r.get("TOTALCOUNT")) for r in rows), 2),
-            "TotalOffAmount": round(sum(sf(r.get("TOTALOFFAMOUNT")) for r in rows), 2),
-            "MobilePayment": round(sum(sf(r.get("MOBILEPAYMENT")) for r in rows), 2),
-            "Different_Price_Less": round(sum(sf(r.get("DIFFERENT_PRICE_LESS")) for r in rows), 2),
-            "Different_Price_More": round(sum(sf(r.get("DIFFERENT_PRICE_MORE")) for r in rows), 2),
-            "RevenueYOY": revenue_yoy,
-            "Revenue_Upload": None,
-            "TotalShopCount": None,
-            "UnUpLoadShopList": None,
-            # C#模型默认字段
-            "SPRegionType_Name": None,
-            "ShopName": None,
-            "ShopRegionName": None,
-            "BusinessTrade_Name": None,
-            "BusinessBrand_Name": None,
-            "Business_TypeName": None,
-            "BusinessType": None,
-            "Revenue_Include": None,
-            "Statistics_Date": None,
-            "BudgetRevenue": 0.0,
-            "RevenueQOQ": None,
-            "CurAccountRoyalty": None,
-            "AccountRoyaltyQOQ": None,
-            "YearRevenueAmount": None,
-            "YearRevenueYOY": None,
-            "YearAccountRoyalty": 0.0,
-            "YearAccountRoyaltyYOY": 0.0,
-        }
-
-        # 7. 统计经营模式分析 (BusinessTypeList)
-        bt_groups = defaultdict(lambda: {"cash": 0.0, "yoy": 0.0})
-        sp_groups = defaultdict(float)
-
-        for r in rows:
-            bt_name = r.get("BUSINESS_TYPENAME") or "其他"
-            bt_groups[bt_name]["cash"] += sf(r.get("CASHPAY"))
-            bt_groups[bt_name]["yoy"] += sf(r.get("REVENUE_AMOUNT_YOY"))
-            sp_name = r.get("SPREGIONTYPE_NAME")
-            if sp_name:
-                sp_groups[sp_name] += sf(r.get("CASHPAY"))
-
-        business_type_list = []
-        for name, vals in sorted(bt_groups.items(), key=lambda x: x[1]["cash"], reverse=True):
-            business_type_list.append({
-                "name": name,
-                "value": f"{vals['cash']:.2f}",
-                "data": f"{vals['yoy']:.2f}",
-                "key": None
-            })
-
-        # 8. 统计管理中心分析 (SPRegionList)
-        sp_region_list = []
-        for name, val in sorted(sp_groups.items(), key=lambda x: x[1], reverse=True):
-            sp_region_list.append({
-                "name": name,
-                "value": f"{val:.2f}"
-            })
-
-        # 9. 统计经营业态分析 (BusinessTradeList) 
-        # 先查T_SERVERPARTSHOP获取(SERVERPART_ID,SHOPTRADE)→BUSINESS_TRADENAME映射
-        shop_where = where_sql.replace('B.', 'B2.')
-        shop_sql = f"""SELECT A2."SERVERPART_ID", A2."SHOPTRADE", A2."BUSINESS_TRADENAME"
-            FROM "T_SERVERPARTSHOP" A2, "T_SERVERPART" B2
-            WHERE A2."SERVERPART_ID" = B2."SERVERPART_ID" AND A2."ISVALID" = 1
-                AND A2."BUSINESS_TRADE" IS NOT NULL {shop_where}
-            GROUP BY A2."SERVERPART_ID", A2."SHOPTRADE", A2."BUSINESS_TRADENAME" """
-        shop_rows = db.execute_query(shop_sql) or []
-        # 建立映射: (SERVERPART_ID, SHOPTRADE) → BUSINESS_TRADENAME
-        trade_name_map = {}
-        for s in shop_rows:
-            key = (str(s.get("SERVERPART_ID")), str(s.get("SHOPTRADE")))
-            trade_name_map[key] = str(s.get("BUSINESS_TRADENAME") or "")
-
-        # 查父级业态映射
-        mapping_sql = """SELECT A."AUTOSTATISTICS_NAME" AS "CHILD", B."AUTOSTATISTICS_NAME" AS "PARENT"
-                         FROM "T_AUTOSTATISTICS" A, "T_AUTOSTATISTICS" B
-                         WHERE A."AUTOSTATISTICS_PID" = B."AUTOSTATISTICS_ID"
-                         AND B."AUTOSTATISTICS_PID" = -1"""
-        mapping_rows = db.execute_query(mapping_sql) or []
-        parent_mapping = {mr["CHILD"]: mr["PARENT"] for mr in mapping_rows}
-
-        parent_trade_groups = defaultdict(float)
-        for r in rows:
-            key = (str(r.get("SERVERPART_ID")), str(r.get("SHOPTRADE")))
-            child_name = trade_name_map.get(key, "")
-            parent_name = parent_mapping.get(child_name, "其他") if child_name else "其他"
-            parent_trade_groups[parent_name] += sf(r.get("CASHPAY"))
-
-        business_trade_list = []
-        for name, val in sorted(parent_trade_groups.items(), key=lambda x: x[1], reverse=True):
-            business_trade_list.append({
-                "name": name,
-                "value": f"{val:.2f}"
-            })
-
-        return Result.success(data={
-            "BusinessTradeList": business_trade_list,
-            "BusinessTypeList": business_type_list,
-            "GrowthRate": 0.0,
-            "MonthRevenueAmount": 0.0,
-            "RevenuePushModel": summary_model,
-            "SPRegionList": sp_region_list,
-            "YearRevenueAmount": 0.0,
-        }, msg="查询成功")
-
+        if not pushProvinceCode:
+            pushProvinceCode = request.headers.get("ProvinceCode", "")
+        data = revenue_push_service.get_summary_revenue(
+            db, pushProvinceCode, Statistics_StartDate, Statistics_Date,
+            SPRegionType_ID, Serverpart_ID, Revenue_Include,
+            ShowCompareRate, ShowYearRevenue
+        )
+        return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSummaryRevenue 失败: {ex}")
         return Result.fail(msg=f"查询失败: {ex}")
+
 
 
 @router.get("/Revenue/GetSummaryRevenueMonth")
