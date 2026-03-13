@@ -21,7 +21,9 @@ from services.commercial import revenue_budget_service
 from services.commercial import revenue_business_service
 from services.commercial import revenue_report_service
 from services.commercial import revenue_holiday_service
-from services.commercial import revenue_account_service
+from services.commercial import revenue_account_service
+from services.commercial import revenue_monthly_service
+
 
 
 
@@ -741,73 +743,134 @@ async def get_holiday_compare(
 
 
 
-# ===== 实时交易 =====
-# 业务逻辑已迁移至 revenue_account_service
-@router.get("/Revenue/GetAccountReceivable")
-async def get_account_receivable(
-    calcType: int = Query(1, description="计算方式：1当月 2累计"),
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsMonth: Optional[str] = Query(None, description="统计结束月份"),
-    StatisticsStartMonth: Optional[str] = Query("", description="统计开始月份"),
-    StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取营收统计明细数据 -- 业务逻辑见 revenue_account_service.get_account_receivable()"""
-    try:
-        data = revenue_account_service.get_account_receivable(
-            db, calcType, pushProvinceCode, StatisticsMonth,
-            StatisticsStartMonth, StatisticsDate
-        )
-        return Result.success(data=data, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetAccountReceivable 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+# ===== 实时交易 =====
+
+# 业务逻辑已迁移至 revenue_account_service
+
+@router.get("/Revenue/GetAccountReceivable")
+
+async def get_account_receivable(
+
+    calcType: int = Query(1, description="计算方式：1当月 2累计"),
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    StatisticsMonth: Optional[str] = Query(None, description="统计结束月份"),
+
+    StatisticsStartMonth: Optional[str] = Query("", description="统计开始月份"),
+
+    StatisticsDate: Optional[str] = Query("", description="统计日期"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取营收统计明细数据 -- 业务逻辑见 revenue_account_service.get_account_receivable()"""
+
+    try:
+
+        data = revenue_account_service.get_account_receivable(
+
+            db, calcType, pushProvinceCode, StatisticsMonth,
+
+            StatisticsStartMonth, StatisticsDate
+
+        )
+
+        return Result.success(data=data, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetAccountReceivable 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetCurRevenue")
-async def get_cur_revenue(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
-    serverPartId: Optional[str] = Query("", description="服务区内码"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取实时营收交易数据 -- 业务逻辑见 revenue_account_service.get_cur_revenue()"""
-    try:
-        data = revenue_account_service.get_cur_revenue(db, pushProvinceCode, StatisticsDate, serverPartId)
-        return Result.success(data=data, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetCurRevenue 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+
+@router.get("/Revenue/GetCurRevenue")
+
+async def get_cur_revenue(
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+
+    serverPartId: Optional[str] = Query("", description="服务区内码"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取实时营收交易数据 -- 业务逻辑见 revenue_account_service.get_cur_revenue()"""
+
+    try:
+
+        data = revenue_account_service.get_cur_revenue(db, pushProvinceCode, StatisticsDate, serverPartId)
+
+        return Result.success(data=data, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetCurRevenue 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetShopCurRevenue")
-async def get_shop_cur_revenue(
-    serverPartId: Optional[str] = Query(None, description="服务区内码"),
-    statisticsDate: Optional[str] = Query(None, description="统计日期"),
-    groupByShop: bool = Query(False, description="是否合并双侧同业态门店"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取实时门店营收交易数据 -- 业务逻辑见 revenue_account_service.get_shop_cur_revenue()"""
-    try:
-        data = revenue_account_service.get_shop_cur_revenue(db, serverPartId, statisticsDate, groupByShop)
-        if data is None:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-        json_list = JsonListData.create(data_list=data, total=len(data), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetShopCurRevenue 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+
+@router.get("/Revenue/GetShopCurRevenue")
+
+async def get_shop_cur_revenue(
+
+    serverPartId: Optional[str] = Query(None, description="服务区内码"),
+
+    statisticsDate: Optional[str] = Query(None, description="统计日期"),
+
+    groupByShop: bool = Query(False, description="是否合并双侧同业态门店"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取实时门店营收交易数据 -- 业务逻辑见 revenue_account_service.get_shop_cur_revenue()"""
+
+    try:
+
+        data = revenue_account_service.get_shop_cur_revenue(db, serverPartId, statisticsDate, groupByShop)
+
+        if data is None:
+
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+        json_list = JsonListData.create(data_list=data, total=len(data), page_size=10)
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetShopCurRevenue 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetLastSyncDateTime")
-async def get_last_sync_date_time(db: DatabaseHelper = Depends(get_db)):
-    """获取最新的同步日期 -- 业务逻辑见 revenue_account_service.get_last_sync_date_time()"""
-    try:
-        data = revenue_account_service.get_last_sync_date_time(db)
-        return Result.success(data=data, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetLastSyncDateTime 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+
+@router.get("/Revenue/GetLastSyncDateTime")
+
+async def get_last_sync_date_time(db: DatabaseHelper = Depends(get_db)):
+
+    """获取最新的同步日期 -- 业务逻辑见 revenue_account_service.get_last_sync_date_time()"""
+
+    try:
+
+        data = revenue_account_service.get_last_sync_date_time(db)
+
+        return Result.success(data=data, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetLastSyncDateTime 失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
+
 
 
 # ===== 节日分析 =====
@@ -1830,370 +1893,67 @@ async def get_shop_inc_analysis(
 
 
 
-# ===== 月度经营 =====
-@router.get("/Revenue/GetMonthlyBusinessAnalysis")
-async def get_monthly_business_analysis(
-    calcType: int = Query(1, description="计算方式：1当月 2累计"),
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    curYear: int = Query(None, description="本年年份"),
-    compareYear: int = Query(None, description="历年年份"),
-    StatisticsMonth: int = Query(None, description="统计月份"),
-    StatisticsStartMonth: Optional[int] = Query(None, description="统计开始月份"),
-    StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    SPRegionTypeId: Optional[str] = Query("", description="片区内码"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    businessType: Optional[str] = Query("", description="经营模式"),
-    businessTrade: Optional[str] = Query("", description="经营业态"),
-    businessRegion: Optional[str] = Query("", description="经营区域"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取月度经营增幅分析 (SQL平移完成)"""
-    try:
-        from datetime import datetime
-        
-        # 1. 参数预处理 (StatisticsMonth 前端传入格式为 yyyyMM，如 202602)
-        stat_month_str = str(StatisticsMonth)  # 如 "202602"
-        if len(stat_month_str) >= 6:
-            cur_month_ym = int(stat_month_str[:6])  # 202602
-        else:
-            cur_month_ym = curYear * 100 + StatisticsMonth  # 兼容旧格式
-
-        if not StatisticsStartMonth:
-            if calcType == 1:
-                StatisticsStartMonth = cur_month_ym
-            else:
-                StatisticsStartMonth = curYear * 100 + 1
-        
-        # 2. 省份/区域内码查询
-        pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-        pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
-        province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else pushProvinceCode
-
-        # 3. 构建 Revenue 筛选条件
-        where_sql = " AND A.PROVINCE_ID = :pid"
-        params = {"pid": province_id}
-        table_name = "T_PROVINCEREVENUE"
-
-        if SPRegionTypeId:
-            where_sql += f" AND B.SPREGIONTYPE_ID IN ({SPRegionTypeId})"
-            table_name = "T_HOLIDAYREVENUE"
-        if ServerpartId:
-            _sp_ids = parse_multi_ids(ServerpartId)
-            if _sp_ids:
-                where_sql += " AND " + build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-                table_name = "T_HOLIDAYREVENUE"
-        if businessType:
-            where_sql += f" AND A.BUSINESS_TYPE IN ({businessType})"
-        if businessTrade:
-            where_sql += f" AND A.SHOPTRADE IN ({businessTrade})"
-        if businessRegion:
-            where_sql += f" AND A.BUSINESS_REGION IN ({businessRegion})"
-
-        limit_sql = ""
-        st_date = StatisticsDate.replace("-", "").replace("/", "") if StatisticsDate else ""
-        if st_date and str(curYear) in st_date:
-            limit_sql = f" AND A.STATISTICS_DATE <= {st_date[:8]}"
-
-        # 4. 查询营收数据 (CASE WHEN 逻辑)
-        # SHOPTRADE 映射: 1便利店, 2餐饮客房, 3外包
-        case_sql = """CASE WHEN A.BUSINESS_TYPE = 4000 AND A.SHOPTRADE = '2' THEN 1 
-                        WHEN A.BUSINESS_TYPE = 4000 AND A.SHOPTRADE <> '2' THEN 2 
-                        ELSE 3 END"""
-        
-        state_col = table_name.replace('T_', '') + '_STATE'
-        rev_base_sql = f"""SELECT 
-                    SUM(A.REVENUE_AMOUNT) AS REVENUE_AMOUNT,
-                    SUM(A.ACCOUNT_AMOUNTNOTAX) AS ACCOUNT_AMOUNT,
-                    {case_sql} AS SHOPTRADE 
-                FROM 
-                    {table_name} A 
-                {" , T_SERVERPART B" if table_name == "T_HOLIDAYREVENUE" else ""}
-                WHERE 
-                    {"A.SERVERPART_ID = B.SERVERPART_ID AND" if table_name == "T_HOLIDAYREVENUE" else ""}
-                    A."{state_col}" = 1 AND 
-                    A.STATISTICS_DATE BETWEEN :start AND :end {where_sql} {limit_sql}
-                GROUP BY 
-                    {case_sql}"""
-
-        # 本年范围：StartMonth+01 ~ StatisticsMonth+31
-        cur_start = f"{StatisticsStartMonth}01"
-        cur_end = f"{cur_month_ym}31"
-        cur_rev_rows = db.execute_query(rev_base_sql, {**params, "start": cur_start, "end": cur_end})
-        
-        # 历年同期 (计算历年月份范围)
-        year_diff = curYear - compareYear
-        cy_month_start = StatisticsStartMonth - year_diff * 100
-        # cur_month_ym 已经是 yyyyMM 格式，计算历年同期月份
-        cy_month_end = cur_month_ym - year_diff * 100
-        
-        limit_sql_cy = ""
-        if st_date and str(curYear) in st_date:
-            limit_sql_cy = f" AND A.STATISTICS_DATE <= {compareYear}{st_date[4:8]}"
-
-        rev_base_sql_cy = rev_base_sql.replace(limit_sql, limit_sql_cy)
-        cy_rev_rows = db.execute_query(rev_base_sql_cy, {**params, "start": f"{cy_month_start}01", "end": f"{cy_month_end}31"})
-
-        # 5. 查询车流量
-        flow_where = f" AND EXISTS (SELECT 1 FROM T_SERVERPART S WHERE A.SERVERPART_ID = S.SERVERPART_ID AND S.PROVINCE_CODE = '{province_id}')"
-        _sp_ids_flow = parse_multi_ids(ServerpartId)
-        if _sp_ids_flow:
-            flow_where = " AND " + build_in_condition('SERVERPART_ID', _sp_ids_flow).replace('"SERVERPART_ID"', 'A.SERVERPART_ID')
-
-        flow_sql = f"""SELECT SUM(A.SERVERPART_FLOW) AS SERVERPART_FLOW 
-                   FROM T_SECTIONFLOW A 
-                   WHERE A.SECTIONFLOW_STATUS = 1 AND A.SERVERPART_ID > 0 AND 
-                   A.STATISTICS_DATE BETWEEN :start AND :end {flow_where} {limit_sql}"""
-        
-        cur_flow_rows = db.execute_query(flow_sql, {"start": cur_start, "end": cur_end})
-        
-        flow_sql_cy = flow_sql.replace(limit_sql, limit_sql_cy).replace("A.SERVERPART_FLOW", "A.SERVERPART_FLOW + NVL(A.SERVERPART_FLOW_ANALOG, 0)")
-        cy_flow_rows = db.execute_query(flow_sql_cy, {"start": f"{cy_month_start}01", "end": f"{cy_month_end}31"})
-
-        # 6. 聚合逻辑 (对应 C# BindINCModel)
-        def bind_inc(rev_rows, cy_rows, flow_rows, cy_flow_rows, shoptrade_filter=None, calc_flow=False):
-            def get_sum(data, col, filter_val=None):
-                if not data: return 0.0
-                if filter_val == "自营":
-                    return sum(float(r.get(col) or 0) for r in data if r.get("SHOPTRADE") in (1, 2))
-                if filter_val:
-                    return sum(float(r.get(col) or 0) for r in data if r.get("SHOPTRADE") == filter_val)
-                return sum(float(r.get(col) or 0) for r in data)
-
-            cur_rev = round(get_sum(rev_rows, "REVENUE_AMOUNT", shoptrade_filter), 2)
-            l_rev = round(get_sum(cy_rows, "REVENUE_AMOUNT", shoptrade_filter), 2)
-            cur_acc = round(get_sum(rev_rows, "ACCOUNT_AMOUNT", shoptrade_filter), 2)
-            l_acc = round(get_sum(cy_rows, "ACCOUNT_AMOUNT", shoptrade_filter), 2)
-
-            res = {
-                "RevenueINC": {"curYearData": cur_rev, "lYearData": l_rev, "increaseData": round(cur_rev - l_rev, 2), "increaseRate": None},
-                "AccountINC": {"curYearData": cur_acc, "lYearData": l_acc, "increaseData": round(cur_acc - l_acc, 2), "increaseRate": None},
-                "BayonetINC": None
-            }
-            if l_rev != 0: res["RevenueINC"]["increaseRate"] = round((res["RevenueINC"]["increaseData"] / l_rev) * 100, 2)
-            if l_acc != 0: res["AccountINC"]["increaseRate"] = round((res["AccountINC"]["increaseData"] / l_acc) * 100, 2)
-
-            if calc_flow:
-                cf = float(flow_rows[0].get("SERVERPART_FLOW") or 0) if flow_rows else 0.0
-                lf = float(cy_flow_rows[0].get("SERVERPART_FLOW") or 0) if cy_flow_rows else 0.0
-                res["BayonetINC"] = {"curYearData": cf, "lYearData": lf, "increaseData": cf - lf, "increaseRate": None}
-                if lf != 0: res["BayonetINC"]["increaseRate"] = round((res["BayonetINC"]["increaseData"] / lf) * 100, 2)
-            return res
-
-        results = []
-        # 1. 累计
-        summary = bind_inc(cur_rev_rows, cy_rev_rows, cur_flow_rows, cy_flow_rows, calc_flow=True)
-        summary.update({"ServerpartId": 0, "ServerpartName": "累计"})
-        results.append(summary)
-
-        # 2. 自营
-        self_run = bind_inc(cur_rev_rows, cy_rev_rows, None, None, shoptrade_filter="自营")
-        self_run.update({"SPRegionTypeId": 1, "SPRegionTypeName": "自营", "ServerpartId": None, "ServerpartName": None})
-        results.append(self_run)
-
-        # 3. 细分业态 (1便利店, 2餐饮客房, 3商铺租赁)
-        names = {1: "便利店", 2: "餐饮客房", 3: "商铺租赁"}
-        for i in range(1, 4):
-            item = bind_inc(cur_rev_rows, cy_rev_rows, None, None, shoptrade_filter=i)
-            item.update({"ServerpartId": i, "ServerpartName": names[i]})
-            results.append(item)
-        
-        # 4. 外包 (ShopTrade 3)
-        coop = bind_inc(cur_rev_rows, cy_rev_rows, cur_flow_rows, cy_flow_rows, shoptrade_filter=3)
-        coop.update({"SPRegionTypeId": 2, "SPRegionTypeName": "外包", "ServerpartId": None, "ServerpartName": None})
-        results.append(coop)
-
-        # 补充旧API字段
-        for r in results:
-            r.setdefault("SPRegionTypeId", None)
-            r.setdefault("SPRegionTypeName", None)
-            r.setdefault("TicketINC", None)
-            r.setdefault("AvgTicketINC", None)
-            r.setdefault("BayonetINC_ORI", None)
-            r.setdefault("SectionFlowINC", None)
-            r.setdefault("ShopINCList", None)
-            r.setdefault("RankDiff", None)
-            r.setdefault("Cost_Amount", None)
-            r.setdefault("Ca_Cost", None)
-            r.setdefault("Profit_Amount", None)
-            # 给所有INC补QOQ字段
-            for inc_key in ["RevenueINC", "AccountINC", "BayonetINC"]:
-                inc = r.get(inc_key)
-                if inc and isinstance(inc, dict):
-                    inc.setdefault("QOQData", None)
-                    inc.setdefault("increaseDataQOQ", None)
-                    inc.setdefault("increaseRateQOQ", None)
-                    inc.setdefault("rankNum", None)
-
-        json_list = JsonListData.create(data_list=results, total=len(results), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-    except Exception as ex:
-        logger.error(f"GetMonthlyBusinessAnalysis 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
+# ===== 月度经营 =====
+# 业务逻辑已迁移至 revenue_monthly_service
+@router.get("/Revenue/GetMonthlyBusinessAnalysis")
+async def get_monthly_business_analysis(
+    calcType: int = Query(1, description="计算方式：1当月 2累计"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    curYear: int = Query(None, description="本年年份"),
+    compareYear: int = Query(None, description="历年年份"),
+    StatisticsMonth: int = Query(None, description="统计月份"),
+    StatisticsStartMonth: Optional[int] = Query(None, description="统计开始月份"),
+    StatisticsDate: Optional[str] = Query("", description="统计日期"),
+    SPRegionTypeId: Optional[str] = Query("", description="片区内码"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    businessType: Optional[str] = Query("", description="经营模式"),
+    businessTrade: Optional[str] = Query("", description="经营业态"),
+    businessRegion: Optional[str] = Query("", description="经营区域"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取月度经营增幅分析 -- 业务逻辑见 revenue_monthly_service.get_monthly_business_analysis()"""
+    try:
+        results = revenue_monthly_service.get_monthly_business_analysis(
+            db, calcType, pushProvinceCode, curYear, compareYear,
+            StatisticsMonth, StatisticsStartMonth, StatisticsDate,
+            SPRegionTypeId, ServerpartId, businessType, businessTrade, businessRegion
+        )
+        json_list = JsonListData.create(data_list=results, total=len(results), page_size=10)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetMonthlyBusinessAnalysis 失败: {ex}")
+        return Result.fail(msg=f"查询失败: {ex}")
 
 
-@router.get("/Revenue/GetMonthlySPINCAnalysis")
-async def get_monthly_sp_inc_analysis(
-    request: Request,
-    calcType: int = Query(1, description="计算方式：1当日 2累计"),
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    curYear: int = Query(None, description="本年年份"),
-    compareYear: int = Query(None, description="历年年份"),
-    StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    StatisticsMonth: int = Query(None, description="统计结束月份"),
-    StatisticsStartMonth: Optional[int] = Query(None, description="统计开始月份"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    businessRegion: Optional[int] = Query(None, description="经营区域：1服务区 2城市店"),
-    Dimension: Optional[str] = Query("", description="统计维度"),
-    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
-    SortStr: Optional[str] = Query("", description="排序字段"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取服务区月度营收增幅分析 (SQL平移完成)"""
-    try:
-        # 1. 参数处理 (StatisticsMonth 前端传入 yyyyMM 格式)
-        stat_month_str = str(StatisticsMonth)
-        if len(stat_month_str) >= 6:
-            cur_month_ym = int(stat_month_str[:6])
-            month_part = int(stat_month_str[4:6])
-        else:
-            cur_month_ym = curYear * 100 + StatisticsMonth
-            month_part = StatisticsMonth
-
-        if not StatisticsStartMonth:
-            StatisticsStartMonth = cur_month_ym if calcType == 1 else curYear * 100 + 1
-        
-        pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-        pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
-        province_id = pc_rows[0]["FIELDENUM_ID"] if pc_rows else pushProvinceCode
-
-        where_sql_base = " AND A.PROVINCE_ID = :pid"
-        rev_params = {"pid": province_id}
-        if ServerpartId:
-            rev_ids = ",".join([f"'{s.strip()}'" for s in ServerpartId.split(",")])
-            where_sql_base += f" AND A.SERVERPART_ID IN ({rev_ids})"
-        
-        limit_sql = ""
-        st_date = StatisticsDate.replace("-", "").replace("/", "") if StatisticsDate else ""
-        if st_date and str(curYear) in st_date:
-            limit_sql = f" AND A.STATISTICS_DATE <= {st_date[:8]}"
-
-        dt_cur_revenue = []
-        dt_cy_revenue = []
-        dt_cur_bayonet = []
-        dt_cy_bayonet = []
-
-        # 2. 查询营收数据 (Dimension 1=对客销售, 2=驿达收入)
-        if not Dimension or "1" in Dimension or "2" in Dimension:
-            rev_sql = f"""SELECT B.SERVERPART_ID, SUM(A.REVENUE_AMOUNT) AS REVENUE_AMOUNT, SUM(A.ACCOUNT_AMOUNTNOTAX) AS ACCOUNT_AMOUNT 
-                        FROM T_HOLIDAYREVENUE A, T_SERVERPART B 
-                        WHERE A.SERVERPART_ID = TO_CHAR(B.SERVERPART_ID) AND A.HOLIDAYREVENUE_STATE = 1 
-                        AND A.STATISTICS_DATE BETWEEN :start AND :end {where_sql_base} {limit_sql}
-                        GROUP BY B.SERVERPART_ID"""
-            
-            dt_cur_revenue = db.execute_query(rev_sql, {**rev_params, "start": f"{StatisticsStartMonth}01", "end": f"{cur_month_ym}31"})
-            
-            year_diff = curYear - compareYear
-            cy_start = f"{StatisticsStartMonth - year_diff * 100}01"
-            cy_end = f"{compareYear}{month_part:02}31"
-            limit_sql_cy = f" AND A.STATISTICS_DATE <= {compareYear}{st_date[4:8]}" if st_date and str(curYear) in st_date else ""
-            
-            rev_sql_cy = rev_sql.replace(limit_sql, limit_sql_cy)
-            dt_cy_revenue = db.execute_query(rev_sql_cy, {**rev_params, "start": cy_start, "end": cy_end})
-
-        # 3. 查询车流量 (Dimension 3)
-        if not Dimension or "3" in Dimension:
-            flow_where = f" AND EXISTS (SELECT 1 FROM T_SERVERPART S WHERE A.SERVERPART_ID = S.SERVERPART_ID AND S.PROVINCE_CODE = '{province_id}')"
-            _sp_ids_f = parse_multi_ids(ServerpartId)
-            if _sp_ids_f:
-                flow_where = ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids_f).replace('"SERVERPART_ID"', 'A.SERVERPART_ID')
-            
-            flow_sql = f"""SELECT SERVERPART_ID, SUM(A.SERVERPART_FLOW) AS SERVERPART_FLOW 
-                        FROM T_SECTIONFLOW A WHERE A.SECTIONFLOW_STATUS = 1 AND A.SERVERPART_ID > 0 
-                        AND A.STATISTICS_DATE BETWEEN :start AND :end {flow_where} {limit_sql}
-                        GROUP BY SERVERPART_ID"""
-            
-            dt_cur_bayonet = db.execute_query(flow_sql, {"start": f"{StatisticsStartMonth}01", "end": f"{cur_month_ym}31"})
-            
-            flow_sql_cy = flow_sql.replace(limit_sql, limit_sql_cy).replace("A.SERVERPART_FLOW", "A.SERVERPART_FLOW + NVL(A.SERVERPART_FLOW_ANALOG, 0)")
-            dt_cy_bayonet = db.execute_query(flow_sql_cy, {"start": cy_start, "end": cy_end})
-
-        # 4. 获取服务区列表
-        sp_where = f"WHERE SPREGIONTYPE_ID IS NOT NULL AND STATISTICS_TYPE = 1000 AND STATISTIC_TYPE = 1000 AND PROVINCE_CODE = '{province_id}'"
-        _sp_ids_sp = parse_multi_ids(ServerpartId)
-        if _sp_ids_sp: sp_where += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids_sp)
-        # 暂时忽略 ExcludeRegionId 过滤以保持简单
-        dt_serverpart = db.execute_query(f"SELECT SPREGIONTYPE_ID, SPREGIONTYPE_NAME, SERVERPART_ID, SERVERPART_NAME, SPREGIONTYPE_INDEX, SERVERPART_INDEX FROM T_SERVERPART {sp_where} ORDER BY SPREGIONTYPE_INDEX, SERVERPART_INDEX, SERVERPART_ID")
-
-        # 5. 组装数据
-        results = []
-        no_inc_results = []
-
-        cur_rev_map = {r["SERVERPART_ID"]: r for r in dt_cur_revenue}
-        cy_rev_map = {r["SERVERPART_ID"]: r for r in dt_cy_revenue}
-        cur_flow_map = {r["SERVERPART_ID"]: r for r in dt_cur_bayonet}
-        cy_flow_map = {r["SERVERPART_ID"]: r for r in dt_cy_bayonet}
-
-        def calc_inc(cur_val, l_val):
-            cur_f = float(cur_val) if cur_val is not None else None
-            l_f = float(l_val) if l_val is not None else None
-            inc = round(cur_f - l_f, 2) if cur_f is not None and l_f is not None else None
-            rate = round((inc / l_f) * 100, 2) if inc is not None and l_f and l_f != 0 else None
-            return {"curYearData": cur_f, "lYearData": l_f, "increaseData": inc, "increaseRate": rate,
-                    "QOQData": None, "increaseDataQOQ": None, "increaseRateQOQ": None, "rankNum": None}
-
-        for sp in dt_serverpart:
-            sp_id = sp["SERVERPART_ID"]
-            rev_c = cur_rev_map.get(sp_id, {})
-            rev_l = cy_rev_map.get(sp_id, {})
-            flow_c = cur_flow_map.get(sp_id, {})
-            flow_l = cy_flow_map.get(sp_id, {})
-
-            item = {
-                "SPRegionTypeId": sp["SPREGIONTYPE_ID"],
-                "SPRegionTypeName": sp["SPREGIONTYPE_NAME"],
-                "ServerpartId": sp_id,
-                "ServerpartName": sp["SERVERPART_NAME"],
-                "RevenueINC": calc_inc(rev_c.get("REVENUE_AMOUNT"), rev_l.get("REVENUE_AMOUNT")),
-                "AccountINC": calc_inc(rev_c.get("ACCOUNT_AMOUNT"), rev_l.get("ACCOUNT_AMOUNT")),
-                "BayonetINC": calc_inc(flow_c.get("SERVERPART_FLOW"), flow_l.get("SERVERPART_FLOW"))
-            }
-
-            # 过滤逻辑 (SortStr 存在时，如果对应的增长率无法计算则可能被移到后面)
-            results.append(item)
-
-        # 6. 排序 (SortStr 示例: "revenue desc")
-        if SortStr:
-            sort_field = SortStr.lower()
-            reverse = "desc" in sort_field
-            key_map = {"revenue": lambda x: x["RevenueINC"]["increaseRate"] or -999999,
-                       "account": lambda x: x["AccountINC"]["increaseRate"] or -999999,
-                       "bayonet": lambda x: x["BayonetINC"]["increaseRate"] or -999999}
-            for k, func in key_map.items():
-                if k in sort_field:
-                    results.sort(key=func, reverse=reverse)
-                    break
-
-        # 补充旧API字段
-        for r in results:
-            r.setdefault("TicketINC", None)
-            r.setdefault("AvgTicketINC", None)
-            r.setdefault("BayonetINC_ORI", None)
-            r.setdefault("SectionFlowINC", None)
-            r.setdefault("ShopINCList", None)
-            r.setdefault("RankDiff", None)
-            r.setdefault("Cost_Amount", None)
-            r.setdefault("Ca_Cost", None)
-            r.setdefault("Profit_Amount", None)
-
-        json_list = JsonListData.create(data_list=results, total=len(results), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-    except Exception as ex:
-        logger.error(f"GetMonthlySPINCAnalysis 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
+@router.get("/Revenue/GetMonthlySPINCAnalysis")
+async def get_monthly_sp_inc_analysis(
+    request: Request,
+    calcType: int = Query(1, description="计算方式：1当日 2累计"),
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+    curYear: int = Query(None, description="本年年份"),
+    compareYear: int = Query(None, description="历年年份"),
+    StatisticsDate: Optional[str] = Query("", description="统计日期"),
+    StatisticsMonth: int = Query(None, description="统计结束月份"),
+    StatisticsStartMonth: Optional[int] = Query(None, description="统计开始月份"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    businessRegion: Optional[int] = Query(None, description="经营区域：1服务区 2城市店"),
+    Dimension: Optional[str] = Query("", description="统计维度"),
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+    SortStr: Optional[str] = Query("", description="排序字段"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取服务区月度营收增幅分析 -- 业务逻辑见 revenue_monthly_service.get_monthly_sp_inc_analysis()"""
+    try:
+        results = revenue_monthly_service.get_monthly_sp_inc_analysis(
+            db, calcType, pushProvinceCode, curYear, compareYear,
+            StatisticsDate, StatisticsMonth, StatisticsStartMonth,
+            ServerpartId, businessRegion, Dimension, SPRegionTypeID, SortStr
+        )
+        json_list = JsonListData.create(data_list=results, total=len(results), page_size=10)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetMonthlySPINCAnalysis 失败: {ex}")
+        return Result.fail(msg=f"查询失败: {ex}")
 
 
 # ===== 其余接口 =====
