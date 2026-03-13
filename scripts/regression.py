@@ -26,48 +26,114 @@ OLD_API_BASE = "http://192.168.1.99:8900"
 MANIFEST_PATH = PROJECT_ROOT / "scripts" / "manifests" / "endpoint_case_library.json"
 RESULTS_DIR = PROJECT_ROOT / "scripts" / "test_results"
 
-# === 冒烟测试端点（每个 Controller 至少 1 个高频接口）===
+# === 冒烟测试端点 ===
+# expect_data: True 表示期望 Result_Data 非空（用于校验返回体）
 SMOKE_ENDPOINTS = [
-    # 系统
+    # ── 系统 ──
     {"path": "/health", "method": "GET", "name": "健康检查"},
     {"path": "/", "method": "GET", "name": "根路径"},
-    # CommercialApi — 核心模块各选 1 个
-    {"path": "/CommercialApi/BaseInfo/GetServerpartList", "method": "GET", "name": "服务区列表"},
+
+    # ── CommercialApi / BaseInfo ──
+    {"path": "/CommercialApi/BaseInfo/GetServerpartList", "method": "GET", "name": "CA-服务区列表",
+     "expect_data": True},
     {"path": "/CommercialApi/BaseInfo/GetSPRegionList", "method": "GET",
-     "params": {"Province_Code": "340000"}, "name": "区域列表"},
+     "params": {"Province_Code": "340000"}, "name": "CA-区域列表", "expect_data": True},
+    {"path": "/CommercialApi/BaseInfo/GetSubTypeList", "method": "GET",
+     "params": {"Province_Code": "340000", "ServerpartId": "416"}, "name": "CA-子类型列表"},
+
+    # ── CommercialApi / Revenue（高频） ──
     {"path": "/CommercialApi/Revenue/GetCurRevenue", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "当前营收"},
+     "params": {"ServerpartId": "416"}, "name": "CA-当前营收"},
     {"path": "/CommercialApi/Revenue/GetRevenueReport", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "营收报告"},
-    {"path": "/CommercialApi/Examine/GetExamineAnalysis", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "考核分析"},
-    {"path": "/CommercialApi/Customer/GetCustomerRatio", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "客群占比"},
+     "params": {"provinceCode": "340000", "startTime": "2025-12-01", "endTime": "2025-12-31"},
+     "name": "CA-营收报告", "expect_data": True},
+    {"path": "/CommercialApi/Revenue/GetRevenueTrend", "method": "GET",
+     "params": {"ProvinceCode": "340000", "StatisticsDate": "2025", "StatisticsType": "1"},
+     "name": "CA-营收趋势"},
+    {"path": "/CommercialApi/Revenue/GetRevenueYOY", "method": "GET",
+     "params": {"pushProvinceCode": "340000", "StatisticsStartDate": "2025-12-01",
+                "StatisticsEndDate": "2025-12-07"}, "name": "CA-营收同比"},
+    {"path": "/CommercialApi/Revenue/GetSPRevenueRank", "method": "GET",
+     "params": {"pushProvinceCode": "340000", "Statistics_Date": "2025-12-01"},
+     "name": "CA-服务区排行"},
+    {"path": "/CommercialApi/Revenue/GetMobileShare", "method": "GET",
+     "params": {"Province_Code": "340000", "StatisticsStartDate": "2025-12-01",
+                "StatisticsEndDate": "2025-12-31"}, "name": "CA-移动支付"},
+    {"path": "/CommercialApi/Revenue/GetTransactionAnalysis", "method": "GET",
+     "params": {"Province_Code": "340000", "Statistics_Date": "2025-12-01",
+                "Serverpart_ID": "416"}, "name": "CA-客单分析"},
+    {"path": "/CommercialApi/Revenue/GetBusinessTradeRevenue", "method": "GET",
+     "params": {"ProvinceCode": "340000", "StatisticsDate": "2025-12-01"},
+     "name": "CA-业态营收"},
+    {"path": "/CommercialApi/Revenue/GetLastSyncDateTime", "method": "GET",
+     "params": {"ProvinceCode": "340000"}, "name": "CA-同步时间"},
+    {"path": "/CommercialApi/Revenue/GetSalableCommodity", "method": "GET",
+     "name": "CA-畅销商品", "expect_data": True},
+    {"path": "/CommercialApi/Revenue/GetCompanyRevenueReport", "method": "GET",
+     "params": {"provinceCode": "340000", "startTime": "2025-12-01", "endTime": "2025-12-31"},
+     "name": "CA-公司营收报表"},
+
+    # ── CommercialApi / BigData ──
     {"path": "/CommercialApi/BigData/GetDateAnalysis", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "日期分析"},
-    # EShangApiMain — 核心 CRUD 模块各选 1 个
+     "params": {"ServerpartId": "416"}, "name": "CA-日期分析"},
+    {"path": "/CommercialApi/Revenue/GetBayonetEntryList", "method": "GET",
+     "params": {"Province_Code": "340000", "StatisticsDate": "2025-12-01"},
+     "name": "CA-入区车流"},
+    {"path": "/CommercialApi/Revenue/GetBayonetRankList", "method": "GET",
+     "params": {"Province_Code": "340000", "statisticsDate": "2025-12-01"},
+     "name": "CA-车流排行"},
+    {"path": "/CommercialApi/Revenue/GetMonthAnalysis", "method": "GET",
+     "params": {"Province_Code": "340000", "StatisticsDate": "202512"},
+     "name": "CA-月度车流"},
+
+    # ── CommercialApi / Examine ──
+    {"path": "/CommercialApi/Examine/GetExamineAnalysis", "method": "GET",
+     "params": {"ServerpartId": "416"}, "name": "CA-考核分析"},
+    {"path": "/CommercialApi/Examine/GetExamineSPList", "method": "GET",
+     "params": {"Province_Code": "340000"}, "name": "CA-考核服务区列表"},
+
+    # ── CommercialApi / Customer ──
+    {"path": "/CommercialApi/Customer/GetCustomerRatio", "method": "GET",
+     "params": {"ServerpartId": "416"}, "name": "CA-客群占比"},
+    {"path": "/CommercialApi/Customer/GetCustomerTrend", "method": "GET",
+     "params": {"ServerpartId": "416"}, "name": "CA-客群趋势"},
+
+    # ── CommercialApi / Analysis ──
+    {"path": "/CommercialApi/Analysis/GetAnalysisReport", "method": "GET",
+     "params": {"Province_Code": "340000"}, "name": "CA-分析报告"},
+
+    # ── CommercialApi / Budget ──
+    {"path": "/CommercialApi/Revenue/GetRevenueBudget", "method": "GET",
+     "params": {"Province_Code": "340000", "Statistics_Date": "2025-12-01"},
+     "name": "CA-营收预算"},
+
+    # ── CommercialApi / Contract ──
+    {"path": "/CommercialApi/Contract/GetContractList", "method": "GET",
+     "params": {"Province_Code": "340000"}, "name": "CA-合同列表"},
+
+    # ── EShangApiMain — 核心 CRUD 模块 ──
     {"path": "/EShangApiMain/BaseInfo/GetBrandList", "method": "POST",
-     "json": {}, "name": "品牌列表"},
+     "json": {}, "name": "EA-品牌列表", "expect_data": True},
     {"path": "/EShangApiMain/BaseInfo/GetServerpartShopList", "method": "POST",
-     "json": {}, "name": "门店列表"},
+     "json": {}, "name": "EA-门店列表", "expect_data": True},
     {"path": "/EShangApiMain/BaseInfo/GetOWNERUNITList", "method": "POST",
-     "json": {}, "name": "业主单位列表"},
+     "json": {}, "name": "EA-业主单位列表", "expect_data": True},
     {"path": "/EShangApiMain/BaseInfo/GetCASHWORKERList", "method": "POST",
-     "json": {}, "name": "收银人员列表"},
+     "json": {}, "name": "EA-收银人员列表"},
     {"path": "/EShangApiMain/BaseInfo/GetCOMMODITYList", "method": "POST",
-     "json": {}, "name": "商品列表"},
+     "json": {}, "name": "EA-商品列表"},
     {"path": "/EShangApiMain/Contract/GetRegisterCompactList", "method": "POST",
-     "json": {}, "name": "合同列表"},
+     "json": {}, "name": "EA-合同列表", "expect_data": True},
     {"path": "/EShangApiMain/BusinessProject/GetBusinessProjectList", "method": "POST",
-     "json": {}, "name": "经营项目列表"},
+     "json": {}, "name": "EA-经营项目列表"},
     {"path": "/EShangApiMain/Budget/GetBudgetProjectList", "method": "POST",
-     "json": {}, "name": "预算列表"},
+     "json": {}, "name": "EA-预算列表"},
     {"path": "/EShangApiMain/Revenue/GetTotalRevenue", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "总营收"},
+     "params": {"ServerpartId": "416"}, "name": "EA-总营收"},
     {"path": "/EShangApiMain/Commodity/GetCOMMODITYList", "method": "POST",
-     "json": {}, "name": "商品管理列表"},
+     "json": {}, "name": "EA-商品管理列表"},
     {"path": "/EShangApiMain/ShopVideo/GetShopVideoInfo", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "视频监控"},
+     "params": {"ServerpartId": "416"}, "name": "EA-视频监控"},
 ]
 
 
@@ -91,15 +157,15 @@ def check_api_available(base_url: str, timeout: int = 5) -> bool:
 
 # === 冒烟测试 ===
 def run_smoke() -> int:
-    """冒烟测试：20 个核心接口，仅检查响应码"""
-    print_header("SMOKE TEST - 冒烟测试（核心接口响应检查）")
+    """冒烟测试：核心接口响应码 + 关键字段校验"""
+    print_header(f"SMOKE TEST - 冒烟测试（{len(SMOKE_ENDPOINTS)} 个端点）")
 
     if not check_api_available(NEW_API_BASE):
         print(f"\n[ERROR] 新 API ({NEW_API_BASE}) 不可用，请先启动服务！")
         print(f"  启动命令: python main.py")
         return 1
 
-    passed, failed, errors = 0, 0, []
+    passed, failed, warned, errors = 0, 0, 0, []
     start = time.time()
     headers = {"ProvinceCode": "340000"}
 
@@ -107,18 +173,25 @@ def run_smoke() -> int:
         try:
             url = f"{NEW_API_BASE}{ep['path']}"
             if ep["method"] == "GET":
-                r = requests.get(url, params=ep.get("params"), headers=headers, timeout=10)
+                r = requests.get(url, params=ep.get("params"), headers=headers, timeout=15)
             else:
-                r = requests.post(url, json=ep.get("json", {}), headers=headers, timeout=10)
+                r = requests.post(url, json=ep.get("json", {}), headers=headers, timeout=15)
 
             # 判定标准：HTTP 200 且 Result_Code 为 100 或 200
             ok = False
+            warn_msg = ""
             if r.status_code == 200:
                 try:
                     body = r.json()
                     code = body.get("Result_Code")
                     if code in (100, 200, "100", "200"):
                         ok = True
+                        # 通过 expect_data 校验返回数据非空
+                        if ep.get("expect_data"):
+                            data = body.get("Result_Data") or body.get("data")
+                            if not data:
+                                warn_msg = "WARN:data=null"
+                                warned += 1
                     elif ep["path"] in ("/", "/health"):
                         ok = True  # 系统端点不一定有 Result_Code
                 except Exception:
@@ -126,12 +199,14 @@ def run_smoke() -> int:
 
             status = "PASS" if ok else "FAIL"
             elapsed = r.elapsed.total_seconds() * 1000
-            print(f"  [{i:2d}/{len(SMOKE_ENDPOINTS)}] {status} {ep['name']:20s} {ep['method']:4s} {ep['path']:50s} {elapsed:7.0f}ms")
+            suffix = f"  {warn_msg}" if warn_msg else ""
+            print(f"  [{i:2d}/{len(SMOKE_ENDPOINTS)}] {status} {ep['name']:22s} {elapsed:7.0f}ms  {ep['path']}{suffix}")
 
             if ok:
                 passed += 1
             else:
                 failed += 1
+
                 errors.append(f"{ep['name']}: HTTP {r.status_code}, body={r.text[:200]}")
         except Exception as ex:
             failed += 1
@@ -140,7 +215,7 @@ def run_smoke() -> int:
 
     elapsed_total = time.time() - start
     print(f"\n{'=' * 60}")
-    print(f"  SMOKE RESULT: PASS {passed} / FAIL {failed} / TOTAL {len(SMOKE_ENDPOINTS)}")
+    print(f"  SMOKE RESULT: PASS {passed} / FAIL {failed} / WARN {warned} / TOTAL {len(SMOKE_ENDPOINTS)}")
     print(f"  Elapsed: {elapsed_total:.1f}s")
     if errors:
         print(f"\n  Failures:")
@@ -152,7 +227,7 @@ def run_smoke() -> int:
     RESULTS_DIR.mkdir(exist_ok=True)
     result = {
         "type": "smoke", "timestamp": datetime.now().isoformat(),
-        "passed": passed, "failed": failed, "total": len(SMOKE_ENDPOINTS),
+        "passed": passed, "failed": failed, "warned": warned, "total": len(SMOKE_ENDPOINTS),
         "elapsed_seconds": round(elapsed_total, 1), "errors": errors,
     }
     (RESULTS_DIR / "smoke_latest.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
