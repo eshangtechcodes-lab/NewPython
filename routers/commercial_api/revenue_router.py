@@ -1763,132 +1763,12 @@ async def get_sp_revenue_rank(
     Revenue_Include: Optional[int] = Query(None, description="是否纳入营收(0否1是)"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取近日服务区营收排行（C#对齐：RevenuePushHelper.GetSPRevenueRank → GetRevenuePushList）"""
+    """获取近日服务区营收排行 — 业务逻辑见 revenue_push_service.get_sp_revenue_rank()"""
     try:
-        from datetime import datetime as dt
-
-        if not pushProvinceCode or not Statistics_Date:
-            json_list = JsonListData.create(data_list=[], total=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def safe_int(v):
-            try: return int(v) if v is not None else 0
-            except: return 0
-
-        # === C#对齐: GetRevenuePushList 中的 WhereSQL 构建 ===
-        where_sql = ""
-
-        # 1. 服务区/区域/省份 过滤（C# 第44-87行 if/elif/elif 分支）
-        if Serverpart_ID is not None:
-            where_sql += f' AND B."SERVERPART_ID" = {Serverpart_ID}'
-        elif SPRegionType_ID is not None:
-            # C#: 通过 SERVERPART_ID 反查 SPREGIONTYPE_ID
-            sp_res = db.execute_query(
-                'SELECT "SPREGIONTYPE_ID" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = :sid',
-                {"sid": SPRegionType_ID})
-            if sp_res:
-                where_sql += f' AND B."SPREGIONTYPE_ID" = {sp_res[0]["SPREGIONTYPE_ID"]}'
-            else:
-                where_sql = " AND 1 = 2"
-        elif pushProvinceCode:
-            # C#: DictionaryHelper.GetFieldEnum("DIVISION_CODE", pushProvinceCode)
-            pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID"
-                AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-            pc_rows = db.execute_query(pc_sql, {"pc": pushProvinceCode})
-            if pc_rows:
-                province_id = pc_rows[0]["FIELDENUM_ID"]
-                where_sql += f' AND B."PROVINCE_CODE" = {province_id}'
-            else:
-                json_list = JsonListData.create(data_list=[], total=0)
-                return Result.success(data=json_list.model_dump(), msg="查询成功")
-        else:
-            json_list = JsonListData.create(data_list=[], total=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-        # 2. 日期（C# Controller 传 Statistics_Date, Statistics_Date → StartDate == EndDate → 走"时间段"分支）
-        # C#: 因为 Start==End，实际走的是 if (Statistics_StartDate != Statistics_EndDate) 分支的 else
-        # 但注意: C# Controller 第1882行传了 Statistics_Date, Statistics_Date 两次
-        # 即 Start==End, 走第199行 else 分支("当日"逻辑，涉及扫码门店等复杂逻辑)
-        # 简化处理: 用 T_REVENUEDAILY 的日期范围查询（Start==End时只查当天）
-        stat_date_str = Statistics_Date
-        if "-" in Statistics_Date:
-            stat_date_str = dt.strptime(Statistics_Date, "%Y-%m-%d").strftime("%Y%m%d")
-        elif "/" in Statistics_Date:
-            stat_date_str = dt.strptime(Statistics_Date, "%Y/%m/%d").strftime("%Y%m%d")
-        where_sql += f' AND A."STATISTICS_DATE" >= {stat_date_str} AND A."STATISTICS_DATE" <= {stat_date_str}'
-
-        # 3. Revenue_Include 过滤（C# 第238-241行：REVENUE_INCLUDE = 1 的门店）
-        exists_where = ""
-        if Revenue_Include == 1:
-            exists_where = ' AND C."REVENUE_INCLUDE" = 1'
-
-        # 4. 构建主查询 SQL（C# 第114-131行 时间段分支的SQL）
-        # C#: 按 SERVERPART_ID + SHOPTRADE 分组，查 T_REVENUEDAILY
-        # 然后 GetSPRevenueRank 再按 SERVERPART_ID GroupBy Sum
-        # 这里合并为一步：直接按 SERVERPART_ID 分组
-        sql = f"""SELECT
-                A."SERVERPART_ID", B."SERVERPART_NAME", B."SPREGIONTYPE_NAME",
-                SUM(A."REVENUE_AMOUNT") AS "CASHPAY",
-                SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
-                SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
-                SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
-                SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
-                SUM(NVL(A."DIFFERENT_AMOUNT_LESS_A",0) + NVL(A."DIFFERENT_AMOUNT_LESS_B",0)) AS "DIFFERENT_PRICE_LESS",
-                SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE"
-            FROM
-                "T_REVENUEDAILY" A,
-                "T_SERVERPART" B
-            WHERE
-                A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
-                AND B."SERVERPART_CODE" NOT IN ('AH0000','AH9999','test001')
-                {where_sql}"""
-
-        # 添加 Revenue_Include EXISTS 子查询（C# 第238-241行）
-        if Revenue_Include == 1:
-            sql += f"""
-                AND EXISTS (SELECT 1 FROM "T_SERVERPARTSHOP" C
-                    WHERE A."SHOPTRADE" = C."SHOPTRADE" AND B."SERVERPART_ID" = C."SERVERPART_ID"
-                    AND C."ISVALID" = 1{exists_where})"""
-
-        sql += """
-            GROUP BY A."SERVERPART_ID", B."SERVERPART_NAME", B."SPREGIONTYPE_NAME"
-            ORDER BY SUM(A."REVENUE_AMOUNT") DESC"""
-
-        rows = db.execute_query(sql) or []
-
-        # 5. 构建结果列表
-        result_list = []
-        for r in rows:
-            result_list.append({
-                "Serverpart_ID": r.get("SERVERPART_ID"),
-                "Serverpart_Name": r.get("SERVERPART_NAME", ""),
-                "SPRegionType_Name": r.get("SPREGIONTYPE_NAME", ""),
-                "TicketCount": safe_int(r.get("TICKETCOUNT")),
-                "TotalCount": round(safe_dec(r.get("TOTALCOUNT")), 2),
-                "TotalOffAmount": round(safe_dec(r.get("TOTALOFFAMOUNT")), 2),
-                "MobilePayment": round(safe_dec(r.get("MOBILEPAYMENT")), 2),
-                "CashPay": round(safe_dec(r.get("CASHPAY")), 2),
-                "Different_Price_Less": round(safe_dec(r.get("DIFFERENT_PRICE_LESS")), 2),
-                "Different_Price_More": round(safe_dec(r.get("DIFFERENT_PRICE_MORE")), 2),
-                "RevenueYOY": None,
-                "YearAccountRoyalty": 0.0,
-                "YearAccountRoyaltyYOY": 0.0,
-            })
-
-        # 6. C#对齐: sumCashpay = REVENUEPUSHList.Sum(o => o.CashPay)
-        sum_cashpay = float(round(sum(item.get("CashPay", 0.0) for item in result_list), 2))
-
-        # 7. C#对齐: 默认不显示万佳商贸
-        result_list = [item for item in result_list if item.get("SPRegionType_Name") != "万佳商贸"]
-
-        # 8. C#对齐: OrderByDescending(CashPay) — SQL 已按 CashPay DESC 排序
-
-        # 9. C#对齐: JsonList<T1,T2>.Success(list, sumCashpay)
+        result_list, sum_cashpay = revenue_push_service.get_sp_revenue_rank(
+            db, pushProvinceCode, Statistics_Date, Serverpart_ID,
+            SPRegionType_ID, Revenue_Include
+        )
         json_list = JsonListData(
             List=result_list, TotalCount=len(result_list),
             PageIndex=1, PageSize=10, OtherData=sum_cashpay
@@ -1897,6 +1777,7 @@ async def get_sp_revenue_rank(
     except Exception as ex:
         logger.error(f"GetSPRevenueRank 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
+
 
 
 @router.get("/Revenue/GetRevenueYOY")

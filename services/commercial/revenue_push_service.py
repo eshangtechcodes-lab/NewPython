@@ -335,3 +335,98 @@ def get_un_upload_shops(db: DatabaseHelper, push_province_code, statistics_date,
              "ServerpartShop_ID": r.get("SERVERPARTSHOP_ID"),
              "ServerpartShop_Name": r.get("SHOPNAME", ""),
              "Statistics_Date": stat_date} for r in rows]
+
+
+# ===== 6. GetSPRevenueRank =====
+def get_sp_revenue_rank(db: DatabaseHelper, push_province_code, statistics_date,
+                         serverpart_id, sp_region_type_id, revenue_include) -> tuple[list, float]:
+    """获取近日服务区营收排行，返回 (result_list, sum_cashpay)"""
+    from datetime import datetime as dt
+
+    if not push_province_code or not statistics_date:
+        return [], 0.0
+
+    # 构建过滤条件
+    where_sql = ""
+    if serverpart_id is not None:
+        where_sql += f' AND B."SERVERPART_ID" = {serverpart_id}'
+    elif sp_region_type_id is not None:
+        sp_res = db.execute_query(
+            'SELECT "SPREGIONTYPE_ID" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = :sid',
+            {"sid": sp_region_type_id})
+        if sp_res:
+            where_sql += f' AND B."SPREGIONTYPE_ID" = {sp_res[0]["SPREGIONTYPE_ID"]}'
+        else:
+            return [], 0.0
+    elif push_province_code:
+        province_id = _get_province_id(db, push_province_code)
+        if not province_id:
+            return [], 0.0
+        where_sql += f' AND B."PROVINCE_CODE" = {province_id}'
+    else:
+        return [], 0.0
+
+    # 日期标准化
+    stat_date_str = statistics_date
+    if "-" in statistics_date:
+        stat_date_str = dt.strptime(statistics_date, "%Y-%m-%d").strftime("%Y%m%d")
+    elif "/" in statistics_date:
+        stat_date_str = dt.strptime(statistics_date, "%Y/%m/%d").strftime("%Y%m%d")
+    where_sql += f' AND A."STATISTICS_DATE" >= {stat_date_str} AND A."STATISTICS_DATE" <= {stat_date_str}'
+
+    # Revenue_Include 过滤
+    exists_where = ""
+    if revenue_include == 1:
+        exists_where = ' AND C."REVENUE_INCLUDE" = 1'
+
+    # 按服务区分组汇总
+    sql = f"""SELECT A."SERVERPART_ID", B."SERVERPART_NAME", B."SPREGIONTYPE_NAME",
+            SUM(A."REVENUE_AMOUNT") AS "CASHPAY",
+            SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
+            SUM(A."TOTAL_COUNT") AS "TOTALCOUNT",
+            SUM(A."TOTALOFF_AMOUNT") AS "TOTALOFFAMOUNT",
+            SUM(A."MOBILEPAY_AMOUNT") AS "MOBILEPAYMENT",
+            SUM(NVL(A."DIFFERENT_AMOUNT_LESS_A",0) + NVL(A."DIFFERENT_AMOUNT_LESS_B",0)) AS "DIFFERENT_PRICE_LESS",
+            SUM(NVL(A."DIFFERENT_AMOUNT_MORE_A",0) + NVL(A."DIFFERENT_AMOUNT_MORE_B",0)) AS "DIFFERENT_PRICE_MORE"
+        FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
+        WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
+            AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
+            AND B."SERVERPART_CODE" NOT IN ('AH0000','AH9999','test001')
+            {where_sql}"""
+
+    if revenue_include == 1:
+        sql += f"""
+            AND EXISTS (SELECT 1 FROM "T_SERVERPARTSHOP" C
+                WHERE A."SHOPTRADE" = C."SHOPTRADE" AND B."SERVERPART_ID" = C."SERVERPART_ID"
+                AND C."ISVALID" = 1{exists_where})"""
+
+    sql += """
+        GROUP BY A."SERVERPART_ID", B."SERVERPART_NAME", B."SPREGIONTYPE_NAME"
+        ORDER BY SUM(A."REVENUE_AMOUNT") DESC"""
+
+    rows = db.execute_query(sql) or []
+
+    result_list = []
+    for r in rows:
+        result_list.append({
+            "Serverpart_ID": r.get("SERVERPART_ID"),
+            "Serverpart_Name": r.get("SERVERPART_NAME", ""),
+            "SPRegionType_Name": r.get("SPREGIONTYPE_NAME", ""),
+            "TicketCount": _si(r.get("TICKETCOUNT")),
+            "TotalCount": round(_sf(r.get("TOTALCOUNT")), 2),
+            "TotalOffAmount": round(_sf(r.get("TOTALOFFAMOUNT")), 2),
+            "MobilePayment": round(_sf(r.get("MOBILEPAYMENT")), 2),
+            "CashPay": round(_sf(r.get("CASHPAY")), 2),
+            "Different_Price_Less": round(_sf(r.get("DIFFERENT_PRICE_LESS")), 2),
+            "Different_Price_More": round(_sf(r.get("DIFFERENT_PRICE_MORE")), 2),
+            "RevenueYOY": None,
+            "YearAccountRoyalty": 0.0,
+            "YearAccountRoyaltyYOY": 0.0,
+        })
+
+    # 汇总 CashPay
+    sum_cashpay = float(round(sum(item.get("CashPay", 0.0) for item in result_list), 2))
+    # 排除万佳商贸
+    result_list = [item for item in result_list if item.get("SPRegionType_Name") != "万佳商贸"]
+
+    return result_list, sum_cashpay
