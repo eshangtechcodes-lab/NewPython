@@ -19,7 +19,9 @@ from services.commercial import revenue_push_service
 from services.commercial import revenue_brand_service
 from services.commercial import revenue_budget_service
 from services.commercial import revenue_business_service
-from services.commercial import revenue_report_service
+from services.commercial import revenue_report_service
+from services.commercial import revenue_holiday_service
+
 
 router = APIRouter()
 
@@ -541,48 +543,88 @@ async def get_revenue_trend_get(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-# ===== 经营报表 =====
-# 业务逻辑已迁移至 revenue_report_service
-@router.get("/Revenue/GetRevenueReport")
-async def get_revenue_report(
-    provinceCode: Optional[str] = Query(None, description="省份编码"),
-    startTime: Optional[str] = Query(None, description="开始时间"),
-    endTime: Optional[str] = Query(None, description="结束时间"),
-    SearchKeyType: Optional[str] = Query("", description="查询类型"),
-    SearchKeyValue: Optional[str] = Query("", description="模糊查询内容"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取服务区经营报表 -- 业务逻辑见 revenue_report_service.get_revenue_report()"""
-    try:
-        data = revenue_report_service.get_revenue_report(db, provinceCode, startTime, endTime)
-        if data is None:
-            return Result.fail(code=200, msg="查询失败，无数数据返回！")
-        return Result.success(data=data, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetRevenueReport 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+# ===== 经营报表 =====
+
+# 业务逻辑已迁移至 revenue_report_service
+
+@router.get("/Revenue/GetRevenueReport")
+
+async def get_revenue_report(
+
+    provinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    startTime: Optional[str] = Query(None, description="开始时间"),
+
+    endTime: Optional[str] = Query(None, description="结束时间"),
+
+    SearchKeyType: Optional[str] = Query("", description="查询类型"),
+
+    SearchKeyValue: Optional[str] = Query("", description="模糊查询内容"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取服务区经营报表 -- 业务逻辑见 revenue_report_service.get_revenue_report()"""
+
+    try:
+
+        data = revenue_report_service.get_revenue_report(db, provinceCode, startTime, endTime)
+
+        if data is None:
+
+            return Result.fail(code=200, msg="查询失败，无数数据返回！")
+
+        return Result.success(data=data, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetRevenueReport 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetRevenueReportDetil")
-async def get_revenue_report_detail(
-    provinceCode: Optional[str] = Query(None, description="省份编码"),
-    serverpartId: Optional[int] = Query(None, description="服务区内码"),
-    serverpartShopId: Optional[int] = Query(None, description="门店内码"),
-    startTime: Optional[str] = Query(None, description="开始时间"),
-    endTime: Optional[str] = Query(None, description="结束时间"),
-    SearchKeyType: Optional[str] = Query("", description="查询类型"),
-    SearchKeyValue: Optional[str] = Query("", description="模糊查询内容"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取服务区经营报表详情 -- 业务逻辑见 revenue_report_service.get_revenue_report_detail()"""
-    try:
-        data = revenue_report_service.get_revenue_report_detail(
-            db, provinceCode, serverpartId, startTime, endTime
-        )
-        return Result.success(data=data, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetRevenueReportDetil 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+
+@router.get("/Revenue/GetRevenueReportDetil")
+
+async def get_revenue_report_detail(
+
+    provinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    serverpartId: Optional[int] = Query(None, description="服务区内码"),
+
+    serverpartShopId: Optional[int] = Query(None, description="门店内码"),
+
+    startTime: Optional[str] = Query(None, description="开始时间"),
+
+    endTime: Optional[str] = Query(None, description="结束时间"),
+
+    SearchKeyType: Optional[str] = Query("", description="查询类型"),
+
+    SearchKeyValue: Optional[str] = Query("", description="模糊查询内容"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取服务区经营报表详情 -- 业务逻辑见 revenue_report_service.get_revenue_report_detail()"""
+
+    try:
+
+        data = revenue_report_service.get_revenue_report_detail(
+
+            db, provinceCode, serverpartId, startTime, endTime
+
+        )
+
+        return Result.success(data=data, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetRevenueReportDetil 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
+
 
 
 # ===== 畅销商品 =====
@@ -649,106 +691,29 @@ async def get_revenue_yoy(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetHolidayCompare")
-async def get_holiday_compare(
-    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
-    curYear: Optional[str] = Query(None, description="本年年份"),
-    compareYear: Optional[str] = Query(None, description="历年年份"),
-    holidayType: int = Query(0, description="节日类型"),
-    StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取节日营收同比数据 (SQL平移完成)"""
-    try:
-        from datetime import datetime as dt, timedelta
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def safe_int(v):
-            try: return int(float(v)) if v is not None else 0
-            except: return 0
-
-        if not curYear or not compareYear:
-            return Result.fail(code=200, msg="查询失败，无数据返回！")
-
-        # 节日名称映射（与C# HolidayEnum一致）
-        holiday_map = {1:"元旦",2:"春运",3:"清明节",4:"劳动节",5:"端午节",6:"暑期",7:"中秋节",8:"国庆节"}
-        h_name = holiday_map.get(int(holidayType), "")
-        if not h_name:
-            return Result.fail(code=200, msg="查询失败，无数据返回！")
-
-        cur_desc = f"{curYear}年{h_name}"
-        cmp_desc = f"{compareYear}年{h_name}"
-        h_rows = db.execute_query(f"""SELECT "HOLIDAY_DATE","HOLIDAY_DESC" FROM "T_HOLIDAY"
-            WHERE "HOLIDAY_DESC" IN ('{cur_desc}','{cmp_desc}')""") or []
-        if not h_rows:
-            return Result.fail(code=200, msg="查询失败，无数据返回！")
-
-        def to_dt(v):
-            if isinstance(v, dt): return v
-            if isinstance(v, str): return dt.strptime(v[:10], "%Y-%m-%d")
-            return dt(v.year, v.month, v.day) if hasattr(v, 'year') else v
-
-        cur_dates = [to_dt(r["HOLIDAY_DATE"]) for r in h_rows if r.get("HOLIDAY_DESC") == cur_desc and r.get("HOLIDAY_DATE")]
-        cmp_dates = [to_dt(r["HOLIDAY_DATE"]) for r in h_rows if r.get("HOLIDAY_DESC") == cmp_desc and r.get("HOLIDAY_DATE")]
-        if not cur_dates or not cmp_dates:
-            return Result.fail(code=200, msg="查询失败，无数据返回！")
-
-        s_date = min(cur_dates)
-        e_date = max(cur_dates)
-        cs_date = min(cmp_dates)
-        ce_date = max(cmp_dates)
-
-        where_sql = ""
-        _sp_ids = parse_multi_ids(ServerpartId)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-        elif SPRegionTypeID:
-            where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeID})'
-
-        rev_sql = """SELECT A."STATISTICS_DATE", SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
-            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                AND B."STATISTIC_TYPE" = 1000
-                AND A."STATISTICS_DATE" >= {s} AND A."STATISTICS_DATE" <= {e}{w}
-            GROUP BY A."STATISTICS_DATE" """
-
-        cur_rows = db.execute_query(rev_sql.format(s=s_date.strftime("%Y%m%d"), e=e_date.strftime("%Y%m%d"), w=where_sql)) or []
-        cmp_rows = db.execute_query(rev_sql.format(s=cs_date.strftime("%Y%m%d"), e=ce_date.strftime("%Y%m%d"), w=where_sql)) or []
-
-        cur_map = {str(safe_int(r.get("STATISTICS_DATE"))): safe_dec(r.get("CASHPAY")) for r in cur_rows}
-        cmp_map = {str(safe_int(r.get("STATISTICS_DATE"))): safe_dec(r.get("CASHPAY")) for r in cmp_rows}
-
-        cur_days = (e_date - s_date).days + 1
-        cmp_days = (ce_date - cs_date).days + 1
-        max_d = max(cur_days, cmp_days)
-        from decimal import Decimal
-        cur_acc = Decimal('0')
-        cmp_acc = Decimal('0')
-        cur_list = []
-        cmp_list = []
-        for i in range(max_d):
-            cd = s_date + timedelta(days=i)
-            ld = cs_date + timedelta(days=i)
-            cv = cur_map.get(cd.strftime("%Y%m%d"), 0)
-            lv = cmp_map.get(ld.strftime("%Y%m%d"), 0)
-            cur_acc += Decimal(str(cv))
-            cmp_acc += Decimal(str(lv))
-            cur_list.append({"name": date_no_pad(cd), "value": str(cv), "data": str(cur_acc), "key": None})
-            cmp_list.append({"name": date_no_pad(ld), "value": str(lv), "data": str(cmp_acc), "key": None})
-
-        return Result.success(data={
-            "curHoliday": f"{s_date.strftime('%m.%d')}-{e_date.strftime('%m.%d')}", "curHolidayDays": cur_days,
-            "curRevenue": float(cur_acc), "curList": cur_list,
-            "compareHoliday": f"{cs_date.strftime('%m.%d')}-{ce_date.strftime('%m.%d')}", "compareHolidayDays": cmp_days,
-            "compareRevenue": float(cmp_acc), "compareList": cmp_list,
-        }, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetHolidayCompare (Revenue) 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+@router.get("/Revenue/GetHolidayCompare")
+async def get_holiday_compare(
+    pushProvinceCode: Optional[str] = Query(None, description="推送省份"),
+    curYear: Optional[str] = Query(None, description="本年年份"),
+    compareYear: Optional[str] = Query(None, description="历年年份"),
+    holidayType: int = Query(0, description="节日类型"),
+    StatisticsDate: Optional[str] = Query("", description="统计日期"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取节日营收同比数据 -- 业务逻辑见 revenue_holiday_service.get_holiday_compare()"""
+    try:
+        data = revenue_holiday_service.get_holiday_compare(
+            db, pushProvinceCode, curYear, compareYear,
+            holidayType, StatisticsDate, ServerpartId, SPRegionTypeID
+        )
+        if data is None:
+            return Result.fail(code=200, msg="查询失败，无数据返回！")
+        return Result.success(data=data, msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetHolidayCompare (Revenue) 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 # ===== 实时交易 =====
@@ -2577,24 +2542,42 @@ async def get_monthly_business_revenue(postData: dict = None, db: DatabaseHelper
         return Result.fail(msg=f"查询失败{ex}")
 
 
-@router.get("/Revenue/GetCompanyRevenueReport")
-async def get_company_revenue_report(
-    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StartTime: Optional[str] = Query(None, description="开始日期"),
-    EndTime: Optional[str] = Query(None, description="结束日期"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """按照安徽驿达子公司运营的门店返回经营数据报表 -- 业务逻辑见 revenue_report_service.get_company_revenue_report()"""
-    try:
-        result_list = revenue_report_service.get_company_revenue_report(
-            db, ProvinceCode, StartTime, EndTime, ServerpartId
-        )
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetCompanyRevenueReport 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+@router.get("/Revenue/GetCompanyRevenueReport")
+
+async def get_company_revenue_report(
+
+    ProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    StartTime: Optional[str] = Query(None, description="开始日期"),
+
+    EndTime: Optional[str] = Query(None, description="结束日期"),
+
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """按照安徽驿达子公司运营的门店返回经营数据报表 -- 业务逻辑见 revenue_report_service.get_company_revenue_report()"""
+
+    try:
+
+        result_list = revenue_report_service.get_company_revenue_report(
+
+            db, ProvinceCode, StartTime, EndTime, ServerpartId
+
+        )
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list))
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetCompanyRevenueReport 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
+
 
 
 # ===== GetRevenueCompare =====
@@ -3182,132 +3165,34 @@ async def get_holiday_spr_analysis(
         return Result.fail(msg=f"查询失败{ex}")
 
 
-# ===== GetHolidayDailyAnalysis =====
-@router.get("/Revenue/GetHolidayDailyAnalysis")
-async def get_holiday_daily_analysis(
-    pushProvinceCode: str = Query(..., description="省份编码"),
-    curYear: int = Query(..., description="本年年份"),
-    compareYear: int = Query(..., description="历年年份"),
-    HolidayType: int = Query(..., description="节日类型"),
-    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
-    SPRegionTypeId: Optional[str] = Query("", description="片区内码"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    businessType: Optional[str] = Query("", description="经营模式"),
-    businessTrade: Optional[str] = Query("", description="经营业态"),
-    businessRegion: Optional[str] = Query("", description="经营区域"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取节假日各类项目所有天数对客分析 (SQL平移完成)"""
-    try:
-        from datetime import datetime as dt, timedelta
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def safe_int(v):
-            try: return int(float(v)) if v is not None else 0
-            except: return 0
-
-        # 节日名称映射
-        holiday_map = {1:"元旦",2:"春运",3:"清明节",4:"劳动节",5:"端午节",6:"暑期",7:"中秋节",8:"国庆节"}
-        h_name = holiday_map.get(int(HolidayType), "")
-        if not h_name:
-            json_list = JsonListData.create(data_list=[], total=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-        cur_desc = f"{curYear}年{h_name}"
-        cmp_desc = f"{compareYear}年{h_name}"
-        h_rows = db.execute_query(f"""SELECT "HOLIDAY_DATE","HOLIDAY_DESC" FROM "T_HOLIDAY"
-            WHERE "HOLIDAY_DESC" IN ('{cur_desc}','{cmp_desc}')""") or []
-        if not h_rows:
-            json_list = JsonListData.create(data_list=[], total=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-        def to_dt(v):
-            if isinstance(v, dt): return v
-            if isinstance(v, str): return dt.strptime(v[:10], "%Y-%m-%d")
-            return dt(v.year, v.month, v.day) if hasattr(v, 'year') else v
-
-        cur_dates = [to_dt(r["HOLIDAY_DATE"]) for r in h_rows if r.get("HOLIDAY_DESC") == cur_desc and r.get("HOLIDAY_DATE")]
-        cmp_dates = [to_dt(r["HOLIDAY_DATE"]) for r in h_rows if r.get("HOLIDAY_DESC") == cmp_desc and r.get("HOLIDAY_DATE")]
-        if not cur_dates or not cmp_dates:
-            json_list = JsonListData.create(data_list=[], total=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-        s_date = min(cur_dates)
-        e_date = max(cur_dates)
-        cs_date = min(cmp_dates)
-
-        stat_d = dt.strptime(StatisticsDate, "%Y-%m-%d") if StatisticsDate and "-" in StatisticsDate else (dt.strptime(StatisticsDate, "%Y%m%d") if StatisticsDate else e_date)
-        if stat_d > e_date:
-            stat_d = e_date
-        day_span = (stat_d - s_date).days
-        cy_date = cs_date + timedelta(days=day_span)
-
-        where_sql = ""
-        use_holiday_table = False
-        if SPRegionTypeId:
-            where_sql += f' AND B."SPREGIONTYPE_ID" IN ({SPRegionTypeId})'
-            use_holiday_table = True
-        _sp_ids = parse_multi_ids(ServerpartId)
-        if _sp_ids:
-            where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-            use_holiday_table = True
-        if businessType:
-            where_sql += f' AND A."BUSINESS_TYPE" IN ({businessType})'
-        if businessTrade:
-            where_sql += f' AND A."SHOPTRADE" IN ({businessTrade})'
-        if businessRegion:
-            where_sql += f' AND A."BUSINESS_REGION" IN ({businessRegion})'
-
-        if use_holiday_table:
-            base_sql = """SELECT A."STATISTICS_DATE", SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
-                FROM "T_HOLIDAYREVENUE" A, "T_SERVERPART" B
-                WHERE A."SERVERPART_ID" = TO_CHAR(B."SERVERPART_ID") AND A."HOLIDAYREVENUE_STATE" = 1
-                    AND A."STATISTICS_DATE" BETWEEN {s} AND {e}{w}
-                GROUP BY A."STATISTICS_DATE" """
-        else:
-            base_sql = """SELECT A."STATISTICS_DATE", SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
-                FROM "T_PROVINCEREVENUE" A
-                WHERE A."PROVINCEREVENUE_STATE" = 1
-                    AND A."STATISTICS_DATE" BETWEEN {s} AND {e}{w}
-                GROUP BY A."STATISTICS_DATE" """
-
-        cur_rows = db.execute_query(base_sql.format(s=s_date.strftime("%Y%m%d"), e=stat_d.strftime("%Y%m%d"), w=where_sql)) or []
-        cmp_rows = db.execute_query(base_sql.format(s=cs_date.strftime("%Y%m%d"), e=cy_date.strftime("%Y%m%d"), w=where_sql)) or []
-        from decimal import Decimal
-        def to_dec(v):
-            try: return Decimal(str(v)) if v is not None else Decimal('0')
-            except: return Decimal('0')
-
-        cur_map = {str(safe_int(r.get("STATISTICS_DATE"))): to_dec(r.get("REVENUE_AMOUNT")) for r in cur_rows}
-        cmp_map = {str(safe_int(r.get("STATISTICS_DATE"))): to_dec(r.get("REVENUE_AMOUNT")) for r in cmp_rows}
-
-        result_list = []
-        total_cur = sum(cur_map.values())
-        total_cmp = sum(cmp_map.values())
-        result_list.append({"name": "累计", "value": str(total_cur), "data": str(total_cmp), "key": None, "date": None})
-
-        for i in range(day_span + 1):
-            cd = s_date + timedelta(days=i)
-            ld = cs_date + timedelta(days=i)
-            cd_key = cd.strftime("%Y%m%d")
-            ld_key = ld.strftime("%Y%m%d")
-            # C#对齐: 没有数据的日期返回空串（C# decimal? 未赋值时ToString()=""）
-            cv = str(cur_map[cd_key]) if cd_key in cur_map else ""
-            lv = str(cmp_map[ld_key]) if ld_key in cmp_map else ""
-            result_list.append({
-                "name": str(i + 1), "value": cv, "data": lv,
-                "key": None,
-                "date": f"{date_no_pad(cd)},{date_no_pad(ld)}",
-            })
-
-        # C#对齐: JsonList.Success(list) 默认PageSize=10
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetHolidayDailyAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+# ===== GetHolidayDailyAnalysis =====
+# 业务逻辑已迁移至 revenue_holiday_service
+@router.get("/Revenue/GetHolidayDailyAnalysis")
+async def get_holiday_daily_analysis(
+    pushProvinceCode: str = Query(..., description="省份编码"),
+    curYear: int = Query(..., description="本年年份"),
+    compareYear: int = Query(..., description="历年年份"),
+    HolidayType: int = Query(..., description="节日类型"),
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+    SPRegionTypeId: Optional[str] = Query("", description="片区内码"),
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+    businessType: Optional[str] = Query("", description="经营模式"),
+    businessTrade: Optional[str] = Query("", description="经营业态"),
+    businessRegion: Optional[str] = Query("", description="经营区域"),
+    db: DatabaseHelper = Depends(get_db)
+):
+    """获取节假日各类项目所有天数对客分析 -- 业务逻辑见 revenue_holiday_service.get_holiday_daily_analysis()"""
+    try:
+        result_list = revenue_holiday_service.get_holiday_daily_analysis(
+            db, pushProvinceCode, curYear, compareYear,
+            HolidayType, StatisticsDate, SPRegionTypeId, ServerpartId,
+            businessType, businessTrade, businessRegion
+        )
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+    except Exception as ex:
+        logger.error(f"GetHolidayDailyAnalysis 查询失败: {ex}")
+        return Result.fail(msg=f"查询失败{ex}")
 
 
 # ===== GetMonthINCAnalysis =====
