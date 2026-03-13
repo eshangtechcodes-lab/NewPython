@@ -10,27 +10,15 @@ CommercialApi - 交易分析 Service
 注意: 这些路由逻辑各 100-200 行, 且与 Router 参数格式紧耦合
       此处仅抽取核心查询+聚合逻辑, Router 层负责参数解析和 Result 包装
 """
+from __future__ import annotations
 from typing import Optional
 from collections import defaultdict
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
-
-
-def _sf(v):
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
-
-def _si(v):
-    try: return int(float(v)) if v is not None else 0
-    except: return 0
-
-
-def _get_province_id(db: DatabaseHelper, province_code: str):
-    """通过省份编码获取省份 FieldEnum ID"""
-    pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-            WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-    pc_rows = db.execute_query(pc_sql, {"pc": province_code})
-    return int(pc_rows[0]["FIELDENUM_ID"]) if pc_rows else int(province_code)
+from services.commercial.service_utils import (
+    safe_float as _sf, safe_int as _si,
+    get_province_id as _get_province_id,
+)
 
 
 # ===== 1. GetMobileShare =====

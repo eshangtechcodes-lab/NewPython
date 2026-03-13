@@ -9,25 +9,14 @@ CommercialApi - 营收趋势/报表/排行/同比 Service
 注意: GetRevenueReport/GetRevenueReportDetil 逻辑复杂（各 150+ 行）,
       暂保留在 Router 层; 此处抽取较简洁的趋势/畅销/排行/同比
 """
+from __future__ import annotations
 from typing import Optional
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
-
-
-def _sf(v):
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
-
-def _si(v):
-    try: return int(v) if v is not None else 0
-    except: return 0
-
-
-def _get_province_id(db: DatabaseHelper, province_code: str):
-    pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-            WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-    pc_rows = db.execute_query(pc_sql, {"pc": province_code})
-    return int(pc_rows[0]["FIELDENUM_ID"]) if pc_rows else int(province_code)
+from services.commercial.service_utils import (
+    safe_float as _sf, safe_int as _si,
+    get_province_id as _get_province_id,
+)
 
 
 # ===== 1. GetRevenueTrend =====

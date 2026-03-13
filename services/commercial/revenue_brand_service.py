@@ -5,14 +5,11 @@ CommercialApi - 品牌营收 + 结账数据 Service
 GetServerpartEndAccountList, GetShopEndAccountList
 每个函数独立、可单独迁移
 """
+from __future__ import annotations
 from typing import Optional
 from collections import defaultdict
 from core.database import DatabaseHelper
-
-
-def _sf(v):
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
+from services.commercial.service_utils import safe_float as _sf
 
 
 # ===== 1. GetServerpartBrand =====

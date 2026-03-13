@@ -8,14 +8,11 @@ CommercialApi - 预算费用 Service
 注意: GetProvinceRevenueBudget 逻辑约 300 行, 含 StatisticsType 分支走向,
       暂保留在 Router 层, 此处仅提供声明
 """
+from __future__ import annotations
 from typing import Optional
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
-
-
-def _sf(v):
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
+from services.commercial.service_utils import safe_float as _sf
 
 
 # ===== 1. GetBudgetExpenseList (POST) =====

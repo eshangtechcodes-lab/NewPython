@@ -5,42 +5,14 @@ CommercialApi - 营收推送 Service
 GetSummaryRevenueMonth, GetWechatPushSalesList, GetUnUpLoadShops
 每个函数独立、可单独迁移
 """
-from typing import Optional
+from __future__ import annotations
 from collections import defaultdict
 from core.database import DatabaseHelper
-from routers.deps import parse_multi_ids, build_in_condition
-
-
-def _sf(v):
-    """安全浮点"""
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
-
-def _si(v):
-    """安全整数"""
-    try: return int(v) if v is not None else 0
-    except: return 0
-
-
-def _get_province_id(db: DatabaseHelper, push_province_code: str):
-    """通过省份编码获取省份 FieldEnum ID"""
-    pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-            WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
-    pc_rows = db.execute_query(pc_sql, {"pc": push_province_code})
-    return int(pc_rows[0]["FIELDENUM_ID"]) if pc_rows else int(push_province_code)
-
-
-def _build_where_sql(province_id, serverpart_id, sp_region_type_id, db=None):
-    """构建通用 WHERE 条件"""
-    where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
-    _sp_ids = parse_multi_ids(serverpart_id)
-    if _sp_ids:
-        where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-    elif sp_region_type_id:
-        where_sql += f' AND B."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
-    elif serverpart_id:
-        where_sql += f' AND B."SERVERPART_ID" = {serverpart_id}'
-    return where_sql
+from services.commercial.service_utils import (
+    safe_float as _sf, safe_int as _si,
+    get_province_id as _get_province_id,
+    build_sp_where as _build_where_sql,
+)
 
 
 # ===== 1. GetRevenuePushList =====
