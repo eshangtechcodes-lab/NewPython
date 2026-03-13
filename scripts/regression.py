@@ -38,8 +38,8 @@ SMOKE_ENDPOINTS = [
      "expect_data": True},
     {"path": "/CommercialApi/BaseInfo/GetSPRegionList", "method": "GET",
      "params": {"Province_Code": "340000"}, "name": "CA-区域列表", "expect_data": True},
-    {"path": "/CommercialApi/BaseInfo/GetSubTypeList", "method": "GET",
-     "params": {"Province_Code": "340000", "ServerpartId": "416"}, "name": "CA-子类型列表"},
+    {"path": "/CommercialApi/BaseInfo/GetBusinessTradeList", "method": "GET",
+     "params": {"Province_Code": "340000"}, "name": "CA-业态列表"},
 
     # ── CommercialApi / Revenue（高频） ──
     {"path": "/CommercialApi/Revenue/GetCurRevenue", "method": "GET",
@@ -75,32 +75,32 @@ SMOKE_ENDPOINTS = [
 
     # ── CommercialApi / BigData ──
     {"path": "/CommercialApi/BigData/GetDateAnalysis", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "CA-日期分析"},
+     "params": {"ServerpartId": "416", "StatisticsDate": "2025-12-01"}, "name": "CA-日期分析"},
     {"path": "/CommercialApi/Revenue/GetBayonetEntryList", "method": "GET",
      "params": {"Province_Code": "340000", "StatisticsDate": "2025-12-01"},
      "name": "CA-入区车流"},
     {"path": "/CommercialApi/Revenue/GetBayonetRankList", "method": "GET",
      "params": {"Province_Code": "340000", "statisticsDate": "2025-12-01"},
      "name": "CA-车流排行"},
-    {"path": "/CommercialApi/Revenue/GetMonthAnalysis", "method": "GET",
+    {"path": "/CommercialApi/BigData/GetMonthAnalysis", "method": "GET",
      "params": {"Province_Code": "340000", "StatisticsDate": "202512"},
      "name": "CA-月度车流"},
 
     # ── CommercialApi / Examine ──
     {"path": "/CommercialApi/Examine/GetExamineAnalysis", "method": "GET",
      "params": {"ServerpartId": "416"}, "name": "CA-考核分析"},
-    {"path": "/CommercialApi/Examine/GetExamineSPList", "method": "GET",
-     "params": {"Province_Code": "340000"}, "name": "CA-考核服务区列表"},
+    {"path": "/CommercialApi/Examine/GetExamineResultList", "method": "GET",
+     "params": {"Province_Code": "340000"}, "name": "CA-考核结果列表"},
 
     # ── CommercialApi / Customer ──
     {"path": "/CommercialApi/Customer/GetCustomerRatio", "method": "GET",
      "params": {"ServerpartId": "416"}, "name": "CA-客群占比"},
-    {"path": "/CommercialApi/Customer/GetCustomerTrend", "method": "GET",
-     "params": {"ServerpartId": "416"}, "name": "CA-客群趋势"},
+    {"path": "/CommercialApi/Customer/GetCustomerGroupRatio", "method": "GET",
+     "params": {"ServerpartId": "416"}, "name": "CA-客群分组"},
 
     # ── CommercialApi / Analysis ──
-    {"path": "/CommercialApi/Analysis/GetAnalysisReport", "method": "GET",
-     "params": {"Province_Code": "340000"}, "name": "CA-分析报告"},
+    {"path": "/CommercialApi/Analysis/GetANALYSISINSDetail", "method": "GET",
+     "params": {"Province_Code": "340000", "AnalysisIns_Id": "1"}, "name": "CA-分析详情"},
 
     # ── CommercialApi / Budget ──
     {"path": "/CommercialApi/Revenue/GetRevenueBudget", "method": "GET",
@@ -108,8 +108,8 @@ SMOKE_ENDPOINTS = [
      "name": "CA-营收预算"},
 
     # ── CommercialApi / Contract ──
-    {"path": "/CommercialApi/Contract/GetContractList", "method": "GET",
-     "params": {"Province_Code": "340000"}, "name": "CA-合同列表"},
+    {"path": "/CommercialApi/Contract/GetContractAnalysis", "method": "GET",
+     "params": {"Province_Code": "340000"}, "name": "CA-合同分析"},
 
     # ── EShangApiMain — 核心 CRUD 模块 ──
     {"path": "/EShangApiMain/BaseInfo/GetBrandList", "method": "POST",
