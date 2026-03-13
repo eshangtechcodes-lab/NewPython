@@ -213,3 +213,269 @@ def get_revenue_budget(db: DatabaseHelper, statistics_date, province_code, serve
 # ===== 4. GetProvinceRevenueBudget =====
 # 此路由约 300 行，含 4 种 StatisticsType 分支，逻辑过长暂保留在 Router 层
 # 后续重写 Router 时整体迁移
+
+
+# ===== 5. GetProvinceRevenueBudget =====
+def get_province_revenue_budget(db: DatabaseHelper, statistics_date, province_code,
+                                 statistics_type, sp_region_type_id, serverpart_id,
+                                 show_whole_year) -> dict | None:
+    """获取全省计划营收分析（4种 StatisticsType 分支）
+    返回 dict 数据或 None (表示无数据/非340000)
+    """
+    from datetime import datetime as dt
+    import calendar
+
+    def safe_dec(v):
+        try: return float(v) if v is not None else 0.0
+        except: return 0.0
+    def safe_int(v):
+        try: return int(v) if v is not None else 0
+        except: return 0
+
+    if province_code != "340000":
+        return None
+    if not statistics_date:
+        return None
+
+    stat_date = dt.strptime(statistics_date, "%Y-%m-%d") if "-" in statistics_date else dt.strptime(statistics_date, "%Y%m%d")
+    yyyyMM = stat_date.strftime("%Y%m")
+    yyyyMMdd = stat_date.strftime("%Y%m%d")
+    yyyy01 = stat_date.strftime("%Y01")
+    yyyy12 = stat_date.strftime("%Y12")
+    yyyy0101 = stat_date.strftime("%Y0101")
+    yyyyMM01 = stat_date.strftime("%Y%m01")
+    day_of_month = stat_date.day
+    days_in_month = calendar.monthrange(stat_date.year, stat_date.month)[1]
+
+    Revenue_PlanAmount = 0.0
+    Budget_Amount = 0.0
+
+    # 1. 构建预算查询 WhereSQL
+    where_sql = ""
+    if serverpart_id is not None:
+        where_sql += f' AND B."SERVERPART_ID" = {serverpart_id}'
+    elif sp_region_type_id is not None:
+        where_sql += f' AND B."SPREGIONTYPE_ID" = {sp_region_type_id}'
+    elif province_code:
+        where_sql += f' AND A."PROVINCE_CODE" = {province_code}'
+        if statistics_type == 2:
+            where_sql += ' AND A."SERVERPART_ID" = 0'
+    if statistics_type in (1, 4):
+        where_sql += f' AND A."STATISTICS_MONTH" = {yyyyMM}'
+    else:
+        where_sql += f' AND A."STATISTICS_MONTH" >= {yyyy01} AND A."STATISTICS_MONTH" <= {yyyy12}'
+
+    # 2. 查询预算数据
+    budget_rows = []
+    if statistics_type == 3:
+        budget_sql = f"""SELECT A."STATISTICS_MONTH", B."SERVERPART_ID", B."SERVERPART_NAME",
+                A."BUDGETDETAIL_AMOUNT" AS "BUDGET_AMOUNT",
+                B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", 1000 AS "STATISTICS_TYPE"
+            FROM "T_BUDGETDETAIL_AH" A, "T_BUDGETPROJECT_AH" B
+            WHERE A."BUDGETPROJECT_AH_ID" = B."BUDGETPROJECT_AH_ID"
+                AND A."ACCOUNT_CODE" = 1000{where_sql}
+            ORDER BY A."STATISTICS_MONTH" """
+        budget_rows = db.execute_query(budget_sql) or []
+        for r in budget_rows:
+            sm = str(r.get("STATISTICS_MONTH", ""))
+            ba = safe_dec(r.get("BUDGET_AMOUNT"))
+            if sm == yyyyMM:
+                Budget_Amount += ba
+                Revenue_PlanAmount += round(ba * day_of_month / days_in_month, 2)
+            else:
+                if safe_int(sm) < safe_int(yyyyMM):
+                    Revenue_PlanAmount += ba
+                Budget_Amount += ba
+    else:
+        budget_sql = f"""SELECT A."STATISTICS_MONTH", A."PROVINCE_CODE", A."SERVERPART_ID",
+                A."SERVERPART_NAME", A."BUDGET_AMOUNT", A."SPREGIONTYPE_ID",
+                A."SPREGIONTYPE_NAME", A."SERVERPART_IDS", B."STATISTICS_TYPE"
+            FROM "T_BUDGETEXPENSE" A
+            LEFT JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
+            WHERE 1 = 1{where_sql}"""
+        budget_rows = db.execute_query(budget_sql) or []
+        if sp_region_type_id is None:
+            filtered = [r for r in budget_rows if safe_int(r.get("SERVERPART_ID")) == 0]
+        else:
+            filtered = budget_rows
+        for r in sorted(filtered, key=lambda x: str(x.get("STATISTICS_MONTH", ""))):
+            sm = str(r.get("STATISTICS_MONTH", ""))
+            ba = safe_dec(r.get("BUDGET_AMOUNT"))
+            try:
+                cd = dt.strptime(sm + "01", "%Y%m%d")
+                cmd = calendar.monthrange(cd.year, cd.month)[1]
+            except:
+                cmd = 30
+            if sm == yyyyMM:
+                Budget_Amount += ba * cmd
+                Revenue_PlanAmount += ba * day_of_month
+            else:
+                bv = ba * cmd
+                if safe_int(sm) < safe_int(yyyyMM):
+                    Revenue_PlanAmount += bv
+                Budget_Amount += bv
+        if statistics_type == 4 and sp_region_type_id is not None:
+            sp_sql = f"""SELECT B."STATISTICS_MONTH", A."SERVERPART_ID", A."SERVERPART_NAME",
+                    B."BUDGETDETAIL_AMOUNT", A."SPREGIONTYPE_ID", A."SPREGIONTYPE_NAME",
+                    1000 AS "STATISTICS_TYPE"
+                FROM "T_BUDGETPROJECT_AH" A, "T_BUDGETDETAIL_AH" B
+                WHERE A."BUDGETPROJECT_AH_ID" = B."BUDGETPROJECT_AH_ID"
+                    AND B."ACCOUNT_CODE" = 1000
+                    AND B."STATISTICS_MONTH" = {yyyyMM}
+                    AND A."SPREGIONTYPE_ID" = {sp_region_type_id}"""
+            sp_rows = db.execute_query(sp_sql) or []
+            for sr in sp_rows:
+                budget_rows.append({
+                    "STATISTICS_MONTH": sr.get("STATISTICS_MONTH"),
+                    "SERVERPART_ID": sr.get("SERVERPART_ID"),
+                    "SERVERPART_NAME": sr.get("SERVERPART_NAME"),
+                    "BUDGET_AMOUNT": sr.get("BUDGETDETAIL_AMOUNT"),
+                    "SPREGIONTYPE_ID": sr.get("SPREGIONTYPE_ID"),
+                    "SPREGIONTYPE_NAME": sr.get("SPREGIONTYPE_NAME"),
+                    "STATISTICS_TYPE": 1000,
+                })
+
+    if Budget_Amount == 0:
+        return None
+
+    # 3. 统计营收数据
+    where_rev = ""
+    if serverpart_id is not None:
+        where_rev += f' AND B."SERVERPART_ID" = {serverpart_id}'
+    elif sp_region_type_id is not None:
+        if statistics_type == 3:
+            sp_ids = set(str(safe_int(r.get("SERVERPART_ID"))) for r in budget_rows)
+            sp_ids.discard("0")
+            where_rev += f' AND B."SERVERPART_ID" IN ({",".join(sp_ids)})' if sp_ids else ' AND 1 = 2'
+        else:
+            has_ids = any(r.get("SERVERPART_IDS") for r in budget_rows)
+            if has_ids:
+                matched = [r for r in budget_rows if safe_int(r.get("SPREGIONTYPE_ID")) == sp_region_type_id]
+                if matched and matched[0].get("SERVERPART_IDS"):
+                    where_rev += f' AND B."SERVERPART_ID" IN ({matched[0]["SERVERPART_IDS"]})'
+                else:
+                    where_rev += ' AND 1 = 2'
+            else:
+                where_rev += f' AND B."SPREGIONTYPE_ID" = {sp_region_type_id}'
+    elif province_code:
+        where_rev += f' AND B."PROVINCE_CODE" = {province_code}'
+    if statistics_type in (1, 4):
+        where_rev += f' AND A."STATISTICS_DATE" >= {yyyyMM01}'
+    else:
+        where_rev += f' AND A."STATISTICS_DATE" >= {yyyy0101}'
+    where_rev += f' AND A."STATISTICS_DATE" <= {yyyyMMdd}'
+
+    if statistics_type in (1, 4):
+        rev_sql = f"""SELECT B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_INDEX",
+                SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
+            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
+                AND B."STATISTIC_TYPE" = 1000 AND A."BUSINESS_TYPE" = 1000{where_rev}
+            GROUP BY B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_INDEX" """
+    else:
+        rev_sql = f"""SELECT SUBSTR(CAST(A."STATISTICS_DATE" AS VARCHAR), 1, 6) AS "STATISTICS_MONTH",
+                SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
+            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
+            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
+                AND B."STATISTIC_TYPE" = 1000 AND A."BUSINESS_TYPE" = 1000{where_rev}
+            GROUP BY SUBSTR(CAST(A."STATISTICS_DATE" AS VARCHAR), 1, 6)"""
+    rev_rows = db.execute_query(rev_sql) or []
+
+    Revenue_Amount = sum(safe_dec(r.get("REVENUE_AMOUNT")) for r in rev_rows)
+    Budget_Degree = round(Revenue_Amount / Budget_Amount * 100, 2) if Budget_Amount > 0 else 0
+
+    # 4. 构建 RegionBudgetList
+    region_list = []
+    Growth_Rate = 0.0
+
+    if statistics_type == 1:
+        Growth_Rate = round(Budget_Degree - (day_of_month * 100.0 / days_in_month), 2)
+        for r in sorted([b for b in budget_rows if safe_int(b.get("STATISTICS_TYPE")) == 1010],
+                       key=lambda x: str(x.get("STATISTICS_MONTH", ""))):
+            ids_str = str(r.get("SERVERPART_IDS", "") or "")
+            id_set = set(ids_str.split(",")) if ids_str else set()
+            sp_rev = sum(safe_dec(rr.get("REVENUE_AMOUNT")) for rr in rev_rows
+                       if str(safe_int(rr.get("SERVERPART_ID"))) in id_set)
+            sp_bgt = safe_dec(r.get("BUDGET_AMOUNT")) * days_in_month
+            sp_deg = round(sp_rev / sp_bgt * 100, 2) if sp_bgt > 0 else 0
+            region_list.append({
+                "Serverpart_ID": safe_int(r.get("SPREGIONTYPE_ID")),
+                "Serverpart_Name": str(r.get("SPREGIONTYPE_NAME", "")),
+                "Revenue_Amount": sp_rev, "Budget_Amount": sp_bgt,
+                "Budget_Degree": sp_deg,
+                "Growth_Rate": round(sp_deg - (day_of_month * 100.0 / days_in_month), 2),
+            })
+    elif statistics_type == 4:
+        Growth_Rate = round(Budget_Degree - (day_of_month * 100.0 / days_in_month), 2)
+        for r in sorted([b for b in budget_rows if safe_int(b.get("STATISTICS_TYPE")) == 1000],
+                       key=lambda x: safe_dec(x.get("BUDGET_AMOUNT")), reverse=True):
+            sp_id = safe_int(r.get("SERVERPART_ID"))
+            sp_rev = sum(safe_dec(rr.get("REVENUE_AMOUNT")) for rr in rev_rows
+                       if safe_int(rr.get("SERVERPART_ID")) == sp_id)
+            sp_bgt = safe_dec(r.get("BUDGET_AMOUNT"))
+            sp_deg = round(sp_rev / sp_bgt * 100, 2) if sp_bgt > 0 else 0
+            region_list.append({
+                "Serverpart_ID": sp_id,
+                "Serverpart_Name": str(r.get("SERVERPART_NAME", "")),
+                "Revenue_Amount": sp_rev, "Budget_Amount": sp_bgt,
+                "Budget_Degree": sp_deg,
+                "Growth_Rate": round(sp_deg - (day_of_month * 100.0 / days_in_month), 2),
+            })
+    elif statistics_type == 2:
+        Growth_Rate = round((Revenue_Amount - Revenue_PlanAmount) / Budget_Amount * 100, 2) if Budget_Amount > 0 else 0
+        mf = [b for b in budget_rows if safe_int(b.get("SERVERPART_ID")) == 0]
+        if not show_whole_year:
+            mf = [b for b in mf if safe_int(b.get("STATISTICS_MONTH")) <= safe_int(yyyyMM)]
+        for r in sorted(mf, key=lambda x: str(x.get("STATISTICS_MONTH", ""))):
+            sm = str(r.get("STATISTICS_MONTH", ""))
+            try:
+                cd = dt.strptime(sm + "01", "%Y%m%d")
+                cmd = calendar.monthrange(cd.year, cd.month)[1]
+            except: cmd = 30
+            sm_m = int(sm[4:6]) if len(sm) >= 6 else 0
+            sp_rev = sum(safe_dec(rr.get("REVENUE_AMOUNT")) for rr in rev_rows
+                       if str(rr.get("STATISTICS_MONTH", "")) == sm)
+            sp_bgt = safe_dec(r.get("BUDGET_AMOUNT")) * cmd
+            sp_deg = round(sp_rev / sp_bgt * 100, 2) if sp_bgt > 0 else 0
+            if sm == yyyyMM:
+                g = round(sp_deg - (day_of_month * 100.0 / cmd), 2)
+            elif safe_int(sm) < safe_int(yyyyMM):
+                g = sp_deg - 100
+            else:
+                g = 0
+            region_list.append({
+                "Statistics_Month": sm_m, "Revenue_Amount": sp_rev,
+                "Budget_Amount": sp_bgt, "Budget_Degree": sp_deg, "Growth_Rate": g,
+            })
+    elif statistics_type == 3:
+        Growth_Rate = round((Revenue_Amount - Revenue_PlanAmount) / Budget_Amount * 100, 2) if Budget_Amount > 0 else 0
+        u_months = sorted(set(str(r.get("STATISTICS_MONTH", "")) for r in budget_rows))
+        if not show_whole_year:
+            u_months = [m for m in u_months if safe_int(m) <= safe_int(yyyyMM)]
+        for sm in u_months:
+            try:
+                cd = dt.strptime(sm + "01", "%Y%m%d")
+                cmd = calendar.monthrange(cd.year, cd.month)[1]
+            except: cmd = 30
+            sm_m = int(sm[4:6]) if len(sm) >= 6 else 0
+            sp_rev = sum(safe_dec(rr.get("REVENUE_AMOUNT")) for rr in rev_rows
+                       if str(rr.get("STATISTICS_MONTH", "")) == sm)
+            sp_bgt = sum(safe_dec(br.get("BUDGET_AMOUNT")) for br in budget_rows
+                       if str(br.get("STATISTICS_MONTH", "")) == sm)
+            sp_deg = round(sp_rev / sp_bgt * 100, 2) if sp_bgt > 0 else 0
+            if sm == yyyyMM:
+                g = round(sp_deg - (day_of_month * 100.0 / cmd), 2)
+            elif safe_int(sm) < safe_int(yyyyMM):
+                g = sp_deg - 100
+            else:
+                g = 0
+            region_list.append({
+                "Statistics_Month": sm_m, "Revenue_Amount": sp_rev,
+                "Budget_Amount": sp_bgt, "Budget_Degree": sp_deg, "Growth_Rate": g,
+            })
+
+    return {
+        "Revenue_Amount": Revenue_Amount, "Budget_Amount": Budget_Amount,
+        "Budget_Degree": Budget_Degree, "Growth_Rate": Growth_Rate,
+        "RegionBudgetList": region_list,
+    }
