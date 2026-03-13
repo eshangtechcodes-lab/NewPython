@@ -27,7 +27,7 @@ def _get_province_id(db: DatabaseHelper, push_province_code: str):
     pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
             WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
     pc_rows = db.execute_query(pc_sql, {"pc": push_province_code})
-    return pc_rows[0]["FIELDENUM_ID"] if pc_rows else push_province_code
+    return int(pc_rows[0]["FIELDENUM_ID"]) if pc_rows else int(push_province_code)
 
 
 def _build_where_sql(province_id, serverpart_id, sp_region_type_id, db=None):

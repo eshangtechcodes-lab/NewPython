@@ -30,7 +30,7 @@ def _get_province_id(db: DatabaseHelper, province_code: str):
     pc_sql = """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
             WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc"""
     pc_rows = db.execute_query(pc_sql, {"pc": province_code})
-    return pc_rows[0]["FIELDENUM_ID"] if pc_rows else province_code
+    return int(pc_rows[0]["FIELDENUM_ID"]) if pc_rows else int(province_code)
 
 
 # ===== 1. GetMobileShare =====
