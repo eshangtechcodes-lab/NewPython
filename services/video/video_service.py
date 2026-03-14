@@ -103,7 +103,8 @@ def _build_where(sp: dict, entity_cfg: dict, query_type: int = 0) -> str:
         upper_key = key.upper()
         if upper_key not in {f.upper() for f in fields_set}:
             continue
-        val_str = str(val).strip()
+        # --- SQL 参数化: 去除单引号和百分号防注入 ---
+        val_str = str(val).strip().replace("'", "").replace("%", "")
         if query_type == 0:
             conditions.append(f"{key} LIKE '%{val_str}%'")
         else:
@@ -114,8 +115,10 @@ def _build_where(sp: dict, entity_cfg: dict, query_type: int = 0) -> str:
     for db_field, param_name in in_fields.items():
         val = sp.get(param_name, "")
         if val and str(val).strip():
-            ids = str(val).strip()
-            conditions.append(f"{db_field} IN ({ids})")
+            # --- SQL 参数化: IN 字段通过整数解析防注入 ---
+            safe_ids = [str(int(x.strip())) for x in str(val).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                conditions.append(f"{db_field} IN ({','.join(safe_ids)})")
 
     # 日期范围查询
     date_range = entity_cfg.get("date_range", {})
@@ -123,9 +126,11 @@ def _build_where(sp: dict, entity_cfg: dict, query_type: int = 0) -> str:
         start_val = sp.get(start_param, "")
         end_val = sp.get(end_param, "")
         if start_val and str(start_val).strip():
-            conditions.append(f"{db_field} >= '{str(start_val).strip()}'")
+            safe_sv = str(start_val).strip().replace("'", "")
+            conditions.append(f"{db_field} >= '{safe_sv}'")
         if end_val and str(end_val).strip():
-            conditions.append(f"{db_field} <= '{str(end_val).strip()}'")
+            safe_ev = str(end_val).strip().replace("'", "")
+            conditions.append(f"{db_field} <= '{safe_ev}'")
 
     return " AND ".join(conditions)
 
@@ -147,19 +152,23 @@ def get_entity_list(db: DatabaseHelper, entity_name: str, search_model: dict):
     kw_key = keyword.get("Key", "")
     kw_val = keyword.get("Value", "")
     if kw_key and kw_val:
+        # --- SQL 参数化: 关键字去除单引号和百分号防注入 ---
+        safe_kw = kw_val.replace("'", "").replace("%", "")
         kw_conditions = []
-        for col in kw_key.split(","):
+        for col in kw_key.split(','):
             col = col.strip()
-            if col:
-                kw_conditions.append(f"{col} LIKE '%{kw_val}%'")
+            if col and col.isalnum():
+                kw_conditions.append(f"{col} LIKE '%{safe_kw}%'")
         if kw_conditions:
-            kw_filter = "(" + " OR ".join(kw_conditions) + ")"
-            sql += (" AND " if where_clause else " WHERE ") + kw_filter
+            kw_filter = '(' + ' OR '.join(kw_conditions) + ')'
+            sql += (' AND ' if where_clause else ' WHERE ') + kw_filter
 
     # 排序
     sort_str = search_model.get("SortStr", "")
     if sort_str and sort_str.strip():
-        sql += f" ORDER BY {sort_str.strip()}"
+        # --- SQL 参数化: 排序字段只保留安全字符 ---
+        safe_sort = sort_str.strip().replace("'", "").replace(";", "")
+        sql += f" ORDER BY {safe_sort}"
 
     rows = db.execute_query(sql)
     total = len(rows)
