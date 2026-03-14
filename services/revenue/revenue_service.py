@@ -635,13 +635,18 @@ def bank_account_compare(db, account_date: str, serverpart_code: str,
     try:
         wp = ["1=1"]
         if account_date:
-            wp.append(f"ACCOUNT_DATE = '{account_date.replace('-', '')}'")
+            # --- SQL 参数化: 字符串去引号防注入 ---
+            safe_ad = account_date.replace('-', '').replace("'", "")
+            wp.append(f"ACCOUNT_DATE = '{safe_ad}'")
         if serverpart_code:
-            wp.append(f"SERVERPART_CODE = '{serverpart_code}'")
+            safe_sc = serverpart_code.replace("'", "")
+            wp.append(f"SERVERPART_CODE = '{safe_sc}'")
         if shop_code:
-            wp.append(f"SHOP_CODE = '{shop_code}'")
+            safe_shc = shop_code.replace("'", "")
+            wp.append(f"SHOP_CODE = '{safe_shc}'")
         if machine_code:
-            wp.append(f"MACHINE_CODE = '{machine_code}'")
+            safe_mc = machine_code.replace("'", "")
+            wp.append(f"MACHINE_CODE = '{safe_mc}'")
         wc = " AND ".join(wp)
         sql = f"SELECT * FROM T_BANKACCOUNT WHERE {wc} ORDER BY ACCOUNT_DATE DESC"
         return db.execute_query(sql) or []
@@ -660,13 +665,19 @@ def get_bank_account_report(db, serverpart_shop_ids: str, start_date: str,
     try:
         wp = ["1=1"]
         if serverpart_shop_ids:
-            wp.append(f"SERVERPARTSHOP_ID IN ({serverpart_shop_ids})")
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_shop_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp.append(f"SERVERPARTSHOP_ID IN ({','.join(safe_ids)})")
         if start_date:
-            wp.append(f"ACCOUNT_DATE >= '{start_date.replace('-', '')}'")
+            safe_sd = start_date.replace('-', '').replace("'", "")
+            wp.append(f"ACCOUNT_DATE >= '{safe_sd}'")
         if end_date:
-            wp.append(f"ACCOUNT_DATE <= '{end_date.replace('-', '')}'")
+            safe_ed = end_date.replace('-', '').replace("'", "")
+            wp.append(f"ACCOUNT_DATE <= '{safe_ed}'")
         if payment_channel:
-            wp.append(f"PAYMENT_CHANNEL IN ({payment_channel})")
+            safe_pc = [str(int(x.strip())) for x in str(payment_channel).split(',') if x.strip().isdigit()]
+            if safe_pc:
+                wp.append(f"PAYMENT_CHANNEL IN ({','.join(safe_pc)})")
         wc = " AND ".join(wp)
         sql = f"""SELECT SERVERPARTSHOP_ID, ACCOUNT_DATE,
                     SUM(ACCOUNT_AMOUNT) AS Total_Amount,
@@ -690,13 +701,19 @@ def get_bank_account_list(db, serverpart_shop_ids: str, start_date: str,
     try:
         wp = ["1=1"]
         if serverpart_shop_ids:
-            wp.append(f"SERVERPARTSHOP_ID IN ({serverpart_shop_ids})")
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_shop_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp.append(f"SERVERPARTSHOP_ID IN ({','.join(safe_ids)})")
         if start_date:
-            wp.append(f"ACCOUNT_DATE >= '{start_date.replace('-', '')}'")
+            safe_sd2 = start_date.replace('-', '').replace("'", "")
+            wp.append(f"ACCOUNT_DATE >= '{safe_sd2}'")
         if end_date:
-            wp.append(f"ACCOUNT_DATE <= '{end_date.replace('-', '')}'")
+            safe_ed2 = end_date.replace('-', '').replace("'", "")
+            wp.append(f"ACCOUNT_DATE <= '{safe_ed2}'")
         if payment_channel:
-            wp.append(f"PAYMENT_CHANNEL IN ({payment_channel})")
+            safe_pc2 = [str(int(x.strip())) for x in str(payment_channel).split(',') if x.strip().isdigit()]
+            if safe_pc2:
+                wp.append(f"PAYMENT_CHANNEL IN ({','.join(safe_pc2)})")
         wc = " AND ".join(wp)
         sql = f"SELECT * FROM T_BANKACCOUNT WHERE {wc} ORDER BY ACCOUNT_DATE DESC"
         return db.execute_query(sql) or []
@@ -713,12 +730,17 @@ def get_cur_total_revenue(db, serverpart_ids: str, serverpart_shop_ids: str) -> 
     logger.info(f"GetCurTotalRevenue: SP={serverpart_ids}")
     try:
         from datetime import datetime
-        today = datetime.now().strftime("%Y%m%d")
+        today = datetime.now().strftime('%Y%m%d')
         wp = f"AND STATISTICS_DATE = {today}"
         if serverpart_shop_ids:
-            wp += f" AND SERVERPARTSHOP_ID IN ({serverpart_shop_ids})"
+            # --- SQL 参数化: IDs 整数解析 ---
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_shop_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp += f" AND SERVERPARTSHOP_ID IN ({','.join(safe_ids)})"
         elif serverpart_ids:
-            wp += f" AND SERVERPART_ID IN ({serverpart_ids})"
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp += f" AND SERVERPART_ID IN ({','.join(safe_ids)})"
         return _build_revenue_summary(db, wp)
     except Exception as e:
         logger.error(f"GetCurTotalRevenue 失败: {e}")
@@ -735,9 +757,13 @@ def get_total_revenue(db, serverpart_ids: str, serverpart_shop_ids: str,
     try:
         wp = ""
         if serverpart_shop_ids:
-            wp += f" AND SERVERPARTSHOP_ID IN ({serverpart_shop_ids})"
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_shop_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp += f" AND SERVERPARTSHOP_ID IN ({','.join(safe_ids)})"
         elif serverpart_ids:
-            wp += f" AND SERVERPART_ID IN ({serverpart_ids})"
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp += f" AND SERVERPART_ID IN ({','.join(safe_ids)})"
         if start_date:
             wp += f" AND STATISTICS_DATE >= {start_date.replace('-', '')}"
         if end_date:
@@ -761,7 +787,9 @@ def get_business_date(db, serverpart_ids: str = "", serverpart_shop_ids: str = "
 
         where_sql = ""
         if serverpart_ids:
-            where_sql += f" AND A.SERVERPART_ID IN ({serverpart_ids})"
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                where_sql += f" AND A.SERVERPART_ID IN ({','.join(safe_ids)})"
 
         # C# 原逻辑: 如果指定 ServerpartShopIds，构建 selectedSQL 用于过滤
         selected_sql_parts = []
