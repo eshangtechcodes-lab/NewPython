@@ -1493,12 +1493,17 @@ def get_commodity_sale_summary(db, **kwargs):
 
         elif data_type == 2:
             # 按月查询 T_COMMODITYSALEMONTH（历史）
+            # --- SQL 参数化: 按月查询日期/业态安全化 ---
             if start_time:
-                where_sql += f" AND STATISTICS_MONTH >= {start_time}"
+                safe_st = str(start_time).replace("'", "")
+                where_sql += f" AND STATISTICS_MONTH >= {safe_st}"
             if end_time:
-                where_sql += f" AND STATISTICS_MONTH <= {end_time}"
+                safe_et = str(end_time).replace("'", "")
+                where_sql += f" AND STATISTICS_MONTH <= {safe_et}"
             if shop_trade:
-                where_sql += f" AND A.BUSINESSTYPE IN ({shop_trade})"
+                st_ids = [str(int(x.strip())) for x in str(shop_trade).split(',') if x.strip().isdigit()]
+                if st_ids:
+                    where_sql += f" AND A.BUSINESSTYPE IN ({','.join(st_ids)})"
             where_sql += shop_filter
             sql = f"""SELECT COMMODITYTYPE_ID,COMMODITYTYPE_CODE,COMMODITYTYPE_NAME,
                         COMMODITY_ID,COMMODITY_NAME,COMMODITY_RULE,COMMODITY_UNIT,
@@ -1514,11 +1519,15 @@ def get_commodity_sale_summary(db, **kwargs):
         elif data_type == 3:
             # 门店汇总 PLATFORM_DASHBOARD.T_COMMODITYSALE
             if start_time:
-                where_sql += f" AND STATISTICS_ENDMONTH >= {start_time}"
+                safe_st = str(start_time).replace("'", "")
+                where_sql += f" AND STATISTICS_ENDMONTH >= {safe_st}"
             if end_time:
-                where_sql += f" AND STATISTICS_ENDMONTH <= {end_time}"
+                safe_et = str(end_time).replace("'", "")
+                where_sql += f" AND STATISTICS_ENDMONTH <= {safe_et}"
             if commodity_type:
-                where_sql += f" AND A.COMMODITYTYPE_ID IN ({commodity_type})"
+                ct_ids = [str(int(x.strip())) for x in str(commodity_type).split(',') if x.strip().isdigit()]
+                if ct_ids:
+                    where_sql += f" AND A.COMMODITYTYPE_ID IN ({','.join(ct_ids)})"
             where_sql += shop_filter
             sql = f"""SELECT COMMODITYTYPE_ID,COMMODITYTYPE_CODE,COMMODITYTYPE_NAME,
                         COMMODITY_ID,COMMODITY_NAME,
@@ -1605,18 +1614,27 @@ def get_commodity_type_summary(db, **kwargs):
         if not shop_ids:
             return [], 0, {}
 
-        where_sql = f" AND A.SERVERPARTSHOP_ID IN ({shop_ids})"
+        # --- SQL 参数化: shop_ids/commodity_type/shop_trade 通过整数解析 ---
+        safe_sids = [str(int(x.strip())) for x in str(shop_ids).split(',') if x.strip().isdigit()]
+        if not safe_sids:
+            return [], 0, {}
+        where_sql = f" AND A.SERVERPARTSHOP_ID IN ({','.join(safe_sids)})"
         if commodity_type:
-            where_sql += f" AND A.COMMODITYTYPE_ID IN ({commodity_type})"
+            ct_ids = [str(int(x.strip())) for x in str(commodity_type).split(',') if x.strip().isdigit()]
+            if ct_ids:
+                where_sql += f" AND A.COMMODITYTYPE_ID IN ({','.join(ct_ids)})"
         if shop_trade:
-            where_sql += f" AND A.BUSINESSTYPE IN ({shop_trade})"
-        where_sql += _build_shop_filter(shop_ids, "", business_type, shop_names,
+            st_ids = [str(int(x.strip())) for x in str(shop_trade).split(',') if x.strip().isdigit()]
+            if st_ids:
+                where_sql += f" AND A.BUSINESSTYPE IN ({','.join(st_ids)})"
+        where_sql += _build_shop_filter(shop_ids, '', business_type, shop_names,
                                          search_key_name, search_key_value)
 
         if data_type == 1:
             # 普通模式：按日期查 T_COMMODITYSALE
             if start_date:
-                where_sql += f" AND A.ENDDATE >= TO_DATE('{start_date}','YYYY-MM-DD')"
+                safe_sd = start_date.replace("'", "")
+                where_sql += f" AND A.ENDDATE >= TO_DATE('{safe_sd}','YYYY-MM-DD')"
             if end_date:
                 where_sql += f" AND A.ENDDATE < TO_DATE('{end_date}','YYYY-MM-DD') + 1"
             sql = f"""SELECT COMMODITYTYPE_ID,
