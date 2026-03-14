@@ -15,7 +15,7 @@ from typing import Optional
 from loguru import logger
 
 from models.base import Result, JsonListData
-from routers.deps import get_db, parse_multi_ids, build_in_condition
+from routers.deps import get_db
 from core.database import DatabaseHelper
 
 router = APIRouter()
