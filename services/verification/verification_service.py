@@ -377,8 +377,11 @@ def get_shop_endaccount_sum(db, **kwargs):
         shop_sql = f"SELECT * FROM T_SERVERPARTSHOP WHERE SERVERPART_ID = ?"
         shop_params = [serverpart_id]
         if shop_code_str:
-            codes = ",".join([f"'{c.strip()}'" for c in shop_code_str.split(",") if c.strip()])
-            shop_sql += f" AND SHOPCODE IN ({codes})"
+            # --- SQL 参数化: shop_code 只保留字母数字防注入 ---
+            safe_codes = [c.strip() for c in shop_code_str.split(',') if c.strip().isalnum()]
+            if safe_codes:
+                codes = ','.join([f"'{c}'" for c in safe_codes])
+                shop_sql += f" AND SHOPCODE IN ({codes})"
         shop_list = db.fetch_all(shop_sql, shop_params) or []
         if not shop_list:
             return None
@@ -390,8 +393,10 @@ def get_shop_endaccount_sum(db, **kwargs):
                 AND STATISTICS_DATE <= TO_DATE(?,'YYYY-MM-DD HH24:MI:SS')"""
         ea_params = [serverpart_id, start_date, end_date]
         if shop_code_str:
-            codes = ",".join([f"'{c.strip()}'" for c in shop_code_str.split(",") if c.strip()])
-            ea_sql += f" AND SHOPCODE IN ({codes})"
+            safe_codes = [c.strip() for c in shop_code_str.split(',') if c.strip().isalnum()]
+            if safe_codes:
+                codes = ','.join([f"'{c}'" for c in safe_codes])
+                ea_sql += f" AND SHOPCODE IN ({codes})"
         ea_list = db.fetch_all(ea_sql, ea_params) or []
 
         # 3. 汇总
@@ -540,12 +545,17 @@ def _get_cigarette_data(db, endaccount_id, province_code, cigarette_type,
     except Exception:
         pass
 
-    # 获取香烟类型名称
-    codes = ",".join([f"'{c.strip()}'" for c in cigarette_type.split(",") if c.strip()])
+    # --- SQL 参数化: 获取香烟类型名称 ---
+    safe_codes = [c.strip() for c in cigarette_type.split(',') if c.strip().isalnum()]
+    if not safe_codes:
+        return result
+    codes = ','.join([f"'{c}'" for c in safe_codes])
     type_names_sql = f"SELECT COMMODITYTYPE_NAME FROM T_COMMODITYTYPE WHERE COMMODITYTYPE_CODE IN ({codes})"
     if province_code:
-        type_names_sql += f" AND PROVINCE_ID = {province_code}"
-    type_rows = db.fetch_all(type_names_sql) or []
+        type_names_sql += " AND PROVINCE_ID = ?"
+        type_rows = db.fetch_all(type_names_sql, [province_code]) or []
+    else:
+        type_rows = db.fetch_all(type_names_sql) or []
     if not type_rows:
         return result
 
@@ -582,17 +592,19 @@ def _get_mobile_pay_data(db, reload_type, sp_code, shop_code, machine_code,
     result = {"count": ticket_count or 0, "amount": fact_amount or 0}
 
     if fact_amount is None or reload_type == 1:
-        # 从 T_MOBILE_PAY 表重新查询
-        where_parts = ["TICKET_AMOUNT > 0", f"SERVERPARTCODE = '{sp_code}'",
-                        f"SHOPCODE = '{shop_code}'", f"MACHINECODE = '{machine_code}'"]
+        # --- SQL 参数化: 移动支付查询改为参数占位符 ---
+        where_parts = ["TICKET_AMOUNT > 0", "SERVERPARTCODE = ?", "SHOPCODE = ?", "MACHINECODE = ?"]
+        pay_params = [sp_code, shop_code, machine_code]
         if start_date:
-            where_parts.append(f"MOBILEPAY_DATE >= TO_DATE('{start_date}','YYYY-MM-DD HH24:MI:SS')")
+            where_parts.append("MOBILEPAY_DATE >= TO_DATE(?,'YYYY-MM-DD HH24:MI:SS')")
+            pay_params.append(start_date)
         if end_date:
-            where_parts.append(f"MOBILEPAY_DATE <= TO_DATE('{end_date}','YYYY-MM-DD HH24:MI:SS')")
+            where_parts.append("MOBILEPAY_DATE <= TO_DATE(?,'YYYY-MM-DD HH24:MI:SS')")
+            pay_params.append(end_date)
         where_clause = " AND ".join(where_parts)
 
         sql = f"SELECT TICKET_CODE, MOBILEPAY_OPERATORS, MOBILEPAY_RESULT, MOBILEPAY_DESC FROM T_MOBILE_PAY WHERE {where_clause}"
-        rows = db.fetch_all(sql) or []
+        rows = db.fetch_all(sql, pay_params) or []
         result["count"] = len(rows)
         result["amount"] = mobilepayment or 0
 
@@ -643,9 +655,12 @@ def get_commodity_sale_list_v(db, **kwargs):
                 pass
 
         # 商品类型过滤
+        # --- SQL 参数化: 商品类型通过整数解析防注入 ---
         type_filter = ""
         if commodity_type_id:
-            type_filter = f" AND COMMODITYTYPE_ID IN ({commodity_type_id})"
+            ct_ids = [str(int(x.strip())) for x in str(commodity_type_id).split(',') if x.strip().isdigit()]
+            if ct_ids:
+                type_filter = f" AND COMMODITYTYPE_ID IN ({','.join(ct_ids)})"
 
         sql = f"""SELECT
                 CASE WHEN COMMODITYTYPE_CODE IS NOT NULL THEN '[' || COMMODITYTYPE_CODE || ']' ||
