@@ -424,3 +424,373 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
 
 # ===== 6. GetProvinceVehicleDetail =====
 # 同上, 交叉查询逻辑（~150行）保留在 Router 层
+
+
+# ===================================================================
+# GetRevenueTrendChart — 营收趋势图
+# ===================================================================
+
+def get_revenue_trend_chart(db, post_data):
+    """获取营收趋势图数据"""
+    from core.aes_util import decrypt_post_data
+    params = decrypt_post_data(postData)
+    province_code = params.get("ProvinceCode", "")
+    serverpart_id = params.get("ServerpartId", "")
+    serverpart_code = params.get("ServerpartCode", "")
+    logger.info(f"GetRevenueTrendChart 解密参数: ProvinceCode={province_code}")
+
+    if not province_code:
+        return Result.fail(code=205, msg="查询失败,请传入省份编码！")
+
+    import math
+    from datetime import datetime as dt
+
+    # 获取服务区编码列表
+    serverpart_codes = []
+    if serverpart_code:
+        serverpart_codes = [serverpart_code]
+    elif serverpart_id:
+        _sp_ids_rt = parse_multi_ids(serverpart_id)
+        if _sp_ids_rt:
+            rows = db.execute_query(
+                f'SELECT "SERVERPART_CODE" FROM "T_SERVERPART" WHERE ' + build_in_condition('SERVERPART_ID', _sp_ids_rt))
+        else:
+            rows = []
+        serverpart_codes = [r["SERVERPART_CODE"] for r in rows if r.get("SERVERPART_CODE")]
+    else:
+        # 获取省份对应的FieldEnum_ID
+        fe_rows = db.execute_query(
+            """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+            WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
+            {"pc": province_code})
+        if fe_rows:
+            province_id = fe_rows[0]["FIELDENUM_ID"]
+            rows = db.execute_query(
+                f'SELECT "SERVERPART_CODE" FROM "T_SERVERPART" WHERE "STATISTICS_TYPE" = 1000 AND "STATISTIC_TYPE" = 1000 AND "PROVINCE_CODE" = {province_id}')
+            serverpart_codes = [r["SERVERPART_CODE"] for r in rows if r.get("SERVERPART_CODE")]
+            # C#对齐: ServerpartCodes.Remove("510206"); ServerpartCodes.Remove("510505");
+            for exclude_code in ["510206", "510505"]:
+                if exclude_code in serverpart_codes:
+                    serverpart_codes.remove(exclude_code)
+
+    # 从 Redis 读取营收趋势数据
+    import redis
+    table_name = f"RevenueTrend:{dt.now().strftime('%Y%m%d')}"
+    all_data = {}
+    try:
+        redis_client = redis.Redis(
+            host=settings.REDIS_HOST,
+            port=settings.REDIS_PORT,
+            db=settings.REDIS_REVENUE_TREND_DB,
+            password=settings.REDIS_PASSWORD or None,
+            decode_responses=True,
+            socket_connect_timeout=1,
+            socket_timeout=2,
+        )
+        all_data = redis_client.hgetall(table_name) or {}
+
+
+# ===================================================================
+# GetProvinceVehicleTreeList — 各省入区车辆统计树
+# ===================================================================
+
+def get_province_vehicle_tree_list(db, serverPartId, statisticsStartMonth, statisticsEndMonth, rankNum, pageIndex, pageSize):
+    """获取各省入区车辆统计树形列表"""
+    from collections import defaultdict
+
+    where_sql = ""
+    _sp_ids = parse_multi_ids(serverPartId)
+    if _sp_ids:
+        where_sql = " AND " + build_in_condition("SERVERPART_ID", _sp_ids).replace('"SERVERPART_ID"', 'T."SERVERPART_ID"')
+
+    # 1. 查车辆归属地月度固化数据(按省份/城市/片区分组)
+    sql = f"""SELECT T."PROVINCE_NAME", T."CITY_NAME", T1."SPREGIONTYPE_ID",
+            SUM(ROUND(T."VEHICLE_COUNT" * T."ANOLOG_RATIO")) AS "VEHICLE_COUNT"
+        FROM "T_BAYONETOWMONTHLY_AH" T, "T_SERVERPART" T1
+        WHERE T."SERVERPART_ID" = T1."SERVERPART_ID"
+            AND T."STATISTICS_MONTH" BETWEEN {statisticsStartMonth} AND {statisticsEndMonth}{where_sql}
+        GROUP BY T."PROVINCE_NAME", T."CITY_NAME", T1."SPREGIONTYPE_ID" """
+    dt_data = db.execute_query(sql) or []
+
+    if not dt_data:
+        json_list = JsonListData.create(data_list=[], total=0, page_size=10)
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    # 2. 查片区信息
+    rt_ids = list(set(str(r["SPREGIONTYPE_ID"]) for r in dt_data if r.get("SPREGIONTYPE_ID")))
+    sp_where = ""
+    if serverPartId:
+        _sp_ids_pv = parse_multi_ids(serverPartId)
+        if _sp_ids_pv:
+            sp_where = " OR " + build_in_condition('SERVERPART_ID', _sp_ids_pv)
+    sql_sp = f"""SELECT "SERVERPART_ID","SERVERPART_NAME","SPREGIONTYPE_ID","SPREGIONTYPE_NAME","SPREGIONTYPE_INDEX"
+        FROM "T_SERVERPART" WHERE "SPREGIONTYPE_ID" IN ({','.join(rt_ids)}){sp_where}"""
+    dt_sp = db.execute_query(sql_sp) or []
+
+    # 片区基础信息
+    rt_map = {}
+    for r in dt_sp:
+        rt_id = r.get("SPREGIONTYPE_ID")
+        if rt_id and rt_id not in rt_map:
+            rt_map[rt_id] = {
+                "SPRegionTypeIndex": r.get("SPREGIONTYPE_INDEX"),
+                "SPRegionTypeId": rt_id,
+                "SPRegionTypeName": r.get("SPREGIONTYPE_NAME"),
+            }
+
+    # 3. 构建城市嵌套(按省份+城市分组,每个含各片区车辆数)
+    city_groups = defaultdict(lambda: defaultdict(int))  # (province, city) -> {rt_id: count}
+    for r in dt_data:
+        prov = r.get("PROVINCE_NAME") or ""
+        city = r.get("CITY_NAME") or ""
+        rt_id = r.get("SPREGIONTYPE_ID")
+        vc = int(r.get("VEHICLE_COUNT") or 0)
+        city_groups[(prov, city)][rt_id] = city_groups[(prov, city)].get(rt_id, 0) + vc
+
+    # 城市节点
+    city_nodes = []
+    for (prov, city), rt_counts in city_groups.items():
+        total_vc = sum(rt_counts.values())
+        sp_list = []
+        for rt_id, info in sorted(rt_map.items(), key=lambda x: x[1].get("SPRegionTypeIndex") or 99):
+            sp_list.append({
+                "SPRegionTypeIndex": info["SPRegionTypeIndex"],
+                "SPRegionTypeId": info["SPRegionTypeId"],
+                "SPRegionTypeName": info["SPRegionTypeName"],
+                "ProvinceName": prov,
+                "VehicleCount": rt_counts.get(rt_id, 0),
+                "CityName": city or "其他",
+                "IsOther": True if not city else False,
+                "ServerPartId": None,
+                "ServerPartIds": None,
+                "ServerPartName": None,
+            })
+        city_nodes.append({
+            "node": {
+                "Index": 999 if not city else 1,
+                "ProvinceOrCityName": "其他" if not city else city,
+                "ProvinceOrCityPName": prov,
+                "TotalCount": total_vc,
+                "SPRegionTypeList": sp_list,
+            },
+            "children": None,
+        })
+
+    # 4. 按省份汇总
+    prov_groups = defaultdict(list)
+    for cn in city_nodes:
+        prov_groups[cn["node"]["ProvinceOrCityPName"]].append(cn)
+
+    province_nodes = []
+    for prov, children in prov_groups.items():
+        children.sort(key=lambda x: (x["node"]["Index"], -(x["node"]["TotalCount"] or 0)))
+        total_vc = sum(c["node"]["TotalCount"] for c in children)
+        # 汇总片区数据
+        rt_totals = defaultdict(int)
+        for c in children:
+            for sp in c["node"].get("SPRegionTypeList", []):
+                rt_totals[sp["SPRegionTypeId"]] = rt_totals.get(sp["SPRegionTypeId"], 0) + sp.get("VehicleCount", 0)
+        sp_list = []
+        for rt_id, info in sorted(rt_map.items(), key=lambda x: x[1].get("SPRegionTypeIndex") or 99):
+            sp_list.append({
+                "SPRegionTypeIndex": info["SPRegionTypeIndex"],
+                "SPRegionTypeId": info["SPRegionTypeId"],
+                "SPRegionTypeName": info["SPRegionTypeName"],
+                "ProvinceName": prov,
+                "CityName": None,
+                "IsOther": False,
+                "ServerPartId": None,
+                "ServerPartIds": None,
+                "ServerPartName": None,
+                "VehicleCount": rt_totals.get(rt_id, 0),
+            })
+        province_nodes.append({
+            "node": {
+                "Index": 999 if not prov else 1,
+                "ProvinceOrCityName": "其他" if not prov else prov,
+                "ProvinceOrCityPName": None,
+                "TotalCount": total_vc,
+                "SPRegionTypeList": sp_list,
+            },
+            "children": children,
+        })
+    province_nodes.sort(key=lambda x: (x["node"]["Index"], -(x["node"]["TotalCount"] or 0)))
+
+    # 5. 顶层"全部省份"
+    all_total = sum(p["node"]["TotalCount"] for p in province_nodes)
+    rt_all = defaultdict(int)
+    for p in province_nodes:
+        for sp in p["node"].get("SPRegionTypeList", []):
+            rt_all[sp["SPRegionTypeId"]] = rt_all.get(sp["SPRegionTypeId"], 0) + sp.get("VehicleCount", 0)
+    all_sp = []
+    for rt_id, info in sorted(rt_map.items(), key=lambda x: x[1].get("SPRegionTypeIndex") or 99):
+        all_sp.append({
+            "SPRegionTypeIndex": info["SPRegionTypeIndex"],
+            "SPRegionTypeId": info["SPRegionTypeId"],
+            "SPRegionTypeName": info["SPRegionTypeName"],
+            "ProvinceName": None,
+            "CityName": None,
+            "IsOther": False,
+            "ServerPartId": None,
+            "ServerPartIds": None,
+            "ServerPartName": None,
+            "VehicleCount": rt_all.get(rt_id, 0),
+        })
+
+    result = [{
+        "node": {
+            "Index": 1,
+            "ProvinceOrCityName": "全部省份",
+            "ProvinceOrCityPName": None,
+            "TotalCount": all_total,
+            "SPRegionTypeList": all_sp,
+        },
+        "children": province_nodes,
+    }]
+
+    json_list = JsonListData.create(data_list=result, total=len(result), page_size=10)
+    return Result.success(data=json_list.model_dump(), msg="成功")
+
+
+# ===================================================================
+# GetProvinceVehicleDetail — 各省入区车辆明细
+# ===================================================================
+
+def get_province_vehicle_detail(db, statisticsStartMonth, statisticsEndMonth, provinceName, serverPartId, cityName, rankNum, pageIndex, pageSize):
+    """获取各省入区车辆统计明细"""
+    from collections import defaultdict
+
+    # ---- 构建 WHERE 条件 (与C#完全一致) ----
+    where_sql = ""
+    if provinceName != "其他":
+        where_sql += f""" AND "PROVINCE_NAME" = '{provinceName}'"""
+    else:
+        where_sql += """ AND "PROVINCE_NAME" IS NULL"""
+        # 省份和城市同时为"其他"，表示未匹配到省份及城市的车流信息
+        if cityName and cityName == "其他":
+            where_sql += """ AND "CITY_NAME" IS NULL"""
+    _sp_ids_d = parse_multi_ids(serverPartId)
+    if _sp_ids_d:
+        where_sql += " AND " + build_in_condition('SERVERPART_ID', _sp_ids_d)
+    if cityName and cityName != "" and cityName != "其他":
+        where_sql += f""" AND "CITY_NAME" = '{cityName}'"""
+
+    # ---- C# SQL: 按 SERVERPART_ID, CITY_NAME 分组 ----
+    sql = f"""SELECT "SERVERPART_ID", "CITY_NAME",
+            SUM(ROUND("VEHICLE_COUNT" * "ANOLOG_RATIO")) AS "VEHICLE_COUNT"
+        FROM "T_BAYONETOWMONTHLY_AH"
+        WHERE "STATISTICS_MONTH" BETWEEN {statisticsStartMonth} AND {statisticsEndMonth}{where_sql}
+        GROUP BY "SERVERPART_ID", "CITY_NAME" """
+    dt_data = db.execute_query(sql) or []
+
+    # ---- cityName=="其他" 且 provinceName!="其他" 时的特殊过滤 ----
+    # C# 逻辑: 先取 Top N 城市，然后把这些城市的数据剔除，留下"其他"城市的数据
+    if cityName == "其他" and provinceName != "其他" and rankNum:
+        city_totals = defaultdict(int)
+        for r in dt_data:
+            cn = str(r.get("CITY_NAME") or "")
+            city_totals[cn] += int(r.get("VEHICLE_COUNT") or 0)
+        # 取 Top N 城市名
+        top_cities = sorted(city_totals.items(), key=lambda x: x[1], reverse=True)[:rankNum]
+        top_city_names = [c[0] for c in top_cities]
+        # 过滤掉 Top N 城市，保留剩余数据
+        dt_data = [r for r in dt_data if str(r.get("CITY_NAME") or "") not in top_city_names]
+
+    if not dt_data:
+        json_list = JsonListData.create(data_list=[], total=0, page_index=pageIndex or 1, page_size=pageSize or 10)
+        return Result.success(data=json_list.model_dump())
+
+    # ---- 获取所有服务区内码（按车辆总数降序排列） ----
+    sp_totals = defaultdict(int)
+    for r in dt_data:
+        sp_totals[int(r.get("SERVERPART_ID") or 0)] += int(r.get("VEHICLE_COUNT") or 0)
+    server_part_id_list = sorted(sp_totals.keys(), key=lambda x: sp_totals[x], reverse=True)
+
+    # ---- 查询服务区信息 ----
+    sp_id_str = ",".join(str(s) for s in server_part_id_list)
+    sql_sp = f"""SELECT "SERVERPART_ID","SERVERPART_NAME","SPREGIONTYPE_ID","SPREGIONTYPE_NAME","SPREGIONTYPE_INDEX"
+        FROM "T_SERVERPART" WHERE "SERVERPART_ID" IN ({sp_id_str})"""
+    dt_sp = db.execute_query(sql_sp) or []
+    sp_map = {int(r["SERVERPART_ID"]): r for r in dt_sp}
+
+    # ---- 构建服务区排名列表(rankNumServerPartList) ----
+    rank_sp_list = []  # 每项: {info, sp_ids, is_other}
+
+    if rankNum and rankNum > 0 and len(server_part_id_list) > rankNum:
+        # Top N 服务区
+        top_sp_ids = server_part_id_list[:rankNum]
+        for sp_id in top_sp_ids:
+            info = sp_map.get(sp_id, {})
+            rank_sp_list.append({
+                "SPRegionTypeIndex": info.get("SPREGIONTYPE_INDEX"),
+                "SPRegionTypeId": info.get("SPREGIONTYPE_ID"),
+                "SPRegionTypeName": info.get("SPREGIONTYPE_NAME"),
+                "ServerPartId": sp_id,
+                "ServerPartIds": [sp_id],
+                "ServerPartName": info.get("SERVERPART_NAME"),
+                "IsOther": False,
+            })
+        # "其他"服务区 = 所有不在 Top N 中的
+        other_sp_ids = [s for s in server_part_id_list if s not in top_sp_ids]
+        rank_sp_list.append({
+            "SPRegionTypeIndex": None,
+            "SPRegionTypeId": None,
+            "SPRegionTypeName": None,
+            "ServerPartId": None,
+            "ServerPartIds": other_sp_ids,
+            "ServerPartName": "其他",
+            "IsOther": True,
+        })
+    else:
+        # 无排名限制，所有服务区都直接列出
+        for sp_id in server_part_id_list:
+            info = sp_map.get(sp_id, {})
+            rank_sp_list.append({
+                "SPRegionTypeIndex": info.get("SPREGIONTYPE_INDEX"),
+                "SPRegionTypeId": info.get("SPREGIONTYPE_ID"),
+                "SPRegionTypeName": info.get("SPREGIONTYPE_NAME"),
+                "ServerPartId": sp_id,
+                "ServerPartIds": [sp_id],
+                "ServerPartName": info.get("SERVERPART_NAME"),
+                "IsOther": False,
+            })
+
+    # ---- 获取全部城市 ----
+    city_list = list(set(str(r.get("CITY_NAME") or "") for r in dt_data))
+
+    # ---- 组合 服务区×城市 交叉 → 平铺列表 (对齐C# LINQ交叉查询) ----
+    result = []
+    for sp_info in rank_sp_list:
+        for city in city_list:
+            # 计算该服务区组 × 该城市的车辆数
+            vc = sum(
+                int(r.get("VEHICLE_COUNT") or 0)
+                for r in dt_data
+                if int(r.get("SERVERPART_ID") or 0) in sp_info["ServerPartIds"]
+                and str(r.get("CITY_NAME") or "") == city
+            )
+            result.append({
+                "SPRegionTypeIndex": sp_info["SPRegionTypeIndex"],
+                "SPRegionTypeId": sp_info["SPRegionTypeId"],
+                "SPRegionTypeName": sp_info["SPRegionTypeName"],
+                "ServerPartId": sp_info["ServerPartId"],
+                "ServerPartIds": sp_info["ServerPartIds"],
+                "ServerPartName": sp_info["ServerPartName"],
+                "ProvinceName": provinceName if provinceName != "其他" else "",
+                "CityName": city if city else "其他",
+                "IsOther": sp_info["IsOther"],
+                "VehicleCount": vc,
+            })
+
+    # ---- C# 排序: IsOther升序 → SPRegionTypeIndex升序 → VehicleCount降序 ----
+    result.sort(key=lambda x: (
+        1 if x["IsOther"] else 0,
+        x["SPRegionTypeIndex"] if x["SPRegionTypeIndex"] is not None else 99,
+        -(x["VehicleCount"] or 0)
+    ))
+
+    # ---- C# Controller层分页 ----
+    total_count = len(result)
+    json_list = JsonListData.create(data_list=result, total=total_count,
+                                     page_index=pageIndex or 1, page_size=pageSize or 10)
+    return Result.success(data=json_list.model_dump())
