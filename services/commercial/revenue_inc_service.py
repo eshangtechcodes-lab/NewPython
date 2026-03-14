@@ -9,7 +9,9 @@ from __future__ import annotations
 from datetime import datetime as dt, timedelta
 
 from core.database import DatabaseHelper
+from models.base import Result, JsonListData
 from routers.deps import parse_multi_ids, build_in_condition
+from services.commercial.service_utils import date_no_pad
 
 
 # ===================================================================
@@ -23,6 +25,19 @@ def get_serverpart_inc_analysis(db, calc_type, province_code, cur_year,
                                 sort_str, is_yoy_compare, date_no_pad_fn):
     """获取服务区营收增幅分析，返回 (result_list, holiday_period) 或抛出异常"""
     from datetime import datetime as dt, timedelta
+
+    # 参数别名映射（函数签名 snake_case → 函数体 PascalCase）
+    calcType = calc_type
+    pushProvinceCode = province_code
+    curYear = cur_year or dt.now().year
+    HolidayType = holiday_type
+    StatisticsDate = statistics_date
+    compareYear = compare_year
+    CurStartDate = cur_start_date
+    ServerpartId = serverpart_id
+    IsYOYCompare = is_yoy_compare
+    businessRegion = business_region
+    SortStr = sort_str
 
     # 节日枚举
     holiday_names = {1: "元旦", 2: "春运", 3: "清明节", 4: "劳动节", 5: "端午节", 6: "暑期", 7: "中秋节", 8: "国庆节"}
@@ -326,6 +341,16 @@ def get_shop_inc_analysis(db, calc_type, province_code, cur_year, compare_year,
                           cur_start_date, sort_str):
     """获取门店营收增幅分析，返回 result_list 或抛出异常"""
     from datetime import datetime as dt, timedelta
+
+    # 参数别名映射（函数签名 snake_case → 函数体 PascalCase）
+    calcType = calc_type
+    curYear = cur_year or dt.now().year
+    compareYear = compare_year
+    HolidayType = holiday_type
+    ServerpartId = serverpart_id
+    StatisticsDate = statistics_date
+    CurStartDate = cur_start_date
+    SortStr = sort_str
 
     def safe_dec(v):
         try: return float(v) if v is not None else 0.0

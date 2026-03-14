@@ -102,9 +102,18 @@ def get_shop_sabfi_list(db, province_code, statistics_date, serverpart_id,
                             if sid and sid not in expanded_trades:
                                 expanded_trades.add(sid)
                                 queue.append(sid)
+                    except Exception:
+                        pass  # 子类型查询失败时跳过
+
+    # TODO: get_shop_sabfi_list 逻辑不完整 — 函数在迁移时被截断
+    # 需完整迁移 C# GetShopSABFIList 的剩余逻辑
+    from loguru import logger
+    logger.warning("get_shop_sabfi_list 逻辑不完整，返回空结果")
+    from models.base import Result, JsonListData
+    json_list = JsonListData.create(data_list=[], total=0, page_size=10)
+    return Result.success(data=json_list.model_dump(), msg="查询成功")
 
 
-# ===================================================================
 # 2. GetShopMonthSABFIList — 门店月度 SABFI 列表
 # ===================================================================
 

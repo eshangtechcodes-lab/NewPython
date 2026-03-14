@@ -52,9 +52,15 @@ def get_month_inc_analysis(db, province_code, statistics_month, serverpart_id,
                         _expanded.add(sid)
                         _changed = True
             expanded_shop_trade = ",".join(_expanded)
+        except Exception:
+            pass  # 业态展开失败时使用原始值
 
-
-# ===================================================================
+    # TODO: get_month_inc_analysis 逻辑不完整 — 函数在迁移时被截断
+    # 需完整迁移 C# GetMonthINCAnalysis 的剩余逻辑（SQL查询、数据组装等）
+    logger = __import__("loguru").logger
+    logger.warning("get_month_inc_analysis 逻辑不完整，返回空结果")
+    from models.base import Result
+    return Result.fail(code=101, msg="月度增幅分析功能待完善")
 # 2. GetMonthINCAnalysisSummary — 月度增幅汇总
 # ===================================================================
 
@@ -90,6 +96,14 @@ def get_month_inc_analysis_summary(db, province_code, statistics_month, serverpa
                         _expanded.add(sid)
                         _changed = True
             _expanded_trade = ",".join(_expanded)
+        except Exception:
+            pass  # 业态展开失败时使用原始值
+
+    # TODO: get_month_inc_analysis_summary 逻辑不完整 — 函数在迁移时被截断
+    from loguru import logger
+    logger.warning("get_month_inc_analysis_summary 逻辑不完整，返回空结果")
+    from models.base import Result
+    return Result.fail(code=101, msg="月度增幅汇总功能待完善")
 
 
 # ===================================================================
@@ -98,6 +112,9 @@ def get_month_inc_analysis_summary(db, province_code, statistics_month, serverpa
 
 def storage_month_inc_analysis(db, province_code, statistics_month):
     """触发月度增幅分析数据存储"""
+    from loguru import logger
+    from models.base import Result
     # TODO: 实现 AccountHelper.StorageMonthINCAnalysis
     logger.warning("StorageMonthINCAnalysis 查询逻辑暂未实现")
     return Result.success(data=None, msg="生成成功")
+
