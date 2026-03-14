@@ -44,20 +44,23 @@ def get_revenue_report(db: DatabaseHelper, province_code: str,
         return None
     province_id = fe_rows[0]["FIELDENUM_ID"]
 
-    # 构建 WHERE 条件
+    # --- SQL 参数化: 经营报表 WHERE 条件 ---
     where_parts = [
         'A."SERVERPART_ID" = B."SERVERPART_ID"',
         'A."REVENUEDAILY_STATE" = 1',
         'B."STATISTIC_TYPE" = 1000',
         'B."STATISTICS_TYPE" = 1000',
-        f'B."PROVINCE_CODE" = {province_id}',
+        'B."PROVINCE_CODE" = :province_id',
     ]
+    rpt_params = {"province_id": province_id}
     if start_time:
         sd = dt.strptime(start_time, "%Y-%m-%d").strftime("%Y%m%d") if "-" in start_time else start_time
-        where_parts.append(f'A."STATISTICS_DATE" >= {sd}')
+        where_parts.append('A."STATISTICS_DATE" >= :sd')
+        rpt_params["sd"] = sd
     if end_time:
         ed = dt.strptime(end_time, "%Y-%m-%d").strftime("%Y%m%d") if "-" in end_time else end_time
-        where_parts.append(f'A."STATISTICS_DATE" <= {ed}')
+        where_parts.append('A."STATISTICS_DATE" <= :ed')
+        rpt_params["ed"] = ed
 
     where_sql = " AND ".join(where_parts)
 
@@ -80,7 +83,7 @@ def get_revenue_report(db: DatabaseHelper, province_code: str,
             B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX"
         ORDER BY B."SPREGIONTYPE_INDEX", B."SPREGIONTYPE_ID", B."SERVERPART_INDEX", B."SERVERPART_CODE" """
 
-    rows = db.execute_query(sql, {})
+    rows = db.execute_query(sql, rpt_params)
     if not rows:
         return None
 
@@ -186,11 +189,15 @@ def get_revenue_report_detail(db: DatabaseHelper, province_code: str,
     end_str = (dt.strptime(end_time.split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
                if end_time and '-' in end_time else end_time)
 
+    # --- SQL 参数化: 报表详情 WHERE 条件 ---
     where_sql = ''
+    detail_params = {"sp_id": serverpart_id}
     if start_str:
-        where_sql += f' AND A."STATISTICS_DATE" >= {start_str}'
+        where_sql += ' AND A."STATISTICS_DATE" >= :start_str'
+        detail_params["start_str"] = start_str
     if end_str:
-        where_sql += f' AND A."STATISTICS_DATE" <= {end_str}'
+        where_sql += ' AND A."STATISTICS_DATE" <= :end_str'
+        detail_params["end_str"] = end_str
 
     # 按 SHOPTRADE 分组查询
     sql = f"""SELECT B."SERVERPART_ID",B."SERVERPART_NAME",B."SERVERPART_CODE",B."SERVERPART_INDEX",
@@ -202,23 +209,27 @@ def get_revenue_report_detail(db: DatabaseHelper, province_code: str,
             SUM(A."OTHERPAY_AMOUNT") AS "OTHERPAY_AMOUNT"
         FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-            AND A."SERVERPART_ID" = {serverpart_id}{where_sql}
+            AND A."SERVERPART_ID" = :sp_id{where_sql}
         GROUP BY B."SERVERPART_ID",B."SERVERPART_NAME",B."SERVERPART_CODE",B."SERVERPART_INDEX",A."SHOPTRADE" """
-    rows = db.execute_query(sql) or []
+    rows = db.execute_query(sql, detail_params) or []
     if not rows:
         return None
 
     # 查询该服务区所有门店
+    # --- SQL 参数化: 门店查询 ---
     dt_shop = db.execute_query(
-        f'SELECT * FROM "T_SERVERPARTSHOP" WHERE "SERVERPART_ID" = {serverpart_id} AND "ISVALID" = 1') or []
+        'SELECT * FROM "T_SERVERPARTSHOP" WHERE "SERVERPART_ID" = :sp_id AND "ISVALID" = 1',
+        {"sp_id": serverpart_id}) or []
 
     # 获取区域名称（南区/东区 vs 北区/西区）
     s_name, n_name = _get_region_names(db, dt_shop)
 
     # 查询品牌信息
+    # --- SQL 参数化: 品牌信息查询 ---
     dt_brand = db.execute_query(
-        f"""SELECT "BRAND_ID","BRAND_INTRO" FROM "T_BRAND"
-        WHERE "PROVINCE_CODE" = '{province_code}' AND "BRAND_CATEGORY" = 1000""") or []
+        """SELECT "BRAND_ID","BRAND_INTRO" FROM "T_BRAND"
+        WHERE "PROVINCE_CODE" = :pc AND "BRAND_CATEGORY" = 1000""",
+        {"pc": province_code}) or []
     brand_map = {}
     for br in dt_brand:
         bid = str(br.get("BRAND_ID", ""))
@@ -312,17 +323,20 @@ def _get_region_names(db: DatabaseHelper, dt_shop: list) -> tuple[str, str]:
     n_shops = [s for s in dt_shop if s.get("SHOPREGION") is not None and int(s.get("SHOPREGION", 0)) >= 30]
     if s_shops:
         s_region = str(sorted(s_shops, key=lambda x: int(x.get("SHOPREGION", 0)))[0].get("SHOPREGION"))
+        # --- SQL 参数化: 区域名称查询 ---
         fe = db.execute_query(
-            f"""SELECT B."FIELDENUM_NAME" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+            """SELECT B."FIELDENUM_NAME" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
             WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'SHOPREGION'
-            AND B."FIELDENUM_VALUE" = '{s_region}'""") or []
+            AND B."FIELDENUM_VALUE" = :region_val""",
+            {"region_val": s_region}) or []
         s_name = fe[0].get("FIELDENUM_NAME", "") if fe else ""
     if n_shops:
         n_region = str(sorted(n_shops, key=lambda x: int(x.get("SHOPREGION", 0)))[0].get("SHOPREGION"))
         fe = db.execute_query(
-            f"""SELECT B."FIELDENUM_NAME" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+            """SELECT B."FIELDENUM_NAME" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
             WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'SHOPREGION'
-            AND B."FIELDENUM_VALUE" = '{n_region}'""") or []
+            AND B."FIELDENUM_VALUE" = :region_val""",
+            {"region_val": n_region}) or []
         n_name = fe[0].get("FIELDENUM_NAME", "") if fe else ""
     return s_name, n_name
 
@@ -359,20 +373,25 @@ def get_company_revenue_report(db: DatabaseHelper, province_code: str,
     province_id = fe_rows[0]["FIELDENUM_ID"]
 
     # 2. 构建 WHERE 条件
-    where_sql = f' AND B."PROVINCE_CODE" = {province_id}'
+    # --- SQL 参数化: 子公司报表动态 WHERE ---
+    where_sql = ' AND B."PROVINCE_CODE" = :province_id'
+    co_params = {"province_id": province_id}
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids:
+        # f-string: 安全 — build_in_condition 已通过 int() 转换
         where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace(
             '"SERVERPART_ID"', 'B."SERVERPART_ID"')
     else:
-        where_sql += (f' AND B."STATISTIC_TYPE" = 1000 AND B."STATISTICS_TYPE" = 1000'
-                      f' AND B."PROVINCE_CODE" = {province_id}')
+        where_sql += (' AND B."STATISTIC_TYPE" = 1000 AND B."STATISTICS_TYPE" = 1000'
+                      ' AND B."PROVINCE_CODE" = :province_id')
     if start_time:
         sd = dt.strptime(start_time, "%Y-%m-%d").strftime("%Y%m%d") if "-" in start_time else start_time
-        where_sql += f' AND A."STATISTICS_DATE" >= {sd}'
+        where_sql += ' AND A."STATISTICS_DATE" >= :sd'
+        co_params["sd"] = sd
     if end_time:
         ed = dt.strptime(end_time, "%Y-%m-%d").strftime("%Y%m%d") if "-" in end_time else end_time
-        where_sql += f' AND A."STATISTICS_DATE" <= {ed}'
+        where_sql += ' AND A."STATISTICS_DATE" <= :ed'
+        co_params["ed"] = ed
 
     # 3. 查询营收数据
     sql = f"""SELECT
@@ -389,7 +408,7 @@ def get_company_revenue_report(db: DatabaseHelper, province_code: str,
             B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_CODE", B."SERVERPART_INDEX",
             A."SERVERPARTSHOP_ID", A."BUSINESS_TYPE", A."SHOPTRADE"
         ORDER BY B."SPREGIONTYPE_INDEX", B."SERVERPART_INDEX", A."SERVERPARTSHOP_ID" """
-    rows = db.execute_query(sql)
+    rows = db.execute_query(sql, co_params)
     if not rows or not any(r.get("SERVERPARTSHOP_ID") for r in rows):
         return []
 
@@ -397,9 +416,11 @@ def get_company_revenue_report(db: DatabaseHelper, province_code: str,
     shop_map = _load_shop_map(db, rows)
 
     # 5. 查业态
+    # --- SQL 参数化: 业态查询 ---
     trade_rows = db.execute_query(
-        f"""SELECT "AUTOSTATISTICS_ID","AUTOSTATISTICS_PID","AUTOSTATISTICS_NAME","AUTOSTATISTICS_INDEX"
-        FROM "T_AUTOSTATISTICS" WHERE "PROVINCE_CODE" = {province_code} AND "AUTOSTATISTICS_STATE" > 0""")
+        """SELECT "AUTOSTATISTICS_ID","AUTOSTATISTICS_PID","AUTOSTATISTICS_NAME","AUTOSTATISTICS_INDEX"
+        FROM "T_AUTOSTATISTICS" WHERE "PROVINCE_CODE" = :pc AND "AUTOSTATISTICS_STATE" > 0""",
+        {"pc": province_code})
     trade_map = {}
     for t in (trade_rows or []):
         trade_map[str(t["AUTOSTATISTICS_ID"])] = t["AUTOSTATISTICS_NAME"]

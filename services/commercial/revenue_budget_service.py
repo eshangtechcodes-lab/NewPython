@@ -113,13 +113,14 @@ def get_revenue_budget(db: DatabaseHelper, statistics_date, province_code, serve
     sp_id = int(serverpart_id) if serverpart_id else None
 
     if sp_id:
-        bsql = f"""SELECT B."STATISTICS_MONTH", B."BUDGETDETAIL_AMOUNT" AS "BUDGET_AMOUNT"
+        # --- SQL 参数化: 预算明细查询 (按服务区) ---
+        bsql = """SELECT B."STATISTICS_MONTH", B."BUDGETDETAIL_AMOUNT" AS "BUDGET_AMOUNT"
             FROM "T_BUDGETPROJECT_AH" A, "T_BUDGETDETAIL_AH" B
             WHERE A."BUDGETPROJECT_AH_ID" = B."BUDGETPROJECT_AH_ID"
                 AND B."ACCOUNT_CODE" = 1000
-                AND B."STATISTICS_MONTH" >= {year_str}01 AND B."STATISTICS_MONTH" <= {year_str}12
-                AND A."SERVERPART_ID" = {sp_id}"""
-        rows = db.execute_query(bsql) or []
+                AND B."STATISTICS_MONTH" >= :m_start AND B."STATISTICS_MONTH" <= :m_end
+                AND A."SERVERPART_ID" = :sp_id"""
+        rows = db.execute_query(bsql, {"m_start": f"{year_str}01", "m_end": f"{year_str}12", "sp_id": sp_id}) or []
         for r in rows:
             sm = str(int(safe_dec(r.get("STATISTICS_MONTH"))))
             ba = safe_dec(r.get("BUDGET_AMOUNT"))
@@ -131,10 +132,11 @@ def get_revenue_budget(db: DatabaseHelper, statistics_date, province_code, serve
                 budget_year += ba
                 if int(sm) < int(month_str): plan_amount += ba
     else:
-        bsql = f"""SELECT * FROM "T_BUDGETEXPENSE"
-            WHERE "PROVINCE_CODE" = {province_code} AND "SERVERPART_ID" = 0
-                AND "STATISTICS_MONTH" >= {year_str}01 AND "STATISTICS_MONTH" <= {year_str}12"""
-        rows = db.execute_query(bsql) or []
+        # --- SQL 参数化: 预算费用查询 (全省) ---
+        bsql = """SELECT * FROM "T_BUDGETEXPENSE"
+            WHERE "PROVINCE_CODE" = :pc AND "SERVERPART_ID" = 0
+                AND "STATISTICS_MONTH" >= :m_start AND "STATISTICS_MONTH" <= :m_end"""
+        rows = db.execute_query(bsql, {"pc": province_code, "m_start": f"{year_str}01", "m_end": f"{year_str}12"}) or []
         for r in rows:
             sm = str(int(safe_dec(r.get("STATISTICS_MONTH"))))
             ba = safe_dec(r.get("BUDGET_AMOUNT"))
@@ -160,36 +162,42 @@ def get_revenue_budget(db: DatabaseHelper, statistics_date, province_code, serve
 
     if not sp_id and not sp_region_type_id:
         date_str = stat_date.strftime("%Y%m%d")
-        rsql = f"""SELECT SUM("REVENUE_AMOUNT_MONTH") AS "REVENUE_AMOUNT_MONTH",
+        # --- SQL 参数化: 日营收查询 (全省汇总) ---
+        rsql = """SELECT SUM("REVENUE_AMOUNT_MONTH") AS "REVENUE_AMOUNT_MONTH",
                 SUM("REVENUE_AMOUNT_YEAR") AS "REVENUE_AMOUNT_YEAR"
             FROM "T_REVENUEDAILY"
             WHERE "REVENUEDAILY_STATE" = 1 AND "BUSINESS_TYPE" = 1000
-                AND "SERVERPART_ID" = 0 AND "STATISTICS_DATE" = {date_str}"""
-        rr = db.execute_query(rsql) or []
+                AND "SERVERPART_ID" = 0 AND "STATISTICS_DATE" = :stat_date"""
+        rr = db.execute_query(rsql, {"stat_date": date_str}) or []
         if rr:
             rev_month = safe_dec(rr[0].get("REVENUE_AMOUNT_MONTH"))
             rev_year = safe_dec(rr[0].get("REVENUE_AMOUNT_YEAR"))
+        # --- SQL 参数化: 同比营收查询 ---
         ly_date = stat_date.replace(year=stat_date.year - 1).strftime("%Y%m%d")
-        rsql_ly = rsql.replace(f"= {date_str}", f"= {ly_date}")
-        rr_ly = db.execute_query(rsql_ly) or []
+        rr_ly = db.execute_query(rsql, {"stat_date": ly_date}) or []
         if rr_ly:
             ly_month = safe_dec(rr_ly[0].get("REVENUE_AMOUNT_MONTH"))
             ly_year = safe_dec(rr_ly[0].get("REVENUE_AMOUNT_YEAR"))
             if ly_month > 0: month_yoy = round((rev_month / ly_month - 1) * 100, 2)
             if ly_year > 0: year_yoy = round((rev_year / ly_year - 1) * 100, 2)
     else:
+        # --- SQL 参数化: 日营收按月分组查询 ---
         where2 = ""
-        if sp_id: where2 += f' AND B."SERVERPART_ID" = {sp_id}'
-        elif sp_region_type_id: where2 += f' AND B."SPREGIONTYPE_ID" = {sp_region_type_id}'
-        date_str = stat_date.strftime("%Y%m%d")
+        rev_params = {"y_start": f"{year_str}0101", "d_end": stat_date.strftime("%Y%m%d")}
+        if sp_id:
+            where2 += ' AND B."SERVERPART_ID" = :sp_id'
+            rev_params["sp_id"] = sp_id
+        elif sp_region_type_id:
+            where2 += ' AND B."SPREGIONTYPE_ID" = :srt_id'
+            rev_params["srt_id"] = sp_region_type_id
         rsql = f"""SELECT SUBSTR(A."STATISTICS_DATE",1,6) AS "STATISTICS_MONTH",
                 SUM(A."REVENUE_AMOUNT") AS "REVENUE_AMOUNT"
             FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
                 AND B."STATISTIC_TYPE" = 1000 AND A."BUSINESS_TYPE" = 1000
-                AND A."STATISTICS_DATE" >= {year_str}0101 AND A."STATISTICS_DATE" <= {date_str}{where2}
+                AND A."STATISTICS_DATE" >= :y_start AND A."STATISTICS_DATE" <= :d_end{where2}
             GROUP BY SUBSTR(A."STATISTICS_DATE",1,6)"""
-        rr = db.execute_query(rsql) or []
+        rr = db.execute_query(rsql, rev_params) or []
         for r in rr:
             ra = safe_dec(r.get("REVENUE_AMOUNT"))
             rm = str(int(safe_dec(r.get("STATISTICS_MONTH"))))
@@ -249,19 +257,27 @@ def get_province_revenue_budget(db: DatabaseHelper, statistics_date, province_co
     Budget_Amount = 0.0
 
     # 1. 构建预算查询 WhereSQL
+    # --- SQL 参数化: 预算查询动态 WHERE ---
     where_sql = ""
+    budget_params = {}
     if serverpart_id is not None:
-        where_sql += f' AND B."SERVERPART_ID" = {serverpart_id}'
+        where_sql += ' AND B."SERVERPART_ID" = :sp_id'
+        budget_params["sp_id"] = serverpart_id
     elif sp_region_type_id is not None:
-        where_sql += f' AND B."SPREGIONTYPE_ID" = {sp_region_type_id}'
+        where_sql += ' AND B."SPREGIONTYPE_ID" = :srt_id'
+        budget_params["srt_id"] = sp_region_type_id
     elif province_code:
-        where_sql += f' AND A."PROVINCE_CODE" = {province_code}'
+        where_sql += ' AND A."PROVINCE_CODE" = :pc'
+        budget_params["pc"] = province_code
         if statistics_type == 2:
             where_sql += ' AND A."SERVERPART_ID" = 0'
     if statistics_type in (1, 4):
-        where_sql += f' AND A."STATISTICS_MONTH" = {yyyyMM}'
+        where_sql += ' AND A."STATISTICS_MONTH" = :stat_month'
+        budget_params["stat_month"] = yyyyMM
     else:
-        where_sql += f' AND A."STATISTICS_MONTH" >= {yyyy01} AND A."STATISTICS_MONTH" <= {yyyy12}'
+        where_sql += ' AND A."STATISTICS_MONTH" >= :m_start AND A."STATISTICS_MONTH" <= :m_end'
+        budget_params["m_start"] = yyyy01
+        budget_params["m_end"] = yyyy12
 
     # 2. 查询预算数据
     budget_rows = []
@@ -273,7 +289,7 @@ def get_province_revenue_budget(db: DatabaseHelper, statistics_date, province_co
             WHERE A."BUDGETPROJECT_AH_ID" = B."BUDGETPROJECT_AH_ID"
                 AND A."ACCOUNT_CODE" = 1000{where_sql}
             ORDER BY A."STATISTICS_MONTH" """
-        budget_rows = db.execute_query(budget_sql) or []
+        budget_rows = db.execute_query(budget_sql, budget_params) or []
         for r in budget_rows:
             sm = str(r.get("STATISTICS_MONTH", ""))
             ba = safe_dec(r.get("BUDGET_AMOUNT"))
@@ -291,7 +307,7 @@ def get_province_revenue_budget(db: DatabaseHelper, statistics_date, province_co
             FROM "T_BUDGETEXPENSE" A
             LEFT JOIN "T_SERVERPART" B ON A."SERVERPART_ID" = B."SERVERPART_ID"
             WHERE 1 = 1{where_sql}"""
-        budget_rows = db.execute_query(budget_sql) or []
+        budget_rows = db.execute_query(budget_sql, budget_params) or []
         if sp_region_type_id is None:
             filtered = [r for r in budget_rows if safe_int(r.get("SERVERPART_ID")) == 0]
         else:
@@ -313,15 +329,16 @@ def get_province_revenue_budget(db: DatabaseHelper, statistics_date, province_co
                     Revenue_PlanAmount += bv
                 Budget_Amount += bv
         if statistics_type == 4 and sp_region_type_id is not None:
-            sp_sql = f"""SELECT B."STATISTICS_MONTH", A."SERVERPART_ID", A."SERVERPART_NAME",
+            # --- SQL 参数化: 片区预算明细查询 ---
+            sp_sql = """SELECT B."STATISTICS_MONTH", A."SERVERPART_ID", A."SERVERPART_NAME",
                     B."BUDGETDETAIL_AMOUNT", A."SPREGIONTYPE_ID", A."SPREGIONTYPE_NAME",
                     1000 AS "STATISTICS_TYPE"
                 FROM "T_BUDGETPROJECT_AH" A, "T_BUDGETDETAIL_AH" B
                 WHERE A."BUDGETPROJECT_AH_ID" = B."BUDGETPROJECT_AH_ID"
                     AND B."ACCOUNT_CODE" = 1000
-                    AND B."STATISTICS_MONTH" = {yyyyMM}
-                    AND A."SPREGIONTYPE_ID" = {sp_region_type_id}"""
-            sp_rows = db.execute_query(sp_sql) or []
+                    AND B."STATISTICS_MONTH" = :stat_month
+                    AND A."SPREGIONTYPE_ID" = :srt_id"""
+            sp_rows = db.execute_query(sp_sql, {"stat_month": yyyyMM, "srt_id": sp_region_type_id}) or []
             for sr in sp_rows:
                 budget_rows.append({
                     "STATISTICS_MONTH": sr.get("STATISTICS_MONTH"),
@@ -337,31 +354,41 @@ def get_province_revenue_budget(db: DatabaseHelper, statistics_date, province_co
         return None
 
     # 3. 统计营收数据
+    # --- SQL 参数化: 营收查询动态 WHERE ---
     where_rev = ""
+    rev_params = {}
     if serverpart_id is not None:
-        where_rev += f' AND B."SERVERPART_ID" = {serverpart_id}'
+        where_rev += ' AND B."SERVERPART_ID" = :sp_id'
+        rev_params["sp_id"] = serverpart_id
     elif sp_region_type_id is not None:
         if statistics_type == 3:
             sp_ids = set(str(safe_int(r.get("SERVERPART_ID"))) for r in budget_rows)
             sp_ids.discard("0")
+            # f-string: 安全 — sp_ids 来自 safe_int() 转换后的字符串
             where_rev += f' AND B."SERVERPART_ID" IN ({",".join(sp_ids)})' if sp_ids else ' AND 1 = 2'
         else:
             has_ids = any(r.get("SERVERPART_IDS") for r in budget_rows)
             if has_ids:
                 matched = [r for r in budget_rows if safe_int(r.get("SPREGIONTYPE_ID")) == sp_region_type_id]
                 if matched and matched[0].get("SERVERPART_IDS"):
+                    # f-string: 安全 — SERVERPART_IDS 来自数据库字段
                     where_rev += f' AND B."SERVERPART_ID" IN ({matched[0]["SERVERPART_IDS"]})'
                 else:
                     where_rev += ' AND 1 = 2'
             else:
-                where_rev += f' AND B."SPREGIONTYPE_ID" = {sp_region_type_id}'
+                where_rev += ' AND B."SPREGIONTYPE_ID" = :srt_id'
+                rev_params["srt_id"] = sp_region_type_id
     elif province_code:
-        where_rev += f' AND B."PROVINCE_CODE" = {province_code}'
+        where_rev += ' AND B."PROVINCE_CODE" = :pc'
+        rev_params["pc"] = province_code
     if statistics_type in (1, 4):
-        where_rev += f' AND A."STATISTICS_DATE" >= {yyyyMM01}'
+        where_rev += ' AND A."STATISTICS_DATE" >= :d_start'
+        rev_params["d_start"] = yyyyMM01
     else:
-        where_rev += f' AND A."STATISTICS_DATE" >= {yyyy0101}'
-    where_rev += f' AND A."STATISTICS_DATE" <= {yyyyMMdd}'
+        where_rev += ' AND A."STATISTICS_DATE" >= :d_start'
+        rev_params["d_start"] = yyyy0101
+    where_rev += ' AND A."STATISTICS_DATE" <= :d_end'
+    rev_params["d_end"] = yyyyMMdd
 
     if statistics_type in (1, 4):
         rev_sql = f"""SELECT B."SERVERPART_ID", B."SERVERPART_NAME", B."SERVERPART_INDEX",
@@ -377,7 +404,7 @@ def get_province_revenue_budget(db: DatabaseHelper, statistics_date, province_co
             WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
                 AND B."STATISTIC_TYPE" = 1000 AND A."BUSINESS_TYPE" = 1000{where_rev}
             GROUP BY SUBSTR(CAST(A."STATISTICS_DATE" AS VARCHAR), 1, 6)"""
-    rev_rows = db.execute_query(rev_sql) or []
+    rev_rows = db.execute_query(rev_sql, rev_params) or []
 
     Revenue_Amount = sum(safe_dec(r.get("REVENUE_AMOUNT")) for r in rev_rows)
     Budget_Degree = round(Revenue_Amount / Budget_Amount * 100, 2) if Budget_Amount > 0 else 0
