@@ -88,19 +88,30 @@ def get_business_trade_list_post(db: DatabaseHelper, search_model: dict) -> tupl
 
 # ===== 8. 品牌分析 =====
 def get_brand_analysis(db: DatabaseHelper, province_code, serverpart_id, business_trade_ids, brand_type, show_all) -> dict:
+    # --- SQL 参数化: 品牌分析 WHERE 条件 ---
     where_sql = ""
+    ba_params = {}
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids:
+        # f-string: 安全 — build_in_condition 已通过 int() 转换
         where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
     elif province_code:
-        fe_rows = db.execute_query(f"""SELECT "FIELDENUM_ID" FROM "T_FIELDENUM"
-            WHERE "FIELD_NAME" = 'DIVISION_CODE' AND "FIELDENUM_VALUE" = '{province_code}'""") or []
+        fe_rows = db.execute_query(
+            """SELECT "FIELDENUM_ID" FROM "T_FIELDENUM"
+            WHERE "FIELD_NAME" = 'DIVISION_CODE' AND "FIELDENUM_VALUE" = :pc""",
+            {"pc": province_code}) or []
         if fe_rows:
-            where_sql += f' AND A."PROVINCE_CODE" = {fe_rows[0].get("FIELDENUM_ID")}'
+            where_sql += ' AND A."PROVINCE_CODE" = :pcode'
+            ba_params["pcode"] = fe_rows[0].get("FIELDENUM_ID")
     if business_trade_ids:
-        where_sql += f' AND A."BUSINESS_TRADE" IN ({business_trade_ids})'
+        # business_trade_ids 通过整数解析防注入
+        bt_ids = parse_multi_ids(business_trade_ids)
+        if bt_ids:
+            where_sql += ' AND ' + build_in_condition('BUSINESS_TRADE', bt_ids).replace('"BUSINESS_TRADE"', 'A."BUSINESS_TRADE"')
     if brand_type:
-        where_sql += f' AND B."BRAND_TYPE" IN ({brand_type})'
+        bt_types = parse_multi_ids(brand_type)
+        if bt_types:
+            where_sql += ' AND ' + build_in_condition('BRAND_TYPE', bt_types).replace('"BRAND_TYPE"', 'B."BRAND_TYPE"')
 
     show_all_sql = "" if show_all else ' AND A."BUSINESS_STATE" = 1000'
     sql = f"""SELECT A."SERVERPARTSHOP_ID", A."SERVERPART_ID", A."SHOPSHORTNAME",
@@ -109,7 +120,7 @@ def get_brand_analysis(db: DatabaseHelper, province_code, serverpart_id, busines
         FROM "T_SERVERPARTSHOP" A LEFT JOIN "T_BRAND" B ON A."BUSINESS_BRAND" = B."BRAND_ID"
         WHERE A."ISVALID" = 1{where_sql}{show_all_sql}
         ORDER BY A."SERVERPART_ID", A."BUSINESS_TRADE" """
-    rows = db.execute_query(sql) or []
+    rows = db.execute_query(sql, ba_params if ba_params else None) or []
 
     # 品牌标签
     brand_tag_set = {str(r.get("BRAND_TYPE")): True for r in rows if r.get("BRAND_TYPE") is not None}
@@ -147,13 +158,19 @@ def get_serverpart_list(db: DatabaseHelper, province_code, sp_region_type_id, se
     conditions = ["A.STATISTICS_TYPE = 1000", "A.SERVERPART_CODE NOT IN ('340001','530590')"]
     params = {}
     if sp_region_type_id:
-        conditions.append(f"A.SPREGIONTYPE_ID IN ({sp_region_type_id})")
+        # --- SQL 参数化: 片区通过整数解析防注入 ---
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids:
+            conditions.append(build_in_condition('SPREGIONTYPE_ID', srt_ids).replace('"SPREGIONTYPE_ID"', 'A.SPREGIONTYPE_ID'))
     elif province_code:
         pcode_rows = db.execute_query("SELECT FIELDENUM_ID FROM T_FIELDENUM WHERE FIELDENUM_VALUE = :pc AND ROWNUM = 1", {"pc": province_code})
         if pcode_rows:
             conditions.append("A.PROVINCE_CODE = :pcode"); params["pcode"] = pcode_rows[0]["FIELDENUM_ID"]
     if serverpart_type:
-        conditions.append(f"A.SERVERPART_TYPE IN ({serverpart_type})")
+        # serverpart_type 通过整数解析防注入
+        st_ids = parse_multi_ids(serverpart_type)
+        if st_ids:
+            conditions.append(build_in_condition('SERVERPART_TYPE', st_ids).replace('"SERVERPART_TYPE"', 'A.SERVERPART_TYPE'))
     if serverpart_name:
         conditions.append("A.SERVERPART_NAME LIKE :sp_name"); params["sp_name"] = f"%{serverpart_name}%"
 
@@ -181,6 +198,7 @@ def get_serverpart_list(db: DatabaseHelper, province_code, sp_region_type_id, se
     sp_ids = [str(r.get("SERVERPART_ID")) for r in rows if r.get("SERVERPART_ID")]
     rt_map = {}
     if sp_ids:
+        # f-string: 安全 — sp_ids 来自 db 查询结果的 SERVERPART_ID，已是整数
         rt_rows = db.execute_query(f'SELECT * FROM "T_RTSERVERPART" WHERE "SERVERPART_ID" IN ({",".join(sp_ids)})')
         for rt in (rt_rows or []):
             rt_map[rt.get("SERVERPART_ID")] = rt
@@ -330,14 +348,23 @@ def get_server_info_tree(db: DatabaseHelper, province_code, sp_region_type_id,
         return []
 
     where_parts = ["1=1"]
-    if sp_region_type_id: where_parts.append(f'"SPREGIONTYPE_ID" IN ({sp_region_type_id})')
-    if serverpart_ids: where_parts.append(f'"SERVERPART_ID" IN ({serverpart_ids})')
+    if sp_region_type_id:
+        # --- SQL 参数化: 片区通过整数解析防注入 ---
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids:
+            where_parts.append(build_in_condition('SPREGIONTYPE_ID', srt_ids))
+    if serverpart_ids:
+        # serverpart_ids 来自 db 查询结果或用户输入，通过整数解析防注入
+        sid_list = parse_multi_ids(serverpart_ids)
+        if sid_list:
+            where_parts.append(build_in_condition('SERVERPART_ID', sid_list))
     sp_rows = db.execute_query(f'SELECT * FROM "T_SERVERPART" WHERE {" AND ".join(where_parts)}')
     if not sp_rows:
         return []
 
     sp_map = {r.get("SERVERPART_ID"): r for r in sp_rows}
-    sp_id_list = ",".join([str(sid) for sid in sp_map.keys()])
+    # f-string: 安全 — sp_map.keys() 来自 db 查询结果的 SERVERPART_ID，已是整数
+    sp_id_list = ",".join([str(int(sid)) for sid in sp_map.keys()])
     info_rows = db.execute_query(
         f'SELECT * FROM "T_SERVERPARTINFO" WHERE "SERVERPART_ID" IN ({sp_id_list}) AND "SERVERPART_REGION" IS NOT NULL')
 
@@ -396,16 +423,24 @@ def get_server_info_tree(db: DatabaseHelper, province_code, sp_region_type_id,
 
 # ===== 12. 设施汇总 =====
 def get_serverpart_service_summary(db: DatabaseHelper, province_code, sp_region_type_id, serverpart_id) -> Optional[dict]:
+    # --- SQL 参数化: 省份代码查询 ---
     province_key = province_code
     try:
-        key_rows = db.execute_query(f"""SELECT E."FIELDENUM_ID" FROM "T_FIELDENUM" E
+        key_rows = db.execute_query(
+            """SELECT E."FIELDENUM_ID" FROM "T_FIELDENUM" E
             JOIN "T_FIELDEXPLAIN" F ON E."FIELDEXPLAIN_ID" = F."FIELDEXPLAIN_ID"
-            WHERE F."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND E."FIELDENUM_VALUE" = '{province_code}'""")
+            WHERE F."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND E."FIELDENUM_VALUE" = :pc""",
+            {"pc": province_code})
         if key_rows: province_key = str(key_rows[0].get("FIELDENUM_ID", province_code))
     except: pass
 
-    where_sql = f' AND A."PROVINCE_CODE" = {province_key}'
-    if sp_region_type_id: where_sql += f' AND A."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+    # --- SQL 参数化: 设施汇总 WHERE 条件 ---
+    svc_params = {"pk": province_key}
+    where_sql = ' AND A."PROVINCE_CODE" = :pk'
+    if sp_region_type_id:
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids:
+            where_sql += ' AND ' + build_in_condition('SPREGIONTYPE_ID', srt_ids).replace('"SPREGIONTYPE_ID"', 'A."SPREGIONTYPE_ID"')
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids: where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'A."SERVERPART_ID"')
 
@@ -427,7 +462,7 @@ def get_serverpart_service_summary(db: DatabaseHelper, province_code, sp_region_
         WHERE A."STATISTICS_TYPE" = 1000 AND A."STATISTIC_TYPE" = 1000
             AND A."SERVERPART_CODE" NOT IN ('340001','530590') AND A."SPREGIONTYPE_ID" NOT IN (89){where_sql}
         GROUP BY A."SERVERPART_ID", A."SERVERPART_NAME" """
-    rows = db.execute_query(sql)
+    rows = db.execute_query(sql, svc_params)
     if not rows: return None
 
     def _cnt(field): return sum(1 for r in rows if float(r.get(field, 0) or 0) > 0)
@@ -450,12 +485,17 @@ def get_serverpart_service_summary(db: DatabaseHelper, province_code, sp_region_
 
 # ===== 13. 品牌结构分析 =====
 def get_brand_structure_analysis(db: DatabaseHelper, province_code: str, business_trade: str) -> list[dict]:
-    where_sql = f""" AND "PROVINCE_CODE" = '{province_code}'"""
-    if business_trade: where_sql += f""" AND "BRAND_INDUSTRY" IN ({business_trade})"""
+    # --- SQL 参数化: 品牌结构分析 ---
+    bs_params = {"pc": province_code}
+    where_sql = ' AND "PROVINCE_CODE" = :pc'
+    if business_trade:
+        bt_ids = parse_multi_ids(business_trade)
+        if bt_ids:
+            where_sql += ' AND ' + build_in_condition('BRAND_INDUSTRY', bt_ids)
     sql = f"""SELECT "BRAND_TYPE", COUNT(1) AS CNT FROM "T_BRAND"
         WHERE "BRAND_CATEGORY" = 1000 AND "BRAND_STATE" = 1{where_sql}
         GROUP BY "BRAND_TYPE" ORDER BY "BRAND_TYPE" """
-    rows = db.execute_query(sql)
+    rows = db.execute_query(sql, bs_params)
 
     brand_type_names = {}
     try:
