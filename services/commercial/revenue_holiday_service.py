@@ -520,3 +520,251 @@ def get_holiday_analysis(db, province_code, cur_year, compare_year,
     _model["lYearBayonet"] = bay_kv(cy_bay)
 
     return _model
+
+
+# ===================================================================
+# 4. GetHolidaySPRAnalysis — 节假日服务区营收分析
+# ===================================================================
+
+def get_holiday_spr_analysis(db, province_code, cur_year, compare_year,
+                             holiday_type, statistics_date,
+                             business_type, business_trade, business_region):
+    """获取节假日服务区营收分析，返回 list (整体+片区+服务区树形结构)
+    从 Router get_holiday_spr_analysis 迁移（~270行核心逻辑）
+    """
+    def safe_dec(v):
+        try: return float(v) if v is not None else 0.0
+        except: return 0.0
+
+    h_name = HOLIDAY_MAP.get(int(holiday_type), "")
+    if not h_name:
+        return []
+
+    cur_desc = f"{cur_year}年{h_name}"
+    cmp_desc = f"{compare_year}年{h_name}"
+    h_rows = db.execute_query(f"""SELECT "HOLIDAY_DATE","HOLIDAY_DESC" FROM "T_HOLIDAY"
+        WHERE "HOLIDAY_DESC" IN ('{cur_desc}','{cmp_desc}')""") or []
+    if not h_rows:
+        return []
+
+    cur_dates = [_to_dt(r["HOLIDAY_DATE"]) for r in h_rows
+                 if r.get("HOLIDAY_DESC") == cur_desc and r.get("HOLIDAY_DATE")]
+    cmp_dates = [_to_dt(r["HOLIDAY_DATE"]) for r in h_rows
+                 if r.get("HOLIDAY_DESC") == cmp_desc and r.get("HOLIDAY_DATE")]
+    if not cur_dates or not cmp_dates:
+        return []
+
+    s_date = min(cur_dates)
+    e_date = max(cur_dates)
+    cs_date = min(cmp_dates)
+
+    stat_d = (dt.strptime(statistics_date, "%Y-%m-%d") if statistics_date and "-" in statistics_date
+              else (dt.strptime(statistics_date, "%Y%m%d") if statistics_date else e_date))
+    if stat_d > e_date:
+        stat_d = e_date
+    day_span = (stat_d - s_date).days
+    cy_date = cs_date + timedelta(days=day_span)
+
+    where_sql = ""
+    if business_type:
+        where_sql += f' AND A."BUSINESS_TYPE" IN ({business_type})'
+    if business_trade:
+        where_sql += f' AND A."SHOPTRADE" IN ({business_trade})'
+    if business_region:
+        where_sql += f' AND A."BUSINESS_REGION" IN ({business_region})'
+
+    sd_str = stat_d.strftime('%Y%m%d')
+    ss_str = s_date.strftime('%Y%m%d')
+    cy_str = cy_date.strftime('%Y%m%d')
+    cs_str = cs_date.strftime('%Y%m%d')
+
+    # 当年营收
+    cur_sql = f"""SELECT B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME",
+            B."SERVERPART_ID", B."SERVERPART_NAME",
+            SUM(A."REVENUE_AMOUNT") AS "REVENUE",
+            SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
+            SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "REVENUE_CUR",
+            SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END) AS "ACCOUNT_CUR"
+        FROM "T_HOLIDAYREVENUE" A, "T_SERVERPART" B
+        WHERE A."SERVERPART_ID" = TO_CHAR(B."SERVERPART_ID") AND A."HOLIDAYREVENUE_STATE" = 1
+            AND A."STATISTICS_DATE" BETWEEN {ss_str} AND {sd_str}{where_sql}
+        GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SERVERPART_ID", B."SERVERPART_NAME" """
+    cur_rows = db.execute_query(cur_sql) or []
+
+    # 历年营收
+    cmp_sql = f"""SELECT B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME",
+            B."SERVERPART_ID", B."SERVERPART_NAME",
+            SUM(A."REVENUE_AMOUNT") AS "REVENUE",
+            SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
+            SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "REVENUE_CUR",
+            SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END) AS "ACCOUNT_CUR"
+        FROM "T_HOLIDAYREVENUE" A, "T_SERVERPART" B
+        WHERE A."SERVERPART_ID" = TO_CHAR(B."SERVERPART_ID") AND A."HOLIDAYREVENUE_STATE" = 1
+            AND A."STATISTICS_DATE" BETWEEN {cs_str} AND {cy_str}{where_sql}
+        GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SERVERPART_ID", B."SERVERPART_NAME" """
+    cmp_rows = db.execute_query(cmp_sql) or []
+
+    # 查省份ID (用于车流量过滤)
+    fe_rows2 = db.execute_query(
+        """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
+            WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
+        {"pc": province_code})
+    province_id = fe_rows2[0]["FIELDENUM_ID"] if fe_rows2 else province_code
+
+    # 当年车流量
+    cur_bay_sql = f"""SELECT B."SPREGIONTYPE_ID", B."SERVERPART_ID",
+            SUM(A."SERVERPART_FLOW") AS "FLOW",
+            SUM(CASE WHEN A."STATISTICS_DATE" = {sd_str} THEN A."SERVERPART_FLOW" ELSE 0 END) AS "FLOW_CUR"
+        FROM "T_SECTIONFLOW" A, "T_SERVERPART" B
+        WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."SECTIONFLOW_STATUS" = 1
+            AND B."PROVINCE_CODE" = {province_id}
+            AND A."STATISTICS_DATE" BETWEEN {ss_str} AND {sd_str}
+        GROUP BY B."SPREGIONTYPE_ID", B."SERVERPART_ID" """
+    cur_bay_rows = db.execute_query(cur_bay_sql) or []
+
+    # 历年车流量
+    cmp_bay_sql = f"""SELECT B."SPREGIONTYPE_ID", B."SERVERPART_ID",
+            SUM(A."SERVERPART_FLOW" + COALESCE(A."SERVERPART_FLOW_ANALOG", 0)) AS "FLOW",
+            SUM(CASE WHEN A."STATISTICS_DATE" = {cy_str} THEN A."SERVERPART_FLOW" +
+                COALESCE(A."SERVERPART_FLOW_ANALOG", 0) ELSE 0 END) AS "FLOW_CUR"
+        FROM "T_SECTIONFLOW" A, "T_SERVERPART" B
+        WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."SECTIONFLOW_STATUS" = 1
+            AND B."PROVINCE_CODE" = {province_id}
+            AND A."STATISTICS_DATE" BETWEEN {cs_str} AND {cy_str}
+        GROUP BY B."SPREGIONTYPE_ID", B."SERVERPART_ID" """
+    cmp_bay_rows = db.execute_query(cmp_bay_sql) or []
+
+    # 构建 map
+    cur_sp_map = {}
+    for r in cur_rows:
+        sp_id = str(r.get("SERVERPART_ID", ""))
+        cur_sp_map[sp_id] = {"rev": safe_dec(r.get("REVENUE")), "rev_cur": safe_dec(r.get("REVENUE_CUR")),
+                             "acc": safe_dec(r.get("ACCOUNT_AMOUNT")), "acc_cur": safe_dec(r.get("ACCOUNT_CUR")),
+                             "region_id": str(r.get("SPREGIONTYPE_ID", "")), "region_name": r.get("SPREGIONTYPE_NAME", ""),
+                             "sp_name": r.get("SERVERPART_NAME", "")}
+    cmp_sp_map = {}
+    for r in cmp_rows:
+        sp_id = str(r.get("SERVERPART_ID", ""))
+        cmp_sp_map[sp_id] = {"rev": safe_dec(r.get("REVENUE")), "rev_cur": safe_dec(r.get("REVENUE_CUR")),
+                             "acc": safe_dec(r.get("ACCOUNT_AMOUNT")), "acc_cur": safe_dec(r.get("ACCOUNT_CUR"))}
+
+    cur_bay_map = {}
+    for r in cur_bay_rows:
+        sp_id = str(r.get("SERVERPART_ID", ""))
+        cur_bay_map[sp_id] = {"flow": safe_dec(r.get("FLOW")), "flow_cur": safe_dec(r.get("FLOW_CUR")),
+                               "region_id": str(r.get("SPREGIONTYPE_ID", ""))}
+    cmp_bay_map = {}
+    for r in cmp_bay_rows:
+        sp_id = str(r.get("SERVERPART_ID", ""))
+        cmp_bay_map[sp_id] = {"flow": safe_dec(r.get("FLOW")), "flow_cur": safe_dec(r.get("FLOW_CUR"))}
+
+    # 整体汇总
+    total_cur = round(sum(v["rev"] for v in cur_sp_map.values()), 2)
+    total_cmp = round(sum(v["rev"] for v in cmp_sp_map.values()), 2)
+    total_cur_d = round(sum(v["rev_cur"] for v in cur_sp_map.values()), 2)
+    total_cmp_d = round(sum(v["rev_cur"] for v in cmp_sp_map.values()), 2)
+    total_cur_acc = round(sum(v["acc"] for v in cur_sp_map.values()), 2)
+    total_cmp_acc = round(sum(v["acc"] for v in cmp_sp_map.values()), 2)
+    total_cur_acc_d = round(sum(v["acc_cur"] for v in cur_sp_map.values()), 2)
+    total_cmp_acc_d = round(sum(v["acc_cur"] for v in cmp_sp_map.values()), 2)
+    total_cur_flow = round(sum(v["flow"] for v in cur_bay_map.values()), 2)
+    total_cmp_flow = round(sum(v["flow"] for v in cmp_bay_map.values()), 2)
+    total_cur_flow_d = round(sum(v["flow_cur"] for v in cur_bay_map.values()), 2)
+    total_cmp_flow_d = round(sum(v["flow_cur"] for v in cmp_bay_map.values()), 2)
+
+    def fmt_dec(v):
+        f = round(float(v), 2)
+        if f == 0: return "0"
+        return f"{f:.2f}"
+
+    def fmt_int(v):
+        return str(int(round(float(v), 2)))
+
+    def mk_kv(v, d, empty=False):
+        if empty: return {"name": None, "value": "", "data": "", "key": None}
+        return {"name": None, "value": fmt_dec(v), "data": fmt_dec(d), "key": None}
+
+    def mk_kv_int(v, d, empty=False):
+        if empty: return {"name": None, "value": "", "data": "", "key": None}
+        return {"name": None, "value": fmt_int(v), "data": fmt_int(d), "key": None}
+
+    result_list = [{"node": {"SPRegionTypeId": 0, "SPRegionTypeName": "整体对客销售",
+                             "ServerpartId": None, "ServerpartName": None,
+                             "curYearRevenue": mk_kv(total_cur_d, total_cur),
+                             "lYearRevenue": mk_kv(total_cmp_d, total_cmp),
+                             "curYearAccount": mk_kv(total_cur_acc_d, total_cur_acc),
+                             "lYearAccount": mk_kv(total_cmp_acc_d, total_cmp_acc),
+                             "curYearBayonet": mk_kv_int(total_cur_flow_d, total_cur_flow),
+                             "lYearBayonet": mk_kv_int(total_cmp_flow_d, total_cmp_flow)},
+                    "children": None}]
+
+    # 查片区配置
+    type_sql = f"""SELECT "SERVERPARTTYPE_ID", "TYPE_NAME" FROM "T_SERVERPARTTYPE"
+        WHERE "PROVINCE_CODE" = {province_code} AND "SERVERPARTSTATICTYPE_ID" = 1000
+        ORDER BY "TYPE_INDEX" """
+    type_rows = db.execute_query(type_sql) or []
+
+    # 查所有服务区
+    sp_sql = f"""SELECT "SERVERPART_ID", "SERVERPART_NAME", "SPREGIONTYPE_ID", "SERVERPART_INDEX", "SERVERPART_CODE"
+        FROM "T_SERVERPART"
+        WHERE "STATISTICS_TYPE" = 1000 AND "STATISTIC_TYPE" = 1000 AND "PROVINCE_CODE" = {province_id}
+        ORDER BY "SERVERPART_INDEX", "SERVERPART_CODE" """
+    sp_rows = db.execute_query(sp_sql) or []
+
+    for tr in type_rows:
+        rid = str(tr.get("SERVERPARTTYPE_ID", ""))
+        rname = tr.get("TYPE_NAME", "")
+
+        # 按片区汇总
+        r_cur = sum(v["rev"] for k, v in cur_sp_map.items() if v.get("region_id") == rid)
+        r_cur_d = sum(v["rev_cur"] for k, v in cur_sp_map.items() if v.get("region_id") == rid)
+        r_cmp = sum(cmp_sp_map.get(k, {}).get("rev", 0) for k, v in cur_sp_map.items() if v.get("region_id") == rid)
+        r_cmp_d = sum(cmp_sp_map.get(k, {}).get("rev_cur", 0) for k, v in cur_sp_map.items() if v.get("region_id") == rid)
+        r_cur_acc = sum(v["acc"] for k, v in cur_sp_map.items() if v.get("region_id") == rid)
+        r_cur_acc_d = sum(v["acc_cur"] for k, v in cur_sp_map.items() if v.get("region_id") == rid)
+        r_cmp_acc = sum(cmp_sp_map.get(k, {}).get("acc", 0) for k, v in cur_sp_map.items() if v.get("region_id") == rid)
+        r_cmp_acc_d = sum(cmp_sp_map.get(k, {}).get("acc_cur", 0) for k, v in cur_sp_map.items() if v.get("region_id") == rid)
+        r_cur_flow = sum(v["flow"] for k, v in cur_bay_map.items() if v.get("region_id") == rid)
+        r_cur_flow_d = sum(v["flow_cur"] for k, v in cur_bay_map.items() if v.get("region_id") == rid)
+        r_cmp_flow = sum(cmp_bay_map.get(k, {}).get("flow", 0) for k, v in cur_bay_map.items() if v.get("region_id") == rid)
+        r_cmp_flow_d = sum(cmp_bay_map.get(k, {}).get("flow_cur", 0) for k, v in cur_bay_map.items() if v.get("region_id") == rid)
+
+        # 构建children（该片区下的服务区列表）
+        ch = []
+        for sr in sp_rows:
+            if str(sr.get("SPREGIONTYPE_ID")) == rid:
+                sp_id = str(sr.get("SERVERPART_ID", ""))
+                has_sp_rev = sp_id in cur_sp_map
+                has_sp_bay = sp_id in cur_bay_map
+                cur_info = cur_sp_map.get(sp_id, {"rev": 0, "rev_cur": 0, "acc": 0, "acc_cur": 0})
+                cmp_info = cmp_sp_map.get(sp_id, {"rev": 0, "rev_cur": 0, "acc": 0, "acc_cur": 0})
+                cb_info = cur_bay_map.get(sp_id, {"flow": 0, "flow_cur": 0})
+                cmb_info = cmp_bay_map.get(sp_id, {"flow": 0, "flow_cur": 0})
+                ch.append({
+                    "node": {"SPRegionTypeId": None, "SPRegionTypeName": None,
+                             "ServerpartId": int(sp_id) if sp_id.isdigit() else sp_id,
+                             "ServerpartName": sr.get("SERVERPART_NAME", ""),
+                             "curYearRevenue": mk_kv(cur_info.get("rev_cur", 0), cur_info.get("rev", 0), empty=not has_sp_rev),
+                             "lYearRevenue": mk_kv(cmp_info.get("rev_cur", 0), cmp_info.get("rev", 0), empty=not has_sp_rev),
+                             "curYearAccount": mk_kv(cur_info.get("acc_cur", 0), cur_info.get("acc", 0), empty=not has_sp_rev),
+                             "lYearAccount": mk_kv(cmp_info.get("acc_cur", 0), cmp_info.get("acc", 0), empty=not has_sp_rev),
+                             "curYearBayonet": mk_kv_int(cb_info.get("flow_cur", 0), cb_info.get("flow", 0), empty=not has_sp_bay),
+                             "lYearBayonet": mk_kv_int(cmb_info.get("flow_cur", 0), cmb_info.get("flow", 0), empty=not has_sp_bay)},
+                    "children": [],
+                })
+
+        has_rev = any(v.get("region_id") == rid for v in cur_sp_map.values())
+        has_bay = any(v.get("region_id") == rid for v in cur_bay_map.values())
+        result_list.append({
+            "node": {"SPRegionTypeId": int(rid) if rid.isdigit() else rid, "SPRegionTypeName": rname,
+                     "ServerpartId": None, "ServerpartName": None,
+                     "curYearRevenue": mk_kv(r_cur_d, r_cur, empty=not has_rev),
+                     "lYearRevenue": mk_kv(r_cmp_d, r_cmp, empty=not has_rev),
+                     "curYearAccount": mk_kv(r_cur_acc_d, r_cur_acc, empty=not has_rev),
+                     "lYearAccount": mk_kv(r_cmp_acc_d, r_cmp_acc, empty=not has_rev),
+                     "curYearBayonet": mk_kv_int(r_cur_flow_d, r_cur_flow, empty=not has_bay),
+                     "lYearBayonet": mk_kv_int(r_cmp_flow_d, r_cmp_flow, empty=not has_bay)},
+            "children": ch,
+        })
+
+    return result_list

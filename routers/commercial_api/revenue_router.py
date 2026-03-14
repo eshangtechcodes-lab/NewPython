@@ -874,83 +874,160 @@ async def get_last_sync_date_time(db: DatabaseHelper = Depends(get_db)):
 
 
 # ===== 节日分析 =====
-
-# ===== 节日分析 =====
-# _get_holiday_dates, _sum_compute 已迁移至 revenue_holiday_service
-# GetHolidayAnalysis 核心逻辑已迁移至 revenue_holiday_service.get_holiday_analysis()
-
-@router.get("/Revenue/GetHolidayAnalysis")
-async def get_holiday_analysis(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    curYear: Optional[str] = Query(None, description="本年年份"),
-    compareYear: Optional[str] = Query(None, description="历年年份"),
-    HolidayType: int = Query(0, alias="HolidayType", description="节日类型"),
-    StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取节日营收数据对比分析 — 业务逻辑见 revenue_holiday_service.get_holiday_analysis()"""
-    try:
-        data = revenue_holiday_service.get_holiday_analysis(
-            db, pushProvinceCode, curYear, compareYear,
-            HolidayType, StatisticsDate, ServerpartId
-        )
-        return Result.success(data=data, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetHolidayAnalysis 查询失败: {ex}")
-        import traceback; traceback.print_exc()
-        return Result.fail(msg=f"查询失败{ex}")
-
-
-@router.get("/Revenue/GetHolidayAnalysisBatch")
-async def get_holiday_analysis_batch(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    curYear: Optional[str] = Query(None, description="本年年份"),
-    compareYear: Optional[str] = Query(None, description="历年年份"),
-    HolidayType: int = Query(0, description="节日类型"),
-    StatisticsDate: Optional[str] = Query("", description="统计日期"),
-    ServerpartIds: Optional[str] = Query("", description="服务区内码集合"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取多个服务区节日营收数据对比分析（批量） — 循环调用 Service"""
-    try:
-        if not ServerpartIds:
-            return Result.fail(code=102, msg="服务区内码不能为空！")
-
-        sp_list = [s.strip() for s in ServerpartIds.split(",") if s.strip()]
-        result_list = []
-
-        for sp_id in sp_list:
-            data = revenue_holiday_service.get_holiday_analysis(
-                db, pushProvinceCode, curYear, compareYear,
-                HolidayType, StatisticsDate, sp_id
-            )
-            if data:
-                # 查询服务区名称
-                sp_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
-                sp_name = sp_rows[0].get("SERVERPART_NAME", "") if sp_rows else ""
-                data["ServerpartId"] = int(sp_id) if sp_id.isdigit() else sp_id
-                data["ServerpartName"] = sp_name
-                data["curYear"] = int(curYear) if curYear else None
-                data["compareYear"] = int(compareYear) if compareYear else None
-                data["HolidayType"] = HolidayType
-                # C# Batch版本不返回这些字段（初始化为null）
-                for null_key in ["curYearSRRevenue", "lYearSRRevenue", "curYearSRAccount",
-                                  "lYearSRAccount", "lYearGRORevenue", "curYearGROAccount", "lYearGROAccount"]:
-                    if null_key in data:
-                        data[null_key] = None
-                result_list.append(data)
-
-        if not result_list:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_index=1, page_size=len(result_list))
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetHolidayAnalysisBatch 查询失败: {ex}")
-        import traceback; traceback.print_exc()
-        return Result.fail(msg=f"查询失败{ex}")
-
+
+
+# ===== 节日分析 =====
+
+# _get_holiday_dates, _sum_compute 已迁移至 revenue_holiday_service
+
+# GetHolidayAnalysis 核心逻辑已迁移至 revenue_holiday_service.get_holiday_analysis()
+
+
+
+@router.get("/Revenue/GetHolidayAnalysis")
+
+async def get_holiday_analysis(
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    curYear: Optional[str] = Query(None, description="本年年份"),
+
+    compareYear: Optional[str] = Query(None, description="历年年份"),
+
+    HolidayType: int = Query(0, alias="HolidayType", description="节日类型"),
+
+    StatisticsDate: Optional[str] = Query("", description="统计日期"),
+
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取节日营收数据对比分析 — 业务逻辑见 revenue_holiday_service.get_holiday_analysis()"""
+
+    try:
+
+        data = revenue_holiday_service.get_holiday_analysis(
+
+            db, pushProvinceCode, curYear, compareYear,
+
+            HolidayType, StatisticsDate, ServerpartId
+
+        )
+
+        return Result.success(data=data, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetHolidayAnalysis 查询失败: {ex}")
+
+        import traceback; traceback.print_exc()
+
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+
+
+
+@router.get("/Revenue/GetHolidayAnalysisBatch")
+
+async def get_holiday_analysis_batch(
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    curYear: Optional[str] = Query(None, description="本年年份"),
+
+    compareYear: Optional[str] = Query(None, description="历年年份"),
+
+    HolidayType: int = Query(0, description="节日类型"),
+
+    StatisticsDate: Optional[str] = Query("", description="统计日期"),
+
+    ServerpartIds: Optional[str] = Query("", description="服务区内码集合"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取多个服务区节日营收数据对比分析（批量） — 循环调用 Service"""
+
+    try:
+
+        if not ServerpartIds:
+
+            return Result.fail(code=102, msg="服务区内码不能为空！")
+
+
+
+        sp_list = [s.strip() for s in ServerpartIds.split(",") if s.strip()]
+
+        result_list = []
+
+
+
+        for sp_id in sp_list:
+
+            data = revenue_holiday_service.get_holiday_analysis(
+
+                db, pushProvinceCode, curYear, compareYear,
+
+                HolidayType, StatisticsDate, sp_id
+
+            )
+
+            if data:
+
+                # 查询服务区名称
+
+                sp_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
+
+                sp_name = sp_rows[0].get("SERVERPART_NAME", "") if sp_rows else ""
+
+                data["ServerpartId"] = int(sp_id) if sp_id.isdigit() else sp_id
+
+                data["ServerpartName"] = sp_name
+
+                data["curYear"] = int(curYear) if curYear else None
+
+                data["compareYear"] = int(compareYear) if compareYear else None
+
+                data["HolidayType"] = HolidayType
+
+                # C# Batch版本不返回这些字段（初始化为null）
+
+                for null_key in ["curYearSRRevenue", "lYearSRRevenue", "curYearSRAccount",
+
+                                  "lYearSRAccount", "lYearGRORevenue", "curYearGROAccount", "lYearGROAccount"]:
+
+                    if null_key in data:
+
+                        data[null_key] = None
+
+                result_list.append(data)
+
+
+
+        if not result_list:
+
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_index=1, page_size=len(result_list))
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetHolidayAnalysisBatch 查询失败: {ex}")
+
+        import traceback; traceback.print_exc()
+
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+
         return Result.fail(msg=f"查询失败{ex}")
 
 
@@ -2182,7 +2259,6 @@ async def get_revenue_compare(
         logger.error(f"GetRevenueCompare 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
 
-
 # ===== GetHolidaySPRAnalysis =====
 @router.get("/Revenue/GetHolidaySPRAnalysis")
 async def get_holiday_spr_analysis(
@@ -2196,264 +2272,18 @@ async def get_holiday_spr_analysis(
     businessRegion: Optional[str] = Query("", description="经营区域"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """获取节假日服务区营收分析 (SQL平移完成)"""
+    """获取节假日服务区营收分析 — 业务逻辑见 revenue_holiday_service.get_holiday_spr_analysis()"""
     try:
-        from datetime import datetime as dt, timedelta
-
-        def safe_dec(v):
-            try: return float(v) if v is not None else 0.0
-            except: return 0.0
-        def safe_int(v):
-            try: return int(float(v)) if v is not None else 0
-            except: return 0
-
-        # 查节日日期
-        # 节日名称映射
-        holiday_map = {1:"元旦",2:"春运",3:"清明节",4:"劳动节",5:"端午节",6:"暑期",7:"中秋节",8:"国庆节"}
-        h_name = holiday_map.get(int(HolidayType), "")
-        if not h_name:
-            json_list = JsonListData.create(data_list=[], total=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-        cur_desc = f"{curYear}年{h_name}"
-        cmp_desc = f"{compareYear}年{h_name}"
-        h_rows = db.execute_query(f"""SELECT "HOLIDAY_DATE","HOLIDAY_DESC" FROM "T_HOLIDAY"
-            WHERE "HOLIDAY_DESC" IN ('{cur_desc}','{cmp_desc}')""") or []
-        if not h_rows:
-            json_list = JsonListData.create(data_list=[], total=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-        def to_dt(v):
-            if isinstance(v, dt): return v
-            if isinstance(v, str): return dt.strptime(v[:10], "%Y-%m-%d")
-            return dt(v.year, v.month, v.day) if hasattr(v, 'year') else v
-
-        cur_dates = [to_dt(r["HOLIDAY_DATE"]) for r in h_rows if r.get("HOLIDAY_DESC") == cur_desc and r.get("HOLIDAY_DATE")]
-        cmp_dates = [to_dt(r["HOLIDAY_DATE"]) for r in h_rows if r.get("HOLIDAY_DESC") == cmp_desc and r.get("HOLIDAY_DATE")]
-        if not cur_dates or not cmp_dates:
-            json_list = JsonListData.create(data_list=[], total=0)
-            return Result.success(data=json_list.model_dump(), msg="查询成功")
-
-        s_date = min(cur_dates)
-        e_date = max(cur_dates)
-        cs_date = min(cmp_dates)
-
-        stat_d = dt.strptime(StatisticsDate, "%Y-%m-%d") if StatisticsDate and "-" in StatisticsDate else (dt.strptime(StatisticsDate, "%Y%m%d") if StatisticsDate else e_date)
-        if stat_d > e_date:
-            stat_d = e_date
-        day_span = (stat_d - s_date).days
-        cy_date = cs_date + timedelta(days=day_span)
-
-        where_sql = ""
-        if businessType:
-            where_sql += f' AND A."BUSINESS_TYPE" IN ({businessType})'
-        if businessTrade:
-            where_sql += f' AND A."SHOPTRADE" IN ({businessTrade})'
-        if businessRegion:
-            where_sql += f' AND A."BUSINESS_REGION" IN ({businessRegion})'
-
-        cur_sql = f"""SELECT B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME",
-                B."SERVERPART_ID", B."SERVERPART_NAME",
-                SUM(A."REVENUE_AMOUNT") AS "REVENUE",
-                SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {stat_d.strftime('%Y%m%d')} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "REVENUE_CUR",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {stat_d.strftime('%Y%m%d')} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END) AS "ACCOUNT_CUR"
-            FROM "T_HOLIDAYREVENUE" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = TO_CHAR(B."SERVERPART_ID") AND A."HOLIDAYREVENUE_STATE" = 1
-                AND A."STATISTICS_DATE" BETWEEN {s_date.strftime('%Y%m%d')} AND {stat_d.strftime('%Y%m%d')}{where_sql}
-            GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SERVERPART_ID", B."SERVERPART_NAME" """
-        cur_rows = db.execute_query(cur_sql) or []
-
-        cmp_sql = f"""SELECT B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME",
-                B."SERVERPART_ID", B."SERVERPART_NAME",
-                SUM(A."REVENUE_AMOUNT") AS "REVENUE",
-                SUM(A."ACCOUNT_AMOUNTNOTAX") AS "ACCOUNT_AMOUNT",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {cy_date.strftime('%Y%m%d')} THEN A."REVENUE_AMOUNT" ELSE 0 END) AS "REVENUE_CUR",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {cy_date.strftime('%Y%m%d')} THEN A."ACCOUNT_AMOUNTNOTAX" ELSE 0 END) AS "ACCOUNT_CUR"
-            FROM "T_HOLIDAYREVENUE" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = TO_CHAR(B."SERVERPART_ID") AND A."HOLIDAYREVENUE_STATE" = 1
-                AND A."STATISTICS_DATE" BETWEEN {cs_date.strftime('%Y%m%d')} AND {cy_date.strftime('%Y%m%d')}{where_sql}
-            GROUP BY B."SPREGIONTYPE_ID", B."SPREGIONTYPE_NAME", B."SERVERPART_ID", B."SERVERPART_NAME" """
-        cmp_rows = db.execute_query(cmp_sql) or []
-
-        # 查车流量 T_SECTIONFLOW
-        # 查省份ID (用于车流量过滤)
-        fe_rows2 = db.execute_query(
-            """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-                WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID" AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
-            {"pc": pushProvinceCode})
-        province_id = fe_rows2[0]["FIELDENUM_ID"] if fe_rows2 else pushProvinceCode
-
-        cur_bay_sql = f"""SELECT B."SPREGIONTYPE_ID", B."SERVERPART_ID",
-                SUM(A."SERVERPART_FLOW") AS "FLOW",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {stat_d.strftime('%Y%m%d')} THEN A."SERVERPART_FLOW" ELSE 0 END) AS "FLOW_CUR"
-            FROM "T_SECTIONFLOW" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."SECTIONFLOW_STATUS" = 1
-                AND B."PROVINCE_CODE" = {province_id}
-                AND A."STATISTICS_DATE" BETWEEN {s_date.strftime('%Y%m%d')} AND {stat_d.strftime('%Y%m%d')}
-            GROUP BY B."SPREGIONTYPE_ID", B."SERVERPART_ID" """
-        cur_bay_rows = db.execute_query(cur_bay_sql) or []
-
-        cmp_bay_sql = f"""SELECT B."SPREGIONTYPE_ID", B."SERVERPART_ID",
-                SUM(A."SERVERPART_FLOW" + COALESCE(A."SERVERPART_FLOW_ANALOG", 0)) AS "FLOW",
-                SUM(CASE WHEN A."STATISTICS_DATE" = {cy_date.strftime('%Y%m%d')} THEN A."SERVERPART_FLOW" +
-                    COALESCE(A."SERVERPART_FLOW_ANALOG", 0) ELSE 0 END) AS "FLOW_CUR"
-            FROM "T_SECTIONFLOW" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."SECTIONFLOW_STATUS" = 1
-                AND B."PROVINCE_CODE" = {province_id}
-                AND A."STATISTICS_DATE" BETWEEN {cs_date.strftime('%Y%m%d')} AND {cy_date.strftime('%Y%m%d')}
-            GROUP BY B."SPREGIONTYPE_ID", B."SERVERPART_ID" """
-        cmp_bay_rows = db.execute_query(cmp_bay_sql) or []
-
-        # 构建map
-        cur_sp_map = {}
-        for r in cur_rows:
-            sp_id = str(r.get("SERVERPART_ID", ""))
-            cur_sp_map[sp_id] = {"rev": safe_dec(r.get("REVENUE")), "rev_cur": safe_dec(r.get("REVENUE_CUR")),
-                                 "acc": safe_dec(r.get("ACCOUNT_AMOUNT")), "acc_cur": safe_dec(r.get("ACCOUNT_CUR")),
-                                 "region_id": str(r.get("SPREGIONTYPE_ID", "")), "region_name": r.get("SPREGIONTYPE_NAME", ""),
-                                 "sp_name": r.get("SERVERPART_NAME", "")}
-        cmp_sp_map = {}
-        for r in cmp_rows:
-            sp_id = str(r.get("SERVERPART_ID", ""))
-            cmp_sp_map[sp_id] = {"rev": safe_dec(r.get("REVENUE")), "rev_cur": safe_dec(r.get("REVENUE_CUR")),
-                                 "acc": safe_dec(r.get("ACCOUNT_AMOUNT")), "acc_cur": safe_dec(r.get("ACCOUNT_CUR"))}
-
-        # 车流量map
-        cur_bay_map = {}
-        for r in cur_bay_rows:
-            sp_id = str(r.get("SERVERPART_ID", ""))
-            cur_bay_map[sp_id] = {"flow": safe_dec(r.get("FLOW")), "flow_cur": safe_dec(r.get("FLOW_CUR")),
-                                   "region_id": str(r.get("SPREGIONTYPE_ID", ""))}
-        cmp_bay_map = {}
-        for r in cmp_bay_rows:
-            sp_id = str(r.get("SERVERPART_ID", ""))
-            cmp_bay_map[sp_id] = {"flow": safe_dec(r.get("FLOW")), "flow_cur": safe_dec(r.get("FLOW_CUR"))}
-
-        # 整体
-        total_cur = round(sum(v["rev"] for v in cur_sp_map.values()), 2)
-        total_cmp = round(sum(v["rev"] for v in cmp_sp_map.values()), 2)
-        total_cur_d = round(sum(v["rev_cur"] for v in cur_sp_map.values()), 2)
-        total_cmp_d = round(sum(v["rev_cur"] for v in cmp_sp_map.values()), 2)
-        total_cur_acc = round(sum(v["acc"] for v in cur_sp_map.values()), 2)
-        total_cmp_acc = round(sum(v["acc"] for v in cmp_sp_map.values()), 2)
-        total_cur_acc_d = round(sum(v["acc_cur"] for v in cur_sp_map.values()), 2)
-        total_cmp_acc_d = round(sum(v["acc_cur"] for v in cmp_sp_map.values()), 2)
-        total_cur_flow = round(sum(v["flow"] for v in cur_bay_map.values()), 2)
-        total_cmp_flow = round(sum(v["flow"] for v in cmp_bay_map.values()), 2)
-        total_cur_flow_d = round(sum(v["flow_cur"] for v in cur_bay_map.values()), 2)
-        total_cmp_flow_d = round(sum(v["flow_cur"] for v in cmp_bay_map.values()), 2)
-
-        def fmt_dec(v):
-            """金额格式: 保留2位小数（含尾零），0返回'0'"""
-            f = round(float(v), 2)
-            if f == 0:
-                return "0"
-            return f"{f:.2f}"
-
-        def fmt_int(v):
-            """车流量等整数格式"""
-            f = round(float(v), 2)
-            return str(int(f))
-
-        def mk_kv(v, d, empty=False):
-            if empty:
-                return {"name": None, "value": "", "data": "", "key": None}
-            return {"name": None, "value": fmt_dec(v), "data": fmt_dec(d), "key": None}
-
-        def mk_kv_int(v, d, empty=False):
-            if empty:
-                return {"name": None, "value": "", "data": "", "key": None}
-            return {"name": None, "value": fmt_int(v), "data": fmt_int(d), "key": None}
-
-        result_list = [{
-            "node": {"SPRegionTypeId": 0, "SPRegionTypeName": "整体对客销售",
-                     "ServerpartId": None, "ServerpartName": None,
-                     "curYearRevenue": mk_kv(total_cur_d, total_cur),
-                     "lYearRevenue": mk_kv(total_cmp_d, total_cmp),
-                     "curYearAccount": mk_kv(total_cur_acc_d, total_cur_acc),
-                     "lYearAccount": mk_kv(total_cmp_acc_d, total_cmp_acc),
-                     "curYearBayonet": mk_kv_int(total_cur_flow_d, total_cur_flow),
-                     "lYearBayonet": mk_kv_int(total_cmp_flow_d, total_cmp_flow)},
-            "children": None,
-        }]
-
-        # C# 对齐：从 T_SERVERPARTTYPE 配置表获取所有片区（而非从数据中提取）
-        type_sql = f"""SELECT "SERVERPARTTYPE_ID", "TYPE_NAME" FROM "T_SERVERPARTTYPE"
-            WHERE "PROVINCE_CODE" = {pushProvinceCode} AND "SERVERPARTSTATICTYPE_ID" = 1000
-            ORDER BY "TYPE_INDEX" """
-        type_rows = db.execute_query(type_sql) or []
-
-        # 获取all服务区信息
-        sp_sql = f"""SELECT "SERVERPART_ID", "SERVERPART_NAME", "SPREGIONTYPE_ID", "SERVERPART_INDEX", "SERVERPART_CODE" FROM "T_SERVERPART"
-            WHERE "STATISTICS_TYPE" = 1000 AND "STATISTIC_TYPE" = 1000 AND "PROVINCE_CODE" = {province_id}
-            ORDER BY "SERVERPART_INDEX", "SERVERPART_CODE" """
-        sp_rows = db.execute_query(sp_sql) or []
-
-        for tr in type_rows:
-            rid = str(tr.get("SERVERPARTTYPE_ID", ""))
-            rname = tr.get("TYPE_NAME", "")
-
-            # 按片区汇总
-            r_cur = sum(v["rev"] for k, v in cur_sp_map.items() if v.get("region_id") == rid)
-            r_cur_d = sum(v["rev_cur"] for k, v in cur_sp_map.items() if v.get("region_id") == rid)
-            r_cmp = sum(cmp_sp_map.get(k, {}).get("rev", 0) for k, v in cur_sp_map.items() if v.get("region_id") == rid)
-            r_cmp_d = sum(cmp_sp_map.get(k, {}).get("rev_cur", 0) for k, v in cur_sp_map.items() if v.get("region_id") == rid)
-            r_cur_acc = sum(v["acc"] for k, v in cur_sp_map.items() if v.get("region_id") == rid)
-            r_cur_acc_d = sum(v["acc_cur"] for k, v in cur_sp_map.items() if v.get("region_id") == rid)
-            r_cmp_acc = sum(cmp_sp_map.get(k, {}).get("acc", 0) for k, v in cur_sp_map.items() if v.get("region_id") == rid)
-            r_cmp_acc_d = sum(cmp_sp_map.get(k, {}).get("acc_cur", 0) for k, v in cur_sp_map.items() if v.get("region_id") == rid)
-            r_cur_flow = sum(v["flow"] for k, v in cur_bay_map.items() if v.get("region_id") == rid)
-            r_cur_flow_d = sum(v["flow_cur"] for k, v in cur_bay_map.items() if v.get("region_id") == rid)
-            r_cmp_flow = sum(cmp_bay_map.get(k, {}).get("flow", 0) for k, v in cur_bay_map.items() if v.get("region_id") == rid)
-            r_cmp_flow_d = sum(cmp_bay_map.get(k, {}).get("flow_cur", 0) for k, v in cur_bay_map.items() if v.get("region_id") == rid)
-
-            # 构建children（该片区下的服务区列表）
-            ch = []
-            for sr in sp_rows:
-                if str(sr.get("SPREGIONTYPE_ID")) == rid:
-                    sp_id = str(sr.get("SERVERPART_ID", ""))
-                    has_sp_rev = sp_id in cur_sp_map
-                    has_sp_bay = sp_id in cur_bay_map
-                    cur_info = cur_sp_map.get(sp_id, {"rev": 0, "rev_cur": 0, "acc": 0, "acc_cur": 0})
-                    cmp_info = cmp_sp_map.get(sp_id, {"rev": 0, "rev_cur": 0, "acc": 0, "acc_cur": 0})
-                    cb_info = cur_bay_map.get(sp_id, {"flow": 0, "flow_cur": 0})
-                    cmb_info = cmp_bay_map.get(sp_id, {"flow": 0, "flow_cur": 0})
-                    ch.append({
-                        "node": {"SPRegionTypeId": None,
-                                 "SPRegionTypeName": None,
-                                 "ServerpartId": int(sp_id) if sp_id.isdigit() else sp_id,
-                                 "ServerpartName": sr.get("SERVERPART_NAME", ""),
-                                 "curYearRevenue": mk_kv(cur_info.get("rev_cur", 0), cur_info.get("rev", 0), empty=not has_sp_rev),
-                                 "lYearRevenue": mk_kv(cmp_info.get("rev_cur", 0), cmp_info.get("rev", 0), empty=not has_sp_rev),
-                                 "curYearAccount": mk_kv(cur_info.get("acc_cur", 0), cur_info.get("acc", 0), empty=not has_sp_rev),
-                                 "lYearAccount": mk_kv(cmp_info.get("acc_cur", 0), cmp_info.get("acc", 0), empty=not has_sp_rev),
-                                 "curYearBayonet": mk_kv_int(cb_info.get("flow_cur", 0), cb_info.get("flow", 0), empty=not has_sp_bay),
-                                 "lYearBayonet": mk_kv_int(cmb_info.get("flow_cur", 0), cmb_info.get("flow", 0), empty=not has_sp_bay)},
-                        "children": [],
-                    })
-            # 检查片区是否有数据
-            has_rev = any(v.get("region_id") == rid for v in cur_sp_map.values())
-            has_bay = any(v.get("region_id") == rid for v in cur_bay_map.values())
-            no_rev = not has_rev
-            no_bay = not has_bay
-            result_list.append({
-                "node": {"SPRegionTypeId": int(rid) if rid.isdigit() else rid, "SPRegionTypeName": rname,
-                         "ServerpartId": None, "ServerpartName": None,
-                         "curYearRevenue": mk_kv(r_cur_d, r_cur, empty=no_rev),
-                         "lYearRevenue": mk_kv(r_cmp_d, r_cmp, empty=no_rev),
-                         "curYearAccount": mk_kv(r_cur_acc_d, r_cur_acc, empty=no_rev),
-                         "lYearAccount": mk_kv(r_cmp_acc_d, r_cmp_acc, empty=no_rev),
-                         "curYearBayonet": mk_kv_int(r_cur_flow_d, r_cur_flow, empty=no_bay),
-                         "lYearBayonet": mk_kv_int(r_cmp_flow_d, r_cmp_flow, empty=no_bay)},
-                "children": ch,
-            })
-
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+        data = revenue_holiday_service.get_holiday_spr_analysis(
+            db, pushProvinceCode, curYear, compareYear,
+            HolidayType, StatisticsDate, businessType, businessTrade, businessRegion
+        )
+        json_list = JsonListData.create(data_list=data, total=len(data), page_size=10)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetHolidaySPRAnalysis 查询失败: {ex}")
         return Result.fail(msg=f"查询失败{ex}")
+
 
 
 # ===== GetHolidayDailyAnalysis =====
