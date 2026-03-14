@@ -1354,9 +1354,9 @@ def update_endaccount_error(db, endaccount_id: int, amountdiffer: float):
                WHERE A.ENDACCOUNT_ID = ?""", [endaccount_id])
         db.execute_non_query(
             f"""UPDATE T_ENDACCOUNT_TEMP A
-                SET A.FACTAMOUNT_SALE = A.FACTAMOUNT_SALE - {amountdiffer}
+                SET A.FACTAMOUNT_SALE = A.FACTAMOUNT_SALE - ?
                 WHERE A.ENDACCOUNT_ID = ? AND A.CHECK_INFO IS NOT NULL""",
-            [endaccount_id])
+            [amountdiffer, endaccount_id])
 
         # 2. 修改 T_ENDACCOUNT
         db.execute_non_query(
@@ -1366,26 +1366,27 @@ def update_endaccount_error(db, endaccount_id: int, amountdiffer: float):
                    A.CASHPAY = A.CASHPAY + NVL(A.CASH,0)+NVL(A.TICKETBILL,0)+NVL(A.OTHERPAY,0)
                    +NVL(A.VIPPERSON,0)+NVL(A.COSTBILL,0)+NVL(A.CREDITCARD,0) - A.TOTALSELLAMOUNT
                WHERE A.ENDACCOUNT_ID = ?""", [endaccount_id])
+        # --- SQL 参数化: amountdiffer 改为参数 ---
         db.execute_non_query(
-            f"""UPDATE T_ENDACCOUNT A
-                SET A.FACTAMOUNT_SALE = A.FACTAMOUNT_SALE - {amountdiffer}
+            """UPDATE T_ENDACCOUNT A
+                SET A.FACTAMOUNT_SALE = A.FACTAMOUNT_SALE - ?
                 WHERE A.ENDACCOUNT_ID = ? AND A.CHECK_INFO IS NOT NULL""",
-            [endaccount_id])
+            [amountdiffer, endaccount_id])
 
         # 3. 插入冲正流水到 T_COMMODITYSALE
         db.execute_non_query(
-            f"""INSERT INTO T_COMMODITYSALE (
+            """INSERT INTO T_COMMODITYSALE (
                     COMMODITYSALE_ID, STARTDATE, ENDDATE, SERVERPARTCODE, SHOPCODE, MACHINECODE,
                     COMMODITY_TYPE, COMMODITY_CODE, COMMODITY_NAME, TICKETCOUNT, TOTALCOUNT,
                     TOTALSELLAMOUNT, TOTALOFFAMOUNT, SERVERPART_ID, SERVERPARTSHOP_ID, BUSINESSTYPE)
                 SELECT 1, A.ENDACCOUNT_STARTDATE, A.ENDACCOUNT_DATE, A.SERVERPARTCODE, A.SHOPCODE,
                     A.MACHINECODE, '优惠', 'CX', '促销优惠冲正流水', 0, 0,
-                    {-amountdiffer}, {amountdiffer},
+                    ?, ?,
                     C.SERVERPART_ID, C.SERVERPARTSHOP_ID, C.SHOPTRADE
                 FROM T_ENDACCOUNT_TEMP A, T_SERVERPARTSHOP C
                 WHERE A.ENDACCOUNT_ID = ?
                     AND A.SERVERPART_ID = C.SERVERPART_ID AND A.SHOPCODE = C.SHOPCODE""",
-            [endaccount_id])
+            [-amountdiffer, amountdiffer, endaccount_id])
 
         return True, "修正成功"
     except Exception as e:
@@ -1417,29 +1418,45 @@ def get_commodity_sale_summary(db, **kwargs):
         if not shop_ids and not serverpart_id:
             return [], 0
 
-        # 获取门店 ID 列表(如果只传了 serverpartId)
+        # --- SQL 参数化: serverpart_id 通过整数解析 ---
         if not shop_ids and serverpart_id:
+            safe_sp = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+            if not safe_sp:
+                return [], 0
             id_rows = db.fetch_all(
                 f"SELECT SERVERPARTSHOP_ID FROM T_SERVERPARTSHOP "
-                f"WHERE SERVERPART_ID IN ({serverpart_id})") or []
-            shop_ids = ",".join([str(r["SERVERPARTSHOP_ID"]) for r in id_rows])
+                f"WHERE SERVERPART_ID IN ({','.join(safe_sp)})") or []
+            shop_ids = ','.join([str(r['SERVERPARTSHOP_ID']) for r in id_rows])
             if not shop_ids:
                 return [], 0
 
-        where_sql = f" AND A.SERVERPARTSHOP_ID IN ({shop_ids})"
+        # shop_ids 通过整数解析防注入
+        safe_shop_ids = [str(int(x.strip())) for x in str(shop_ids).split(',') if x.strip().isdigit()]
+        if not safe_shop_ids:
+            return [], 0
+        shop_ids_in = ','.join(safe_shop_ids)
+
+        where_sql = f" AND A.SERVERPARTSHOP_ID IN ({shop_ids_in})"
         shop_filter = _build_shop_filter(shop_ids, shop_trade, business_type,
                                          shop_names, search_key_name, search_key_value)
 
         if data_type == 1:
             # 按日查询 T_COMMODITYSALE
+            # --- SQL 参数化: 日期/业态/商品类型安全化 ---
             if start_time:
-                where_sql += f" AND A.ENDDATE >= TO_DATE('{start_time.split(' ')[0]}','YYYY/MM/DD')"
+                safe_st = start_time.split(' ')[0].replace("'", "")
+                where_sql += f" AND A.ENDDATE >= TO_DATE('{safe_st}','YYYY/MM/DD')"
             if end_time:
-                where_sql += f" AND A.ENDDATE < TO_DATE('{end_time.split(' ')[0]}','YYYY/MM/DD') + 1"
+                safe_et = end_time.split(' ')[0].replace("'", "")
+                where_sql += f" AND A.ENDDATE < TO_DATE('{safe_et}','YYYY/MM/DD') + 1"
             if shop_trade:
-                where_sql += f" AND A.BUSINESSTYPE IN ({shop_trade})"
+                st_ids = [str(int(x.strip())) for x in str(shop_trade).split(',') if x.strip().isdigit()]
+                if st_ids:
+                    where_sql += f" AND A.BUSINESSTYPE IN ({','.join(st_ids)})"
             if commodity_type:
-                where_sql += f" AND A.COMMODITYTYPE_ID IN ({commodity_type})"
+                ct_ids = [str(int(x.strip())) for x in str(commodity_type).split(',') if x.strip().isdigit()]
+                if ct_ids:
+                    where_sql += f" AND A.COMMODITYTYPE_ID IN ({','.join(ct_ids)})"
             where_sql += shop_filter
 
             group_cols = ("COMMODITYTYPE_ID,COMMODITYTYPE_CODE,"
