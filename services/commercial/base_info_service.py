@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
+
+from services.commercial.service_utils import (
+    safe_float as _sf,
+    safe_int as _si,
+)
+
 # -*- coding: utf-8 -*-
 """
 CommercialApi - 基础信息业务服务
@@ -10,14 +16,6 @@ from collections import defaultdict
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
 
-
-def _safe_int(v):
-    try: return int(v) if v is not None else None
-    except: return None
-
-def _safe_float(v):
-    try: return float(v) if v is not None else None
-    except: return None
 
 def _to_bool(v):
     if v is None: return False
@@ -131,13 +129,13 @@ def get_brand_analysis(db: DatabaseHelper, province_code, serverpart_id, busines
     for r in rows:
         bt = str(r.get("BRAND_TYPE", "") or "")
         shop_brand_list.append({
-            "Brand_Id": _safe_int(r.get("BUSINESS_BRAND")), "Brand_Name": r.get("BRAND_NAME"),
+            "Brand_Id": _si(r.get("BUSINESS_BRAND")), "Brand_Name": r.get("BRAND_NAME"),
             "BrandType_Name": type_name_map.get(bt, ""), "Brand_ICO": r.get("BRAND_INTRO"),
-            "ServerpartShop_Id": _safe_int(r.get("SERVERPARTSHOP_ID")),
+            "ServerpartShop_Id": _si(r.get("SERVERPARTSHOP_ID")),
             "Bussiness_Time": str(r.get("BUSINESS_DATE", "") or ""),
-            "Bussiness_Name": r.get("SHOPSHORTNAME"), "Bussiness_State": _safe_int(r.get("BUSINESS_STATE")),
-            "CurRevenue": None, "Revenue_Amount": None, "Business_Trade": _safe_int(r.get("BUSINESS_TRADE")),
-            "Business_TradeICO": None, "Business_TradeId": _safe_int(r.get("BUSINESS_TRADE")),
+            "Bussiness_Name": r.get("SHOPSHORTNAME"), "Bussiness_State": _si(r.get("BUSINESS_STATE")),
+            "CurRevenue": None, "Revenue_Amount": None, "Business_Trade": _si(r.get("BUSINESS_TRADE")),
+            "Business_TradeICO": None, "Business_TradeId": _si(r.get("BUSINESS_TRADE")),
             "ShopEndaccountList": None,
         })
     return {"BrandTag": brand_tag, "ShopBrandList": shop_brand_list}
@@ -196,13 +194,13 @@ def get_serverpart_list(db: DatabaseHelper, province_code, sp_region_type_id, se
         r["HASCHARGE"] = _to_bool(r.get("HASCHARGE")); r["HASGUESTROOM"] = _to_bool(r.get("HASGUESTROOM"))
         rt = rt_map.get(r.get("SERVERPART_ID"))
         if rt:
-            r["SERVERPART_X"] = _safe_float(rt.get("SERVERPART_X")) or _safe_float(r.get("SERVERPART_X"))
-            r["SERVERPART_Y"] = _safe_float(rt.get("SERVERPART_Y")) or _safe_float(r.get("SERVERPART_Y"))
+            r["SERVERPART_X"] = _sf(rt.get("SERVERPART_X")) or _sf(r.get("SERVERPART_X"))
+            r["SERVERPART_Y"] = _sf(rt.get("SERVERPART_Y")) or _sf(r.get("SERVERPART_Y"))
             r["SERVERPART_ADDRESS"] = rt.get("SERVERPART_ADDRESS", "")
             r["ServerpartInfo"] = _build_sp_info(r, rt)
         else:
-            r["SERVERPART_X"] = _safe_float(r.get("SERVERPART_X"))
-            r["SERVERPART_Y"] = _safe_float(r.get("SERVERPART_Y"))
+            r["SERVERPART_X"] = _sf(r.get("SERVERPART_X"))
+            r["SERVERPART_Y"] = _sf(r.get("SERVERPART_Y"))
             r.setdefault("SERVERPART_ADDRESS", None)
             r["ServerpartInfo"] = _build_sp_info_empty(r)
 
@@ -213,12 +211,12 @@ def _build_sp_info(r, rt):
     return {
         "SERVERPART_ID": r.get("SERVERPART_ID"), "RTSERVERPART_ID": rt.get("RTSERVERPART_ID"),
         "SERVERPART_ADDRESS": rt.get("SERVERPART_ADDRESS"),
-        "SERVERPART_X": _safe_float(rt.get("SERVERPART_X")), "SERVERPART_Y": _safe_float(rt.get("SERVERPART_Y")),
-        "SERVERPART_TEL": rt.get("SERVERPART_TEL"), "SERVERPART_AREA": _safe_float(rt.get("SERVERPART_AREA")),
+        "SERVERPART_X": _sf(rt.get("SERVERPART_X")), "SERVERPART_Y": _sf(rt.get("SERVERPART_Y")),
+        "SERVERPART_TEL": rt.get("SERVERPART_TEL"), "SERVERPART_AREA": _sf(rt.get("SERVERPART_AREA")),
         "SERVERPART_INFO": rt.get("SERVERPART_INFO"), "SERVERPART_TARGET": rt.get("SERVERPART_TARGET"),
         "STARTDATE": rt.get("STARTDATE"), "CENTERSTAKE_NUM": rt.get("CENTERSTAKE_NUM"),
-        "EXPRESSWAY_NAME": rt.get("EXPRESSWAY_NAME"), "FLOORAREA": _safe_float(rt.get("FLOORAREA")),
-        "BUSINESSAREA": _safe_float(rt.get("BUSINESSAREA")), "SHAREAREA": _safe_float(rt.get("SHAREAREA")),
+        "EXPRESSWAY_NAME": rt.get("EXPRESSWAY_NAME"), "FLOORAREA": _sf(rt.get("FLOORAREA")),
+        "BUSINESSAREA": _sf(rt.get("BUSINESSAREA")), "SHAREAREA": _sf(rt.get("SHAREAREA")),
         "BUSINESS_REGION": rt.get("BUSINESS_REGION"), "MANAGERCOMPANY": rt.get("MANAGERCOMPANY"),
         "OWNEDCOMPANY": rt.get("OWNEDCOMPANY"), "SELLERCOUNT": rt.get("SELLERCOUNT"),
         "TAXPAYER_IDENTIFYCODE": rt.get("TAXPAYER_IDENTIFYCODE"),
@@ -229,8 +227,8 @@ def _build_sp_info(r, rt):
 def _build_sp_info_empty(r):
     return {
         "SERVERPART_ID": r.get("SERVERPART_ID"), "RTSERVERPART_ID": None,
-        "SERVERPART_ADDRESS": None, "SERVERPART_X": _safe_float(r.get("SERVERPART_X")),
-        "SERVERPART_Y": _safe_float(r.get("SERVERPART_Y")), "SERVERPART_TEL": r.get("SERVERPART_TEL"),
+        "SERVERPART_ADDRESS": None, "SERVERPART_X": _sf(r.get("SERVERPART_X")),
+        "SERVERPART_Y": _sf(r.get("SERVERPART_Y")), "SERVERPART_TEL": r.get("SERVERPART_TEL"),
         "SERVERPART_AREA": None, "SERVERPART_INFO": None, "SERVERPART_TARGET": None,
         "STARTDATE": None, "CENTERSTAKE_NUM": None, "EXPRESSWAY_NAME": None,
         "FLOORAREA": None, "BUSINESSAREA": None, "SHAREAREA": None,
@@ -255,8 +253,8 @@ def get_serverpart_info(db: DatabaseHelper, serverpart_id: int) -> Optional[dict
         bt_name_map = {str(r.get("FIELDENUM_VALUE", "")): r.get("FIELDENUM_NAME", "") for r in (bt_rows or [])}
     except: pass
 
-    result = {k: (_safe_int(sp.get(k)) if k.endswith("_ID") or k.endswith("_INDEX") or k.endswith("_TYPE") or k == "PROVINCE_CODE"
-                   else _safe_float(sp.get(k)) if k in ("SERVERPART_X", "SERVERPART_Y")
+    result = {k: (_si(sp.get(k)) if k.endswith("_ID") or k.endswith("_INDEX") or k.endswith("_TYPE") or k == "PROVINCE_CODE"
+                   else _sf(sp.get(k)) if k in ("SERVERPART_X", "SERVERPART_Y")
                    else sp.get(k, ""))
               for k in ["SERVERPART_ID", "SERVERPART_NAME", "SERVERPART_TEL", "SERVERPART_ADDRESS",
                         "SERVERPART_INDEX", "PROVINCE_CODE", "SERVERPART_CODE", "SERVERPART_TYPE",
@@ -269,9 +267,9 @@ def get_serverpart_info(db: DatabaseHelper, serverpart_id: int) -> Optional[dict
     if rt_rows:
         rt = rt_rows[0]
         for k in ["SERVERPART_X", "SERVERPART_Y", "SERVERPART_AREA", "FLOORAREA", "BUSINESSAREA", "SHAREAREA"]:
-            rt[k] = _safe_float(rt.get(k))
+            rt[k] = _sf(rt.get(k))
         for k in ["SERVERPART_ID", "RTSERVERPART_ID", "SELLERCOUNT"]:
-            rt[k] = _safe_int(rt.get(k))
+            rt[k] = _si(rt.get(k))
         result["ServerpartInfo"] = rt
         if rt.get("SERVERPART_X") is not None: result["SERVERPART_X"] = rt["SERVERPART_X"]
         if rt.get("SERVERPART_Y") is not None: result["SERVERPART_Y"] = rt["SERVERPART_Y"]
@@ -285,9 +283,9 @@ def get_serverpart_info(db: DatabaseHelper, serverpart_id: int) -> Optional[dict
         result["HASGUESTROOM"] = any(float(r.get("POINTCONTROLCOUNT", 0) or 0) > 0 for r in info_rows)
         for ri in info_rows:
             for k in ["BUILDINGAREA", "FLOORAREA", "PARKINGAREA", "GREENSPACEAREA"]:
-                ri[k] = _safe_float(ri.get(k))
+                ri[k] = _sf(ri.get(k))
             for k in ["TOILETCOUNT", "SMALLPARKING", "PACKING", "TRUCKPACKING"]:
-                ri[k] = _safe_int(ri.get(k))
+                ri[k] = _si(ri.get(k))
             bt_val = str(ri.get("BUSINESSTYPE", "") or "")
             ri["BUSINESSTYPE"] = bt_name_map.get(bt_val, bt_val)
             ri.setdefault("REPAIR_TIME", None)
@@ -356,8 +354,8 @@ def get_server_info_tree(db: DatabaseHelper, province_code, sp_region_type_id,
         sp_id = r.get("SERVERPART_ID"); sp = sp_map.get(sp_id, {})
         node = {"SERVERPART_ID": sp_id, "TreeNodeName": r.get("SERVERPART_REGION", ""),
                 "TreeNodePName": sp.get("SERVERPART_NAME", ""), "BUSINESSTYPE": str(r.get("BUSINESSTYPE", "") or "")}
-        for f in INT_FIELDS + SHORT_FIELDS: node[f] = _safe_int(r.get(f))
-        for f in DEC_FIELDS: node[f] = _safe_float(r.get(f))
+        for f in INT_FIELDS + SHORT_FIELDS: node[f] = _si(r.get(f))
+        for f in DEC_FIELDS: node[f] = _sf(r.get(f))
         info_nodes.append({"node": node, "children": []})
 
     # 按服务区分组
@@ -374,7 +372,7 @@ def get_server_info_tree(db: DatabaseHelper, province_code, sp_region_type_id,
         sp = sp_map.get(sp_id, {})
         node = {"SERVERPART_ID": sp_id, "TreeNodeName": sp.get("SERVERPART_NAME", ""),
                 "TreeNodePName": sp.get("SPREGIONTYPE_NAME", ""),
-                "SPRegionTypeId": sp.get("SPREGIONTYPE_ID"), "ServerPartIndex": _safe_int(sp.get("SERVERPART_INDEX"))}
+                "SPRegionTypeId": sp.get("SPREGIONTYPE_ID"), "ServerPartIndex": _si(sp.get("SERVERPART_INDEX"))}
         for f in INT_FIELDS + SHORT_FIELDS + DEC_FIELDS: node[f] = _sum(children, f)
         sp_nesting.append({"node": node, "children": sorted(children, key=lambda x: str(x["node"].get("TreeNodeName", "")))})
 
@@ -388,7 +386,7 @@ def get_server_info_tree(db: DatabaseHelper, province_code, sp_region_type_id,
     for rid, sp_items in rg.items():
         sp = next((r for r in sp_rows if r.get("SPREGIONTYPE_ID") == rid), None)
         node = {"TreeNodeName": sp.get("SPREGIONTYPE_NAME", "") if sp else "", "TreeNodePName": "",
-                "SPRegionTypeId": rid, "SPRegionTypeIndex": _safe_int(sp.get("SPREGIONTYPE_INDEX")) if sp else None}
+                "SPRegionTypeId": rid, "SPRegionTypeIndex": _si(sp.get("SPREGIONTYPE_INDEX")) if sp else None}
         for f in INT_FIELDS + SHORT_FIELDS + DEC_FIELDS: node[f] = _sum(sp_items, f)
         result_list.append({"node": node, "children": sorted(sp_items, key=lambda x: x["node"].get("ServerPartIndex") or 0)})
     result_list.sort(key=lambda x: x["node"].get("SPRegionTypeIndex") or 0)

@@ -10,11 +10,11 @@ from datetime import datetime as dt, timedelta
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
 
+from services.commercial.service_utils import (
+    safe_float as _sf,
+)
 
-def _sf(v):
-    """安全浮点转换"""
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
+
 
 
 # ===================================================================

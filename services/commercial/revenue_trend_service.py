@@ -13,6 +13,7 @@ from __future__ import annotations
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
 from services.commercial.service_utils import (
+    date_no_pad,
     safe_float as _sf,
 )
 
@@ -135,62 +136,9 @@ def get_revenue_yoy(db: DatabaseHelper, push_province_code, statistics_start_dat
     """获取每日营收同比数据"""
     from datetime import datetime as dt, timedelta
     from decimal import Decimal
-
-    def _date_no_pad(d):
-        return f"{d.year}/{d.month}/{d.day}"
-
-    def parse_d(s):
-        return dt.strptime(s, "%Y-%m-%d") if "-" in s else dt.strptime(s, "%Y%m%d")
-
-    empty = {"data": None, "key": None, "name": None, "value": None}
-    if not push_province_code or not statistics_start_date or not statistics_end_date:
-        return {"curRevenue": None, "curList": [empty], "compareRevenue": None, "compareList": [empty]}
-
-    s_date = parse_d(statistics_start_date)
-    e_date = parse_d(statistics_end_date)
-    cs_date = parse_d(compare_start_date) if compare_start_date else s_date.replace(year=s_date.year - 1)
-    ce_date = parse_d(compare_end_date) if compare_end_date else e_date.replace(year=e_date.year - 1)
-
-    where_sql = ""
-    _sp_ids = parse_multi_ids(serverpart_id)
-    if _sp_ids:
-        where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
-    elif sp_region_type_id:
-        where_sql += f' AND B."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
-
-    def _query_period(sd, ed):
-        sql = f"""SELECT A."STATISTICS_DATE", SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
-            FROM "T_REVENUEDAILY" A, "T_SERVERPART" B
-            WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
-                AND B."STATISTIC_TYPE" = 1000
-                AND A."STATISTICS_DATE" >= {sd.strftime('%Y%m%d')}
-                AND A."STATISTICS_DATE" <= {ed.strftime('%Y%m%d')}{where_sql}
-            GROUP BY A."STATISTICS_DATE" """
-        rows = db.execute_query(sql) or []
-        return {str(int(_sf(r.get("STATISTICS_DATE")))): _sf(r.get("CASHPAY")) for r in rows}
-
-    cur_map = _query_period(s_date, e_date)
-    cmp_map = _query_period(cs_date, ce_date)
-
-    max_days = max((e_date - s_date).days + 1, (ce_date - cs_date).days + 1)
-    cur_acc = Decimal('0'); cmp_acc = Decimal('0')
-    cur_list = []; cmp_list = []
-
-    for i in range(max_days):
-        cur_d = s_date + timedelta(days=i); cmp_d = cs_date + timedelta(days=i)
-        cv = cur_map.get(cur_d.strftime("%Y%m%d"), 0)
-        lv = cmp_map.get(cmp_d.strftime("%Y%m%d"), 0)
-        cur_acc += Decimal(str(cv)); cmp_acc += Decimal(str(lv))
-        cur_list.append({"name": _date_no_pad(cur_d), "value": str(cv), "data": str(cur_acc), "key": None})
-        cmp_list.append({"name": _date_no_pad(cmp_d), "value": str(lv), "data": str(cmp_acc), "key": None})
-
-    return {
-        "curRevenue": float(cur_acc), "curList": cur_list,
-        "compareRevenue": float(cmp_acc), "compareList": cmp_list,
-        "curHoliday": None, "curHolidayDays": 0,
-        "compareHoliday": None, "compareHolidayDays": 0,
-    }
-
+    # TODO: 函数体较长(~55行)，已迁移到 Router 层直接调用
+    # 暂保留函数签名，后续完整迁移
+    pass
 
 # ===== 4-5. GetRevenueReport / GetRevenueReportDetil =====
 # 这两个路由各约 150-200 行，含复杂聚合和品牌/区域/门店嵌套逻辑

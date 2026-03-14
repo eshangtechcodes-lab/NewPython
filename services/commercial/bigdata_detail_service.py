@@ -9,17 +9,18 @@ GetEnergyRevenueInfo, GetBayonetOwnerAHTreeList, GetProvinceVehicleTreeList, Get
       需在 Router 层解密后传入; 树形路由逻辑较复杂, 整体迁移到此处
 """
 from typing import Optional
+from loguru import logger
 from core.database import DatabaseHelper
+from config import settings
 from routers.deps import parse_multi_ids, build_in_condition
+from models.base import Result, JsonListData
+
+from services.commercial.service_utils import (
+    safe_float as _sf,
+    safe_int as _si,
+)
 
 
-def _safe_int(v):
-    try: return int(float(v)) if v is not None else 0
-    except: return 0
-
-def _safe_f(v):
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
 
 
 # ===== 1. GetDateAnalysis =====
@@ -280,7 +281,7 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
     west = "西北"
 
     def count_vehicles(rows, vtype_contains, region_set):
-        return sum(_safe_int(r.get("VEHICLE_COUNT")) for r in rows
+        return sum(_si(r.get("VEHICLE_COUNT")) for r in rows
                    if vtype_contains in str(r.get("VEHICLE_TYPE", ""))
                    and str(r.get("SERVERPART_REGION", "")) in region_set)
 
@@ -291,11 +292,11 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
     west_light = count_vehicles(dt_bayonet, "小", west)
     west_mid = count_vehicles(dt_bayonet, "中", west)
     west_large = count_vehicles(dt_bayonet, "大", west)
-    total_count = sum(_safe_int(r.get("VEHICLE_COUNT")) for r in dt_bayonet)
+    total_count = sum(_si(r.get("VEHICLE_COUNT")) for r in dt_bayonet)
 
-    sf_total = sum(_safe_int(r.get("SECTIONFLOW_NUM")) for r in dt_sf)
-    sf_east = sum(_safe_int(r.get("SECTIONFLOW_NUM")) for r in dt_sf if str(r.get("SERVERPART_REGION", "")) in east)
-    sf_west = sum(_safe_int(r.get("SECTIONFLOW_NUM")) for r in dt_sf if str(r.get("SERVERPART_REGION", "")) in west)
+    sf_total = sum(_si(r.get("SECTIONFLOW_NUM")) for r in dt_sf)
+    sf_east = sum(_si(r.get("SECTIONFLOW_NUM")) for r in dt_sf if str(r.get("SERVERPART_REGION", "")) in east)
+    sf_west = sum(_si(r.get("SECTIONFLOW_NUM")) for r in dt_sf if str(r.get("SERVERPART_REGION", "")) in west)
     section_flow = {"total": float(sf_total), "RegionA": float(sf_east), "RegionB": float(sf_west)} if dt_sf else None
     entry_rate = None
     if section_flow and sf_total > 0:
@@ -307,10 +308,10 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
 
     root_node = {
         "Index": 1, "ServerPartLevel": 0,
-        "SPRegionTypeIndex": _safe_int(sp_info.get("SPREGIONTYPE_INDEX")),
-        "SPRegionTypeId": _safe_int(sp_info.get("SPREGIONTYPE_ID")),
+        "SPRegionTypeIndex": _si(sp_info.get("SPREGIONTYPE_INDEX")),
+        "SPRegionTypeId": _si(sp_info.get("SPREGIONTYPE_ID")),
         "SPRegionTypeNAME": sp_info.get("SPREGIONTYPE_NAME"),
-        "ServerPartId": _safe_int(sp_info.get("SERVERPART_ID")),
+        "ServerPartId": _si(sp_info.get("SERVERPART_ID")),
         "ServerPartName": sp_info.get("SERVERPART_NAME"),
         "ProvinceName": None, "CityName": None,
         "SectionFlow": section_flow, "EntryRate": entry_rate,
@@ -323,16 +324,16 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
     # 按省份分组
     prov_map = defaultdict(list)
     for r in dt_bayonet: prov_map[str(r.get("PROVINCE_NAME") or "")].append(r)
-    prov_sorted = sorted(prov_map.items(), key=lambda x: sum(_safe_int(r.get("VEHICLE_COUNT")) for r in x[1]), reverse=True)
+    prov_sorted = sorted(prov_map.items(), key=lambda x: sum(_si(r.get("VEHICLE_COUNT")) for r in x[1]), reverse=True)
 
     def _build_city_node(city_name, city_rows, prov_name):
-        c_total = sum(_safe_int(r.get("VEHICLE_COUNT")) for r in city_rows)
+        c_total = sum(_si(r.get("VEHICLE_COUNT")) for r in city_rows)
         cel = count_vehicles(city_rows, "小", east); cem = count_vehicles(city_rows, "中", east); cea = count_vehicles(city_rows, "大", east)
         cwl = count_vehicles(city_rows, "小", west); cwm = count_vehicles(city_rows, "中", west); cwa = count_vehicles(city_rows, "大", west)
         return {"node": {
             "Index": 999 if not city_name else 1, "ServerPartLevel": 2,
-            "SPRegionTypeIndex": _safe_int(sp_info.get("SPREGIONTYPE_INDEX")),
-            "SPRegionTypeId": _safe_int(sp_info.get("SPREGIONTYPE_ID")),
+            "SPRegionTypeIndex": _si(sp_info.get("SPREGIONTYPE_INDEX")),
+            "SPRegionTypeId": _si(sp_info.get("SPREGIONTYPE_ID")),
             "SPRegionTypeNAME": sp_info.get("SPREGIONTYPE_NAME"),
             "ServerPartId": sp_id, "ServerPartName": sp_info.get("SERVERPART_NAME"),
             "ProvinceName": prov_name, "CityName": city_name or "其他",
@@ -346,11 +347,11 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
     province_children = []
     for prov_name_raw, prov_rows in prov_sorted:
         prov_name = prov_name_raw if prov_name_raw else "其他"
-        p_total = sum(_safe_int(r.get("VEHICLE_COUNT")) for r in prov_rows)
+        p_total = sum(_si(r.get("VEHICLE_COUNT")) for r in prov_rows)
         prov_node = {
             "Index": 999 if not prov_name_raw else 1, "ServerPartLevel": 1,
-            "SPRegionTypeIndex": _safe_int(sp_info.get("SPREGIONTYPE_INDEX")),
-            "SPRegionTypeId": _safe_int(sp_info.get("SPREGIONTYPE_ID")),
+            "SPRegionTypeIndex": _si(sp_info.get("SPREGIONTYPE_INDEX")),
+            "SPRegionTypeId": _si(sp_info.get("SPREGIONTYPE_ID")),
             "SPRegionTypeNAME": sp_info.get("SPREGIONTYPE_NAME"),
             "ServerPartId": sp_id, "ServerPartName": sp_info.get("SERVERPART_NAME"),
             "ProvinceName": prov_name, "CityName": None, "SectionFlow": None, "EntryRate": None,
@@ -368,7 +369,7 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
 
         city_map = defaultdict(list)
         for r in prov_rows: city_map[str(r.get("CITY_NAME") or "")].append(r)
-        city_sorted = sorted(city_map.items(), key=lambda x: sum(_safe_int(r.get("VEHICLE_COUNT")) for r in x[1]), reverse=True)
+        city_sorted = sorted(city_map.items(), key=lambda x: sum(_si(r.get("VEHICLE_COUNT")) for r in x[1]), reverse=True)
 
         city_children = []
         if rank_num and rank_num > 0 and len(city_sorted) >= rank_num:
@@ -376,7 +377,7 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
             top_total = 0; top_counts = {"el": 0, "em": 0, "ea": 0, "wl": 0, "wm": 0, "wa": 0}
             for cn, cr in top_cities:
                 city_children.append(_build_city_node(cn, cr, prov_name))
-                top_total += sum(_safe_int(r.get("VEHICLE_COUNT")) for r in cr)
+                top_total += sum(_si(r.get("VEHICLE_COUNT")) for r in cr)
                 top_counts["el"] += count_vehicles(cr, "小", east)
                 top_counts["em"] += count_vehicles(cr, "中", east)
                 top_counts["ea"] += count_vehicles(cr, "大", east)
@@ -392,8 +393,8 @@ def get_bayonet_owner_ah_tree_detail(db: DatabaseHelper, sp_id: int, start_month
             owa = max(0, prov_node["WestLargeCount"] - top_counts["wa"])
             city_children.append({"node": {
                 "Index": 999, "ServerPartLevel": 2,
-                "SPRegionTypeIndex": _safe_int(sp_info.get("SPREGIONTYPE_INDEX")),
-                "SPRegionTypeId": _safe_int(sp_info.get("SPREGIONTYPE_ID")),
+                "SPRegionTypeIndex": _si(sp_info.get("SPREGIONTYPE_INDEX")),
+                "SPRegionTypeId": _si(sp_info.get("SPREGIONTYPE_ID")),
                 "SPRegionTypeNAME": sp_info.get("SPREGIONTYPE_NAME"),
                 "ServerPartId": sp_id, "ServerPartName": sp_info.get("SERVERPART_NAME"),
                 "ProvinceName": prov_name, "CityName": "其他", "SectionFlow": None, "EntryRate": None,
@@ -488,8 +489,23 @@ def get_revenue_trend_chart(db, post_data):
             socket_timeout=2,
         )
         all_data = redis_client.hgetall(table_name) or {}
+    except Exception as ex:
+        logger.warning(f"Redis 连接失败: {ex}")
+        all_data = {}
 
+    # 汇总各服务区的营收趋势数据
+    result_list = []
+    for sp_code in serverpart_codes:
+        val = all_data.get(sp_code, "")
+        if val:
+            try:
+                import json
+                item = json.loads(val)
+                result_list.append(item)
+            except Exception:
+                pass
 
+    return result_list
 # ===================================================================
 # GetProvinceVehicleTreeList — 各省入区车辆统计树
 # ===================================================================

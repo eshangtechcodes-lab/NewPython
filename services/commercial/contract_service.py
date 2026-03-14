@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
+
+from services.commercial.service_utils import (
+    safe_int as _si,
+)
+
 # -*- coding: utf-8 -*-
 """
 CommercialApi - 合同分析业务服务
@@ -14,10 +19,6 @@ from routers.deps import parse_multi_ids, build_in_condition
 def _safe_dec(v):
     try: return float(v) if v is not None else 0.0
     except: return 0.0
-
-def _safe_int(v):
-    try: return int(v) if v is not None else 0
-    except: return 0
 
 
 def get_contract_analysis(db: DatabaseHelper, statistics_date: str,
@@ -76,7 +77,7 @@ def get_contract_analysis(db: DatabaseHelper, statistics_date: str,
         FROM "T_SHOPCOUNT" A, "T_SERVERPART" B
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID"{shop_where}"""
     shop_rows = db.execute_query(sql_shop) or []
-    shop_count = _safe_int(shop_rows[0].get("SHOP_COUNT")) if shop_rows else 0
+    shop_count = _si(shop_rows[0].get("SHOP_COUNT")) if shop_rows else 0
 
     # 欠款
     sql_arrearage = f"""SELECT SUM(A."CURRENTBALANCE" / 10000) AS "TOTAL_BALANCE"
@@ -108,7 +109,7 @@ def get_contract_analysis(db: DatabaseHelper, statistics_date: str,
             AND "COMPACT_ENDDATE" <= ADD_MONTHS(TO_DATE('{stat_short}','YYYY/MM/DD'),6){exists_sql}"""
     expired_rows = db.execute_query(sql_expired) or []
 
-    expired_3 = [r for r in expired_rows if _safe_int(r.get("EXPIRED_SITUATION")) == 3]
+    expired_3 = [r for r in expired_rows if _si(r.get("EXPIRED_SITUATION")) == 3]
     contract_list = []
     if expired_3:
         expired_3.sort(key=lambda x: x.get("COMPACT_ENDDATE", ""))
@@ -248,7 +249,7 @@ def get_merchant_account_detail(db: DatabaseHelper, merchant_id: int,
     brand_rows = db.execute_query("""SELECT "BRAND_ID","BRAND_NAME","BRAND_INTRO"
         FROM "T_BRAND" WHERE "PROVINCE_CODE" = 340000""") or []
     brand_map = {str(b.get("BRAND_ID", "")): {
-        "BrandId": _safe_int(b.get("BRAND_ID")),
+        "BrandId": _si(b.get("BRAND_ID")),
         "BrandName": b.get("BRAND_NAME", ""),
         "BrandICO": b.get("BRAND_INTRO", ""),
     } for b in brand_rows}
@@ -266,8 +267,8 @@ def get_merchant_account_detail(db: DatabaseHelper, merchant_id: int,
         brand_account_list = []
         for dr in sp_rows:
             brand_model = {
-                "BusinessType": _safe_int(dr.get("BUSINESS_TYPE")),
-                "SettlementMods": _safe_int(dr.get("SETTLEMENT_MODES")),
+                "BusinessType": _si(dr.get("BUSINESS_TYPE")),
+                "SettlementMods": _si(dr.get("SETTLEMENT_MODES")),
                 "SubRoyaltyPrice": _safe_dec(dr.get("SUBROYALTY_PRICE")),
                 "SubRoyaltyTheory": _safe_dec(dr.get("SUBROYALTY_THEORY")),
                 "ReceivableAmount": round(_safe_dec(dr.get("SUBROYALTY_PRICE")) - _safe_dec(dr.get("SUBROYALTY_THEORY")), 2),
@@ -287,7 +288,7 @@ def get_merchant_account_detail(db: DatabaseHelper, merchant_id: int,
                         if brand_model["BrandICO"] and brand_model["BrandICO"].startswith("/"):
                             brand_model["BrandICO"] = "http://yida.anhighway.cn" + brand_model["BrandICO"]
                     else:
-                        brand_model["BrandId"] = _safe_int(b_id)
+                        brand_model["BrandId"] = _si(b_id)
                         brand_model["BrandName"] = shop_rows[0].get("BRAND_NAME", "")
             brand_account_list.append(brand_model)
 

@@ -7,10 +7,11 @@ from typing import Optional
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
 
+from services.commercial.service_utils import (
+    safe_float as _sf,
+)
 
-def _safe_f(v):
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
+
 
 
 def get_month_analysis(db: DatabaseHelper, statistics_date, province_code, start_date, end_date,
@@ -50,9 +51,9 @@ def get_month_analysis(db: DatabaseHelper, statistics_date, province_code, start
     for r in sf_rows:
         m = str(r.get("STATISTICS_MONTH", "")).strip()
         region = str(r.get("SERVERPART_REGION", "")).strip()
-        vc = _safe_f(r.get("VEHICLE_COUNT"))
-        sf = _safe_f(r.get("SECTIONFLOW_NUM"))
-        days = int(_safe_f(r.get("DATE_COUNT")))
+        vc = _sf(r.get("VEHICLE_COUNT"))
+        sf = _sf(r.get("SECTIONFLOW_NUM"))
+        days = int(_sf(r.get("DATE_COUNT")))
         if m not in sf_map:
             sf_map[m] = {"days": 0, "vc": 0.0, "sf": 0.0}
         sf_map[m]["days"] = max(sf_map[m]["days"], days)
@@ -74,7 +75,7 @@ def get_month_analysis(db: DatabaseHelper, statistics_date, province_code, start
     mv_map = {}
     for r in mv_rows:
         m = str(r.get("STATISTICS_MONTH", "")).strip()
-        mv_map[m] = {"days": int(_safe_f(r.get("DATE_COUNT"))), "vc": _safe_f(r.get("VEHICLE_COUNT")), "min": _safe_f(r.get("MINVEHICLE_COUNT"))}
+        mv_map[m] = {"days": int(_sf(r.get("DATE_COUNT"))), "vc": _sf(r.get("VEHICLE_COUNT")), "min": _sf(r.get("MINVEHICLE_COUNT"))}
 
     # 查营收 按月
     rev_where = ""
@@ -92,7 +93,7 @@ def get_month_analysis(db: DatabaseHelper, statistics_date, province_code, start
     rev_map = {}
     for r in rev_rows:
         m = str(r.get("STATISTICS_MONTH", "")).strip()
-        rev_map[m] = {"days": int(_safe_f(r.get("DATE_COUNT"))), "rev": _safe_f(r.get("REVENUE_AMOUNT"))}
+        rev_map[m] = {"days": int(_sf(r.get("DATE_COUNT"))), "rev": _sf(r.get("REVENUE_AMOUNT"))}
 
     server_regions = ["东", "南", "西", "北"]
     result_list = []

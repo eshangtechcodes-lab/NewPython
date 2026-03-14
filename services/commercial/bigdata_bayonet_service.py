@@ -8,14 +8,13 @@ from typing import Optional
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
 
+from services.commercial.service_utils import (
+    date_no_pad,
+    safe_float as _sf,
+    safe_int as _si,
+)
 
-def _safe_int(v):
-    try: return int(float(v)) if v is not None else 0
-    except: return 0
 
-def _safe_f(v):
-    try: return float(v) if v is not None else 0.0
-    except: return 0.0
 
 
 # ===== Helper: 车辆停留时长模型 =====
@@ -193,14 +192,14 @@ def get_bayonet_entry_list(db: DatabaseHelper, statistics_date, serverpart_id, s
     regions_order = ["东", "南", "西", "北"]
 
     def bind_model(sf_row, key):
-        sp_flow = _safe_int(sf_row.get("SERVERPART_FLOW"))
-        section_num = _safe_int(sf_row.get("SECTIONFLOW_NUM"))
-        in_vc = _safe_int(in_map.get(key, {}).get("VEHICLE_COUNT"))
+        sp_flow = _si(sf_row.get("SERVERPART_FLOW"))
+        section_num = _si(sf_row.get("SECTIONFLOW_NUM"))
+        in_vc = _si(in_map.get(key, {}).get("VEHICLE_COUNT"))
         vc = max(sp_flow, in_vc)
         entry_rate = round(vc / section_num * 100, 2) if section_num > 0 and vc > 0 else 0
-        vy = _safe_int(in_y_map.get(key, {}).get("VEHICLE_COUNT"))
-        sy = _safe_int(sf_y_map.get(key, {}).get("SECTIONFLOW_NUM"))
-        spy = _safe_int(sf_y_map.get(key, {}).get("SERVERPART_FLOW"))
+        vy = _si(in_y_map.get(key, {}).get("VEHICLE_COUNT"))
+        sy = _si(sf_y_map.get(key, {}).get("SECTIONFLOW_NUM"))
+        spy = _si(sf_y_map.get(key, {}).get("SERVERPART_FLOW"))
         vy = max(vy, spy)
         vg_rate, eg_rate = None, None
         if vy > 0 and sy > 0:
@@ -459,13 +458,13 @@ def get_sp_bayonet_list(db: DatabaseHelper, statistics_date, province_code, sp_r
 
         if rows and rows[0].get("VEHICLE_COUNT"):
             r = rows[0]
-            vc = _safe_f(r.get("VEHICLE_COUNT")); sf = _safe_f(r.get("SECTIONFLOW_NUM"))
+            vc = _sf(r.get("VEHICLE_COUNT")); sf = _sf(r.get("SECTIONFLOW_NUM"))
             item = {
                 "SPRegionType_Id": None, "SPRegionType_Index": None, "SPRegionType_Name": None,
                 "Serverpart_ID": None, "Serverpart_Index": None, "Serverpart_Name": None, "Serverpart_Region": None,
-                "Vehicle_Count": vc, "MinVehicle_Count": _safe_f(r.get("MINVEHICLE_COUNT")),
-                "MediumVehicle_Count": _safe_f(r.get("MEDIUMVEHICLE_COUNT")),
-                "LargeVehicle_Count": _safe_f(r.get("LARGEVEHICLE_COUNT")),
+                "Vehicle_Count": vc, "MinVehicle_Count": _sf(r.get("MINVEHICLE_COUNT")),
+                "MediumVehicle_Count": _sf(r.get("MEDIUMVEHICLE_COUNT")),
+                "LargeVehicle_Count": _sf(r.get("LARGEVEHICLE_COUNT")),
                 "SectionFlow_Count": sf,
                 "Entry_Rate": round(vc / sf * 100, 2) if sf > 0 else None,
                 "MinVehicleEntry_Rate": None, "MediumVehicleEntry_Rate": None, "LargeVehicleEntry_Rate": None,
@@ -477,9 +476,9 @@ def get_sp_bayonet_list(db: DatabaseHelper, statistics_date, province_code, sp_r
                 if item["MediumVehicle_Count"]: item["MediumVehicleEntry_Rate"] = round(item["MediumVehicle_Count"] / sf * 100, 2)
                 if item["LargeVehicle_Count"]: item["LargeVehicleEntry_Rate"] = round(item["LargeVehicle_Count"] / sf * 100, 2)
             if rows_lm and rows_lm[0].get("VEHICLE_COUNT"):
-                rl = rows_lm[0]; lsf = _safe_f(rl.get("SECTIONFLOW_NUM"))
+                rl = rows_lm[0]; lsf = _sf(rl.get("SECTIONFLOW_NUM"))
                 if lsf > 0 and item["Entry_Rate"]:
-                    last_rate = round(_safe_f(rl.get("VEHICLE_COUNT")) / lsf * 100, 2)
+                    last_rate = round(_sf(rl.get("VEHICLE_COUNT")) / lsf * 100, 2)
                     item["Entry_GrowthRate"] = round(item["Entry_Rate"] - last_rate, 2)
             result_list.append(item)
     else:
@@ -506,7 +505,7 @@ def get_sp_bayonet_list(db: DatabaseHelper, statistics_date, province_code, sp_r
         sf_map = {}
         for s in dt_sf:
             key = (s["SERVERPART_ID"], s.get("SERVERPART_REGION", ""))
-            sf_map[key] = _safe_f(s.get("SECTIONFLOW_NUM"))
+            sf_map[key] = _sf(s.get("SECTIONFLOW_NUM"))
 
         lm_bayonet_map, lm_sf_map = {}, {}
         if show_growth_rate:
@@ -517,13 +516,13 @@ def get_sp_bayonet_list(db: DatabaseHelper, statistics_date, province_code, sp_r
                 lm_bayonet_map[(lb["SERVERPART_ID"], lb.get("SERVERPART_REGION", ""))] = lb
             lm_sf_sql = sf_sql.replace(f">= {start_str}", f">= {lm_start}").replace(f"<= {end_str}", f"<= {lm_end}")
             for ls in (db.execute_query(lm_sf_sql) or []):
-                lm_sf_map[(ls["SERVERPART_ID"], ls.get("SERVERPART_REGION", ""))] = _safe_f(ls.get("SECTIONFLOW_NUM"))
+                lm_sf_map[(ls["SERVERPART_ID"], ls.get("SERVERPART_REGION", ""))] = _sf(ls.get("SECTIONFLOW_NUM"))
 
         for r in dt_bayonet:
             sp_id = r["SERVERPART_ID"]
             region = r.get("SERVERPART_REGION", "")
             key = (sp_id, region)
-            vc_min = _safe_f(r.get("MINVEHICLE_COUNT")); vc_med = _safe_f(r.get("MEDIUMVEHICLE_COUNT")); vc_lrg = _safe_f(r.get("LARGEVEHICLE_COUNT"))
+            vc_min = _sf(r.get("MINVEHICLE_COUNT")); vc_med = _sf(r.get("MEDIUMVEHICLE_COUNT")); vc_lrg = _sf(r.get("LARGEVEHICLE_COUNT"))
             vc = vc_min + vc_med + vc_lrg; sf = sf_map.get(key, 0)
             item = {
                 "SPRegionType_Id": r.get("SPREGIONTYPE_ID"), "SPRegionType_Index": r.get("SPREGIONTYPE_INDEX"),
@@ -544,7 +543,7 @@ def get_sp_bayonet_list(db: DatabaseHelper, statistics_date, province_code, sp_r
             if show_growth_rate and sf > 0:
                 lb = lm_bayonet_map.get(key); lsf = lm_sf_map.get(key, 0)
                 if lb and lsf > 0:
-                    l_vc = _safe_f(lb.get("MINVEHICLE_COUNT")) + _safe_f(lb.get("MEDIUMVEHICLE_COUNT")) + _safe_f(lb.get("LARGEVEHICLE_COUNT"))
+                    l_vc = _sf(lb.get("MINVEHICLE_COUNT")) + _sf(lb.get("MEDIUMVEHICLE_COUNT")) + _sf(lb.get("LARGEVEHICLE_COUNT"))
                     l_rate = round(l_vc / lsf * 100, 2)
                     item["Entry_GrowthRate"] = round(item["Entry_Rate"] - l_rate, 2) if item["Entry_Rate"] else None
             result_list.append(item)
@@ -581,8 +580,8 @@ def get_avg_bayonet_analysis(db: DatabaseHelper, statistics_date, province_code,
         rows = db.execute_query(sql) or []
         if rows and rows[0].get("SERVERPART_FLOW"):
             r = rows[0]
-            return {"Vehicle_Count": _safe_f(r.get("SERVERPART_FLOW")),
-                    "Entry_Rate": _safe_f(r.get("AVGENTRY_RATE")), "Stay_Times": _safe_f(r.get("AVGSTAY_TIMES"))}
+            return {"Vehicle_Count": _sf(r.get("SERVERPART_FLOW")),
+                    "Entry_Rate": _sf(r.get("AVGENTRY_RATE")), "Stay_Times": _sf(r.get("AVGSTAY_TIMES"))}
         return None
 
     _sp_ids = parse_multi_ids(serverpart_id)
@@ -613,8 +612,8 @@ def get_avg_bayonet_analysis(db: DatabaseHelper, statistics_date, province_code,
     sp_groups = defaultdict(lambda: {"vc": 0, "sf": 0})
     for r in rows:
         sp_id = r["SERVERPART_ID"]
-        sp_groups[sp_id]["vc"] += _safe_f(r.get("VEHICLE_COUNT"))
-        sp_groups[sp_id]["sf"] += _safe_f(r.get("SECTIONFLOW_NUM"))
+        sp_groups[sp_id]["vc"] += _sf(r.get("VEHICLE_COUNT"))
+        sp_groups[sp_id]["sf"] += _sf(r.get("SECTIONFLOW_NUM"))
 
     rates, vcs = [], []
     for sp_id, g in sp_groups.items():
@@ -632,7 +631,7 @@ def get_avg_bayonet_analysis(db: DatabaseHelper, statistics_date, province_code,
     sta_rows = db.execute_query(sta_sql) or []
     avg_stay = 0
     if sta_rows:
-        stay_vals = [_safe_f(r.get("AVGSTAY_TIMES")) for r in sta_rows if _safe_f(r.get("AVGSTAY_TIMES")) > 0]
+        stay_vals = [_sf(r.get("AVGSTAY_TIMES")) for r in sta_rows if _sf(r.get("AVGSTAY_TIMES")) > 0]
         if stay_vals: avg_stay = round(sum(stay_vals) / len(stay_vals) / 60, 2)
 
     return {"Vehicle_Count": avg_vc, "Entry_Rate": avg_rate, "Stay_Times": avg_stay}
@@ -711,33 +710,12 @@ def get_province_avg_bayonet_analysis(db: DatabaseHelper, province_code, statist
     flow_map = {}
     for r in flow_rows:
         sd = str(r.get("STATISTICS_DATE", ""))
-        flow_map[sd] = {"sf": _safe_f(r.get("SUM_SECTIONFLOW_NUM")), "spf": _safe_f(r.get("SUM_SERVERPART_FLOW"))}
+        flow_map[sd] = {"sf": _sf(r.get("SUM_SECTIONFLOW_NUM")), "spf": _sf(r.get("SUM_SERVERPART_FLOW"))}
 
     cur_avg = next((r for r in avg_rows if str(r.get("STATISTICS_DATE", "")) == str(cur_month)), None)
-    cur_entry = _safe_f(cur_avg.get("AVGENTRY_RATE")) if cur_avg else 0
-    cur_stay = _safe_f(cur_avg.get("AVGSTAY_TIMES")) if cur_avg else 0
+    cur_entry = _sf(cur_avg.get("AVGENTRY_RATE")) if cur_avg else 0
+    cur_stay = _sf(cur_avg.get("AVGSTAY_TIMES")) if cur_avg else 0
     cur_spf = flow_map.get(str(cur_month), {}).get("spf", 0)
-
-    def _date_no_pad(d):
-        return f"{d.year}/{d.month}/{d.day}"
-
-    data_list = []
-    for r in avg_rows:
-        sd = str(r.get("STATISTICS_DATE", ""))
-        vc = _safe_f(r.get("SERVERPART_FLOW")); entry = _safe_f(r.get("AVGENTRY_RATE")); stay = _safe_f(r.get("AVGSTAY_TIMES"))
-        addup_sf = int(flow_map.get(sd, {}).get("sf", 0)); addup_vc = int(flow_map.get(sd, {}).get("spf", 0))
-        vc_growth = round((cur_spf / addup_vc - 1) * 100, 2) if addup_vc else 0.0
-        entry_growth = round(cur_entry - entry, 2) if entry else 0.0
-        stay_growth = round((cur_stay / stay - 1) * 100, 2) if stay else 0.0
-        name = "QOQ" if sd == last_month else ("YOY" if sd == last_year else "Current")
-        data_list.append({
-            "Serverpart_ID": None, "Serverpart_Name": name, "Serverpart_Region": None,
-            "Vehicle_Count": int(vc), "Vehicle_GrowthRate": vc_growth,
-            "SectionFlow_Count": None, "Entry_Rate": entry, "Entry_GrowthRate": entry_growth,
-            "Stay_Times": stay, "StayTimes_GrowthRate": stay_growth,
-            "Vehicle_AddUpCount": addup_vc, "SectionFlow_AddUpCount": addup_sf, "EntryAddUp_Rate": None,
-        })
-    return data_list
 
 
 # ===== 9. GetBayonetSTAnalysis =====

@@ -9,18 +9,16 @@ from typing import Optional
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
 
+from services.commercial.service_utils import (
+    date_no_pad,
+    safe_int as _si,
+)
 
-def _safe_int(v):
-    try: return int(float(v)) if v is not None else 0
-    except: return 0
+
 
 def _safe_dec(v):
     try: return float(v) if v is not None else 0.0
     except: return 0.0
-
-def _date_no_pad(d):
-    """日期格式化为不补零的 yyyy/M/d"""
-    return f"{d.year}/{d.month}/{d.day}"
 
 
 # ===== 1. GetBayonetWarning =====
@@ -39,28 +37,28 @@ def get_bayonet_warning(db: DatabaseHelper, statistics_date, statistics_hour,
 
     result_list = []
     if statistics_type == 1:
-        filtered = [r for r in rows if _safe_int(r.get("VEHICLE_COUNT")) > 100
+        filtered = [r for r in rows if _si(r.get("VEHICLE_COUNT")) > 100
                     and 1.5 < _safe_dec(r.get("VEHICLE_RATE")) < 10]
-        filtered.sort(key=lambda x: _safe_int(x.get("VEHICLE_COUNT")), reverse=True)
+        filtered.sort(key=lambda x: _si(x.get("VEHICLE_COUNT")), reverse=True)
         for r in filtered:
             result_list.append({
-                "SERVERPART_ID": _safe_int(r.get("SERVERPART_ID")),
+                "SERVERPART_ID": _si(r.get("SERVERPART_ID")),
                 "SERVERPART_NAME": r.get("SERVERPART_NAME", ""),
                 "SERVERPART_REGION": r.get("SERVERPART_REGION", ""),
-                "VEHICLE_COUNT": _safe_int(r.get("VEHICLE_COUNT")),
-                "MONTHVEHICLE_COUNT": _safe_int(r.get("MONTHVEHICLE_COUNT")),
+                "VEHICLE_COUNT": _si(r.get("VEHICLE_COUNT")),
+                "MONTHVEHICLE_COUNT": _si(r.get("MONTHVEHICLE_COUNT")),
                 "VEHICLE_RATE": round(_safe_dec(r.get("VEHICLE_RATE")) * 100, 2),
             })
     elif statistics_type == 2:
         filtered = [r for r in rows if 1 < _safe_dec(r.get("MONTHVEHICLE_TOTALRATE")) < 10]
-        filtered.sort(key=lambda x: _safe_int(x.get("VEHICLE_TOTALCOUNT")), reverse=True)
+        filtered.sort(key=lambda x: _si(x.get("VEHICLE_TOTALCOUNT")), reverse=True)
         for r in filtered[:show_count]:
             result_list.append({
-                "SERVERPART_ID": _safe_int(r.get("SERVERPART_ID")),
+                "SERVERPART_ID": _si(r.get("SERVERPART_ID")),
                 "SERVERPART_NAME": r.get("SERVERPART_NAME", ""),
                 "SERVERPART_REGION": r.get("SERVERPART_REGION", ""),
-                "VEHICLE_COUNT": _safe_int(r.get("VEHICLE_TOTALCOUNT")),
-                "MONTHVEHICLE_COUNT": _safe_int(r.get("MONTHVEHICLE_TOTALCOUNT")),
+                "VEHICLE_COUNT": _si(r.get("VEHICLE_TOTALCOUNT")),
+                "MONTHVEHICLE_COUNT": _si(r.get("MONTHVEHICLE_TOTALCOUNT")),
                 "VEHICLE_RATE": round(_safe_dec(r.get("MONTHVEHICLE_TOTALRATE")) * 100, 2),
             })
     return result_list
@@ -123,11 +121,11 @@ def get_holiday_bayonet_warning(db: DatabaseHelper, statistics_date, statistics_
 
     cmp_map = {}
     for c in dt_compare:
-        key = (_safe_int(c.get("SERVERPART_ID")), c.get("SERVERPART_REGION", ""))
+        key = (_si(c.get("SERVERPART_ID")), c.get("SERVERPART_REGION", ""))
         cmp_map[key] = c
 
     for w in dt_warning:
-        key = (_safe_int(w.get("SERVERPART_ID")), w.get("SERVERPART_REGION", ""))
+        key = (_si(w.get("SERVERPART_ID")), w.get("SERVERPART_REGION", ""))
         if key in cmp_map:
             c = cmp_map[key]
             w["MONTHVEHICLE_COUNT"] = c.get("VEHICLE_COUNT")
@@ -144,28 +142,28 @@ def get_holiday_bayonet_warning(db: DatabaseHelper, statistics_date, statistics_
 
     result_list = []
     if statistics_type in (3, 5):
-        filtered = [r for r in dt_warning if _safe_int(r.get("VEHICLE_COUNT")) > 100
+        filtered = [r for r in dt_warning if _si(r.get("VEHICLE_COUNT")) > 100
                     and _safe_dec(r.get("VEHICLE_RATE")) > 1.5]
-        filtered.sort(key=lambda x: _safe_int(x.get("VEHICLE_COUNT")), reverse=True)
+        filtered.sort(key=lambda x: _si(x.get("VEHICLE_COUNT")), reverse=True)
         for r in filtered:
             result_list.append({
-                "SERVERPART_ID": _safe_int(r.get("SERVERPART_ID")),
+                "SERVERPART_ID": _si(r.get("SERVERPART_ID")),
                 "SERVERPART_NAME": r.get("SERVERPART_NAME", ""),
                 "SERVERPART_REGION": r.get("SERVERPART_REGION", ""),
-                "VEHICLE_COUNT": _safe_int(r.get("VEHICLE_COUNT")),
-                "MONTHVEHICLE_COUNT": _safe_int(r.get("MONTHVEHICLE_COUNT")),
+                "VEHICLE_COUNT": _si(r.get("VEHICLE_COUNT")),
+                "MONTHVEHICLE_COUNT": _si(r.get("MONTHVEHICLE_COUNT")),
                 "VEHICLE_RATE": round(_safe_dec(r.get("VEHICLE_RATE")) * 100, 2),
             })
     elif statistics_type in (4, 6):
         filtered = [r for r in dt_warning if _safe_dec(r.get("MONTHVEHICLE_TOTALRATE")) > 1]
-        filtered.sort(key=lambda x: _safe_int(x.get("VEHICLE_TOTALCOUNT")), reverse=True)
+        filtered.sort(key=lambda x: _si(x.get("VEHICLE_TOTALCOUNT")), reverse=True)
         for r in filtered[:show_count]:
             result_list.append({
-                "SERVERPART_ID": _safe_int(r.get("SERVERPART_ID")),
+                "SERVERPART_ID": _si(r.get("SERVERPART_ID")),
                 "SERVERPART_NAME": r.get("SERVERPART_NAME", ""),
                 "SERVERPART_REGION": r.get("SERVERPART_REGION", ""),
-                "VEHICLE_COUNT": _safe_int(r.get("VEHICLE_TOTALCOUNT")),
-                "MONTHVEHICLE_COUNT": _safe_int(r.get("MONTHVEHICLE_TOTALCOUNT")),
+                "VEHICLE_COUNT": _si(r.get("VEHICLE_TOTALCOUNT")),
+                "MONTHVEHICLE_COUNT": _si(r.get("MONTHVEHICLE_TOTALCOUNT")),
                 "VEHICLE_RATE": round(_safe_dec(r.get("MONTHVEHICLE_TOTALRATE")) * 100, 2),
             })
     return result_list
@@ -222,12 +220,12 @@ def get_bayonet_growth_analysis(db: DatabaseHelper, push_province_code, statisti
             GROUP BY B."SERVERPART_ID",A."SERVERPART_REGION" """
         yes_rows = db.execute_query(sql2) or []
         for r in yes_rows:
-            key = (_safe_int(r.get("SERVERPART_ID")), r.get("SERVERPART_REGION", ""))
+            key = (_si(r.get("SERVERPART_ID")), r.get("SERVERPART_REGION", ""))
             yes_map[key] = r
 
     entry_list = []
     for r in rows:
-        sp_id = _safe_int(r.get("SERVERPART_ID"))
+        sp_id = _si(r.get("SERVERPART_ID"))
         region = r.get("SERVERPART_REGION", "")
         vc = _safe_dec(r.get("VEHICLE_COUNT"))
         growth = 0.0
@@ -316,9 +314,9 @@ def get_bayonet_compare(db: DatabaseHelper, push_province_code, statistics_start
     def build_map(rows):
         m = {}
         for r in rows:
-            d = str(_safe_int(r.get("STATISTICS_DATE")))
-            sc = _safe_int(r.get("SERVERPART_COUNT"))
-            vc = _safe_int(r.get("VEHICLE_COUNT"))
+            d = str(_si(r.get("STATISTICS_DATE")))
+            sc = _si(r.get("SERVERPART_COUNT"))
+            vc = _si(r.get("VEHICLE_COUNT"))
             m[d] = vc // sc if sc > 0 else 0
         return m
 
@@ -333,8 +331,8 @@ def get_bayonet_compare(db: DatabaseHelper, push_province_code, statistics_start
     for i in range(max_days):
         cd = s_date + timedelta(days=i)
         ld = cs_date + timedelta(days=i)
-        cur_list.append({"name": _date_no_pad(cd), "value": str(cur_map.get(cd.strftime("%Y%m%d"), 0)), "data": None, "key": None})
-        cmp_list.append({"name": _date_no_pad(ld), "value": str(cmp_map.get(ld.strftime("%Y%m%d"), 0)), "data": None, "key": None})
+        cur_list.append({"name": date_no_pad(cd), "value": str(cur_map.get(cd.strftime("%Y%m%d"), 0)), "data": None, "key": None})
+        cmp_list.append({"name": date_no_pad(ld), "value": str(cmp_map.get(ld.strftime("%Y%m%d"), 0)), "data": None, "key": None})
 
     return {
         "curHoliday": None, "curHolidayDays": 0, "curList": cur_list,
@@ -403,9 +401,9 @@ def get_holiday_compare(db: DatabaseHelper, push_province_code, holiday_type, cu
     def build_map(rows):
         m = {}
         for r in rows:
-            d = str(_safe_int(r.get("STATISTICS_DATE")))
-            sc = _safe_int(r.get("SERVERPART_COUNT"))
-            vc = _safe_int(r.get("VEHICLE_COUNT"))
+            d = str(_si(r.get("STATISTICS_DATE")))
+            sc = _si(r.get("SERVERPART_COUNT"))
+            vc = _si(r.get("VEHICLE_COUNT"))
             m[d] = vc // sc if sc > 0 else 0
         return m
 
@@ -416,8 +414,8 @@ def get_holiday_compare(db: DatabaseHelper, push_province_code, holiday_type, cu
     cur_list, cmp_list = [], []
     for i in range(max_d):
         cd = s_date + timedelta(days=i); ld = cs_date + timedelta(days=i)
-        cur_list.append({"name": _date_no_pad(cd), "value": str(cur_map.get(cd.strftime("%Y%m%d"), 0)), "data": None, "key": None})
-        cmp_list.append({"name": _date_no_pad(ld), "value": str(cmp_map.get(ld.strftime("%Y%m%d"), 0)), "data": None, "key": None})
+        cur_list.append({"name": date_no_pad(cd), "value": str(cur_map.get(cd.strftime("%Y%m%d"), 0)), "data": None, "key": None})
+        cmp_list.append({"name": date_no_pad(ld), "value": str(cmp_map.get(ld.strftime("%Y%m%d"), 0)), "data": None, "key": None})
 
     return {
         "curHoliday": cur_holiday, "curHolidayDays": cur_days, "curList": cur_list,
@@ -484,15 +482,15 @@ def get_bayonet_oa_analysis(db: DatabaseHelper, holiday_type, start_month, end_m
 
     # 构建索引
     sf_map = defaultdict(list)
-    for r in dt_sf: sf_map[_safe_int(r.get("SERVERPART_ID"))].append(r)
+    for r in dt_sf: sf_map[_si(r.get("SERVERPART_ID"))].append(r)
     oa_map = defaultdict(list)
-    for r in dt_oa: oa_map[_safe_int(r.get("SERVERPART_ID"))].append(r)
+    for r in dt_oa: oa_map[_si(r.get("SERVERPART_ID"))].append(r)
     out_map = {}
-    for r in dt_out: out_map[(_safe_int(r.get("SERVERPART_ID")), r.get("SERVERPART_REGION", ""))] = r
+    for r in dt_out: out_map[(_si(r.get("SERVERPART_ID")), r.get("SERVERPART_REGION", ""))] = r
 
     sp_set = {}
     for r in dt_sf:
-        sp_id = _safe_int(r.get("SERVERPART_ID"))
+        sp_id = _si(r.get("SERVERPART_ID"))
         if sp_id not in sp_set: sp_set[sp_id] = r.get("SERVERPART_NAME", "")
 
     regions = ["东", "南", "西", "北"]
@@ -504,29 +502,29 @@ def get_bayonet_oa_analysis(db: DatabaseHelper, holiday_type, start_month, end_m
         for region in regions:
             sf_rows = [r for r in sf_map[sp_id] if r.get("SERVERPART_REGION") == region]
             if sf_rows:
-                s = sf_rows[0]; days = _safe_int(s.get("STATISTICS_DAYS"))
+                s = sf_rows[0]; days = _si(s.get("STATISTICS_DAYS"))
                 if days > 0:
-                    vc_total += _safe_int(s.get("SERVERPART_FLOW")) // days
-                    mini_vc += _safe_int(s.get("MINVEHICLE_COUNT")) // days
-                    medium_vc += _safe_int(s.get("MEDIUMVEHICLE_COUNT")) // days
-                    large_vc += _safe_int(s.get("LARGEVEHICLE_COUNT")) // days
+                    vc_total += _si(s.get("SERVERPART_FLOW")) // days
+                    mini_vc += _si(s.get("MINVEHICLE_COUNT")) // days
+                    medium_vc += _si(s.get("MEDIUMVEHICLE_COUNT")) // days
+                    large_vc += _si(s.get("LARGEVEHICLE_COUNT")) // days
                 sm = s.get("START_MONTH"); em = s.get("END_MONTH")
-                if sm: start_month_val = min(start_month_val, _safe_int(sm)) if start_month_val else _safe_int(sm)
-                if em: end_month_val = max(end_month_val, _safe_int(em)) if end_month_val else _safe_int(em)
+                if sm: start_month_val = min(start_month_val, _si(sm)) if start_month_val else _si(sm)
+                if em: end_month_val = max(end_month_val, _si(em)) if end_month_val else _si(em)
             out_row = out_map.get((sp_id, region))
             if out_row:
-                od = _safe_int(out_row.get("STATISTICS_DAYS"))
-                if od > 0: out_vc_total += _safe_int(out_row.get("VEHICLE_COUNT")) // od
+                od = _si(out_row.get("STATISTICS_DAYS"))
+                if od > 0: out_vc_total += _si(out_row.get("VEHICLE_COUNT")) // od
 
-        oa_rows = sorted(oa_map.get(sp_id, []), key=lambda x: _safe_int(x.get("RANK_NUM")))
-        total_avg_oa = sum(_safe_int(r.get("AVGVEHICLE_COUNT")) for r in oa_rows)
+        oa_rows = sorted(oa_map.get(sp_id, []), key=lambda x: _si(x.get("RANK_NUM")))
+        total_avg_oa = sum(_si(r.get("AVGVEHICLE_COUNT")) for r in oa_rows)
         if total_avg_oa > out_vc_total: out_vc_total = total_avg_oa
 
         province_list, province_names = [], []
         for r in oa_rows:
             pname = r.get("PROVINCE_NAME", "")
             province_names.append(pname)
-            avg_c = _safe_int(r.get("AVGVEHICLE_COUNT"))
+            avg_c = _si(r.get("AVGVEHICLE_COUNT"))
             pv = (avg_c * vc_total // out_vc_total) if out_vc_total > 0 else 0
             province_list.append({"name": pname, "value": str(pv)})
 
