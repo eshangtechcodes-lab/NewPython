@@ -297,11 +297,15 @@ def get_videolog_list(db: DatabaseHelper, search_model: dict):
             continue
         val_str = str(val).strip()
         if key.upper() == "OPERATE_DATE":
-            conditions.append(f"OPERATE_DATE >= TO_DATE('{val_str}','YYYY/MM/DD HH24:MI:SS')")
+            # --- SQL 参数化: 日期去引号防注入 ---
+            safe_v = val_str.replace("'", "")
+            conditions.append(f"OPERATE_DATE >= TO_DATE('{safe_v}','YYYY/MM/DD HH24:MI:SS')")
         elif query_type == 0:
-            conditions.append(f"{key} LIKE '%{val_str}%'")
+            safe_v = val_str.replace("'", "").replace("%", "")
+            conditions.append(f"{key} LIKE '%{safe_v}%'")
         else:
-            conditions.append(f"{key} = '{val_str}'")
+            safe_v = val_str.replace("'", "")
+            conditions.append(f"{key} = '{safe_v}'")
 
     where_clause = " WHERE " + " AND ".join(conditions) if conditions else ""
 
@@ -315,13 +319,15 @@ def get_videolog_list(db: DatabaseHelper, search_model: dict):
         # 匹配异常稽核表
         other_sql = ""
         if serverpart_id:
-            other_sql += f" AND B.SERVERPART_ID IN ({serverpart_id})"
+            # --- SQL 参数化: serverpart_id 整数解析 ---
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                other_sql += f" AND B.SERVERPART_ID IN ({','.join(safe_ids)})"
         if start_date:
-            sd = start_date.split(" ")[0].replace("/", "").replace("-", "")
+            sd = start_date.split(' ')[0].replace('/', '').replace('-', '')
             other_sql += f" AND B.ABNORMALITY_TIME >= {sd}000000"
         if end_date:
-            # C# 中 AddDays(1)，此处不做严格日期计算，直接用 < 下一天
-            ed = end_date.split(" ")[0].replace("/", "").replace("-", "")
+            ed = end_date.split(' ')[0].replace('/', '').replace('-', '')
             other_sql += f" AND B.ABNORMALITY_TIME < {ed}235959"
         base_where = where_clause if where_clause else "WHERE 1 = 1"
         sql = (f"SELECT * FROM {table} A {base_where} "
@@ -332,11 +338,15 @@ def get_videolog_list(db: DatabaseHelper, search_model: dict):
         # 匹配现场稽查表
         other_sql = ""
         if serverpart_id:
-            other_sql += f" AND SERVERPART_ID IN ({serverpart_id})"
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                other_sql += f" AND SERVERPART_ID IN ({','.join(safe_ids)})"
         if start_date:
-            other_sql += f" AND CHECK_ENDDATE >= TO_DATE('{start_date.split(' ')[0]}','YYYY/MM/DD')"
+            safe_sd = start_date.split(' ')[0].replace("'", "")
+            other_sql += f" AND CHECK_ENDDATE >= TO_DATE('{safe_sd}','YYYY/MM/DD')"
         if end_date:
-            other_sql += f" AND CHECK_ENDDATE < TO_DATE('{end_date.split(' ')[0]}','YYYY/MM/DD') + 1"
+            safe_ed = end_date.split(' ')[0].replace("'", "")
+            other_sql += f" AND CHECK_ENDDATE < TO_DATE('{safe_ed}','YYYY/MM/DD') + 1"
 
         if not other_sql:
             other_sql = " AND CHECKACCOUNT_ID IS NOT NULL"
@@ -358,12 +368,14 @@ def get_videolog_list(db: DatabaseHelper, search_model: dict):
         # 匹配异常现场稽查表
         other_sql = ""
         if serverpart_id:
-            other_sql += f" AND SERVERPART_ID IN ({serverpart_id})"
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                other_sql += f" AND SERVERPART_ID IN ({','.join(safe_ids)})"
         if start_date:
-            sd = start_date.split(" ")[0].replace("/", "").replace("-", "")
+            sd = start_date.split(' ')[0].replace('/', '').replace('-', '')
             other_sql += f" AND CHECK_ENDDATE >= {sd}000000"
         if end_date:
-            ed = end_date.split(" ")[0].replace("/", "").replace("-", "")
+            ed = end_date.split(' ')[0].replace('/', '').replace('-', '')
             other_sql += f" AND CHECK_ENDDATE < {ed}235959"
 
         if not other_sql:
@@ -385,11 +397,15 @@ def get_videolog_list(db: DatabaseHelper, search_model: dict):
         # 匹配日结账期表
         other_sql = ""
         if serverpart_id:
-            other_sql += f" AND SERVERPART_ID IN ({serverpart_id})"
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                other_sql += f" AND SERVERPART_ID IN ({','.join(safe_ids)})"
         if start_date:
-            other_sql += f" AND ENDACCOUNT_DATE >= TO_DATE('{start_date.split(' ')[0]}','YYYY/MM/DD')"
+            safe_sd = start_date.split(' ')[0].replace("'", "")
+            other_sql += f" AND ENDACCOUNT_DATE >= TO_DATE('{safe_sd}','YYYY/MM/DD')"
         if end_date:
-            other_sql += f" AND ENDACCOUNT_DATE < TO_DATE('{end_date.split(' ')[0]}','YYYY/MM/DD') + 1"
+            safe_ed = end_date.split(' ')[0].replace("'", "")
+            other_sql += f" AND ENDACCOUNT_DATE < TO_DATE('{safe_ed}','YYYY/MM/DD') + 1"
 
         if not other_sql:
             other_sql = " AND ENDACCOUNT_ID IS NOT NULL"
@@ -411,17 +427,19 @@ def get_videolog_list(db: DatabaseHelper, search_model: dict):
         other_sql = ""
         if serverpart_id:
             # C# 先查 T_SERVERPART 获取 SERVERPART_CODE
-            sp_sql = f"SELECT SERVERPART_CODE FROM T_SERVERPART WHERE SERVERPART_ID IN ({serverpart_id})"
-            sp_rows = db.execute_query(sp_sql)
-            if sp_rows:
-                codes = ",".join(f"'{r.get('SERVERPART_CODE', '')}'" for r in sp_rows if r.get("SERVERPART_CODE"))
-                if codes:
-                    other_sql += f" AND B.SERVERPART_CODE IN ({codes})"
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                sp_sql = f"SELECT SERVERPART_CODE FROM T_SERVERPART WHERE SERVERPART_ID IN ({','.join(safe_ids)})"
+                sp_rows = db.execute_query(sp_sql)
+                if sp_rows:
+                    codes = ','.join(f"'{r.get('SERVERPART_CODE', '')}'" for r in sp_rows if r.get('SERVERPART_CODE'))
+                    if codes:
+                        other_sql += f" AND B.SERVERPART_CODE IN ({codes})"
         if start_date:
-            sd = start_date.split(" ")[0].replace("/", "").replace("-", "")
+            sd = start_date.split(' ')[0].replace('/', '').replace('-', '')
             other_sql += f" AND B.SELLMASTER_DATE >= {sd}000000"
         if end_date:
-            ed = end_date.split(" ")[0].replace("/", "").replace("-", "")
+            ed = end_date.split(' ')[0].replace('/', '').replace('-', '')
             other_sql += f" AND B.SELLMASTER_DATE < {ed}235959"
         base_where = where_clause if where_clause else "WHERE 1 = 1"
         sql = (f"SELECT * FROM {table} A {base_where} "
