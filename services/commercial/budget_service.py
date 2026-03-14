@@ -99,7 +99,10 @@ def get_budget_project_detail_list(
         params["smonth"] = statistics_month
 
     if serverpart_id:
-        conditions.append(f"A.SERVERPART_ID IN ({serverpart_id})")
+        # --- SQL 参数化: serverpart_id 通过整数解析防注入 ---
+        sp_ids = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+        if sp_ids:
+            conditions.append(f"A.SERVERPART_ID IN ({','.join(sp_ids)})")
 
     where_sql = " AND ".join(conditions)
 
@@ -122,21 +125,30 @@ def get_budget_project_detail_list(
     # 实际营收
     revenue_rows = []
     if serverpart_id:
-        rev_conditions = [f"A.SERVERPART_ID IN ({serverpart_id})", "A.REVENUEDAILY_STATE = 1"]
+        # --- SQL 参数化: 实际营收查询 ---
+        sp_ids = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+        if not sp_ids:
+            return _build_tree(-1, account_code or "")
+        rev_conditions = [f"A.SERVERPART_ID IN ({','.join(sp_ids)})", "A.REVENUEDAILY_STATE = 1"]
+        rev_params = {}
         if statistics_date:
             sdate = statistics_date.replace("-", "").replace("/", "")
-            rev_conditions.append(f"A.STATISTICS_DATE >= {sdate[:6]}01")
-            rev_conditions.append(f"A.STATISTICS_DATE <= {sdate[:8]}")
+            rev_conditions.append("A.STATISTICS_DATE >= :rev_sd")
+            rev_params["rev_sd"] = f"{sdate[:6]}01"
+            rev_conditions.append("A.STATISTICS_DATE <= :rev_ed")
+            rev_params["rev_ed"] = sdate[:8]
         elif statistics_month:
-            rev_conditions.append(f"A.STATISTICS_DATE >= {statistics_month}01")
-            rev_conditions.append(f"A.STATISTICS_DATE <= {statistics_month}31")
+            rev_conditions.append("A.STATISTICS_DATE >= :rev_sd")
+            rev_params["rev_sd"] = f"{statistics_month}01"
+            rev_conditions.append("A.STATISTICS_DATE <= :rev_ed")
+            rev_params["rev_ed"] = f"{statistics_month}31"
         try:
             rev_sql = f"""SELECT A.BUSINESS_TYPE, A.SHOPTRADE,
                     SUM(A.REVENUE_AMOUNT) AS REVENUE_AMOUNT
                 FROM T_REVENUEDAILY A
                 WHERE {' AND '.join(rev_conditions)}
                 GROUP BY A.BUSINESS_TYPE, A.SHOPTRADE"""
-            revenue_rows = db.execute_query(rev_sql, {})
+            revenue_rows = db.execute_query(rev_sql, rev_params if rev_params else {})
         except Exception:
             revenue_rows = []
 

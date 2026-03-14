@@ -127,55 +127,61 @@ def get_bayonet_entry_list(db: DatabaseHelper, statistics_date, serverpart_id, s
     date_str = stat_date.strftime("%Y%m%d")
     ydate_str = (stat_date - timedelta(days=1)).strftime("%Y%m%d")
 
+    # --- SQL 参数化: 入区车流 WHERE 条件 ---
     where_sql = ""
+    entry_params = {"d_str": date_str, "yd_str": ydate_str}
     if serverpart_id is not None:
-        where_sql += f' AND "SERVERPART_ID" = {serverpart_id}'
+        where_sql += ' AND "SERVERPART_ID" = :sp_id'
+        entry_params["sp_id"] = serverpart_id
     if serverpart_region:
-        where_sql += f" AND \"SERVERPART_REGION\" = '{serverpart_region}'"
+        where_sql += ' AND "SERVERPART_REGION" = :region'
+        entry_params["region"] = serverpart_region
 
     # 今日入区车流
     if serverpart_id is not None:
         iv_sql = f"""SELECT "SERVERPART_ID","SERVERPART_REGION", SUM("VEHICLE_COUNT") AS "VEHICLE_COUNT"
-            FROM "T_BAYONETDAILY_AH" WHERE "INOUT_TYPE" = 0 AND "STATISTICS_DATE" = {date_str}{where_sql}
+            FROM "T_BAYONETDAILY_AH" WHERE "INOUT_TYPE" = 0 AND "STATISTICS_DATE" = :d_str{where_sql}
             GROUP BY "SERVERPART_ID","SERVERPART_REGION" """
     else:
         iv_sql = f"""SELECT NULL AS "SERVERPART_ID",'' AS "SERVERPART_REGION", SUM("VEHICLE_COUNT") AS "VEHICLE_COUNT"
-            FROM "T_BAYONETDAILY_AH" WHERE "INOUT_TYPE" = 0 AND "STATISTICS_DATE" = {date_str}{where_sql}"""
-    dt_in = db.execute_query(iv_sql) or []
+            FROM "T_BAYONETDAILY_AH" WHERE "INOUT_TYPE" = 0 AND "STATISTICS_DATE" = :d_str{where_sql}"""
+    dt_in = db.execute_query(iv_sql, entry_params) or []
 
     # 今日断面流量
     if serverpart_id is not None:
         sf_sql = f"""SELECT "SERVERPART_ID","SERVERPART_REGION","SERVERPART_NAME",
                 "SECTIONFLOW_NUM","SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0) AS "SERVERPART_FLOW"
-            FROM "T_SECTIONFLOW" WHERE "STATISTICS_DATE" = {date_str}{where_sql}"""
+            FROM "T_SECTIONFLOW" WHERE "STATISTICS_DATE" = :d_str{where_sql}"""
     else:
         sf_sql = f"""SELECT NULL AS "SERVERPART_ID",'' AS "SERVERPART_REGION",'' AS "SERVERPART_NAME",
                 SUM("SECTIONFLOW_NUM") AS "SECTIONFLOW_NUM",
                 SUM("SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0)) AS "SERVERPART_FLOW"
-            FROM "T_SECTIONFLOW" WHERE "STATISTICS_DATE" = {date_str}{where_sql}"""
-    dt_sf = db.execute_query(sf_sql) or []
+            FROM "T_SECTIONFLOW" WHERE "STATISTICS_DATE" = :d_str{where_sql}"""
+    dt_sf = db.execute_query(sf_sql, entry_params) or []
 
     # 昨日入区车流
+    # 重用 entry_params 但用 yd_str 代替 d_str
+    y_params = {**entry_params, "d_str": ydate_str}
     if serverpart_id is not None:
         ivy_sql = f"""SELECT "SERVERPART_ID","SERVERPART_REGION", SUM("VEHICLE_COUNT") AS "VEHICLE_COUNT"
-            FROM "T_BAYONETDAILY_AH" WHERE "INOUT_TYPE" = 0 AND "STATISTICS_DATE" = {ydate_str}{where_sql}
+            FROM "T_BAYONETDAILY_AH" WHERE "INOUT_TYPE" = 0 AND "STATISTICS_DATE" = :d_str{where_sql}
             GROUP BY "SERVERPART_ID","SERVERPART_REGION" """
     else:
         ivy_sql = f"""SELECT NULL AS "SERVERPART_ID",'' AS "SERVERPART_REGION", SUM("VEHICLE_COUNT") AS "VEHICLE_COUNT"
-            FROM "T_BAYONETDAILY_AH" WHERE "INOUT_TYPE" = 0 AND "STATISTICS_DATE" = {ydate_str}{where_sql}"""
-    dt_in_y = db.execute_query(ivy_sql) or []
+            FROM "T_BAYONETDAILY_AH" WHERE "INOUT_TYPE" = 0 AND "STATISTICS_DATE" = :d_str{where_sql}"""
+    dt_in_y = db.execute_query(ivy_sql, y_params) or []
 
     # 昨日断面流量
     if serverpart_id is not None:
         sfy_sql = f"""SELECT "SERVERPART_ID","SERVERPART_REGION","SERVERPART_NAME",
                 "SECTIONFLOW_NUM","SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0) AS "SERVERPART_FLOW"
-            FROM "T_SECTIONFLOW" WHERE "STATISTICS_DATE" = {ydate_str}{where_sql}"""
+            FROM "T_SECTIONFLOW" WHERE "STATISTICS_DATE" = :d_str{where_sql}"""
     else:
         sfy_sql = f"""SELECT NULL AS "SERVERPART_ID",'' AS "SERVERPART_REGION",'' AS "SERVERPART_NAME",
                 SUM("SECTIONFLOW_NUM") AS "SECTIONFLOW_NUM",
                 SUM("SERVERPART_FLOW" + NVL("SERVERPART_FLOW_ANALOG",0)) AS "SERVERPART_FLOW"
-            FROM "T_SECTIONFLOW" WHERE "STATISTICS_DATE" = {ydate_str}{where_sql}"""
-    dt_sf_y = db.execute_query(sfy_sql) or []
+            FROM "T_SECTIONFLOW" WHERE "STATISTICS_DATE" = :d_str{where_sql}"""
+    dt_sf_y = db.execute_query(sfy_sql, y_params) or []
 
     # 构建索引
     def build_map(rows):
@@ -420,15 +426,21 @@ def get_sp_bayonet_list(db: DatabaseHelper, statistics_date, province_code, sp_r
     start_str = start_date.strftime("%Y%m%d")
     end_str = stat_date.strftime("%Y%m%d")
 
+    # --- SQL 参数化: 片区 + 方位条件 ---
     where_sql = ""
-    _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids:
+        # f-string: 安全 — build_in_condition 已通过 int() 转换
         where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
     elif sp_region_type_id:
-        where_sql += f' AND B."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids:
+            where_sql += ' AND ' + build_in_condition('SPREGIONTYPE_ID', srt_ids).replace('"SPREGIONTYPE_ID"', 'B."SPREGIONTYPE_ID"')
     if serverpart_region:
-        regions = ",".join([f"'{r.strip()}'" for r in serverpart_region.split(",")])
-        where_sql += f' AND A."SERVERPART_REGION" IN ({regions})'
+        # serverpart_region 通过筛选安全值防注入
+        safe_regions = [r.strip() for r in serverpart_region.split(',') if r.strip() in ('东', '南', '西', '北')]
+        if safe_regions:
+            regions = ','.join([f"'{r}'" for r in safe_regions])
+            where_sql += f' AND A."SERVERPART_REGION" IN ({regions})'
 
     field_sql = "" if show_growth_rate else ',A."SERVERPART_REGION"'
 
@@ -584,14 +596,20 @@ def get_avg_bayonet_analysis(db: DatabaseHelper, statistics_date, province_code,
                     "Entry_Rate": _sf(r.get("AVGENTRY_RATE")), "Stay_Times": _sf(r.get("AVGSTAY_TIMES"))}
         return None
 
+    # --- SQL 参数化: 片区 + 方位条件 ---
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids:
+        # f-string: 安全 — build_in_condition 已通过 int() 转换
         where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'C."SERVERPART_ID"')
     elif sp_region_type_id:
-        where_sql += f' AND C."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids:
+            where_sql += ' AND ' + build_in_condition('SPREGIONTYPE_ID', srt_ids).replace('"SPREGIONTYPE_ID"', 'C."SPREGIONTYPE_ID"')
     if serverpart_region:
-        regions = ",".join([f"'{r.strip()}'" for r in serverpart_region.split(",")])
-        where_sql += f' AND A."SERVERPART_REGION" IN ({regions})'
+        safe_regions = [r.strip() for r in serverpart_region.split(',') if r.strip() in ('东', '南', '西', '北')]
+        if safe_regions:
+            regions = ','.join([f"'{r}'" for r in safe_regions])
+            where_sql += f' AND A."SERVERPART_REGION" IN ({regions})'
 
     stat_str = dt.strptime(statistics_date, "%Y-%m-%d").strftime("%Y%m%d") if "-" in statistics_date else statistics_date
 
@@ -742,7 +760,9 @@ def get_bayonet_st_analysis(db: DatabaseHelper, start_month, end_month, province
     if _sp_ids:
         conditions.append(build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"'))
     elif sp_region_type_id:
-        conditions.append(f'B."SPREGIONTYPE_ID" IN ({sp_region_type_id})')
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids:
+            conditions.append(build_in_condition('SPREGIONTYPE_ID', srt_ids).replace('"SPREGIONTYPE_ID"', 'B."SPREGIONTYPE_ID"'))
 
     where_sql = " AND ".join(conditions)
     sql = f"""SELECT A."VEHICLE_TYPE", {group_field} AS "STATISTICS_HOUR",
