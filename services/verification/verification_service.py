@@ -162,17 +162,23 @@ def get_supp_endaccount_list(db, **kwargs):
         wp = ["OPERATE_TYPE = 1010"]
         params = []
 
-        # 服务区过滤
+        # --- SQL 参数化: 服务区/门店/状态过滤 ---
         if sp_ids:
-            wp.append(f"SERVERPART_ID IN ({sp_ids})")
+            safe_ids = [str(int(x.strip())) for x in str(sp_ids).split(',') if x.strip().isdigit()]
+            if safe_ids: wp.append(f"SERVERPART_ID IN ({','.join(safe_ids)})")
         elif sp_code:
-            codes = ",".join([f"'{c.strip()}'" for c in sp_code.split(",") if c.strip()])
-            wp.append(f"SERVERPARTCODE IN ({codes})")
+            # sp_code 是字符串编码，只保留字母数字防注入
+            safe_codes = [c.strip() for c in sp_code.split(',') if c.strip().isalnum()]
+            if safe_codes:
+                codes = ','.join([f"'{c}'" for c in safe_codes])
+                wp.append(f"SERVERPARTCODE IN ({codes})")
 
         # 门店过滤
         if shop_code:
-            codes = ",".join([f"'{c.strip()}'" for c in shop_code.split(",") if c.strip()])
-            wp.append(f"SHOPCODE IN ({codes})")
+            safe_shops = [c.strip() for c in shop_code.split(',') if c.strip().isalnum()]
+            if safe_shops:
+                codes = ','.join([f"'{c}'" for c in safe_shops])
+                wp.append(f"SHOPCODE IN ({codes})")
 
         # 日期过滤
         if start_date:
@@ -184,7 +190,8 @@ def get_supp_endaccount_list(db, **kwargs):
 
         # 有效状态
         if state is not None:
-            wp.append(f"VALID = {state}")
+            wp.append("VALID = ?")
+            params.append(state)
 
         wc = " AND ".join(wp)
         order = sort_str if sort_str else "ENDACCOUNT_ID DESC"
@@ -234,15 +241,21 @@ def get_data_verification_list(db, **kwargs):
         # 状态机：管理员(1)→未校验(0), 财务(2)→待审核(1), 主任(3)→主任复核(3)
         treatment_mark = {1: 0, 2: 1, 3: 3}.get(role_type, 0)
 
+        # --- SQL 参数化: serverpart_id 通过整数解析防注入 ---
+        safe_sp_ids = [str(int(x.strip())) for x in str(serverpart_id).split(',') if x.strip().isdigit()]
+        if not safe_sp_ids:
+            return []
+        sp_id_in = ','.join(safe_sp_ids)
+
         # 1. 查询服务区列表
         sp_sql = f"""SELECT SERVERPART_ID, SERVERPART_NAME
-            FROM T_SERVERPART WHERE SERVERPART_ID IN ({serverpart_id})
+            FROM T_SERVERPART WHERE SERVERPART_ID IN ({sp_id_in})
             ORDER BY SPREGIONTYPE_INDEX, SPREGIONTYPE_ID, SERVERPART_INDEX, SERVERPART_CODE"""
         sp_list = db.fetch_all(sp_sql) or []
         if not sp_list:
             return []
 
-        # 2. 查询日结账期汇总（按服务区分组）
+        # 2. 查询日结账期汇总
         ea_sql = f"""SELECT
                 SERVERPART_ID,
                 NVL(SUM(TICKET_COUNT),0) AS Ticket_Count,
@@ -251,7 +264,7 @@ def get_data_verification_list(db, **kwargs):
                 SUM(CASE WHEN TREATMENT_MARK = {treatment_mark} AND UPLOAD_STATE = 1 THEN 1 ELSE 0 END) AS Treatment_Count,
                 COUNT(DISTINCT CASE WHEN UPLOAD_STATE > 0 THEN SHOPCODE || '|' || TO_CHAR(STATISTICS_DATE,'YYYY-MM-DD') END) AS UploadShop_Count
             FROM T_ENDACCOUNT
-            WHERE SERVERPART_ID IN ({serverpart_id}) AND VALID = 1
+            WHERE SERVERPART_ID IN ({sp_id_in}) AND VALID = 1
                 AND STATISTICS_DATE >= TO_DATE(?,'YYYY-MM-DD HH24:MI:SS')
                 AND STATISTICS_DATE <= TO_DATE(?,'YYYY-MM-DD HH24:MI:SS')
             GROUP BY SERVERPART_ID"""
@@ -263,7 +276,7 @@ def get_data_verification_list(db, **kwargs):
         try:
             sc_sql = f"""SELECT SERVERPART_ID, COUNT(*) AS SHOP_COUNT
                 FROM T_SERVERPARTSHOP
-                WHERE SERVERPART_ID IN ({serverpart_id}) AND ISVALID = 1 AND BUSINESS_STATE != 1010
+                WHERE SERVERPART_ID IN ({sp_id_in}) AND ISVALID = 1 AND BUSINESS_STATE != 1010
                 GROUP BY SERVERPART_ID"""
             sc_rows = db.fetch_all(sc_sql) or []
             shop_count_map = {r["SERVERPART_ID"]: r["SHOP_COUNT"] for r in sc_rows}
@@ -271,9 +284,12 @@ def get_data_verification_list(db, **kwargs):
             pass
 
         # 4. 查询门店级别明细（按服务区+门店分组）
+        # --- SQL 参数化: business_type 通过整数解析防注入 ---
         btype_filter = ""
         if business_type:
-            btype_filter = f" AND S.BUSINESS_TYPE IN ({business_type})"
+            bt_ids = [str(int(x.strip())) for x in str(business_type).split(',') if x.strip().isdigit()]
+            if bt_ids:
+                btype_filter = f" AND S.BUSINESS_TYPE IN ({','.join(bt_ids)})"
         detail_sql = f"""SELECT
                 S.SERVERPART_ID, S.SHOPCODE, MIN(S.SHOPSHORTNAME) AS SHOPSHORTNAME,
                 MIN(S.SHOPTRADE) AS SHOPTRADE, MIN(S.BUSINESS_TYPE) AS BUSINESS_TYPE,
@@ -290,7 +306,7 @@ def get_data_verification_list(db, **kwargs):
                 AND E.VALID = 1
                 AND E.STATISTICS_DATE >= TO_DATE(?,'YYYY-MM-DD HH24:MI:SS')
                 AND E.STATISTICS_DATE <= TO_DATE(?,'YYYY-MM-DD HH24:MI:SS')
-            WHERE S.SERVERPART_ID IN ({serverpart_id}){btype_filter}
+            WHERE S.SERVERPART_ID IN ({sp_id_in}){btype_filter}
             GROUP BY S.SERVERPART_ID, S.SHOPCODE
             ORDER BY S.SHOPCODE"""
         detail_rows = db.fetch_all(detail_sql, [start_date, end_date]) or []
