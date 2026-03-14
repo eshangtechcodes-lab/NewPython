@@ -45,7 +45,7 @@ async def get_expensesprepaid_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetEXPENSESPREPAIDList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Expenses/GetEXPENSESPREPAIDDetail")
@@ -62,7 +62,7 @@ async def get_expensesprepaid_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetEXPENSESPREPAIDDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Expenses/SynchroEXPENSESPREPAID")
@@ -82,7 +82,7 @@ async def synchro_expensesprepaid(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroEXPENSESPREPAID 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/Expenses/DeleteEXPENSESPREPAID", methods=["GET", "POST"])
@@ -102,7 +102,7 @@ async def delete_expensesprepaid(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteEXPENSESPREPAID 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # =====================================================
@@ -129,7 +129,7 @@ async def get_expensesseparate_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetEXPENSESSEPARATEList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Expenses/GetEXPENSESSEPARATEDetail")
@@ -146,7 +146,7 @@ async def get_expensesseparate_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetEXPENSESSEPARATEDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Expenses/SynchroEXPENSESSEPARATE")
@@ -166,7 +166,7 @@ async def synchro_expensesseparate(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroEXPENSESSEPARATE 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/Expenses/DeleteEXPENSESSEPARATE", methods=["GET", "POST"])
@@ -186,7 +186,7 @@ async def delete_expensesseparate(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteEXPENSESSEPARATE 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # =====================================================
@@ -209,7 +209,7 @@ async def synchro_his_data(
         return Result.success(msg="同步成功")
     except Exception as ex:
         logger.error(f"SynchroHisData 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.post("/Expenses/GetShopExpenseHisList")
@@ -251,4 +251,4 @@ async def get_shop_expense_his_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetShopExpenseHisList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

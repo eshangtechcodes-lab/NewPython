@@ -37,4 +37,4 @@ async def get_business_process_list(
         json_list = JsonListData.create(data_list=[], total=0, page_index=PageIndex, page_size=PageSize)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

@@ -29,7 +29,7 @@ async def get_budget_project_ah_list(searchModel: dict = None, db: DatabaseHelpe
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBUDGETPROJECT_AHList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetBUDGETPROJECT_AHDetail")
@@ -45,7 +45,7 @@ async def get_budget_project_ah_detail(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBUDGETPROJECT_AHDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetBudgetProjectDetailList")
@@ -67,7 +67,7 @@ async def get_budget_project_detail_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBudgetProjectDetailList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetBudgetMainShow")
@@ -92,4 +92,4 @@ async def get_budget_main_show(
         }, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBudgetMainShow 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

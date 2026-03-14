@@ -44,7 +44,7 @@ for _e in _A_ENTITIES:
                 return Result.success(JsonListData.create(rows, total, page_index=pi, page_size=ps).model_dump(), msg="查询成功")
             except Exception as ex:
                 logger.error(f"Get{_ent}List 查询失败: {ex}")
-                return Result.fail(msg=f"查询失败{ex}")
+                return Result.fail(msg="查询失败")
 
         @analysis_router.get(f"/{_prefix}/Get{ent}Detail", name=f"get_{ent.lower()}_detail")
         def _detail(pk_val: int = Query(..., alias=_param_name),
@@ -53,7 +53,7 @@ for _e in _A_ENTITIES:
                 return Result.success(analysis_service.get_entity_detail(db, _ent, pk_val), msg="查询成功")
             except Exception as ex:
                 logger.error(f"Get{_ent}Detail 查询失败: {ex}")
-                return Result.fail(msg=f"查询失败{ex}")
+                return Result.fail(msg="查询失败")
 
         @analysis_router.post(f"/{_prefix}/Synchro{ent}", name=f"synchro_{ent.lower()}")
         def _synchro(data: dict, db: DatabaseHelper = Depends(get_db), _ent=ent):
@@ -64,7 +64,7 @@ for _e in _A_ENTITIES:
                 return Result.fail(msg="同步失败")
             except Exception as ex:
                 logger.error(f"Synchro{_ent} 同步失败: {ex}")
-                return Result.fail(msg=f"同步失败{ex}")
+                return Result.fail(msg="同步失败")
 
         @analysis_router.post(f"/{_prefix}/Delete{ent}", name=f"delete_{ent.lower()}")
         def _delete(pk_val: int = Query(..., alias=_param_name),
@@ -75,7 +75,7 @@ for _e in _A_ENTITIES:
                 return Result.fail(msg="删除失败")
             except Exception as ex:
                 logger.error(f"Delete{_ent} 删除失败: {ex}")
-                return Result.fail(msg=f"删除失败{ex}")
+                return Result.fail(msg="删除失败")
     _make_routes(_e)
 
 # Analysis 散装接口
@@ -134,7 +134,7 @@ def get_shop_sabfi_list(
         return Result.success(JsonListData.create(rows, len(rows), page_size=ps).model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetShopSABFIList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 @analysis_router.post("/Analysis/SolidProfitAnalysis")
 def solid_profit_analysis(data: dict, db: DatabaseHelper = Depends(get_db)):
@@ -160,7 +160,7 @@ def get_period_monthly_list(
         return Result.success(JsonListData.create(rows, len(rows), page_size=ps).model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPeriodMonthlyList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 @analysis_router.get("/Analysis/GetRevenueEstimateList")
 def get_revenue_estimate_list(
@@ -174,7 +174,7 @@ def get_revenue_estimate_list(
         return Result.success(JsonListData.create(rows, len(rows), page_size=ps).model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueEstimateList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 @analysis_router.post("/Analysis/SolidShopSABFI")
 def solid_shop_sabfi(data: dict, db: DatabaseHelper = Depends(get_db)):
@@ -204,7 +204,7 @@ def get_investment_report(
         return Result.success(JsonListData.create(rows, len(rows), page_size=ps).model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetInvestmentReport 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 @analysis_router.get("/Analysis/GetNestingIAReport")
 def get_nesting_ia_report(
@@ -221,7 +221,7 @@ def get_nesting_ia_report(
         return Result.success(JsonListData.create(rows, flat_count, page_size=ps).model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetNestingIAReport 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ============================================================
@@ -257,7 +257,7 @@ for _name, (_ent, _prefix) in _BM_CRUD.items():
                 return Result.success(JsonListData.create(rows, total, page_index=pi, page_size=ps).model_dump(), msg="查询成功")
             except Exception as ex:
                 logger.error(f"Get{_e}List 查询失败: {ex}")
-                return Result.fail(msg=f"查询失败{ex}")
+                return Result.fail(msg="查询失败")
 
         @businessman_router.get(f"/{prefix}/Get{name}Detail", name=f"get_{ent.lower()}_detail_bm")
         def _detail(pk_val: int = Query(..., alias=_param_name),
@@ -266,7 +266,7 @@ for _name, (_ent, _prefix) in _BM_CRUD.items():
                 return Result.success(businessman_service.get_entity_detail(db, _e, pk_val), msg="查询成功")
             except Exception as ex:
                 logger.error(f"Get{_e}Detail 查询失败: {ex}")
-                return Result.fail(msg=f"查询失败{ex}")
+                return Result.fail(msg="查询失败")
 
         @businessman_router.post(f"/{prefix}/Synchro{name}", name=f"synchro_{ent.lower()}_bm")
         def _synchro(data: dict, db: DatabaseHelper = Depends(get_db), _e=ent):
@@ -277,7 +277,7 @@ for _name, (_ent, _prefix) in _BM_CRUD.items():
                 return Result.fail(msg="同步失败")
             except Exception as ex:
                 logger.error(f"Synchro{_e} 同步失败: {ex}")
-                return Result.fail(msg=f"同步失败{ex}")
+                return Result.fail(msg="同步失败")
 
         @businessman_router.post(f"/{prefix}/Delete{name}", name=f"delete_{ent.lower()}_bm")
         def _delete(pk_val: int = Query(..., alias=_param_name),
@@ -288,7 +288,7 @@ for _name, (_ent, _prefix) in _BM_CRUD.items():
                 return Result.fail(msg="删除失败")
             except Exception as ex:
                 logger.error(f"Delete{_e} 删除失败: {ex}")
-                return Result.fail(msg=f"删除失败{ex}")
+                return Result.fail(msg="删除失败")
     _make_bm(_name, _ent, _prefix)
 
 # BusinessMan/Supplier 散装

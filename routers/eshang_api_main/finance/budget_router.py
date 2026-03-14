@@ -31,7 +31,7 @@ async def get_budget_project_list(data: dict, db: DatabaseHelper = Depends(get_d
         return Result.success(jld.model_dump(), msg="查询成功")
     except Exception as e:
         logger.error(f"GetBudgetProjectList 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetbudgetProjectDetail")
@@ -45,7 +45,7 @@ async def get_budget_project_detail(
         return Result.success(row, msg="查询成功")
     except Exception as e:
         logger.error(f"GetbudgetProjectDetail 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Budget/SynchroBudgetProject")
@@ -58,7 +58,7 @@ async def synchro_budget_project(data: dict, db: DatabaseHelper = Depends(get_db
         return Result.fail("更新失败，数据不存在！", code=200)
     except Exception as e:
         logger.error(f"SynchroBudgetProject 失败: {e}")
-        return Result.fail(f"同步失败{e}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/Budget/DeleteBudgetProject", methods=["GET", "POST"])
@@ -74,7 +74,7 @@ async def delete_budget_project(
         return Result.fail("删除失败，数据不存在！", code=200)
     except Exception as e:
         logger.error(f"DeleteBudgetProject 失败: {e}")
-        return Result.fail(f"删除失败{e}")
+        return Result.fail(msg="删除失败")
 
 
 # ==================== BUDGETDETAIL_AH CRUD ====================
@@ -93,7 +93,7 @@ async def get_budget_detail_list(data: dict, db: DatabaseHelper = Depends(get_db
         return Result.success(jld.model_dump(), msg="查询成功")
     except Exception as e:
         logger.error(f"GetBudgetDetailList 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetBudgetDetailDetail")
@@ -107,7 +107,7 @@ async def get_budget_detail_detail(
         return Result.success(row, msg="查询成功")
     except Exception as e:
         logger.error(f"GetBudgetDetailDetail 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Budget/SynchroBudgetDetail")
@@ -120,7 +120,7 @@ async def synchro_budget_detail(data: dict, db: DatabaseHelper = Depends(get_db)
         return Result.fail("更新失败，数据不存在！", code=200)
     except Exception as e:
         logger.error(f"SynchroBudgetDetail 失败: {e}")
-        return Result.fail(f"同步失败{e}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/Budget/DeleteBudgetDetail", methods=["GET", "POST"])
@@ -136,7 +136,7 @@ async def delete_budget_detail(
         return Result.fail("删除失败，数据不存在！", code=200)
     except Exception as e:
         logger.error(f"DeleteBudgetDetail 失败: {e}")
-        return Result.fail(f"删除失败{e}")
+        return Result.fail(msg="删除失败")
 
 
 # ==================== 散装接口 ====================
@@ -154,7 +154,7 @@ async def set_budget_detail_ah_list(request: Request, db: DatabaseHelper = Depen
         return Result.fail(f"保存失败，{msg}！", code=200)
     except Exception as e:
         logger.error(f"SetBudgetDetailAHList 失败: {e}")
-        return Result.fail(f"保存失败{e}")
+        return Result.fail(msg="保存失败")
 
 
 @router.get("/Budget/GetBudgetProjectReportOfMonth")
@@ -169,7 +169,7 @@ async def get_budget_project_report_of_month(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetBudgetProjectReportOfMonth 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetbudgetProjectReport")
@@ -182,7 +182,7 @@ async def get_budget_project_report(
         return Result.success(data)
     except Exception as e:
         logger.error(f"GetbudgetProjectReport 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetbudgetProjectReportDynamic")
@@ -195,7 +195,7 @@ async def get_budget_project_report_dynamic(
         return Result.success(data)
     except Exception as e:
         logger.error(f"GetbudgetProjectReportDynamic 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetbudgetProjectReportIn")
@@ -208,7 +208,7 @@ async def get_budget_project_report_in(
         return Result.success(data)
     except Exception as e:
         logger.error(f"GetbudgetProjectReportIn 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetbudgetProjectReportInDynamic")
@@ -221,7 +221,7 @@ async def get_budget_project_report_in_dynamic(
         return Result.success(data)
     except Exception as e:
         logger.error(f"GetbudgetProjectReportInDynamic 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetbudgetProjectReportOut")
@@ -234,7 +234,7 @@ async def get_budget_project_report_out(
         return Result.success(data)
     except Exception as e:
         logger.error(f"GetbudgetProjectReportOut 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Budget/GetbudgetProjectReportOutDynamic")
@@ -247,4 +247,4 @@ async def get_budget_project_report_out_dynamic(
         return Result.success(data)
     except Exception as e:
         logger.error(f"GetbudgetProjectReportOutDynamic 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")

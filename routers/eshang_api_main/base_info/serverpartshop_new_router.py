@@ -54,7 +54,7 @@ async def get_server_part_shop_new_list(
         return Result.success(data=json_list.model_dump(), msg="成功")
     except Exception as ex:
         logger.error(f"GetServerPartShopNewList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetServerPartShopNewDetail")
@@ -70,7 +70,7 @@ async def get_server_part_shop_new_detail(
         return Result.success(data=detail, msg="成功")
     except Exception as ex:
         logger.error(f"GetServerPartShopNewDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/ServerPartShopNewSaveState")
@@ -87,7 +87,7 @@ async def server_part_shop_new_save_state(
             return Result(Result_Code=200, Result_Desc=msg)
     except Exception as ex:
         logger.error(f"ServerPartShopNewSaveState 操作失败: {ex}")
-        return Result.fail(msg=f"操作失败{ex}")
+        return Result.fail(msg="操作失败")
 
 
 @router.post("/BaseInfo/SynchroServerPartShopNew")
@@ -104,4 +104,4 @@ async def synchro_server_part_shop_new(
             return Result(Result_Code=200, Result_Desc="同步失败")
     except Exception as ex:
         logger.error(f"SynchroServerPartShopNew 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")

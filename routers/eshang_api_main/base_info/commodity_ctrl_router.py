@@ -69,7 +69,7 @@ async def get_commodity_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"Commodity/GetCOMMODITYList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ========== 2. GetCOMMODITYDetail ==========
@@ -85,7 +85,7 @@ async def get_commodity_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"Commodity/GetCOMMODITYDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ========== 3. SynchroCOMMODITY ==========
@@ -104,7 +104,7 @@ async def synchro_commodity(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"Commodity/SynchroCOMMODITY 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 # ========== 4. DeleteCOMMODITY ==========
@@ -123,7 +123,7 @@ async def delete_commodity(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"Commodity/DeleteCOMMODITY 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ========== 5. GetCommodityList (SearchType switch) ==========
@@ -194,7 +194,7 @@ async def get_commodity_list_by_type(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"Commodity/GetCommodityList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ========== 6. SyncCommodityInfo_AHJG ==========
@@ -209,4 +209,4 @@ async def sync_commodity_info_ahjg(
         return Result.success(msg="同步完成")
     except Exception as ex:
         logger.error(f"SyncCommodityInfo_AHJG 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")

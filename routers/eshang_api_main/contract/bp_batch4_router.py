@@ -57,7 +57,7 @@ async def get_approved_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAPPROVEDList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ==================== SHOPEXPENSE 门店费用表 ====================
@@ -90,7 +90,7 @@ async def get_shopexpense_list(
         return Result.success(data=result, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSHOPEXPENSEList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetSHOPEXPENSEDetail")
@@ -104,7 +104,7 @@ async def get_shopexpense_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSHOPEXPENSEDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroSHOPEXPENSE")
@@ -121,7 +121,7 @@ async def synchro_shopexpense(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroSHOPEXPENSE 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteSHOPEXPENSE", methods=["GET", "POST"])
@@ -140,7 +140,7 @@ async def delete_shopexpense(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteSHOPEXPENSE 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 @router.post("/BusinessProject/ApproveSHOPEXPENSE")
@@ -157,7 +157,7 @@ async def approve_shopexpense(
             return Result(Result_Code=200, Result_Desc="审批失败！")
     except Exception as ex:
         logger.error(f"ApproveSHOPEXPENSE 审批失败: {ex}")
-        return Result.fail(msg=f"审批失败{ex}")
+        return Result.fail(msg="审批失败")
 
 
 # ==================== PROJECTSPLITMONTH 月度经营项目应收拆分汇总表 ====================
@@ -186,7 +186,7 @@ async def get_projectsplitmonth_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPROJECTSPLITMONTHList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetPROJECTSPLITMONTHDetail")
@@ -200,7 +200,7 @@ async def get_projectsplitmonth_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPROJECTSPLITMONTHDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroPROJECTSPLITMONTH")
@@ -217,7 +217,7 @@ async def synchro_projectsplitmonth(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroPROJECTSPLITMONTH 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeletePROJECTSPLITMONTH", methods=["GET", "POST"])
@@ -234,4 +234,4 @@ async def delete_projectsplitmonth(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeletePROJECTSPLITMONTH 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

@@ -54,7 +54,7 @@ async def get_businesspayment_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessPaymentList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetBusinessPaymentDetail")
@@ -68,7 +68,7 @@ async def get_businesspayment_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessPaymentDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroBusinessPayment")
@@ -85,7 +85,7 @@ async def synchro_businesspayment(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroBusinessPayment 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteBusinessPayment", methods=["GET", "POST"])
@@ -102,7 +102,7 @@ async def delete_businesspayment(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteBusinessPayment 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ==================== PROJECTWARNING 经营项目预警表 ====================
@@ -127,7 +127,7 @@ async def get_projectwarning_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPROJECTWARNINGList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetPROJECTWARNINGDetail")
@@ -141,7 +141,7 @@ async def get_projectwarning_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPROJECTWARNINGDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroPROJECTWARNING")
@@ -158,7 +158,7 @@ async def synchro_projectwarning(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroPROJECTWARNING 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeletePROJECTWARNING", methods=["GET", "POST"])
@@ -175,7 +175,7 @@ async def delete_projectwarning(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeletePROJECTWARNING 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ==================== PERIODWARNING 经营项目周期预警表 ====================
@@ -197,7 +197,7 @@ async def get_periodwarning_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPERIODWARNINGList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetPERIODWARNINGDetail")
@@ -211,7 +211,7 @@ async def get_periodwarning_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPERIODWARNINGDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroPERIODWARNING")
@@ -228,7 +228,7 @@ async def synchro_periodwarning(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroPERIODWARNING 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeletePERIODWARNING", methods=["GET", "POST"])
@@ -245,7 +245,7 @@ async def delete_periodwarning(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeletePERIODWARNING 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ==================== BIZPSPLITMONTH 月度经营项目应收拆分表 ====================
@@ -267,7 +267,7 @@ async def get_bizpsplitmonth_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBIZPSPLITMONTHList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetBIZPSPLITMONTHDetail")
@@ -281,7 +281,7 @@ async def get_bizpsplitmonth_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBIZPSPLITMONTHDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroBIZPSPLITMONTH")
@@ -298,7 +298,7 @@ async def synchro_bizpsplitmonth(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroBIZPSPLITMONTH 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteBIZPSPLITMONTH", methods=["GET", "POST"])
@@ -315,7 +315,7 @@ async def delete_bizpsplitmonth(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteBIZPSPLITMONTH 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ==================== BUSINESSPROJECTSPLIT 经营项目应收拆分表 ====================
@@ -337,7 +337,7 @@ async def get_businessprojectsplit_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBUSINESSPROJECTSPLITList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetBUSINESSPROJECTSPLITDetail")
@@ -351,7 +351,7 @@ async def get_businessprojectsplit_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBUSINESSPROJECTSPLITDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroBUSINESSPROJECTSPLIT")
@@ -368,7 +368,7 @@ async def synchro_businessprojectsplit(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroBUSINESSPROJECTSPLIT 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteBUSINESSPROJECTSPLIT", methods=["GET", "POST"])
@@ -385,4 +385,4 @@ async def delete_businessprojectsplit(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteBUSINESSPROJECTSPLIT 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

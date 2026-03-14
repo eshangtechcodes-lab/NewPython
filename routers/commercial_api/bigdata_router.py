@@ -48,7 +48,7 @@ async def get_bayonet_entry_list(
 
         logger.error(f"GetBayonetEntryList 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -82,7 +82,7 @@ async def get_bayonet_sta_list(
 
         logger.error(f"GetBayonetSTAList 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -118,7 +118,7 @@ async def get_bayonet_oa_list(
 
         logger.error(f"GetBayonetOAList 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -154,7 +154,7 @@ async def get_bayonet_province_oa_list(
 
         logger.error(f"GetBayonetProvinceOAList 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -191,7 +191,7 @@ async def get_sp_bayonet_list(
 
         logger.error(f"GetSPBayonetList 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -250,7 +250,7 @@ async def get_bayonet_rank_list(
         return Result.success(data=result, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBayonetRankList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetAvgBayonetAnalysis")
@@ -282,7 +282,7 @@ async def get_avg_bayonet_analysis(
 
         logger.error(f"GetAvgBayonetAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -314,7 +314,7 @@ async def get_province_avg_bayonet_analysis(
 
         logger.error(f"GetProvinceAvgBayonetAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -350,7 +350,7 @@ async def get_bayonet_st_analysis(
 
         logger.error(f"GetBayonetSTAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -388,7 +388,7 @@ async def get_month_analysis(
 
         logger.error(f"GetMonthAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -424,7 +424,7 @@ async def get_province_month_analysis(
 
         logger.error(f"GetProvinceMonthAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -458,7 +458,7 @@ async def get_bayonet_warning(
 
         logger.error(f"GetBayonetWarning 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -495,7 +495,7 @@ async def get_holiday_bayonet_warning(
 
         logger.error(f"GetHolidayBayonetWarning 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -532,7 +532,7 @@ async def get_bayonet_growth_analysis(
 
         logger.error(f"GetBayonetGrowthAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -570,7 +570,7 @@ async def get_bayonet_compare(
 
         logger.error(f"GetBayonetCompare 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -607,7 +607,7 @@ async def get_holiday_compare(
 
         logger.error(f"GetHolidayCompare 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -641,7 +641,7 @@ async def get_bayonet_oa_analysis(
 
         logger.error(f"GetBayonetOAAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -674,7 +674,7 @@ async def get_date_analysis(
 
         logger.error(f"GetDateAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -706,9 +706,9 @@ async def get_cur_busy_rank(postData: dict = None, db: DatabaseHelper = Depends(
         return Result.success(data=resp, msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetCurBusyRank AES解密失败: {ve}")
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="解密失败")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BigData/GetRevenueTrendChart")
@@ -733,7 +733,7 @@ async def get_revenue_trend_chart(postData: dict = None, db: DatabaseHelper = De
 
         logger.error(f"GetRevenueTrendChart 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -761,7 +761,7 @@ async def get_energy_revenue_info(postData: dict = None, db: DatabaseHelper = De
 
         logger.error(f"GetEnergyRevenueInfo 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -799,7 +799,7 @@ async def get_bayonet_owner_ah_tree_list(
 
         logger.error(f"GetBayonetOwnerAHTreeList 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -835,7 +835,7 @@ async def get_province_vehicle_tree_list(
 
         logger.error(f"GetProvinceVehicleTreeList 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -873,7 +873,7 @@ async def get_province_vehicle_detail(
 
         logger.error(f"GetProvinceVehicleDetail 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 

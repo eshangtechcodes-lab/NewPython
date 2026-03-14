@@ -40,7 +40,7 @@ async def get_contractsyn_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetContractSynList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/ContractSyn/GetContractSynDetail")
@@ -54,7 +54,7 @@ async def get_contractsyn_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetContractSynDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/ContractSyn/SynchroContractSyn")
@@ -71,7 +71,7 @@ async def synchro_contractsyn(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroContractSyn 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/ContractSyn/DeleteContractSyn", methods=["GET", "POST"])
@@ -88,7 +88,7 @@ async def delete_contractsyn(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteContractSyn 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # =====================================================
@@ -113,7 +113,7 @@ async def get_contract_syn_list_bp(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCONTRACT_SYNList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetCONTRACT_SYNDetail")
@@ -127,7 +127,7 @@ async def get_contract_syn_detail_bp(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCONTRACT_SYNDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroCONTRACT_SYN")
@@ -144,7 +144,7 @@ async def synchro_contract_syn_bp(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroCONTRACT_SYN 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteCONTRACT_SYN", methods=["GET", "POST"])
@@ -161,4 +161,4 @@ async def delete_contract_syn_bp(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteCONTRACT_SYN 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

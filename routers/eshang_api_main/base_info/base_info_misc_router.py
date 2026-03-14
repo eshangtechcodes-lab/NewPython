@@ -70,7 +70,7 @@ async def get_shop_short_names(
         }
     except Exception as e:
         logger.error(f"GetShopShortNames 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -94,7 +94,7 @@ async def get_serverpart_shop_info(
         }
     except Exception as e:
         logger.error(f"GetServerpartShopInfo 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -138,7 +138,7 @@ async def get_serverpart_ddl(
         }
     except Exception as e:
         logger.error(f"GetServerpartDDL 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -186,7 +186,7 @@ async def get_serverpart_tree(
         }
     except Exception as e:
         logger.error(f"GetServerpartTree 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -244,7 +244,7 @@ async def get_sp_region_shop_tree(
         }
     except Exception as e:
         logger.error(f"GetSPRegionShopTree 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -289,7 +289,7 @@ async def get_serverpart_shop_ddl(
         }
     except Exception as e:
         logger.error(f"GetServerpartShopDDL 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -340,7 +340,7 @@ async def get_serverpart_shop_tree(
         }
     except Exception as e:
         logger.error(f"GetServerpartShopTree 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -375,7 +375,7 @@ async def get_nesting_ownerunit_list(
         }
     except Exception as e:
         logger.error(f"GetNestingOwnerUnitList 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -415,7 +415,7 @@ async def binding_ownerunit_ddl(
         }
     except Exception as e:
         logger.error(f"BindingOwnerUnitDDL 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -445,7 +445,7 @@ async def binding_ownerunit_tree(
         }
     except Exception as e:
         logger.error(f"BindingOwnerUnitTree 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -479,7 +479,7 @@ async def binding_merchant_tree(
         }
     except Exception as e:
         logger.error(f"BindingMerchantTree 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -519,7 +519,7 @@ async def get_business_brand_list(
         }
     except Exception as e:
         logger.error(f"GetBusinessBrandList 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -542,7 +542,7 @@ async def modify_shop_state(
             return {"Result_Code": 200, "Result_Desc": "变更失败，数据更新失败！", "Result_Data": None}
     except Exception as e:
         logger.error(f"ModifyShopState 变更失败: {e}")
-        return Result.fail(msg=f"变更失败{str(e)}")
+        return Result.fail(msg="变更失败")
 
 
 # =====================================
@@ -576,7 +576,7 @@ async def get_shop_receivables(
         }
     except Exception as e:
         logger.error(f"GetShopReceivables 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -612,7 +612,7 @@ async def get_serverpart_ud_type_tree(
         }
     except Exception as e:
         logger.error(f"GetServerpartUDTypeTree 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -636,7 +636,7 @@ async def get_serverpart_detail(
         }
     except Exception as e:
         logger.error(f"GetSERVERPARTDetail 查询失败: {e}")
-        return Result.fail(msg=f"查询失败{str(e)}")
+        return Result.fail(msg="查询失败")
 
 
 # =====================================
@@ -662,7 +662,7 @@ async def synchro_serverpart(
             return {"Result_Code": 200, "Result_Desc": "更新失败，数据不存在！"}
     except Exception as e:
         logger.error(f"SynchroSERVERPART 同步失败: {e}")
-        return Result.fail(msg=f"同步失败{str(e)}")
+        return Result.fail(msg="同步失败")
 
 
 # =====================================
@@ -689,7 +689,7 @@ async def solid_serverpart_weather(
             return {"Result_Code": 200, "Result_Desc": "更新失败，数据不存在！"}
     except Exception as e:
         logger.error(f"SolidServerpartWeather 同步失败: {e}")
-        return Result.fail(msg=f"同步失败{str(e)}")
+        return Result.fail(msg="同步失败")
 
 
 # =====================================

@@ -66,7 +66,7 @@ async def get_revenue_push_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenuePushList 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -95,7 +95,7 @@ async def get_summary_revenue(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSummaryRevenue 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -130,7 +130,7 @@ async def get_summary_revenue_month(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSummaryRevenueMonth 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -150,7 +150,7 @@ async def get_wechat_push_sales_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetWechatPushSalesList 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetUnUpLoadShops")
@@ -172,7 +172,7 @@ async def get_un_upload_shops(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetUnUpLoadShops 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetServerpartBrand")
@@ -190,6 +190,7 @@ async def get_serverpart_brand(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartBrand 失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ===== 结账数据接口 =====
@@ -216,7 +217,7 @@ async def get_serverpart_end_account_list(
         }, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartEndAccountList 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetShopEndAccountList")
@@ -252,7 +253,7 @@ async def get_shop_end_account_list(
         }, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetShopEndAccountList 失败: {ex}")
-        return Result.fail(msg=f"查询失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ===== 预算费用 =====
@@ -268,7 +269,7 @@ async def get_budget_expense_list_post(searchModel: dict = None, db: DatabaseHel
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBudgetExpenseList POST 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetBudgetExpenseList")
@@ -287,7 +288,7 @@ async def get_budget_expense_list_get(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBudgetExpenseList GET 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetRevenueBudget")
@@ -310,7 +311,7 @@ async def get_revenue_budget(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueBudget 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -336,7 +337,7 @@ async def get_province_revenue_budget(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetProvinceRevenueBudget 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -362,7 +363,7 @@ async def get_mobile_share(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMobileShare 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetMallDeliver")
@@ -384,7 +385,7 @@ async def get_mall_deliver(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMallDeliver 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ===== 客单交易分析 =====
@@ -406,7 +407,7 @@ async def get_transaction_analysis(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetTransactionTimeAnalysis")
@@ -426,7 +427,7 @@ async def get_transaction_time_analysis(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionTimeAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetTransactionConvert")
@@ -446,7 +447,7 @@ async def get_transaction_convert(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionConvert 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -473,7 +474,7 @@ async def get_business_trade_revenue(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeRevenue 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetBusinessTradeLevel")
@@ -495,7 +496,7 @@ async def get_business_trade_level(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeLevel 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetBusinessBrandLevel")
@@ -520,7 +521,7 @@ async def get_business_brand_level(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessBrandLevel 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -551,7 +552,7 @@ async def get_revenue_trend_get(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueTrend 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ===== 经营报表 =====
@@ -592,7 +593,7 @@ async def get_revenue_report(
 
         logger.error(f"GetRevenueReport 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -634,7 +635,7 @@ async def get_revenue_report_detail(
 
         logger.error(f"GetRevenueReportDetil 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -675,7 +676,7 @@ async def get_sp_revenue_rank(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSPRevenueRank 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -699,7 +700,7 @@ async def get_revenue_yoy(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueYOY 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetHolidayCompare")
@@ -746,7 +747,7 @@ async def get_holiday_compare(
 
         logger.error(f"GetHolidayCompare (Revenue) 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -790,7 +791,7 @@ async def get_account_receivable(
 
         logger.error(f"GetAccountReceivable 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -820,7 +821,7 @@ async def get_cur_revenue(
 
         logger.error(f"GetCurRevenue 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -856,7 +857,7 @@ async def get_shop_cur_revenue(
 
         logger.error(f"GetShopCurRevenue 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -876,7 +877,7 @@ async def get_last_sync_date_time(db: DatabaseHelper = Depends(get_db)):
 
         logger.error(f"GetLastSyncDateTime 失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -931,7 +932,7 @@ async def get_holiday_analysis(
 
         import traceback; traceback.print_exc()
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -1031,11 +1032,11 @@ async def get_holiday_analysis_batch(
 
         import traceback; traceback.print_exc()
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ===== 增幅分析 =====
@@ -1112,7 +1113,7 @@ async def get_serverpart_inc_analysis(
 
         logger.error(f"GetServerpartINCAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -1170,7 +1171,7 @@ async def get_shop_inc_analysis(
 
         logger.error(f"GetShopINCAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -1235,7 +1236,7 @@ async def get_monthly_business_analysis(
 
         logger.error(f"GetMonthlyBusinessAnalysis 失败: {ex}")
 
-        return Result.fail(msg=f"查询失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -1295,7 +1296,7 @@ async def get_monthly_sp_inc_analysis(
 
         logger.error(f"GetMonthlySPINCAnalysis 失败: {ex}")
 
-        return Result.fail(msg=f"查询失败: {ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -1321,7 +1322,7 @@ async def get_transaction_detail_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionDetailList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -1374,7 +1375,7 @@ async def get_business_revenue_list(postData: dict = None, db: DatabaseHelper = 
         logger.error(f"GetBusinessRevenueList AES解密失败: {ve}")
         return Result.fail(msg="查询失败未将对象引用设置到对象的实例。")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Revenue/GetMonthlyBusinessRevenue")
@@ -1398,7 +1399,7 @@ async def get_monthly_business_revenue(postData: dict = None, db: DatabaseHelper
         logger.error(f"GetMonthlyBusinessRevenue AES解密失败: {ve}")
         return Result.fail(msg="查询失败未将对象引用设置到对象的实例。")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Revenue/GetCompanyRevenueReport")
@@ -1435,7 +1436,7 @@ async def get_company_revenue_report(
 
         logger.error(f"GetCompanyRevenueReport 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -1459,7 +1460,7 @@ async def get_revenue_compare(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueCompare 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 # ===== GetHolidaySPRAnalysis =====
 @router.get("/Revenue/GetHolidaySPRAnalysis")
@@ -1484,7 +1485,7 @@ async def get_holiday_spr_analysis(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetHolidaySPRAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
@@ -1542,133 +1543,258 @@ async def get_holiday_daily_analysis(
 
         logger.error(f"GetHolidayDailyAnalysis 查询失败: {ex}")
 
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 
-
-# ===== 月度增幅分析 =====
-
-@router.get("/Revenue/GetMonthINCAnalysis")
-async def get_month_inc_analysis(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsMonth: Optional[str] = Query(None, description="统计月份 YYYYMM"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
-    businessRegion: Optional[int] = Query(None, description="经营区域"),
-    SortStr: Optional[str] = Query("", description="排序字段"),
-    DataType: Optional[str] = Query("", description="数据类型"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取月度增幅分析 — 业务逻辑见 revenue_month_inc_service.get_month_inc_analysis()"""
-    try:
-        from services.commercial import revenue_month_inc_service
-        result_list = revenue_month_inc_service.get_month_inc_analysis(
-            db, pushProvinceCode, StatisticsMonth, ServerpartId,
-            SPRegionTypeID, businessRegion, SortStr, DataType
-        )
-        if not result_list:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetMonthINCAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
-@router.get("/Revenue/GetMonthINCAnalysisSummary")
-async def get_month_inc_analysis_summary(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsMonth: Optional[str] = Query(None, description="统计月份 YYYYMM"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
-    businessRegion: Optional[int] = Query(None, description="经营区域"),
-    DataType: Optional[str] = Query("", description="数据类型"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取月度增幅分析汇总 — 业务逻辑见 revenue_month_inc_service.get_month_inc_analysis_summary()"""
-    try:
-        from services.commercial import revenue_month_inc_service
-        result = revenue_month_inc_service.get_month_inc_analysis_summary(
-            db, pushProvinceCode, StatisticsMonth, ServerpartId,
-            SPRegionTypeID, businessRegion, DataType
-        )
-        return Result.success(data=result, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetMonthINCAnalysisSummary 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
-@router.get("/Revenue/StorageMonthINCAnalysis")
-async def storage_month_inc_analysis(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsMonth: Optional[str] = Query(None, description="统计月份 YYYYMM"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """存储月度增幅分析数据 — 业务逻辑见 revenue_month_inc_service.storage_month_inc_analysis()"""
-    try:
-        from services.commercial import revenue_month_inc_service
-        result = revenue_month_inc_service.storage_month_inc_analysis(
-            db, pushProvinceCode, StatisticsMonth
-        )
-        return Result.success(data=result, msg="查询成功")
-    except Exception as ex:
-        logger.error(f"StorageMonthINCAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
-# ===== 门店 SABFI 分析 =====
-
-@router.get("/Revenue/GetShopSABFIList")
-async def get_shop_sabfi_list(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
-    businessRegion: Optional[int] = Query(None, description="经营区域"),
-    SortStr: Optional[str] = Query("", description="排序字段"),
-    businessType: Optional[str] = Query("", description="经营模式"),
-    businessTrade: Optional[str] = Query("", description="经营业态"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取门店 SABFI 列表 — 业务逻辑见 revenue_sabfi_service.get_shop_sabfi_list()"""
-    try:
-        from services.commercial import revenue_sabfi_service
-        result_list = revenue_sabfi_service.get_shop_sabfi_list(
-            db, pushProvinceCode, StatisticsDate, ServerpartId,
-            SPRegionTypeID, businessRegion, SortStr, businessType, businessTrade
-        )
-        if not result_list:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetShopSABFIList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
-@router.get("/Revenue/GetShopMonthSABFIList")
-async def get_shop_month_sabfi_list(
-    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
-    StatisticsMonth: Optional[str] = Query(None, description="统计月份 YYYYMM"),
-    ServerpartId: Optional[str] = Query("", description="服务区内码"),
-    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
-    businessRegion: Optional[int] = Query(None, description="经营区域"),
-    SortStr: Optional[str] = Query("", description="排序字段"),
-    db: DatabaseHelper = Depends(get_db)
-):
-    """获取门店月度 SABFI 列表 — 业务逻辑见 revenue_sabfi_service.get_shop_month_sabfi_list()"""
-    try:
-        from services.commercial import revenue_sabfi_service
-        result_list = revenue_sabfi_service.get_shop_month_sabfi_list(
-            db, pushProvinceCode, StatisticsMonth, ServerpartId,
-            SPRegionTypeID, businessRegion, SortStr
-        )
-        if not result_list:
-            return Result.fail(code=101, msg="查询失败，无数据返回！")
-        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetShopMonthSABFIList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+
+
+# ===== 月度增幅分析 =====
+
+
+
+@router.get("/Revenue/GetMonthINCAnalysis")
+
+async def get_month_inc_analysis(
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    StatisticsMonth: Optional[str] = Query(None, description="统计月份 YYYYMM"),
+
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+
+    businessRegion: Optional[int] = Query(None, description="经营区域"),
+
+    SortStr: Optional[str] = Query("", description="排序字段"),
+
+    DataType: Optional[str] = Query("", description="数据类型"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取月度增幅分析 — 业务逻辑见 revenue_month_inc_service.get_month_inc_analysis()"""
+
+    try:
+
+        from services.commercial import revenue_month_inc_service
+
+        result_list = revenue_month_inc_service.get_month_inc_analysis(
+
+            db, pushProvinceCode, StatisticsMonth, ServerpartId,
+
+            SPRegionTypeID, businessRegion, SortStr, DataType
+
+        )
+
+        if not result_list:
+
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetMonthINCAnalysis 查询失败: {ex}")
+
+        return Result.fail(msg="查询失败")
+
+
+
+
+
+@router.get("/Revenue/GetMonthINCAnalysisSummary")
+
+async def get_month_inc_analysis_summary(
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    StatisticsMonth: Optional[str] = Query(None, description="统计月份 YYYYMM"),
+
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+
+    businessRegion: Optional[int] = Query(None, description="经营区域"),
+
+    DataType: Optional[str] = Query("", description="数据类型"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取月度增幅分析汇总 — 业务逻辑见 revenue_month_inc_service.get_month_inc_analysis_summary()"""
+
+    try:
+
+        from services.commercial import revenue_month_inc_service
+
+        result = revenue_month_inc_service.get_month_inc_analysis_summary(
+
+            db, pushProvinceCode, StatisticsMonth, ServerpartId,
+
+            SPRegionTypeID, businessRegion, DataType
+
+        )
+
+        return Result.success(data=result, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetMonthINCAnalysisSummary 查询失败: {ex}")
+
+        return Result.fail(msg="查询失败")
+
+
+
+
+
+@router.get("/Revenue/StorageMonthINCAnalysis")
+
+async def storage_month_inc_analysis(
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    StatisticsMonth: Optional[str] = Query(None, description="统计月份 YYYYMM"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """存储月度增幅分析数据 — 业务逻辑见 revenue_month_inc_service.storage_month_inc_analysis()"""
+
+    try:
+
+        from services.commercial import revenue_month_inc_service
+
+        result = revenue_month_inc_service.storage_month_inc_analysis(
+
+            db, pushProvinceCode, StatisticsMonth
+
+        )
+
+        return Result.success(data=result, msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"StorageMonthINCAnalysis 查询失败: {ex}")
+
+        return Result.fail(msg="查询失败")
+
+
+
+
+
+# ===== 门店 SABFI 分析 =====
+
+
+
+@router.get("/Revenue/GetShopSABFIList")
+
+async def get_shop_sabfi_list(
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    StatisticsDate: Optional[str] = Query(None, description="统计日期"),
+
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+
+    businessRegion: Optional[int] = Query(None, description="经营区域"),
+
+    SortStr: Optional[str] = Query("", description="排序字段"),
+
+    businessType: Optional[str] = Query("", description="经营模式"),
+
+    businessTrade: Optional[str] = Query("", description="经营业态"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取门店 SABFI 列表 — 业务逻辑见 revenue_sabfi_service.get_shop_sabfi_list()"""
+
+    try:
+
+        from services.commercial import revenue_sabfi_service
+
+        result_list = revenue_sabfi_service.get_shop_sabfi_list(
+
+            db, pushProvinceCode, StatisticsDate, ServerpartId,
+
+            SPRegionTypeID, businessRegion, SortStr, businessType, businessTrade
+
+        )
+
+        if not result_list:
+
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetShopSABFIList 查询失败: {ex}")
+
+        return Result.fail(msg="查询失败")
+
+
+
+
+
+@router.get("/Revenue/GetShopMonthSABFIList")
+
+async def get_shop_month_sabfi_list(
+
+    pushProvinceCode: Optional[str] = Query(None, description="省份编码"),
+
+    StatisticsMonth: Optional[str] = Query(None, description="统计月份 YYYYMM"),
+
+    ServerpartId: Optional[str] = Query("", description="服务区内码"),
+
+    SPRegionTypeID: Optional[str] = Query("", description="片区内码"),
+
+    businessRegion: Optional[int] = Query(None, description="经营区域"),
+
+    SortStr: Optional[str] = Query("", description="排序字段"),
+
+    db: DatabaseHelper = Depends(get_db)
+
+):
+
+    """获取门店月度 SABFI 列表 — 业务逻辑见 revenue_sabfi_service.get_shop_month_sabfi_list()"""
+
+    try:
+
+        from services.commercial import revenue_sabfi_service
+
+        result_list = revenue_sabfi_service.get_shop_month_sabfi_list(
+
+            db, pushProvinceCode, StatisticsMonth, ServerpartId,
+
+            SPRegionTypeID, businessRegion, SortStr
+
+        )
+
+        if not result_list:
+
+            return Result.fail(code=101, msg="查询失败，无数据返回！")
+
+        json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_size=10)
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetShopMonthSABFIList 查询失败: {ex}")
+
+        return Result.fail(msg="查询失败")
+
 

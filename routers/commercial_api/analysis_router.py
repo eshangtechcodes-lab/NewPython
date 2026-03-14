@@ -27,7 +27,7 @@ async def get_analysisins_list(searchModel: dict = None, db: DatabaseHelper = De
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetANALYSISINSList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Analysis/GetANALYSISINSDetail")
@@ -40,7 +40,7 @@ async def get_analysisins_detail(ANALYSISINSId: Optional[int] = Query(None), db:
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetANALYSISINSDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Analysis/SolidTransactionAnalysis")
@@ -54,7 +54,7 @@ async def solid_transaction_analysis(analysisParamModel: dict = None, db: Databa
         logger.warning("SolidTransactionAnalysis 生成逻辑暂未实现")
         return Result.success(msg="生成成功")
     except Exception as ex:
-        return Result.fail(msg=f"生成失败{ex}")
+        return Result.fail(msg="生成失败")
 
 
 @router.post("/Analysis/GetTransactionAnalysis")
@@ -66,7 +66,7 @@ async def get_transaction_analysis(tapModel: dict = None, db: DatabaseHelper = D
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTransactionAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Analysis/TranslateSentence")
@@ -84,7 +84,7 @@ async def translate_sentence(
             "RevenueList": None, "ServerpartId": None, "ServerpartName": None,
         }, msg="查询成功")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Analysis/GetMapConfigByProvinceCode")
@@ -99,7 +99,7 @@ async def get_map_config_by_province_code(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMapConfigByProvinceCode 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Analysis/GetServerpartTypeAnalysis")
@@ -114,6 +114,6 @@ async def get_serverpart_type_analysis(postData: dict = None, db: DatabaseHelper
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetServerpartTypeAnalysis AES解密失败: {ve}")
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="解密失败")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

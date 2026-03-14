@@ -37,7 +37,7 @@ async def get_revenueconfirm_list_post(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueConfirmList POST 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetRevenueConfirmList")
@@ -62,7 +62,7 @@ async def get_revenueconfirm_list_get(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueConfirmList GET 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetRevenueConfirmDetail")
@@ -75,7 +75,7 @@ async def get_revenueconfirm_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRevenueConfirmDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroRevenueConfirm")
@@ -87,7 +87,7 @@ async def synchro_revenueconfirm(data: dict, db: DatabaseHelper = Depends(get_db
         return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroRevenueConfirm 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteRevenueConfirm", methods=["GET", "POST"])
@@ -102,7 +102,7 @@ async def delete_revenueconfirm(
         return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteRevenueConfirm 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ========== PaymentConfirm 6 个接口 ==========
@@ -123,7 +123,7 @@ async def get_paymentconfirm_list_post(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPaymentConfirmList POST 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetPaymentConfirmList")
@@ -147,7 +147,7 @@ async def get_paymentconfirm_list_get(
         return Result.success(data=json_list, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPaymentConfirmList GET 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetPaymentConfirmDetail")
@@ -160,7 +160,7 @@ async def get_paymentconfirm_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPaymentConfirmDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SeparatePaymentRecord")
@@ -172,7 +172,7 @@ async def separate_payment_record(data: list, db: DatabaseHelper = Depends(get_d
         return Result(Result_Code=200, Result_Desc="保存失败！")
     except Exception as ex:
         logger.error(f"SeparatePaymentRecord 保存失败: {ex}")
-        return Result.fail(msg=f"保存失败{ex}")
+        return Result.fail(msg="保存失败")
 
 
 @router.post("/BusinessProject/SynchroPaymentConfirm")
@@ -184,7 +184,7 @@ async def synchro_paymentconfirm(data: dict, db: DatabaseHelper = Depends(get_db
         return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroPaymentConfirm 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeletePaymentConfirm", methods=["GET", "POST"])
@@ -199,7 +199,7 @@ async def delete_paymentconfirm(
         return Result(Result_Code=200, Result_Desc=msg or "删除失败！")
     except Exception as ex:
         logger.error(f"DeletePaymentConfirm 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ========== RTPaymentRecord 4 个接口 ==========
@@ -220,7 +220,7 @@ async def get_rtpaymentrecord_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRTPaymentRecordList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetRTPaymentRecordDetail")
@@ -233,7 +233,7 @@ async def get_rtpaymentrecord_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRTPaymentRecordDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroRTPaymentRecord")
@@ -245,7 +245,7 @@ async def synchro_rtpaymentrecord(data: dict, db: DatabaseHelper = Depends(get_d
         return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroRTPaymentRecord 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteRTPaymentRecord", methods=["GET", "POST"])
@@ -260,7 +260,7 @@ async def delete_rtpaymentrecord(
         return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteRTPaymentRecord 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ========== Remarks 4 个接口 ==========
@@ -281,7 +281,7 @@ async def get_remarks_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRemarksList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetRemarksDetail")
@@ -294,7 +294,7 @@ async def get_remarks_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRemarksDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroRemarks")
@@ -306,7 +306,7 @@ async def synchro_remarks(data: dict, db: DatabaseHelper = Depends(get_db)):
         return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroRemarks 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteRemarks", methods=["GET", "POST"])
@@ -321,4 +321,4 @@ async def delete_remarks(
         return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteRemarks 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

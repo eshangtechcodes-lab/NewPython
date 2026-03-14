@@ -32,7 +32,7 @@ async def get_serverpartcrt_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSERVERPARTCRTList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/GetSERVERPARTCRTTreeList")
@@ -50,7 +50,7 @@ async def get_serverpartcrt_tree_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSERVERPARTCRTTreeList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetSERVERPARTCRTDetail")
@@ -65,7 +65,7 @@ async def get_serverpartcrt_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSERVERPARTCRTDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/SynchroSERVERPARTCRT")
@@ -82,7 +82,7 @@ async def synchro_serverpartcrt(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroSERVERPARTCRT 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.post("/BaseInfo/DeleteSERVERPARTCRT")
@@ -103,4 +103,4 @@ async def delete_serverpartcrt(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteSERVERPARTCRT 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

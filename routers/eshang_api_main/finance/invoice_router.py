@@ -30,7 +30,7 @@ async def get_bill_list(data: dict, db: DatabaseHelper = Depends(get_db)):
             PageIndex=page_index, PageSize=page_size))
     except Exception as e:
         logger.error(f"GetBILLList 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Invoice/GetBILLDetail")
@@ -44,7 +44,7 @@ async def get_bill_detail(
         return Result.success(row)
     except Exception as e:
         logger.error(f"GetBILLDetail 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Invoice/SynchroBILL")
@@ -57,7 +57,7 @@ async def synchro_bill(data: dict, db: DatabaseHelper = Depends(get_db)):
         return Result.fail("更新失败，数据不存在！", code=200)
     except Exception as e:
         logger.error(f"SynchroBILL 失败: {e}")
-        return Result.fail(f"同步失败{e}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/Invoice/DeleteBILL", methods=["GET", "POST"])
@@ -70,7 +70,7 @@ async def delete_bill(BILLId: int = Query(0), db: DatabaseHelper = Depends(get_d
         return Result.fail("删除失败，数据不存在！", code=200)
     except Exception as e:
         logger.error(f"DeleteBILL 失败: {e}")
-        return Result.fail(f"删除失败{e}")
+        return Result.fail(msg="删除失败")
 
 
 # ==================== BILLDETAIL CRUD ====================
@@ -87,7 +87,7 @@ async def get_billdetail_list(data: dict, db: DatabaseHelper = Depends(get_db)):
             PageIndex=page_index, PageSize=page_size))
     except Exception as e:
         logger.error(f"GetBILLDETAILList 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Invoice/GetBILLDETAILDetail")
@@ -98,7 +98,7 @@ async def get_billdetail_detail(BILLDETAILId: int = Query(0), db: DatabaseHelper
         return Result.success(row)
     except Exception as e:
         logger.error(f"GetBILLDETAILDetail 失败: {e}")
-        return Result.fail(f"查询失败{e}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Invoice/SynchroBILLDETAIL")
@@ -111,7 +111,7 @@ async def synchro_billdetail(data: dict, db: DatabaseHelper = Depends(get_db)):
         return Result.fail("更新失败，数据不存在！", code=200)
     except Exception as e:
         logger.error(f"SynchroBILLDETAIL 失败: {e}")
-        return Result.fail(f"同步失败{e}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/Invoice/DeleteBILLDETAIL", methods=["GET", "POST"])
@@ -124,7 +124,7 @@ async def delete_billdetail(BILLDETAILId: int = Query(0), db: DatabaseHelper = D
         return Result.fail("删除失败，数据不存在！", code=200)
     except Exception as e:
         logger.error(f"DeleteBILLDETAIL 失败: {e}")
-        return Result.fail(f"删除失败{e}")
+        return Result.fail(msg="删除失败")
 
 
 # ==================== 散装接口 ====================
@@ -139,7 +139,7 @@ async def write_back_invoice(data: dict, db: DatabaseHelper = Depends(get_db)):
         return Result.fail(f"回写失败，{msg}！", code=200)
     except Exception as e:
         logger.error(f"WriteBackInvoice 失败: {e}")
-        return Result.fail(f"回写失败{e}")
+        return Result.fail(msg="回写失败")
 
 
 @router.post("/Invoice/SendHXInvoiceInfo")
@@ -153,7 +153,7 @@ async def send_hx_invoice_info(request: Request):
         return Result.fail(f"请求失败，{msg}", code=200)
     except Exception as e:
         logger.error(f"SendHXInvoiceInfo 失败: {e}")
-        return Result.fail(f"请求失败{e}")
+        return Result.fail(msg="请求失败")
 
 
 @router.post("/Invoice/RewriteJDPJInfo")
@@ -167,7 +167,7 @@ async def rewrite_jdpj_info(data: dict, db: DatabaseHelper = Depends(get_db)):
         return Result.fail(f"回写失败，{msg}！", code=200)
     except Exception as e:
         logger.error(f"RewriteJDPJInfo 失败: {e}")
-        return Result.fail(f"回写失败{e}")
+        return Result.fail(msg="回写失败")
 
 
 @router.post("/Invoice/ForwardJDPJInterface")
@@ -184,4 +184,4 @@ async def forward_jdpj_interface(data: dict):
         return Result.fail(f"转发失败{msg}")
     except Exception as e:
         logger.error(f"ForwardJDPJInterface 失败: {e}")
-        return Result.fail(f"转发失败{e}")
+        return Result.fail(msg="转发失败")

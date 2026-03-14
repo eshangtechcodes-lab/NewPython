@@ -25,7 +25,7 @@ async def get_sp_region_list(Province_Code: Optional[str] = Query(None), db: Dat
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSPRegionList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetBusinessTradeList")
@@ -42,7 +42,7 @@ async def get_business_trade_list_get(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeList(GET) 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/GetBusinessTradeList")
@@ -56,7 +56,7 @@ async def get_business_trade_list_post(searchModel: dict = None, db: DatabaseHel
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeList(POST) 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetBrandAnalysis")
@@ -72,7 +72,7 @@ async def get_brand_analysis(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBrandAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetServerpartList")
@@ -101,7 +101,7 @@ async def get_serverpart_list(
         return Result.success(data=resp, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetServerpartInfo")
@@ -120,7 +120,7 @@ async def get_serverpart_info(
         return Result.success(data=result, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerpartInfo 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetServerInfoTree")
@@ -145,7 +145,7 @@ async def get_server_info_tree(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetServerInfoTree 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/GetServerpartServiceSummary")
@@ -160,10 +160,10 @@ async def get_serverpart_service_summary(postData: dict = None, db: DatabaseHelp
             return Result.fail(code=101, msg="查询失败，无数据返回！")
         return Result.success(data=data, msg="查询成功")
     except ValueError as ve:
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="解密失败")
     except Exception as ex:
         logger.error(f"GetServerpartServiceSummary 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/GetBrandStructureAnalysis")
@@ -177,7 +177,7 @@ async def get_brand_structure_analysis(postData: dict = None, db: DatabaseHelper
         json_list = JsonListData.create(data_list=result_list, total=len(result_list), page_index=1, page_size=len(result_list))
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="解密失败")
     except Exception as ex:
         logger.error(f"GetBrandStructureAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

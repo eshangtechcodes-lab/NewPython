@@ -64,7 +64,7 @@ async def get_businessproject_list(
         return Result.success(data=result_data, msg="查询成功")
     except Exception as ex:
         logger.error(f"BusinessProject/GetBusinessProjectList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ===================================================================
@@ -84,7 +84,7 @@ async def get_businessproject_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"BusinessProject/GetBusinessProjectDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ===================================================================
@@ -124,7 +124,7 @@ async def synchro_businessproject(
         return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"BusinessProject/SynchroBusinessProject 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 # ===================================================================
@@ -165,4 +165,4 @@ async def delete_businessproject(
         return Result(Result_Code=200, Result_Desc=msg or "删除失败")
     except Exception as ex:
         logger.error(f"BusinessProject/DeleteBusinessProject 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

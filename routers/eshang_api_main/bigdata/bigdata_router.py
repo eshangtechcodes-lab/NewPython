@@ -49,7 +49,7 @@ def _make_list_route(entity_name: str, route_path: str):
             return Result.success(data=json_list.model_dump(), msg="查询成功")
         except Exception as ex:
             logger.error(f"Get{entity_name}List 查询失败: {ex}")
-            return Result.fail(msg=f"查询失败{ex}")
+            return Result.fail(msg="查询失败")
     _list.__name__ = f"get_{entity_name.lower()}_list"
     return _list
 
@@ -63,7 +63,7 @@ def _make_detail_route(entity_name: str, route_path: str, param_name: str):
             return Result.success(data=detail, msg="查询成功")
         except Exception as ex:
             logger.error(f"Get{entity_name}Detail 查询失败: {ex}")
-            return Result.fail(msg=f"查询失败{ex}")
+            return Result.fail(msg="查询失败")
     _detail.__name__ = f"get_{entity_name.lower()}_detail"
     return _detail
 
@@ -79,7 +79,7 @@ def _make_synchro_route(entity_name: str, route_path: str):
                 return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
         except Exception as ex:
             logger.error(f"Synchro{entity_name} 同步失败: {ex}")
-            return Result.fail(msg=f"同步失败{ex}")
+            return Result.fail(msg="同步失败")
     _synchro.__name__ = f"synchro_{entity_name.lower()}"
     return _synchro
 
@@ -96,7 +96,7 @@ def _make_delete_route(entity_name: str, route_path: str, param_name: str):
                 return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
         except Exception as ex:
             logger.error(f"Delete{entity_name} 删除失败: {ex}")
-            return Result.fail(msg=f"删除失败{ex}")
+            return Result.fail(msg="删除失败")
     _delete.__name__ = f"delete_{entity_name.lower()}"
     return _delete
 

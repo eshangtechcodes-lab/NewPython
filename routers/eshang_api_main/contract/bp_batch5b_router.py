@@ -30,7 +30,7 @@ async def get_merchants_receivables_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMerchantsReceivablesList 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 2. GetMerchantsReceivables
@@ -45,7 +45,7 @@ async def get_merchants_receivables(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMerchantsReceivables 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 3. GetBrandReceivables
@@ -69,7 +69,7 @@ async def get_brand_receivables(
         return Result.success(data=result_data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBrandReceivables 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 4. GetMerchantsReceivablesReport
@@ -89,7 +89,7 @@ async def get_merchants_receivables_report(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMerchantsReceivablesReport 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 5. GetExpenseSummary
@@ -109,7 +109,7 @@ async def get_expense_summary(
         return Result.success(data=result_data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetExpenseSummary 失败: {ex}")
-        return Result.fail(msg=f"获取失败{ex}")
+        return Result.fail(msg="获取失败")
 
 
 # 6. GetShopExpenseSummary
@@ -126,7 +126,7 @@ async def get_shop_expense_summary(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetShopExpenseSummary 失败: {ex}")
-        return Result.fail(msg=f"获取失败{ex}")
+        return Result.fail(msg="获取失败")
 
 
 # 7. GetMonthSummaryList
@@ -141,7 +141,7 @@ async def get_month_summary_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMonthSummaryList 失败: {ex}")
-        return Result.fail(msg=f"获取失败{ex}")
+        return Result.fail(msg="获取失败")
 
 
 # 8. GetAnnualSplit
@@ -161,7 +161,7 @@ async def get_annual_split(
         return Result.success(data=result_data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAnnualSplit 失败: {ex}")
-        return Result.fail(msg=f"获取失败{ex}")
+        return Result.fail(msg="获取失败")
 
 
 # 9. GetProjectAccountList
@@ -184,7 +184,7 @@ async def get_project_account_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetProjectAccountList 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 10. GetProjectAccountTree
@@ -199,7 +199,7 @@ async def get_project_account_tree(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetProjectAccountTree 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 11. GetProjectAccountDetail
@@ -216,7 +216,7 @@ async def get_project_account_detail(
             return {"Result_Code": 200, "Result_Desc": "查询失败，无数据返回！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"GetProjectAccountDetail 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 12. GetAccountWarningList
@@ -236,7 +236,7 @@ async def get_account_warning_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAccountWarningList 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 13. SolidAccountWarningList
@@ -254,7 +254,7 @@ async def solid_account_warning_list(
             return {"Result_Code": 200, "Result_Desc": "生成失败！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"SolidAccountWarningList 失败: {ex}")
-        return Result.fail(msg=f"生成失败{ex}")
+        return Result.fail(msg="生成失败")
 
 
 # 14. SolidProjectRevenue
@@ -271,7 +271,7 @@ async def solid_project_revenue(
             return {"Result_Code": 200, "Result_Desc": "生成失败！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"SolidProjectRevenue 失败: {ex}")
-        return Result.fail(msg=f"生成失败{ex}")
+        return Result.fail(msg="生成失败")
 
 
 # 15. SolidPeriodAnalysis
@@ -285,7 +285,7 @@ async def solid_period_analysis(data: dict, db: DatabaseHelper = Depends(get_db)
             return {"Result_Code": 200, "Result_Desc": "生成失败！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"SolidPeriodAnalysis 失败: {ex}")
-        return Result.fail(msg=f"生成失败{ex}")
+        return Result.fail(msg="生成失败")
 
 
 # 16. GetPeriodWarningList
@@ -308,7 +308,7 @@ async def get_period_warning_list(
         return Result.success(data=result_data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPeriodWarningList 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # 17. ReconfigureProfit
@@ -325,7 +325,7 @@ async def reconfigure_profit(
             return {"Result_Code": 200, "Result_Desc": "生成失败！", "Result_Data": None}
     except Exception as ex:
         logger.error(f"ReconfigureProfit 失败: {ex}")
-        return Result.fail(msg=f"生成失败{ex}")
+        return Result.fail(msg="生成失败")
 
 
 # 18. GetWillSettleProject
@@ -341,4 +341,4 @@ async def get_will_settle_project(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetWillSettleProject 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

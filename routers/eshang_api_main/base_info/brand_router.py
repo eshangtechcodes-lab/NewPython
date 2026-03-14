@@ -59,7 +59,7 @@ async def get_brand_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBrandList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetCombineBrandList")
@@ -108,7 +108,7 @@ async def get_combine_brand_list(
         return Result.success(data=json_list, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCombineBrandList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.api_route("/BaseInfo/GetTradeBrandTree", methods=["GET", "POST"])
@@ -143,7 +143,7 @@ async def get_trade_brand_tree(
         return Result.success(data=json_list, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetTradeBrandTree 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetBrandDetail")
@@ -160,7 +160,7 @@ async def get_brand_detail(
         return Result.success(data=brand, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBrandDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/SynchroBrand")
@@ -186,7 +186,7 @@ async def synchro_brand(
             return Result(Result_Code=200, Result_Desc=failure_msg)
     except Exception as ex:
         logger.error(f"SynchroBrand 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BaseInfo/DeleteBrand", methods=["GET", "POST"])
@@ -206,4 +206,4 @@ async def delete_brand(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteBrand 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

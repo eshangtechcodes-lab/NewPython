@@ -37,9 +37,9 @@ async def get_current_early_warning(postData: dict = None, db: DatabaseHelper = 
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetCurrentEarlyWarning AES解密失败: {ve}")
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="解密失败")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/AbnormalAudit/GetMonthEarlyWarning")
@@ -65,6 +65,6 @@ async def get_month_early_warning(postData: dict = None, db: DatabaseHelper = De
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
         logger.error(f"GetMonthEarlyWarning AES解密失败: {ve}")
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="解密失败")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

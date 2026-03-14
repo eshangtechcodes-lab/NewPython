@@ -38,7 +38,7 @@ async def get_shoproyalty_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetShopRoyaltyList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetShopRoyaltyDetail")
@@ -52,7 +52,7 @@ async def get_shoproyalty_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetShopRoyaltyDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroShopRoyalty")
@@ -68,7 +68,7 @@ async def synchro_shoproyalty(
         return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroShopRoyalty 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteShopRoyalty", methods=["GET", "POST"])
@@ -84,7 +84,7 @@ async def delete_shoproyalty(
         return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteShopRoyalty 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 # ========== SHOPROYALTYDETAIL 4 个接口 ==========
@@ -108,7 +108,7 @@ async def get_shoproyaltydetail_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSHOPROYALTYDETAILList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BusinessProject/GetSHOPROYALTYDETAILDetail")
@@ -122,7 +122,7 @@ async def get_shoproyaltydetail_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSHOPROYALTYDETAILDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BusinessProject/SynchroSHOPROYALTYDETAIL")
@@ -138,7 +138,7 @@ async def synchro_shoproyaltydetail(
         return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroSHOPROYALTYDETAIL 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BusinessProject/DeleteSHOPROYALTYDETAIL", methods=["GET", "POST"])
@@ -154,4 +154,4 @@ async def delete_shoproyaltydetail(
         return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteSHOPROYALTYDETAIL 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

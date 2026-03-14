@@ -52,7 +52,7 @@ async def get_rtserverpartshop_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRTSERVERPARTSHOPList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetRTSERVERPARTSHOPDetail")
@@ -69,7 +69,7 @@ async def get_rtserverpartshop_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetRTSERVERPARTSHOPDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/SynchroRTSERVERPARTSHOP")
@@ -91,7 +91,7 @@ async def synchro_rtserverpartshop(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroRTSERVERPARTSHOP 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BaseInfo/DeleteRTSERVERPARTSHOP", methods=["GET", "POST"])
@@ -111,4 +111,4 @@ async def delete_rtserverpartshop(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteRTSERVERPARTSHOP 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

@@ -27,7 +27,7 @@ async def get_examine_list(searchModel: dict = None, db: DatabaseHelper = Depend
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetEXAMINEList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/GetEXAMINEDetail")
@@ -39,7 +39,7 @@ async def get_examine_detail(EXAMINEId: Optional[int] = Query(None), db: Databas
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetEXAMINEDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Examine/GetMEETINGList")
@@ -53,7 +53,7 @@ async def get_meeting_list(searchModel: dict = None, db: DatabaseHelper = Depend
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMEETINGList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/GetMEETINGDetail")
@@ -65,7 +65,7 @@ async def get_meeting_detail(MEETINGId: Optional[int] = Query(None), db: Databas
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMEETINGDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Examine/GetPATROLList")
@@ -79,7 +79,7 @@ async def get_patrol_list(searchModel: dict = None, db: DatabaseHelper = Depends
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPATROLList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/GetPATROLDetail")
@@ -91,7 +91,7 @@ async def get_patrol_detail(PATROLId: Optional[int] = Query(None), db: DatabaseH
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPATROLDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/WeChat_GetExamineList")
@@ -107,7 +107,7 @@ async def wechat_get_examine_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"WeChat_GetExamineList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/WeChat_GetExamineDetail")
@@ -122,7 +122,7 @@ async def wechat_get_examine_detail(request: Request, db: DatabaseHelper = Depen
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"WeChat_GetExamineDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/WeChat_GetPatrolList")
@@ -140,7 +140,7 @@ async def wechat_get_patrol_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"WeChat_GetPatrolList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/WeChat_GetMeetingList")
@@ -156,7 +156,7 @@ async def wechat_get_meeting_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"WeChat_GetMeetingList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/GetPatrolAnalysis")
@@ -172,7 +172,7 @@ async def get_patrol_analysis(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPatrolAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/GetExamineAnalysis")
@@ -188,7 +188,7 @@ async def get_examine_analysis(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetExamineAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/GetExamineResultList")
@@ -205,7 +205,7 @@ async def get_examine_result_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetExamineResultList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Examine/GetPatrolResultList")
@@ -221,7 +221,7 @@ async def get_patrol_result_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetPatrolResultList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/Examine/GetEvaluateResList")
@@ -237,6 +237,6 @@ async def get_evaluate_res_list(postData: dict = None, db: DatabaseHelper = Depe
         json_list = JsonListData.create(data_list=evaluate_list, total=total, page_size=total if total > 0 else 10, page_index=1)
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except ValueError as ve:
-        return Result.fail(msg=f"解密失败{ve}")
+        return Result.fail(msg="解密失败")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

@@ -56,7 +56,7 @@ async def get_autostatistics_tree_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAutoStatisticsTreeList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.api_route("/BaseInfo/GetAUTOSTATISTICSDetail", methods=["GET", "POST"])
@@ -73,7 +73,7 @@ async def get_autostatistics_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAUTOSTATISTICSDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/SynchroAUTOSTATISTICS")
@@ -94,7 +94,7 @@ async def synchro_autostatistics(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroAUTOSTATISTICS 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BaseInfo/DeleteAUTOSTATISTICS", methods=["GET", "POST"])
@@ -115,4 +115,4 @@ async def delete_autostatistics(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteAUTOSTATISTICS 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

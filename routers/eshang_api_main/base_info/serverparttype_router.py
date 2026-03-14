@@ -32,7 +32,7 @@ async def get_serverparttype_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSERVERPARTTYPEList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BasicConfig/GetSERVERPARTTYPEDetail")
@@ -46,7 +46,7 @@ async def get_serverparttype_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSERVERPARTTYPEDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BasicConfig/SynchroSERVERPARTTYPE")
@@ -63,7 +63,7 @@ async def synchro_serverparttype(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroSERVERPARTTYPE 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BasicConfig/DeleteSERVERPARTTYPE", methods=["GET", "POST"])
@@ -80,7 +80,7 @@ async def delete_serverparttype(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteSERVERPARTTYPE 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 @router.get("/BasicConfig/GetNestingSERVERPARTTYPEList")
@@ -101,7 +101,7 @@ async def get_nesting_serverparttype_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetNestingSERVERPARTTYPEList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BasicConfig/GetNestingSERVERPARTTYPETree")
@@ -122,7 +122,7 @@ async def get_nesting_serverparttype_tree(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetNestingSERVERPARTTYPETree 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BasicConfig/ModifyRTServerpartType")
@@ -143,4 +143,4 @@ async def modify_rt_serverpart_type(
             return Result(Result_Code=200, Result_Desc="操作失败！")
     except Exception as ex:
         logger.error(f"ModifyRTServerpartType 操作失败: {ex}")
-        return Result.fail(msg=f"操作失败{ex}")
+        return Result.fail(msg="操作失败")

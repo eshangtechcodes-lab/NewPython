@@ -57,7 +57,7 @@ async def get_businesstrade_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.api_route("/BaseInfo/GetBusinessTradeTree", methods=["GET", "POST"])
@@ -102,7 +102,7 @@ async def get_businesstrade_tree(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeTree 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.api_route("/BaseInfo/GetBusinessTradeEnum", methods=["GET", "POST"])
@@ -149,7 +149,7 @@ async def get_businesstrade_enum(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeEnum 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.api_route("/BaseInfo/GetBusinessTradeDetail", methods=["GET", "POST"])
@@ -166,7 +166,7 @@ async def get_businesstrade_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetBusinessTradeDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/SynchroBusinessTrade")
@@ -188,7 +188,7 @@ async def synchro_businesstrade(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroBusinessTrade 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BaseInfo/DeleteBusinessTrade", methods=["GET", "POST"])
@@ -209,4 +209,4 @@ async def delete_businesstrade(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteBusinessTrade 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

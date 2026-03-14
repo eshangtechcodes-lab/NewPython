@@ -29,7 +29,7 @@ async def get_project_split_summary(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetProjectSplitSummary 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 2. GetProjectSummary ====================
@@ -50,7 +50,7 @@ async def get_project_summary(
         return Result.success(JsonListData(List=data, TotalCount=len(data), OtherData=other_data))
     except Exception as e:
         logger.error(f"GetProjectSummary 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 3. GetRevenueSplitSummary ====================
@@ -71,7 +71,7 @@ async def get_revenue_split_summary(
         return Result.success(JsonListData(List=data, TotalCount=len(data), OtherData=other_data))
     except Exception as e:
         logger.error(f"GetRevenueSplitSummary 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 4. GetProjectMerchantSummary ====================
@@ -92,7 +92,7 @@ async def get_project_merchant_summary(
         return Result.success(JsonListData(List=data, TotalCount=len(data), OtherData=other_data))
     except Exception as e:
         logger.error(f"GetProjectMerchantSummary 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 5. CreateSingleProjectSplit ====================
@@ -114,7 +114,7 @@ async def create_single_project_split(
         return Result.fail("生成失败")
     except Exception as e:
         logger.error(f"CreateSingleProjectSplit 失败: {e}")
-        return Result.fail(f"生成失败: {e}")
+        return Result.fail(msg="生成失败")
 
 
 # ==================== 6. SolidMonthProjectSplit ====================
@@ -132,7 +132,7 @@ async def solid_month_project_split(
         return Result.fail("固化失败")
     except Exception as e:
         logger.error(f"SolidMonthProjectSplit 失败: {e}")
-        return Result.fail(f"固化失败: {e}")
+        return Result.fail(msg="固化失败")
 
 
 # ==================== 7. GetRoyaltyDateSumReport ====================
@@ -150,7 +150,7 @@ async def get_royalty_date_sum_report(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetRoyaltyDateSumReport 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 8. GetRoyaltyReport ====================
@@ -168,7 +168,7 @@ async def get_royalty_report(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetRoyaltyReport 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 9. GetProjectShopIncome ====================
@@ -184,7 +184,7 @@ async def get_project_shop_income(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetProjectShopIncome 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 10. GetContractMerchant ====================
@@ -201,7 +201,7 @@ async def get_contract_merchant(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetContractMerchant 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 11. GetAccountReached ====================
@@ -218,7 +218,7 @@ async def get_account_reached(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetAccountReached 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 12. GetShopExpense ====================
@@ -235,7 +235,7 @@ async def get_shop_expense(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetShopExpense 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 13. GetReconciliation ====================
@@ -251,7 +251,7 @@ async def get_reconciliation(
         return Result.success(JsonListData(List=data, TotalCount=len(data), OtherData=other_data))
     except Exception as e:
         logger.error(f"GetReconciliation 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 14. GetRevenueRecognition ====================
@@ -273,7 +273,7 @@ async def get_revenue_recognition(
         return Result.success(JsonListData(List=data, TotalCount=len(data), OtherData=solid_date))
     except Exception as e:
         logger.error(f"GetRevenueRecognition 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 15. GetProjectPeriodIncome ====================
@@ -292,7 +292,7 @@ async def get_project_period_income(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetProjectPeriodIncome 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 16. GetProjectPeriodAccount ====================
@@ -308,7 +308,7 @@ async def get_project_period_account(
         return Result.success(data)
     except Exception as e:
         logger.error(f"GetProjectPeriodAccount 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 17. ApplyAccountProinst ====================
@@ -325,7 +325,7 @@ async def apply_account_proinst(
         return Result.fail(msg or "发起审批失败")
     except Exception as e:
         logger.error(f"ApplyAccountProinst 失败: {e}")
-        return Result.fail(f"提交失败: {e}")
+        return Result.fail(msg="提交失败")
 
 
 # ==================== 18. ApproveAccountProinst ====================
@@ -348,7 +348,7 @@ async def approve_account_proinst(
         return Result.fail(f"{approve_type}失败！{msg}")
     except Exception as e:
         logger.error(f"ApproveAccountProinst 失败: {e}")
-        return Result.fail(f"提交失败: {e}")
+        return Result.fail(msg="提交失败")
 
 
 # ==================== 19. RejectAccountProinst ====================
@@ -370,7 +370,7 @@ async def reject_account_proinst(
         return Result.fail(f"驳回失败！{msg}")
     except Exception as e:
         logger.error(f"RejectAccountProinst 失败: {e}")
-        return Result.fail(f"驳回失败: {e}")
+        return Result.fail(msg="驳回失败")
 
 
 # ==================== 20. GetMonthAccountProinst ====================
@@ -385,7 +385,7 @@ async def get_month_account_proinst(
         return Result.success(JsonListData(List=result_list, TotalCount=total, OtherData=todo_count))
     except Exception as e:
         logger.error(f"GetMonthAccountProinst 失败: {e}")
-        return Result.fail(f"查询失败: {e}")
+        return Result.fail(msg="查询失败")
 
 
 # ==================== 21. ApplyMonthAccountProinst ====================
@@ -402,7 +402,7 @@ async def apply_month_account_proinst(
         return Result.fail(f"发起审批失败，{msg}！")
     except Exception as e:
         logger.error(f"ApplyMonthAccountProinst 失败: {e}")
-        return Result.fail(f"提交失败: {e}")
+        return Result.fail(msg="提交失败")
 
 
 # ==================== 22. ApproveMonthAccountProinst ====================
@@ -425,7 +425,7 @@ async def approve_month_account_proinst(
         return Result.fail(f"{approve_type}失败！{msg}")
     except Exception as e:
         logger.error(f"ApproveMonthAccountProinst 失败: {e}")
-        return Result.fail(f"提交失败: {e}")
+        return Result.fail(msg="提交失败")
 
 
 # ==================== 23. ApproveMAPList ====================
@@ -447,7 +447,7 @@ async def approve_map_list(
         return Result.fail(f"审批失败！{msg}")
     except Exception as e:
         logger.error(f"ApproveMAPList 失败: {e}")
-        return Result.fail(f"批量审批失败: {e}")
+        return Result.fail(msg="批量审批失败")
 
 
 # ==================== 24. RejectMonthAccountProinst ====================
@@ -469,7 +469,7 @@ async def reject_month_account_proinst(
         return Result.fail(f"驳回失败！{msg}")
     except Exception as e:
         logger.error(f"RejectMonthAccountProinst 失败: {e}")
-        return Result.fail(f"驳回失败: {e}")
+        return Result.fail(msg="驳回失败")
 
 
 # ==================== 25. StorageMonthProjectAccount ====================
@@ -488,7 +488,7 @@ async def storage_month_project_account(
         return Result.fail("保存失败，数据异常！")
     except Exception as e:
         logger.error(f"StorageMonthProjectAccount 失败: {e}")
-        return Result.fail(f"保存失败: {e}")
+        return Result.fail(msg="保存失败")
 
 
 # ==================== 26. GetMonthAccountDiff ====================
@@ -504,7 +504,7 @@ async def get_month_account_diff(
         return Result.success(JsonListData(List=data, TotalCount=len(data), OtherData=solid_date))
     except Exception as e:
         logger.error(f"GetMonthAccountDiff 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 27. ApprovePeriodAccount ====================
@@ -523,7 +523,7 @@ async def approve_period_account(
         return Result.fail("生成失败，数据异常！")
     except Exception as e:
         logger.error(f"ApprovePeriodAccount 失败: {e}")
-        return Result.fail(f"保存失败: {e}")
+        return Result.fail(msg="保存失败")
 
 
 # ==================== 28. RejectPeriodAccount ====================
@@ -541,7 +541,7 @@ async def reject_period_account(
         return Result.fail("驳回失败，数据异常！")
     except Exception as e:
         logger.error(f"RejectPeriodAccount 失败: {e}")
-        return Result.fail(f"驳回失败: {e}")
+        return Result.fail(msg="驳回失败")
 
 
 # ==================== 29. GetPeriodSupplementList ====================
@@ -558,7 +558,7 @@ async def get_period_supplement_list(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetPeriodSupplementList 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 30. GetProjectExpenseList ====================
@@ -574,7 +574,7 @@ async def get_project_expense_list(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetProjectExpenseList 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 31. GetBankAccountAnalyseList ====================
@@ -591,7 +591,7 @@ async def get_bank_account_analyse_list(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetBankAccountAnalyseList 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 32. GetBankAccountAnalyseTreeList ====================
@@ -609,7 +609,7 @@ async def get_bank_account_analyse_tree_list(
         return Result.success(JsonListData(List=data, TotalCount=len(data), OtherData=solid_date))
     except Exception as e:
         logger.error(f"GetBankAccountAnalyseTreeList 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 33. SolidBankAccountSplit ====================
@@ -628,7 +628,7 @@ async def solid_bank_account_split(
         return Result.fail("保存失败")
     except Exception as e:
         logger.error(f"SolidBankAccountSplit 失败: {e}")
-        return Result.fail(f"保存失败: {e}")
+        return Result.fail(msg="保存失败")
 
 
 # ==================== 34. GetContractExcuteAnalysis ====================
@@ -646,7 +646,7 @@ async def get_contract_excute_analysis(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetContractExcuteAnalysis 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 35. RebuildSCSplit ====================
@@ -663,7 +663,7 @@ async def rebuild_sc_split(
         return Result.fail("生成失败")
     except Exception as e:
         logger.error(f"RebuildSCSplit 失败: {e}")
-        return Result.fail(f"生成失败: {e}")
+        return Result.fail(msg="生成失败")
 
 
 # ==================== 36. CorrectRevenueAccountData ====================
@@ -680,7 +680,7 @@ async def correct_revenue_account_data(
         return Result.fail("更正失败")
     except Exception as e:
         logger.error(f"CorrectRevenueAccountData 失败: {e}")
-        return Result.fail(f"更正失败: {e}")
+        return Result.fail(msg="更正失败")
 
 
 # ==================== 37. RebuildClosedPeriod ====================
@@ -697,7 +697,7 @@ async def rebuild_closed_period(
         return Result.fail(msg or "生成失败")
     except Exception as e:
         logger.error(f"RebuildClosedPeriod 失败: {e}")
-        return Result.fail(f"生成失败: {e}")
+        return Result.fail(msg="生成失败")
 
 
 # ==================== 38. RebuildReductionPeriod ====================
@@ -714,7 +714,7 @@ async def rebuild_reduction_period(
         return Result.fail(msg or "生成失败")
     except Exception as e:
         logger.error(f"RebuildReductionPeriod 失败: {e}")
-        return Result.fail(f"生成失败: {e}")
+        return Result.fail(msg="生成失败")
 
 
 # ==================== 39. SendSMSMessage ====================
@@ -731,7 +731,7 @@ async def send_sms_message(
         return Result.fail(f"发送失败: {msg}")
     except Exception as e:
         logger.error(f"SendSMSMessage 失败: {e}")
-        return Result.fail(f"发送失败: {e}")
+        return Result.fail(msg="发送失败")
 
 
 # ==================== 40. LadingBill ====================
@@ -751,7 +751,7 @@ async def lading_bill(
         return Result.fail(f"提单失败！{msg}")
     except Exception as e:
         logger.error(f"LadingBill 失败: {e}")
-        return Result.fail(f"提单失败: {e}")
+        return Result.fail(msg="提单失败")
 
 
 # ==================== 41. RejectLadingBill ====================
@@ -771,7 +771,7 @@ async def reject_lading_bill(
         return Result.fail(f"驳回失败！{msg}")
     except Exception as e:
         logger.error(f"RejectLadingBill 失败: {e}")
-        return Result.fail(f"驳回失败: {e}")
+        return Result.fail(msg="驳回失败")
 
 
 # ==================== 42. GetAHJKtoken ====================
@@ -785,7 +785,7 @@ async def get_ahjk_token(data: dict = None):
         return Result.fail(msg=msg or "获取失败")
     except Exception as e:
         logger.error(f"GetAHJKtoken 失败: {e}")
-        return Result.fail(msg=f"获取失败{e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 43. GetAccountCompare ====================
@@ -808,7 +808,7 @@ async def get_account_compare(
             msg="查询成功")
     except Exception as e:
         logger.error(f"GetAccountCompare 失败: {e}")
-        return Result.fail(f"获取失败{e}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 44. GetAnnualAccountList ====================
@@ -828,4 +828,4 @@ async def get_annual_account_list(
         return Result.success(JsonListData(List=data, TotalCount=len(data)))
     except Exception as e:
         logger.error(f"GetAnnualAccountList 失败: {e}")
-        return Result.fail(f"获取失败: {e}")
+        return Result.fail(msg="获取失败")

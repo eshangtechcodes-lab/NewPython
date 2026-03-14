@@ -32,7 +32,7 @@ async def get_serverpartshopcrt_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSERVERPARTSHOPCRTList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BasicConfig/GetSERVERPARTSHOPCRTDetail")
@@ -46,7 +46,7 @@ async def get_serverpartshopcrt_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetSERVERPARTSHOPCRTDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BasicConfig/SynchroSERVERPARTSHOPCRT")
@@ -63,7 +63,7 @@ async def synchro_serverpartshopcrt(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroSERVERPARTSHOPCRT 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BasicConfig/DeleteSERVERPARTSHOPCRT", methods=["GET", "POST"])
@@ -80,4 +80,4 @@ async def delete_serverpartshopcrt(
             return Result(Result_Code=200, Result_Desc="删除失败！")
     except Exception as ex:
         logger.error(f"DeleteSERVERPARTSHOPCRT 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")

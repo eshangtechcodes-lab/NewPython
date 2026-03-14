@@ -31,7 +31,7 @@ async def get_contract_analysis(
         return Result.success(data=result_data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetContractAnalysis 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Contract/GetMerchantAccountSplit")
@@ -52,7 +52,7 @@ async def get_merchant_account_split(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMerchantAccountSplit 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Contract/GetMerchantAccountDetail")
@@ -73,4 +73,4 @@ async def get_merchant_account_detail(
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMerchantAccountDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

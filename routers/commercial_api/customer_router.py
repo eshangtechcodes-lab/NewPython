@@ -31,7 +31,7 @@ async def get_customer_ratio(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCustomerRatio 错误: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Customer/GetCustomerConsumeRatio")
@@ -48,7 +48,7 @@ async def get_customer_consume_ratio(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCustomerConsumeRatio 错误: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Customer/GetCustomerAgeRatio")
@@ -65,7 +65,7 @@ async def get_customer_age_ratio(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCustomerAgeRatio 错误: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Customer/GetCustomerGroupRatio")
@@ -82,7 +82,7 @@ async def get_customer_group_ratio(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCustomerGroupRatio 错误: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Customer/GetAnalysisDescList")
@@ -101,7 +101,7 @@ async def get_analysis_desc_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAnalysisDescList 错误: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Customer/GetAnalysisDescDetail")
@@ -122,7 +122,7 @@ async def get_analysis_desc_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAnalysisDescDetail 错误: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/Customer/GetCustomerSaleRatio")
@@ -160,4 +160,4 @@ async def get_customer_sale_ratio(
             "MaxAgeRatio": None, "MaxSexAgeRatio": None, "MaxSexRatio": None,
         }, msg="查询成功")
     except Exception as ex:
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

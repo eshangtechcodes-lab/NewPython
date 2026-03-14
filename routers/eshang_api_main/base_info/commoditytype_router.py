@@ -32,7 +32,7 @@ async def get_commoditytype_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCOMMODITYTYPEList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetCOMMODITYTYPEDetail")
@@ -46,7 +46,7 @@ async def get_commoditytype_detail(
         return Result.success(data=detail, msg="查询成功")
     except Exception as ex:
         logger.error(f"GetCOMMODITYTYPEDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.post("/BaseInfo/SynchroCOMMODITYTYPE")
@@ -63,7 +63,7 @@ async def synchro_commoditytype(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SynchroCOMMODITYTYPE 同步失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 @router.api_route("/BaseInfo/DeleteCOMMODITYTYPE", methods=["GET", "POST"])
@@ -80,7 +80,7 @@ async def delete_commoditytype(
             return Result(Result_Code=200, Result_Desc="删除失败，数据不存在！")
     except Exception as ex:
         logger.error(f"DeleteCOMMODITYTYPE 删除失败: {ex}")
-        return Result.fail(msg=f"删除失败{ex}")
+        return Result.fail(msg="删除失败")
 
 
 @router.get("/BaseInfo/GetNestingCOMMODITYTYPEList")
@@ -101,7 +101,7 @@ async def get_nesting_commoditytype_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetNestingCOMMODITYTYPEList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 @router.get("/BaseInfo/GetNestingCOMMODITYTYPETree")
@@ -123,4 +123,4 @@ async def get_nesting_commoditytype_tree(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetNestingCOMMODITYTYPETree 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")

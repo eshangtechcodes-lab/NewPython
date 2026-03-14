@@ -41,7 +41,7 @@ async def get_no_project_shop_list(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetNoProjectShopList 失败: {ex}")
-        return Result.fail(msg=f"获取失败{ex}")
+        return Result.fail(msg="获取失败")
 
 
 # ==================== 2. GetAccountWarningListSummary ====================
@@ -60,7 +60,7 @@ async def get_account_warning_summary(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetAccountWarningListSummary 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ==================== 3. GetMerchantSplit ====================
@@ -80,7 +80,7 @@ async def get_merchant_split(
         return Result.success(data=json_list.model_dump(), msg="查询成功")
     except Exception as ex:
         logger.error(f"GetMerchantSplit 失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
+        return Result.fail(msg="查询失败")
 
 
 # ==================== 4. SolidPeriodWarningList ====================
@@ -98,7 +98,7 @@ async def solid_period_warning_list(
             return Result(Result_Code=200, Result_Desc="生成失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SolidPeriodWarningList 失败: {ex}")
-        return Result.fail(msg=f"生成失败{ex}")
+        return Result.fail(msg="生成失败")
 
 
 # ==================== 5. UploadRevenueConfirmList ====================
@@ -116,7 +116,7 @@ async def upload_revenueconfirm_list(
             return Result(Result_Code=200, Result_Desc="同步失败！")
     except Exception as ex:
         logger.error(f"UploadRevenueConfirmList 失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 # ==================== 6. SaveHisPaymentAccount ====================
@@ -134,7 +134,7 @@ async def save_his_payment_account(
             return Result(Result_Code=200, Result_Desc="更新失败，数据不存在！")
     except Exception as ex:
         logger.error(f"SaveHisPaymentAccount 失败: {ex}")
-        return Result.fail(msg=f"同步失败{ex}")
+        return Result.fail(msg="同步失败")
 
 
 # ==================== 7. CreateRevenueAccount ====================
@@ -152,7 +152,7 @@ async def create_revenue_account(
             return Result(Result_Code=200, Result_Desc="生成失败，日结数据未完成校验！")
     except Exception as ex:
         logger.error(f"CreateRevenueAccount 失败: {ex}")
-        return Result.fail(msg=f"生成失败{ex}")
+        return Result.fail(msg="生成失败")
 
 
 # ==================== 8. ApproveProinst ====================
@@ -176,4 +176,4 @@ async def approve_proinst(
             return Result(Result_Code=200, Result_Desc=f"审批失败！{msg}")
     except Exception as ex:
         logger.error(f"ApproveProinst 失败: {ex}")
-        return Result.fail(msg=f"生成失败{ex}")
+        return Result.fail(msg="生成失败")
