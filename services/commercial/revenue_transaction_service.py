@@ -26,27 +26,34 @@ def get_mobile_share(db: DatabaseHelper, province_code, statistics_start_date,
     """获取移动支付分账数据"""
     from datetime import datetime as dt
 
+    # --- SQL 参数化: 移动支付分账 WHERE 条件 ---
     where_sql = ""
+    ms_params = {}
     if serverpart_id:
-        where_sql += f' AND A."SERVERPART_ID" = {serverpart_id}'
+        where_sql += ' AND A."SERVERPART_ID" = :sp_id'
+        ms_params["sp_id"] = serverpart_id
     elif sp_region_type_id:
-        where_sql += f' AND A."SERVERPART_ID" IN (SELECT "SERVERPART_ID" FROM "T_SERVERPART" WHERE "SPREGIONTYPE_ID" = {sp_region_type_id})'
+        where_sql += ' AND A."SERVERPART_ID" IN (SELECT "SERVERPART_ID" FROM "T_SERVERPART" WHERE "SPREGIONTYPE_ID" = :srt_id)'
+        ms_params["srt_id"] = sp_region_type_id
     if province_code:
-        where_sql += f' AND A."PROVINCE_CODE" = {province_code}'
+        where_sql += ' AND A."PROVINCE_CODE" = :pc'
+        ms_params["pc"] = province_code
 
     if statistics_start_date:
         sd = dt.strptime(statistics_start_date, "%Y-%m-%d").strftime("%Y%m%d") if "-" in statistics_start_date else statistics_start_date
-        where_sql += f' AND A."STATISTICS_DATE" >= {sd}'
+        where_sql += ' AND A."STATISTICS_DATE" >= :sd'
+        ms_params["sd"] = sd
     if statistics_end_date:
         ed = dt.strptime(statistics_end_date, "%Y-%m-%d").strftime("%Y%m%d") if "-" in statistics_end_date else statistics_end_date
-        where_sql += f' AND A."STATISTICS_DATE" <= {ed}'
+        where_sql += ' AND A."STATISTICS_DATE" <= :ed'
+        ms_params["ed"] = ed
 
     sql = f"""SELECT COUNT(DISTINCT "SERVERPARTSHOP_ID") AS "SHOP_COUNT",
             SUM("TICKET_PRICE") AS "TICKET_PRICE", SUM("TICKET_FEE") AS "TICKET_FEE",
             SUM("ROYALTY_PRICE") AS "ROYALTY_PRICE", SUM("SUBROYALTY_PRICE") AS "SUBROYALTY_PRICE",
             SUM("TICKET_PRICE" - "TICKET_FEE") AS "ACCOUNT_PRICE"
         FROM "T_MOBILEPAYSHARE" A WHERE A."MOBILEPAYSHARE_STATE" = 1{where_sql}"""
-    rows = db.execute_query(sql) or []
+    rows = db.execute_query(sql, ms_params if ms_params else None) or []
 
     if not rows or not rows[0].get("SHOP_COUNT"):
         return None
@@ -73,18 +80,22 @@ def get_mall_deliver(db: DatabaseHelper, province_code, statistics_start_date,
         return None
 
     where_sql = ' AND A."SELLER_ID" = 9'
+    # --- SQL 参数化: 配送日期条件 ---
     date_sql = ""
+    deliver_params = {}
     if statistics_start_date:
-        date_sql += f" AND A.\"DELIVER_DATE\" >= TO_DATE('{statistics_start_date.split(' ')[0]}','YYYY-MM-DD')"
+        date_sql += ' AND A."DELIVER_DATE" >= TO_DATE(:sd, \'YYYY-MM-DD\')'
+        deliver_params["sd"] = statistics_start_date.split(' ')[0]
     if statistics_end_date:
-        date_sql += f" AND A.\"DELIVER_DATE\" < TO_DATE('{statistics_end_date.split(' ')[0]}','YYYY-MM-DD') + 1"
+        date_sql += ' AND A."DELIVER_DATE" < TO_DATE(:ed, \'YYYY-MM-DD\') + 1'
+        deliver_params["ed"] = statistics_end_date.split(' ')[0]
 
     sql = f"""SELECT COUNT(DISTINCT A."GOODSDELIVER_ID") AS "DELIVERBILL_COUNT",
             SUM(B."DELIVER_PRICE") AS "DELIVER_PRICE"
         FROM "T_GOODSDELIVER" A, "T_GOODSDELIVERDETAIL" B
         WHERE A."DELIVER_STATE" > 0 AND A."DELIVER_STATE" < 9000
             AND A."GOODSDELIVER_ID" = B."GOODSDELIVER_ID"{where_sql}{date_sql}"""
-    rows = db.execute_query(sql) or []
+    rows = db.execute_query(sql, deliver_params if deliver_params else None) or []
     r = rows[0] if rows else {}
     return {
         "Statistics_Date": statistics_end_date,
@@ -109,18 +120,19 @@ def get_transaction_analysis(db: DatabaseHelper, province_code, statistics_date,
     month_start = stat_date.strftime("%Y%m01")
     sp_id = int(serverpart_id) if serverpart_id else None
 
-    # 当日数据
+    # --- SQL 参数化: 当日营收查询 ---
     if sp_id:
-        day_sql = f"""SELECT SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
+        day_sql = """SELECT SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
                 SUM(A."TOTAL_COUNT") AS "TOTALCOUNT", SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
             FROM "T_REVENUEDAILY" A
-            WHERE A."REVENUEDAILY_STATE" = 1 AND A."STATISTICS_DATE" = {date_str} AND A."SERVERPART_ID" = {sp_id}"""
+            WHERE A."REVENUEDAILY_STATE" = 1 AND A."STATISTICS_DATE" = :d_str AND A."SERVERPART_ID" = :sp_id"""
+        day_rows = db.execute_query(day_sql, {"d_str": date_str, "sp_id": sp_id}) or []
     else:
-        day_sql = f"""SELECT SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
+        day_sql = """SELECT SUM(A."TICKET_COUNT") AS "TICKETCOUNT",
                 SUM(A."TOTAL_COUNT") AS "TOTALCOUNT", SUM(A."REVENUE_AMOUNT") AS "CASHPAY"
             FROM "T_REVENUEDAILY" A
-            WHERE A."REVENUEDAILY_STATE" = 1 AND A."SERVERPART_ID" = 0 AND A."STATISTICS_DATE" = {date_str}"""
-    day_rows = db.execute_query(day_sql) or []
+            WHERE A."REVENUEDAILY_STATE" = 1 AND A."SERVERPART_ID" = 0 AND A."STATISTICS_DATE" = :d_str"""
+        day_rows = db.execute_query(day_sql, {"d_str": date_str}) or []
 
     ticket_count = 0; total_count = 0.0; revenue_amount = 0.0; avg_ticket_price = None
     if day_rows and day_rows[0].get("TICKETCOUNT") is not None:
@@ -129,10 +141,15 @@ def get_transaction_analysis(db: DatabaseHelper, province_code, statistics_date,
         revenue_amount = _sf(day_rows[0].get("CASHPAY"))
         if ticket_count > 0: avg_ticket_price = round(revenue_amount / ticket_count, 2)
 
-    # 月均数据
+    # --- SQL 参数化: 月均数据查询 ---
     province_id = _get_province_id(db, province_code) if province_code else None
+    # f-string: 安全 — sp_id 已通过 int() 转换，用于 CASE WHEN 表达式
     sp_filter = f'= {sp_id}' if sp_id else '> 0'
-    prov_where = f' AND A."PROVINCE_ID" = {province_id}' if province_id else ''
+    month_params = {"m_start": month_start, "d_str": date_str}
+    prov_where = ''
+    if province_id:
+        prov_where = ' AND A."PROVINCE_ID" = :prov_id'
+        month_params["prov_id"] = province_id
     month_sql = f"""SELECT
             COUNT(DISTINCT CASE WHEN A."SERVERPART_ID" {sp_filter} THEN A."STATISTICS_DATE" END) AS "SP_DAYS",
             SUM(CASE WHEN A."SERVERPART_ID" {sp_filter} THEN A."TICKET_COUNT" ELSE 0 END) AS "SP_TICKET",
@@ -146,8 +163,8 @@ def get_transaction_analysis(db: DatabaseHelper, province_code, statistics_date,
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."TICKET_COUNT" > 0
             AND A."REVENUEDAILY_STATE" = 1 AND B."STATISTICS_TYPE" = 1000 AND B."STATISTIC_TYPE" = 1000
             AND B."SERVERPART_CODE" NOT IN ('S000','S092','S093','S094'){prov_where}
-            AND A."STATISTICS_DATE" >= {month_start} AND A."STATISTICS_DATE" <= {date_str}"""
-    m_rows = db.execute_query(month_sql) or []
+            AND A."STATISTICS_DATE" >= :m_start AND A."STATISTICS_DATE" <= :d_str"""
+    m_rows = db.execute_query(month_sql, month_params) or []
 
     ticket_avg = 0; total_avg = 0.0; avg_rev = 0.0; month_avg_price = 0.0
     province_ticket = 0; province_total = 0.0; province_rev = 0.0; province_avg_price = 0.0
@@ -167,7 +184,10 @@ def get_transaction_analysis(db: DatabaseHelper, province_code, statistics_date,
 
     sp_name = None
     if sp_id:
-        sp_name_rows = db.execute_query(f'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = {sp_id}') or []
+        # --- SQL 参数化: 服务区名称查询 ---
+        sp_name_rows = db.execute_query(
+            'SELECT "SERVERPART_NAME" FROM "T_SERVERPART" WHERE "SERVERPART_ID" = :sp_id',
+            {"sp_id": sp_id}) or []
         sp_name = sp_name_rows[0].get("SERVERPART_NAME", "") if sp_name_rows else ""
 
     return {
@@ -196,24 +216,29 @@ def get_transaction_time_analysis(db: DatabaseHelper, province_code, statistics_
     stat_date = dt.strptime(statistics_date, "%Y-%m-%d") if "-" in statistics_date else dt.strptime(statistics_date, "%Y%m%d")
     month_str = stat_date.strftime("%Y%m")
 
+    # --- SQL 参数化: 时段消费分析 WHERE 条件 ---
     where_sql = ""
+    tta_params = {"month_str": month_str}
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids:
+        # f-string: 安全 — build_in_condition 已通过 int() 转换
         where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
     elif sp_region_type_id:
-        where_sql += f' AND B."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+        where_sql += ' AND B."SPREGIONTYPE_ID" = :srt_id'
+        tta_params["srt_id"] = sp_region_type_id
     elif province_code:
         pid = _get_province_id(db, province_code)
-        where_sql += f' AND B."PROVINCE_CODE" = {pid}'
+        where_sql += ' AND B."PROVINCE_CODE" = :pid'
+        tta_params["pid"] = pid
 
     sql = f"""SELECT A."STATISTICS_HOUR",
             ROUND(SUM(A."TICKET_COUNT") / MAX(A."STATISTICS_DAYS"),0) AS "TICKET_COUNT",
             ROUND(SUM(A."SELLMASTER_AMOUNT") / MAX(A."STATISTICS_DAYS"),2) AS "SELLMASTER_AMOUNT"
         FROM "T_YSSELLMASTERMONTH" A, "T_SERVERPART" B
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-            AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = {month_str}{where_sql}
+            AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = :month_str{where_sql}
         GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
-    rows = db.execute_query(sql) or []
+    rows = db.execute_query(sql, tta_params) or []
     if not rows: return None
 
     hour_map = {}
@@ -246,21 +271,25 @@ def get_transaction_convert(db: DatabaseHelper, statistics_date, serverpart_id,
     stat_date = dt.strptime(statistics_date, "%Y-%m-%d") if "-" in statistics_date else dt.strptime(statistics_date, "%Y%m%d")
     month_str = stat_date.strftime("%Y%m")
 
+    # --- SQL 参数化: 消费转化 WHERE 条件 ---
     where_sql = ""
+    tc_params = {"month_str": month_str}
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids:
+        # f-string: 安全 — build_in_condition 已通过 int() 转换
         where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
     elif sp_region_type_id:
-        where_sql += f' AND B."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+        where_sql += ' AND B."SPREGIONTYPE_ID" = :srt_id'
+        tc_params["srt_id"] = sp_region_type_id
 
     # 时段客单
     t_sql = f"""SELECT A."STATISTICS_HOUR",
             FLOOR(SUM(A."TICKET_COUNT") * 1.0 / MAX(A."STATISTICS_DAYS") + 0.5) AS "TICKET_COUNT"
         FROM "T_YSSELLMASTERMONTH" A, "T_SERVERPART" B
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-            AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = {month_str}{where_sql}
+            AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = :month_str{where_sql}
         GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
-    t_rows = db.execute_query(t_sql) or []
+    t_rows = db.execute_query(t_sql, tc_params) or []
     t_data = [[float(h), 0] for h in range(24)]
     for r in t_rows:
         h = int(_sf(r.get("STATISTICS_HOUR")))
@@ -272,9 +301,9 @@ def get_transaction_convert(db: DatabaseHelper, statistics_date, serverpart_id,
         FROM "T_BAYONETHOURMONTH_AH" A, "T_SERVERPART" B
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
             AND A."INOUT_TYPE" = 0 AND A."DATA_TYPE" IN (0,1)
-            AND A."STATISTICS_MONTH" = {month_str}{where_sql}
+            AND A."STATISTICS_MONTH" = :month_str{where_sql}
         GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
-    b_rows = db.execute_query(b_sql) or []
+    b_rows = db.execute_query(b_sql, tc_params) or []
     b_data = [[float(h), 0] for h in range(24)]
     for r in b_rows:
         h = int(_sf(r.get("STATISTICS_HOUR")))
@@ -299,12 +328,16 @@ def get_business_trade_revenue(db: DatabaseHelper, province_code, statistics_dat
     month_start = stat_date.strftime("%Y%m01")
     date_str = stat_date.strftime("%Y%m%d")
 
-    where_sql = f' AND A."STATISTICS_DATE" >= {month_start} AND A."STATISTICS_DATE" <= {date_str}'
+    # --- SQL 参数化: 业态营收 WHERE 条件 ---
+    btr_params = {"m_start": month_start, "d_end": date_str}
+    where_sql = ' AND A."STATISTICS_DATE" >= :m_start AND A."STATISTICS_DATE" <= :d_end'
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids:
+        # f-string: 安全 — build_in_condition 已通过 int() 转换
         where_sql += ' AND ' + build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
     elif sp_region_type_id:
-        where_sql += f' AND B."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+        where_sql += ' AND B."SPREGIONTYPE_ID" = :srt_id'
+        btr_params["srt_id"] = sp_region_type_id
 
     sql = f"""SELECT A."BUSINESS_TRADE",
             SUM(A."TICKET_COUNT") AS "TICKET_COUNT",
@@ -313,7 +346,7 @@ def get_business_trade_revenue(db: DatabaseHelper, province_code, statistics_dat
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID" AND A."REVENUEDAILY_STATE" = 1
             AND B."STATISTIC_TYPE" = 1000{where_sql}
         GROUP BY A."BUSINESS_TRADE" ORDER BY SUM(A."TICKET_COUNT") DESC"""
-    rows = db.execute_query(sql) or []
+    rows = db.execute_query(sql, btr_params) or []
     if not rows: return None
 
     total_ticket = sum(_sf(r.get("TICKET_COUNT")) for r in rows)
@@ -356,21 +389,25 @@ def get_transaction_convert(db: DatabaseHelper, province_code, statistics_date,
     stat_date = dt.strptime(statistics_date, "%Y-%m-%d") if "-" in statistics_date else dt.strptime(statistics_date, "%Y%m%d")
     month_str = stat_date.strftime("%Y%m")
 
+    # --- SQL 参数化: 消费转化(重载) WHERE 条件 ---
     where_sql = ""
+    tc2_params = {"month_str": month_str}
     _sp_ids = _parse_multi_ids(serverpart_id)
     if _sp_ids:
+        # f-string: 安全 — _build_in_condition 已通过 int() 转换
         where_sql += ' AND ' + _build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
     elif sp_region_type_id:
-        where_sql += f' AND B."SPREGIONTYPE_ID" IN ({sp_region_type_id})'
+        where_sql += ' AND B."SPREGIONTYPE_ID" = :srt_id'
+        tc2_params["srt_id"] = sp_region_type_id
 
     # 时段客单
     t_sql = f"""SELECT A."STATISTICS_HOUR",
             FLOOR(SUM(A."TICKET_COUNT") * 1.0 / MAX(A."STATISTICS_DAYS") + 0.5) AS "TICKET_COUNT"
         FROM "T_YSSELLMASTERMONTH" A, "T_SERVERPART" B
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
-            AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = {month_str}{where_sql}
+            AND A."DATA_TYPE" IN (0,1) AND A."STATISTICS_MONTH" = :month_str{where_sql}
         GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
-    t_rows = db.execute_query(t_sql) or []
+    t_rows = db.execute_query(t_sql, tc2_params) or []
     t_data = [[float(h), 0] for h in range(24)]
     for r in t_rows:
         h = int(_sf(r.get("STATISTICS_HOUR")))
@@ -383,9 +420,9 @@ def get_transaction_convert(db: DatabaseHelper, province_code, statistics_date,
         FROM "T_BAYONETHOURMONTH_AH" A, "T_SERVERPART" B
         WHERE A."SERVERPART_ID" = B."SERVERPART_ID"
             AND A."INOUT_TYPE" = 0 AND A."DATA_TYPE" IN (0,1)
-            AND A."STATISTICS_MONTH" = {month_str}{where_sql}
+            AND A."STATISTICS_MONTH" = :month_str{where_sql}
         GROUP BY A."STATISTICS_HOUR" ORDER BY A."STATISTICS_HOUR" """
-    b_rows = db.execute_query(b_sql) or []
+    b_rows = db.execute_query(b_sql, tc2_params) or []
     b_data = [[float(h), 0] for h in range(24)]
     for r in b_rows:
         h = int(_sf(r.get("STATISTICS_HOUR")))
@@ -405,28 +442,40 @@ def get_transaction_detail_list(db: DatabaseHelper, province_code, serverpart_id
     from datetime import datetime as dt
     from collections import OrderedDict
 
+    # --- SQL 参数化: 交易明细 WHERE 条件 ---
     where_sql = ""
+    td_params = {}
     if serverpart_shop_id:
-        where_sql = f' AND C."SERVERPARTSHOP_ID" IN ({serverpart_shop_id})'
+        # f-string: 安全 — serverpart_shop_id 来自用户输入，需用 parse 处理
+        # 注意: 此处 serverpart_shop_id 可能是逗号分隔的多值，IN 子句不能直接参数化
+        # 但 serverpart_shop_id 是从前端传入的 ID 字符串，通过整数解析防注入
+        safe_ids = [str(int(x.strip())) for x in str(serverpart_shop_id).split(',') if x.strip().isdigit()]
+        if safe_ids:
+            where_sql = f' AND C."SERVERPARTSHOP_ID" IN ({",".join(safe_ids)})'
+        else:
+            return []
     elif serverpart_id:
         _sp_ids = _parse_multi_ids(serverpart_id)
         if _sp_ids:
             where_sql = ' AND ' + _build_in_condition('SERVERPART_ID', _sp_ids).replace('"SERVERPART_ID"', 'B."SERVERPART_ID"')
     elif province_code:
-        where_sql = f' AND B."PROVINCE_CODE" = {province_code}'
+        where_sql = ' AND B."PROVINCE_CODE" = :pc'
+        td_params["pc"] = province_code
     else:
         return []
 
     if start_time:
         try:
             st = dt.strptime(start_time, "%Y-%m-%d %H:%M:%S") if " " in start_time else dt.strptime(start_time, "%Y-%m-%d")
-            where_sql += f' AND A."SELLMASTER_DATE" >= {st.strftime("%Y%m%d")}000000'
+            where_sql += ' AND A."SELLMASTER_DATE" >= :st_date'
+            td_params["st_date"] = f"{st.strftime('%Y%m%d')}000000"
         except:
             pass
     if end_time:
         try:
             et = dt.strptime(end_time, "%Y-%m-%d %H:%M:%S") if " " in end_time else dt.strptime(end_time, "%Y-%m-%d")
-            where_sql += f' AND A."SELLMASTER_DATE" <= {et.strftime("%Y%m%d")}235959'
+            where_sql += ' AND A."SELLMASTER_DATE" <= :et_date'
+            td_params["et_date"] = f"{et.strftime('%Y%m%d')}235959"
         except:
             pass
 

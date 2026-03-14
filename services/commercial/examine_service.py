@@ -203,7 +203,11 @@ def get_patrol_detail(db: DatabaseHelper, patrol_id: int) -> Optional[dict]:
 # ===== 7. WeChat 考核列表 =====
 def wechat_get_examine_list(db: DatabaseHelper, sp_region_type_id, serverpart_id, start_date, end_date) -> list[dict]:
     conditions, params = [], []
-    if sp_region_type_id: conditions.append(f"SPREGIONTYPE_ID IN ({sp_region_type_id})")
+    # --- SQL 参数化: 片区条件 ---
+    if sp_region_type_id:
+        # sp_region_type_id 可能是单值或逗号分隔多值，通过整数解析防注入
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids: conditions.append(build_in_condition('SPREGIONTYPE_ID', srt_ids))
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids: conditions.append(build_in_condition('SERVERPART_ID', _sp_ids))
     for date_val, op in [(start_date, ">="), (end_date, "<=")]:
@@ -241,7 +245,10 @@ def wechat_get_examine_detail(db: DatabaseHelper, examine_id: int) -> list[dict]
 # ===== 9. WeChat 巡检列表 =====
 def wechat_get_patrol_list(db: DatabaseHelper, sp_region_type_id, serverpart_id, start_date, end_date) -> list[dict]:
     conditions, params = [], []
-    if sp_region_type_id: conditions.append(f"SPREGIONTYPE_ID IN ({sp_region_type_id})")
+    # --- SQL 参数化: 片区条件 ---
+    if sp_region_type_id:
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids: conditions.append(build_in_condition('SPREGIONTYPE_ID', srt_ids))
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids: conditions.append(build_in_condition('SERVERPART_ID', _sp_ids))
     for date_val, op in [(start_date, ">="), (end_date, "<=")]:
@@ -266,7 +273,10 @@ def wechat_get_patrol_list(db: DatabaseHelper, sp_region_type_id, serverpart_id,
 # ===== 10. WeChat 晨会列表 =====
 def wechat_get_meeting_list(db: DatabaseHelper, sp_region_type_id, serverpart_id, start_date, end_date) -> list[dict]:
     conditions, params = [], []
-    if sp_region_type_id: conditions.append(f"SPREGIONTYPE_ID IN ({sp_region_type_id})")
+    # --- SQL 参数化: 片区条件 ---
+    if sp_region_type_id:
+        srt_ids = parse_multi_ids(sp_region_type_id)
+        if srt_ids: conditions.append(build_in_condition('SPREGIONTYPE_ID', srt_ids))
     _sp_ids = parse_multi_ids(serverpart_id)
     if _sp_ids: conditions.append(build_in_condition('SERVERPART_ID', _sp_ids))
     for date_val, op in [(start_date, ">="), (end_date, "<=")]:
@@ -323,7 +333,8 @@ def get_examine_analysis(db: DatabaseHelper, data_type, start_month, end_month, 
     elif sp_region_type_id:
         conditions.append('B."SPREGIONTYPE_ID" = ?'); params.append(int(sp_region_type_id))
     elif province_code:
-        pid = _resolve_province_id(db, province_code); conditions.append(f'B."PROVINCE_CODE" = {pid}')
+        pid = _resolve_province_id(db, province_code)
+        conditions.append('B."PROVINCE_CODE" = ?'); params.append(pid)
     if start_month: conditions.append('A."EXAMINE_DATE" >= ?'); params.append(f"{start_month}01000000")
     if end_month: conditions.append('A."EXAMINE_DATE" <= ?'); params.append(f"{end_month}32000000")
     sql = f"""SELECT COUNT(1) AS "EXAMINE_COUNT",
@@ -347,7 +358,8 @@ def get_examine_result_list(db: DatabaseHelper, data_type, start_month, end_mont
     elif sp_region_type_id:
         conditions.append('B."SPREGIONTYPE_ID" = ?'); params.append(int(sp_region_type_id))
     elif province_code:
-        pid = _resolve_province_id(db, province_code); conditions.append(f'B."PROVINCE_CODE" = {pid}')
+        pid = _resolve_province_id(db, province_code)
+        conditions.append('B."PROVINCE_CODE" = ?'); params.append(pid)
     if start_month: conditions.append('A."EXAMINE_DATE" >= ?'); params.append(f"{start_month}01000000")
     if end_month: conditions.append('A."EXAMINE_DATE" <= ?'); params.append(f"{end_month}32000000")
 
