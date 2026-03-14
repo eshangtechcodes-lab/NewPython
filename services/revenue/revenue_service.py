@@ -260,9 +260,14 @@ def get_revenue_data_list(db: DatabaseHelper, serverpart_ids: str, serverpart_sh
     try:
         where_parts = ["A.REVENUEDAILY_STATE = 1"]
         if serverpart_shop_ids:
-            where_parts.append(f"A.SERVERPARTSHOP_ID IN ({serverpart_shop_ids})")
+            # --- SQL 参数化: shop_ids 通过整数解析 ---
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_shop_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                where_parts.append(f"A.SERVERPARTSHOP_ID IN ({','.join(safe_ids)})")
         elif serverpart_ids:
-            where_parts.append(f"A.SERVERPART_ID IN ({serverpart_ids})")
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                where_parts.append(f"A.SERVERPART_ID IN ({','.join(safe_ids)})")
         if start_date:
             where_parts.append(f"A.STATISTICS_DATE >= {start_date.replace('-', '')}")
         if end_date:
@@ -325,18 +330,27 @@ def get_revenue_report(db, **kwargs) -> list:
         business_type = kwargs.get("businessType", "")
         target_system = kwargs.get("targetSystem")
         if shop_ids:
-            wp.append(f"A.SERVERPARTSHOP_ID IN ({shop_ids})")
+            # --- SQL 参数化: shop_ids/sp_ids 通过整数解析 ---
+            safe_ids = [str(int(x.strip())) for x in str(shop_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp.append(f"A.SERVERPARTSHOP_ID IN ({','.join(safe_ids)})")
         elif sp_ids:
-            wp.append(f"A.SERVERPART_ID IN ({sp_ids})")
+            safe_ids = [str(int(x.strip())) for x in str(sp_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp.append(f"A.SERVERPART_ID IN ({','.join(safe_ids)})")
         if start:
             wp.append(f"A.STATISTICS_DATE >= {start.replace('-', '')}")
         if end:
             wp.append(f"A.STATISTICS_DATE <= {end.replace('-', '')}")
         # C# 原逻辑: shopTrade/businessType/targetSystem 过滤
         if shop_trade:
-            wp.append(f"A.SHOPTRADE IN ({shop_trade})")
+            st_ids = [str(int(x.strip())) for x in str(shop_trade).split(',') if x.strip().isdigit()]
+            if st_ids:
+                wp.append(f"A.SHOPTRADE IN ({','.join(st_ids)})")
         if business_type:
-            wp.append(f"A.BUSINESS_TYPE IN ({business_type})")
+            bt_ids = [str(int(x.strip())) for x in str(business_type).split(',') if x.strip().isdigit()]
+            if bt_ids:
+                wp.append(f"A.BUSINESS_TYPE IN ({','.join(bt_ids)})")
         if target_system is not None:
             target_system = int(target_system)
             if target_system == 1:
@@ -476,17 +490,25 @@ def get_revenue_report_by_date(db, **kwargs) -> list:
         business_type = kwargs.get("businessType", "")
         target_system = kwargs.get("targetSystem")
         if shop_ids:
-            wp.append(f"A.SERVERPARTSHOP_ID IN ({shop_ids})")
+            safe_ids = [str(int(x.strip())) for x in str(shop_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp.append(f"A.SERVERPARTSHOP_ID IN ({','.join(safe_ids)})")
         elif sp_ids:
-            wp.append(f"A.SERVERPART_ID IN ({sp_ids})")
+            safe_ids = [str(int(x.strip())) for x in str(sp_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                wp.append(f"A.SERVERPART_ID IN ({','.join(safe_ids)})")
         if start:
             wp.append(f"A.STATISTICS_DATE >= {start.replace('-', '')}")
         if end:
             wp.append(f"A.STATISTICS_DATE <= {end.replace('-', '')}")
         if shop_trade:
-            wp.append(f"A.SHOPTRADE IN ({shop_trade})")
+            st_ids = [str(int(x.strip())) for x in str(shop_trade).split(',') if x.strip().isdigit()]
+            if st_ids:
+                wp.append(f"A.SHOPTRADE IN ({','.join(st_ids)})")
         if business_type:
-            wp.append(f"A.BUSINESS_TYPE IN ({business_type})")
+            bt_ids = [str(int(x.strip())) for x in str(business_type).split(',') if x.strip().isdigit()]
+            if bt_ids:
+                wp.append(f"A.BUSINESS_TYPE IN ({','.join(bt_ids)})")
         if target_system is not None:
             ts = int(target_system)
             if ts == 1:
