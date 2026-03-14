@@ -16,6 +16,9 @@ Service 文件清单:
   revenue_account_service    — 应收/当日营收/同步
   revenue_monthly_service    — 月度经营分析
   revenue_compare_service    — 营收同比环比趋势
+  revenue_inc_service        — 增幅分析
+  revenue_month_inc_service  — 月度增幅分析
+  revenue_sabfi_service      — 商品助力分析
 """
 from fastapi import APIRouter, Depends, Query, Request
 from typing import Optional
@@ -39,16 +42,10 @@ from services.commercial import revenue_account_service
 from services.commercial import revenue_monthly_service
 from services.commercial import revenue_compare_service
 
+# 公共工具
+from services.commercial.service_utils import date_no_pad
+
 router = APIRouter()
-
-
-def date_no_pad(d, fmt="ymd"):
-    """C# DateTime.ToString("yyyy/M/d") 不补零"""
-    if fmt == "ymd":
-        return f"{d.year}/{d.month}/{d.day}"
-    elif fmt == "ymd_hms":
-        return f"{d.year}/{d.month}/{d.day} {d.hour}:{d.minute:02d}:{d.second:02d}"
-    return f"{d.year}/{d.month}/{d.day}"
 
 # ===== 每日营收推送 =====
 @router.get("/Revenue/GetRevenuePushList")

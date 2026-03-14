@@ -1,161 +1,24 @@
 # -*- coding: utf-8 -*-
 """
 CommercialApi - BigData 路由
-对应原 CommercialApi/Controllers/BigDataController.cs
+对应原 C# CommercialApi/Controllers/BigDataController.cs
 大数据分析相关接口（车流分析、归属地分析、预警等）
-注意：原 Controller 1503行，34个接口，此处按方法签名完整定义路由
+
+Service 文件清单:
+  bigdata_bayonet_service   — 卡口入区/停留/归属地分析 (8路由)
+  bigdata_month_service     — 月度车流分析 (2路由)
+  bigdata_warning_service   — 预警/增长/对比分析 (6路由)
+  bigdata_detail_service    — 日分析/能源/车辆树 (6路由)
 """
 from fastapi import APIRouter, Depends, Query
 from typing import Optional
 from loguru import logger
 
-from config import settings
 from models.base import Result, JsonListData
 from routers.deps import get_db, parse_multi_ids, build_in_condition
 from core.database import DatabaseHelper
 
 router = APIRouter()
-
-
-def date_no_pad(d, fmt="ymd"):
-    """C# DateTime.ToString("yyyy/M/d") 不补零。Python Windows不支持%-m"""
-    if fmt == "ymd":
-        return f"{d.year}/{d.month}/{d.day}"
-    elif fmt == "ymd_hms":
-        return f"{d.year}/{d.month}/{d.day} {d.hour}:{d.minute:02d}:{d.second:02d}"
-    return f"{d.year}/{d.month}/{d.day}"
-
-
-def _build_sta_model(rows, vehicle_types, sp_id, sp_name, region):
-    """构建车辆停留时长分析模型（按方位聚合）"""
-    vc_list = []
-    st_list = []
-    valid_types = []
-    for vt in vehicle_types:
-        vt_rows = [r for r in rows if r.get("VEHICLE_TYPE") == vt]
-        if not vt_rows:
-            continue
-        valid_types.append(vt)
-        # 统计天数
-        dates = set(r.get("STATISTICS_DATE") for r in vt_rows)
-        total_days = max(len(dates), 1)
-        # 日均车流量 = 总车流/天数
-        total_vc = sum(r.get("VEHICLE_COUNT") or 0 for r in vt_rows)
-        avg_vc = int(total_vc / total_days)
-        vc_list.append({"name": vt, "value": str(avg_vc)})
-        # 平均停留时长 = 总停留时长/记录条数/60
-        total_st_count = sum(int(r.get("STAY_TIMESCOUNT") or 0) for r in vt_rows)
-        if total_st_count > 0:
-            total_st = sum(float(r.get("STAY_TIMES") or 0) for r in vt_rows)
-            avg_st = total_st / total_st_count / 60
-        else:
-            avg_st = 0
-        st_list.append({"name": vt, "value": f"{avg_st:.2f}"})
-
-    return {
-        "Serverpart_ID": sp_id,
-        "Serverpart_Name": sp_name,
-        "Serverpart_Region": region,
-        "Vehicle_Type": valid_types,
-        "VehicleCountList": vc_list,
-        "StayTimesList": st_list,
-    }
-
-
-def _build_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, prov_top):
-    """构建车辆归属地分析模型（城市Top-N + 省份Top-N）"""
-    # 城市聚合
-    city_map = {}
-    for r in city_rows:
-        cn = r.get("CITY_NAME") or ""
-        city_map[cn] = city_map.get(cn, 0) + float(r.get("VEHICLE_COUNT") or 0)
-    city_sorted = sorted(city_map.items(), key=lambda x: x[1], reverse=True)[:city_top]
-    city_list = [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted]
-
-    # 省份聚合
-    prov_map = {}
-    for r in prov_rows:
-        pn = r.get("PROVINCE_NAME") or ""
-        prov_map[pn] = prov_map.get(pn, 0) + float(r.get("VEHICLE_COUNT") or 0)
-    prov_sorted_all = sorted(prov_map.items(), key=lambda x: x[1], reverse=True)
-    prov_sorted = prov_sorted_all[:prov_top]
-    prov_list = [{"name": p[0], "value": str(int(p[1]))} for p in prov_sorted]
-    # 追加"其他"汇总（C#逻辑：topN之外的省份归入"其他"）
-    if len(prov_sorted_all) > prov_top:
-        other_count = sum(p[1] for p in prov_sorted_all[prov_top:])
-        prov_list.append({"name": "其他", "value": str(int(other_count))})
-
-    total_vc = sum(float(r.get("VEHICLE_COUNT") or 0) for r in city_rows)
-    return {
-        "Serverpart_ID": sp_id,
-        "Serverpart_Name": sp_name,
-        "Serverpart_Region": region,
-        "OwnerCity": [c[0] for c in city_sorted],
-        "OwnerProvince": [p[0] for p in prov_sorted] + (["其他"] if len(prov_sorted_all) > prov_top else []),
-        "Vehicle_Count": int(total_vc),
-        "OwnerCityList": city_list if city_list else [{"name": None, "value": None}],
-        "OwnerProvinceList": prov_list,
-    }
-
-
-def _build_province_oa_model(city_rows, prov_rows, sp_id, sp_name, region, city_top, is_exclude, prov_top=0):
-    """构建省份归属地分析模型（省份->城市嵌套）
-    prov_top: 显示省份数量。C#的ProvinceOAList传0，所以所有省份都归为"其他"
-    """
-    # 省份聚合
-    prov_map = {}
-    for r in prov_rows:
-        pn = r.get("PROVINCE_NAME") or ""
-        prov_map[pn] = prov_map.get(pn, 0) + float(r.get("VEHICLE_COUNT") or 0)
-    prov_sorted = sorted(prov_map.items(), key=lambda x: x[1], reverse=True)
-
-    total_vc = sum(float(r.get("VEHICLE_COUNT") or 0) for r in prov_rows)
-    # 城市归属表的总数
-    city_total = sum(float(r.get("VEHICLE_COUNT") or 0) for r in city_rows)
-    # Vehicle_Count取city_total和prov总的最大值（与C#一致）
-    vehicle_count = int(max(total_vc, city_total))
-
-    prov_list = []
-    other_count = vehicle_count
-    if prov_top > 0:
-        # 正常展示省份明细
-        show_provs = prov_sorted[:prov_top]
-        for pn, pv in show_provs:
-            p_cities = {}
-            for r in city_rows:
-                if r.get("PROVINCE_NAME") == pn:
-                    cn = r.get("CITY_NAME") or ""
-                    p_cities[cn] = p_cities.get(cn, 0) + float(r.get("VEHICLE_COUNT") or 0)
-            city_sorted = sorted(p_cities.items(), key=lambda x: x[1], reverse=True)[:city_top]
-            _cities = [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted]
-            prov_list.append({"name": pn, "value": str(int(pv))})
-            other_count -= int(pv)
-    # 剩余归为"其他"
-    if other_count > 0:
-        prov_list.append({"name": "其他", "value": str(other_count)})
-
-    owner_province = [p["name"] for p in prov_list]
-
-    # 顶层城市列表
-    city_map = {}
-    for r in city_rows:
-        cn = r.get("CITY_NAME") or ""
-        city_map[cn] = city_map.get(cn, 0) + float(r.get("VEHICLE_COUNT") or 0)
-    city_sorted_top = sorted(city_map.items(), key=lambda x: x[1], reverse=True)[:city_top]
-    top_city_list = [{"name": c[0], "value": str(int(c[1]))} for c in city_sorted_top]
-    if not top_city_list:
-        top_city_list = [{"name": None, "value": None}]
-    return {
-        "Serverpart_ID": sp_id,
-        "Serverpart_Name": sp_name,
-        "Serverpart_Region": region,
-        "OwnerCity": [c[0] for c in city_sorted_top],
-        "OwnerProvince": owner_province,
-        "Vehicle_Count": vehicle_count,
-        "OwnerProvinceList": prov_list,
-        "OwnerCityList": top_city_list,
-    }
-
 
 @router.get("/Revenue/GetBayonetEntryList")
 async def get_bayonet_entry_list(
@@ -850,19 +713,32 @@ async def get_cur_busy_rank(postData: dict = None, db: DatabaseHelper = Depends(
 
 @router.post("/BigData/GetRevenueTrendChart")
 async def get_revenue_trend_chart(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
-    """业务逻辑见 bigdata_detail_service.get_revenue_trend_chart()"""
-    try:
-        from services.commercial import bigdata_detail_service
-        data = bigdata_detail_service.get_revenue_trend_chart(db, postData)
-        json_list = JsonListData.create(
-            data_list=data if isinstance(data, list) else [data],
-            total=len(data) if isinstance(data, list) else 1)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetRevenueTrendChart 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
+    """业务逻辑见 bigdata_detail_service.get_revenue_trend_chart()"""
+
+    try:
+
+        from services.commercial import bigdata_detail_service
+
+        data = bigdata_detail_service.get_revenue_trend_chart(db, postData)
+
+        json_list = JsonListData.create(
+
+            data_list=data if isinstance(data, list) else [data],
+
+            total=len(data) if isinstance(data, list) else 1)
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetRevenueTrendChart 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+
+
+
 @router.post("/BigData/GetEnergyRevenueInfo")
 async def get_energy_revenue_info(postData: dict = None, db: DatabaseHelper = Depends(get_db)):
     """业务逻辑见 bigdata_detail_service.get_energy_revenue_info()"""
@@ -939,19 +815,32 @@ async def get_province_vehicle_tree_list(
     pageSize: Optional[int] = Query(10, description="每页条数"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """业务逻辑见 bigdata_detail_service.get_province_vehicle_tree_list()"""
-    try:
-        from services.commercial import bigdata_detail_service
-        data = bigdata_detail_service.get_province_vehicle_tree_list(db, serverPartId, statisticsStartMonth, statisticsEndMonth, rankNum, pageIndex, pageSize)
-        json_list = JsonListData.create(
-            data_list=data if isinstance(data, list) else [data],
-            total=len(data) if isinstance(data, list) else 1)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetProvinceVehicleTreeList 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
+    """业务逻辑见 bigdata_detail_service.get_province_vehicle_tree_list()"""
+
+    try:
+
+        from services.commercial import bigdata_detail_service
+
+        data = bigdata_detail_service.get_province_vehicle_tree_list(db, serverPartId, statisticsStartMonth, statisticsEndMonth, rankNum, pageIndex, pageSize)
+
+        json_list = JsonListData.create(
+
+            data_list=data if isinstance(data, list) else [data],
+
+            total=len(data) if isinstance(data, list) else 1)
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetProvinceVehicleTreeList 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+
+
+
 @router.get("/BigData/GetProvinceVehicleDetail")
 async def get_province_vehicle_detail(
     statisticsStartMonth: int = Query(..., description="开始日期(yyyyMM)"),
@@ -964,16 +853,29 @@ async def get_province_vehicle_detail(
     pageSize: Optional[int] = Query(10, description="每页条数"),
     db: DatabaseHelper = Depends(get_db)
 ):
-    """业务逻辑见 bigdata_detail_service.get_province_vehicle_detail()"""
-    try:
-        from services.commercial import bigdata_detail_service
-        data = bigdata_detail_service.get_province_vehicle_detail(db, statisticsStartMonth, statisticsEndMonth, provinceName, serverPartId, cityName, rankNum, pageIndex, pageSize)
-        json_list = JsonListData.create(
-            data_list=data if isinstance(data, list) else [data],
-            total=len(data) if isinstance(data, list) else 1)
-        return Result.success(data=json_list.model_dump(), msg="查询成功")
-    except Exception as ex:
-        logger.error(f"GetProvinceVehicleDetail 查询失败: {ex}")
-        return Result.fail(msg=f"查询失败{ex}")
-
-
+    """业务逻辑见 bigdata_detail_service.get_province_vehicle_detail()"""
+
+    try:
+
+        from services.commercial import bigdata_detail_service
+
+        data = bigdata_detail_service.get_province_vehicle_detail(db, statisticsStartMonth, statisticsEndMonth, provinceName, serverPartId, cityName, rankNum, pageIndex, pageSize)
+
+        json_list = JsonListData.create(
+
+            data_list=data if isinstance(data, list) else [data],
+
+            total=len(data) if isinstance(data, list) else 1)
+
+        return Result.success(data=json_list.model_dump(), msg="查询成功")
+
+    except Exception as ex:
+
+        logger.error(f"GetProvinceVehicleDetail 查询失败: {ex}")
+
+        return Result.fail(msg=f"查询失败{ex}")
+
+
+
+
+

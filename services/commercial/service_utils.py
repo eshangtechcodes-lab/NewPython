@@ -117,3 +117,17 @@ def format_date_short(val) -> str | None:
     if isinstance(val, str):
         val = datetime.strptime(val[:10], "%Y-%m-%d")
     return f"{val.year}/{val.month}/{val.day}"
+
+
+def date_no_pad(d, fmt="ymd"):
+    """C# DateTime.ToString("yyyy/M/d") 不补零（Router/Service 通用版本）
+
+    Args:
+        d: datetime 对象
+        fmt: "ymd" 返回 "2025/3/30"，"ymd_hms" 返回 "2025/3/30 14:02:47"
+    """
+    if fmt == "ymd":
+        return f"{d.year}/{d.month}/{d.day}"
+    elif fmt == "ymd_hms":
+        return f"{d.year}/{d.month}/{d.day} {d.hour}:{d.minute:02d}:{d.second:02d}"
+    return f"{d.year}/{d.month}/{d.day}"
