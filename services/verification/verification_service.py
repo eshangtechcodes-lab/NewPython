@@ -1636,7 +1636,8 @@ def get_commodity_type_summary(db, **kwargs):
                 safe_sd = start_date.replace("'", "")
                 where_sql += f" AND A.ENDDATE >= TO_DATE('{safe_sd}','YYYY-MM-DD')"
             if end_date:
-                where_sql += f" AND A.ENDDATE < TO_DATE('{end_date}','YYYY-MM-DD') + 1"
+                safe_ed = end_date.replace("'", "")
+                where_sql += f" AND A.ENDDATE < TO_DATE('{safe_ed}','YYYY-MM-DD') + 1"
             sql = f"""SELECT COMMODITYTYPE_ID,
                         CASE WHEN COMMODITYTYPE_CODE IS NOT NULL
                             THEN '[' || A.COMMODITYTYPE_CODE || ']' || COMMODITYTYPE_NAME
@@ -1652,9 +1653,11 @@ def get_commodity_type_summary(db, **kwargs):
         else:
             # 历史模式：T_COMMODITYSALEMONTH
             if start_date:
-                where_sql += f" AND STATISTICS_MONTH >= {start_date}"
+                safe_sd = str(start_date).replace("'", "")
+                where_sql += f" AND STATISTICS_MONTH >= {safe_sd}"
             if end_date:
-                where_sql += f" AND STATISTICS_MONTH <= {end_date}"
+                safe_ed = str(end_date).replace("'", "")
+                where_sql += f" AND STATISTICS_MONTH <= {safe_ed}"
             sql = f"""SELECT COMMODITYTYPE_ID,
                         CASE WHEN COMMODITYTYPE_CODE IS NOT NULL
                             THEN '[' || A.COMMODITYTYPE_CODE || ']' || A.COMMODITYTYPE_NAME
@@ -1760,11 +1763,16 @@ def update_commodity_sale(db, **kwargs):
     try:
         from datetime import datetime
         current_month = datetime.now().strftime("%Y%m")
+        # --- SQL 参数化: shop_ids 通过整数解析防注入 ---
+        safe_sids = [str(int(x.strip())) for x in str(shop_ids).split(',') if x.strip().isdigit()]
+        if not safe_sids:
+            return True, "无有效门店ID"
+        sids_in = ','.join(safe_sids)
         # 查询门店当前最大月份
         max_row = db.fetch_one(
             f"""SELECT MAX(STATISTICS_ENDMONTH) AS MAX_MONTH
                 FROM T_COMMODITYSALE
-                WHERE COMMODITYSALE_STATE = 1 AND SERVERPARTSHOP_ID IN ({shop_ids})""")
+                WHERE COMMODITYSALE_STATE = 1 AND SERVERPARTSHOP_ID IN ({sids_in})""")
         start_month = str(max_row.get("MAX_MONTH", "")) if max_row else ""
         if not start_month:
             start_month = "202301"  # 默认起始月份
@@ -1784,7 +1792,7 @@ def update_commodity_sale(db, **kwargs):
                 FROM T_COMMODITYSALEMONTH A
                 WHERE STATISTICS_MONTH > {start_month}
                     AND STATISTICS_MONTH <= {current_month}
-                    AND SERVERPARTSHOP_ID IN ({shop_ids})
+                    AND SERVERPARTSHOP_ID IN ({sids_in})
                 GROUP BY COMMODITY_ID, COMMODITY_BARCODE, SERVERPARTSHOP_ID""") or []
         logger.info(f"UpdateCommoditySale: 增量数据 {len(rows)} 条")
         # 注: C# 原版有复杂的 upsert + 项目关联逻辑，此处简化为日志记录
