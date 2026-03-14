@@ -12,6 +12,7 @@ from services.commercial.service_utils import (
     safe_float as _sf, safe_int as _si,
     get_province_id as _get_province_id,
     build_sp_where as _build_where_sql,
+    date_no_pad,
 )
 
 
@@ -80,8 +81,6 @@ def get_revenue_push_list(db: DatabaseHelper, push_province_code, statistics_dat
 
     rows = db.execute_query(sql) or []
 
-    def _date_no_pad_hms(d):
-        return f"{d.year}/{d.month}/{d.day} {d.hour}:{d.minute:02d}:{d.second:02d}"
 
     results = []
     for row in rows:
@@ -94,7 +93,7 @@ def get_revenue_push_list(db: DatabaseHelper, push_province_code, statistics_dat
             "Business_TypeName": row["BUSINESS_TYPENAME"],
             "BusinessTrade_Name": row["BUSINESSTRADE_NAME"],
             "BusinessBrand_Name": row["BUSINESSBRAND_NAME"],
-            "Statistics_Date": _date_no_pad_hms(st_date),
+            "Statistics_Date": date_no_pad(st_date, "ymd_hms"),
             "TicketCount": _si(row["TICKETCOUNT"]),
             "TotalCount": _sf(row["TOTALCOUNT"]),
             "TotalOffAmount": _sf(row["TOTALOFFAMOUNT"]),

@@ -11,6 +11,7 @@ CommercialApi - 预算费用 Service
 from __future__ import annotations
 from core.database import DatabaseHelper
 from routers.deps import parse_multi_ids, build_in_condition
+from services.commercial.service_utils import safe_int
 
 
 # ===== 1. GetBudgetExpenseList (POST) =====
@@ -228,9 +229,6 @@ def get_province_revenue_budget(db: DatabaseHelper, statistics_date, province_co
     def safe_dec(v):
         try: return float(v) if v is not None else 0.0
         except: return 0.0
-    def safe_int(v):
-        try: return int(v) if v is not None else 0
-        except: return 0
 
     if province_code != "340000":
         return None

@@ -7,18 +7,9 @@ CommercialApi - 业态/品牌消费水平分析 Service
 from __future__ import annotations
 from collections import defaultdict
 from core.database import DatabaseHelper
-from services.commercial.service_utils import safe_float as _sf
+from services.commercial.service_utils import safe_float as _sf, get_province_id as _get_province_id
 from routers.deps import build_in_condition
 
-
-def _get_province_id(db: DatabaseHelper, province_code: str):
-    """省份编码 → 省份内码"""
-    fe_rows = db.execute_query(
-        """SELECT B."FIELDENUM_ID" FROM "T_FIELDEXPLAIN" A, "T_FIELDENUM" B
-            WHERE A."FIELDEXPLAIN_ID" = B."FIELDEXPLAIN_ID"
-            AND A."FIELDEXPLAIN_FIELD" = 'DIVISION_CODE' AND B."FIELDENUM_VALUE" = :pc""",
-        {"pc": province_code})
-    return fe_rows[0]["FIELDENUM_ID"] if fe_rows else province_code
 
 
 def _build_level_result(groups_total, groups_range, sorted_items, show_whole, show_count,
