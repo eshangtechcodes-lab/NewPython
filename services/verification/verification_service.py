@@ -1144,24 +1144,30 @@ def exception_handling(db, data: dict):
         if not endaccount_ids:
             return False, "请传入日结账期内码！"
 
+        # --- SQL 参数化: endaccount_ids 通过整数解析防注入 ---
+        safe_ids = [str(int(x.strip())) for x in str(endaccount_ids).split(',') if x.strip().isdigit()]
+        if not safe_ids:
+            return False, "请传入有效的日结账期内码！"
+        ids_in = ','.join(safe_ids)
+
         if operate_type == 1:
             # 变更日结账期统计日期
             db.execute(
                 f"UPDATE T_ENDACCOUNT SET STATISTICS_DATE = TO_DATE(?,'YYYY/MM/DD HH24:MI:SS') "
-                f"WHERE ENDACCOUNT_ID IN ({endaccount_ids})", [statistics_date])
+                f"WHERE ENDACCOUNT_ID IN ({ids_in})", [statistics_date])
         elif operate_type == 2:
             # 驳回日结账期至待处理状态
             db.execute(
                 f"UPDATE T_ENDACCOUNT SET TREATMENT_MARK = 1, CHECK_INFO = NULL "
-                f"WHERE ENDACCOUNT_ID IN ({endaccount_ids})")
+                f"WHERE ENDACCOUNT_ID IN ({ids_in})")
         elif operate_type == 3:
             # 无效日结账期
             db.execute(
-                f"UPDATE T_ENDACCOUNT SET VALID = 0 WHERE ENDACCOUNT_ID IN ({endaccount_ids}) AND VALID = 1")
+                f"UPDATE T_ENDACCOUNT SET VALID = 0 WHERE ENDACCOUNT_ID IN ({ids_in}) AND VALID = 1")
         elif operate_type == 4:
             # 有效日结账期
             db.execute(
-                f"UPDATE T_ENDACCOUNT SET VALID = 1 WHERE ENDACCOUNT_ID IN ({endaccount_ids}) AND VALID = 0")
+                f"UPDATE T_ENDACCOUNT SET VALID = 1 WHERE ENDACCOUNT_ID IN ({ids_in}) AND VALID = 0")
         else:
             return False, f"不支持的操作类型: {operate_type}"
 
@@ -1195,20 +1201,28 @@ def _build_shop_filter(shop_ids, shop_trade="", business_type="", shop_names="",
     """构建门店过滤子句（复用于多个 Sales 查询）"""
     shop_sql = ""
     if business_type:
-        shop_sql += f" AND C.BUSINESS_TYPE IN ({business_type})"
+        # --- SQL 参数化: business_type 通过整数解析防注入 ---
+        bt_ids = [str(int(x.strip())) for x in str(business_type).split(',') if x.strip().isdigit()]
+        if bt_ids:
+            shop_sql += f" AND C.BUSINESS_TYPE IN ({','.join(bt_ids)})"
     if shop_names:
-        names = "','".join(shop_names.split(","))
-        shop_sql += f" AND C.SHOPSHORTNAME IN ('{names}')"
+        # shop_names 只保留安全字符防注入
+        safe_names = [n.strip().replace("'", "") for n in shop_names.split(',') if n.strip()]
+        if safe_names:
+            names = "','".join(safe_names)
+            shop_sql += f" AND C.SHOPSHORTNAME IN ('{names}')"
     if search_key_name and search_key_value:
+        # search_key_value 去除单引号和百分号防注入
+        safe_val = search_key_value.replace("'", "").replace("%", "")
         parts = []
-        for kn in search_key_name.split(","):
+        for kn in search_key_name.split(','):
             kn = kn.strip()
             if kn == "MerchantName":
-                parts.append(f"C.SELLER_NAME LIKE '%{search_key_value}%'")
+                parts.append(f"C.SELLER_NAME LIKE '%{safe_val}%'")
             elif kn == "Brand":
-                parts.append(f"C.BRAND_NAME LIKE '%{search_key_value}%'")
+                parts.append(f"C.BRAND_NAME LIKE '%{safe_val}%'")
             elif kn == "Shop":
-                parts.append(f"C.SHOPNAME LIKE '%{search_key_value}%'")
+                parts.append(f"C.SHOPNAME LIKE '%{safe_val}%'")
         if parts:
             shop_sql += f" AND ({' OR '.join(parts)})"
     if shop_sql:
@@ -1281,15 +1295,20 @@ def get_endaccount_error(db, search_model: dict):
     """
     logger.info(f"GetEndaccountError: {search_model}")
     try:
+        # --- SQL 参数化: 日期和关键字 ---
         sp = search_model.get("SearchParameter", {}) or {}
         where_sql = ""
+        err_params = []
         if sp.get("ENDDATE_Start"):
-            where_sql += f" AND A.ENDACCOUNT_DATE >= TO_DATE('{sp['ENDDATE_Start'].split(' ')[0]}','YYYY/MM/DD')"
+            where_sql += " AND A.ENDACCOUNT_DATE >= TO_DATE(?,'YYYY/MM/DD')"
+            err_params.append(sp['ENDDATE_Start'].split(' ')[0])
         if sp.get("ENDDATE_End"):
-            where_sql += f" AND A.ENDACCOUNT_DATE < TO_DATE('{sp['ENDDATE_End'].split(' ')[0]}','YYYY/MM/DD') + 1"
+            where_sql += " AND A.ENDACCOUNT_DATE < TO_DATE(?,'YYYY/MM/DD') + 1"
+            err_params.append(sp['ENDDATE_End'].split(' ')[0])
         kw = search_model.get("keyWord") or {}
         if kw.get("Value"):
-            where_sql += f" AND A.SHOPNAME LIKE '%{kw['Value']}%'"
+            where_sql += " AND A.SHOPNAME LIKE ?"
+            err_params.append(f"%{kw['Value']}%")
 
         sql = f"""SELECT A.ENDACCOUNT_ID, A.SERVERPART_NAME, A.SHOPNAME, A.ENDACCOUNT_DATE,
                     A.TOTALSELLAMOUNT,
@@ -1302,7 +1321,7 @@ def get_endaccount_error(db, search_model: dict):
                     AND NVL(A.ENDPERSONCODE,' ') NOT LIKE '%扫码%'
                     AND NVL(A.DESCRIPTION_STAFF,'1') NOT LIKE '%【补】%'
                     {where_sql}"""
-        rows = db.fetch_all(sql) or []
+        rows = db.fetch_all(sql, err_params if err_params else None) or []
         result = []
         for r in rows:
             result.append({
