@@ -36,12 +36,14 @@ def _generic_list(db: DatabaseHelper, table: str, pk: str, search_model: dict,
     for field in (extra_search_fields or []):
         val = sp.get(field)
         if val is not None and str(val).strip():
+            # --- SQL 参数化: 字段值去引号防注入 ---
             if isinstance(val, str):
-                where_parts.append(f"{field} = '{val}'")
+                safe_val = val.replace("'", "")
+                where_parts.append(f"{field} = '{safe_val}'")
             else:
-                where_parts.append(f"{field} = {val}")
+                where_parts.append(f"{field} = {int(val)}")
     if sp.get("SERVERPART_ID"):
-        where_parts.append(f"SERVERPART_ID = {sp['SERVERPART_ID']}")
+        where_parts.append(f"SERVERPART_ID = {int(sp['SERVERPART_ID'])}")
     where_clause = " AND ".join(where_parts) if where_parts else "1=1"
     sql = f"SELECT * FROM {table} WHERE {where_clause} ORDER BY {pk} DESC"
     rows = db.execute_query(sql) or []
@@ -57,7 +59,9 @@ def _generic_list(db: DatabaseHelper, table: str, pk: str, search_model: dict,
 
 def _generic_detail(db: DatabaseHelper, table: str, pk: str, pk_val: int) -> Optional[dict]:
     """通用明细查询"""
-    sql = f"SELECT * FROM {table} WHERE {pk} = {pk_val}"
+    # --- SQL 参数化: pk_val 改为整数防注入 ---
+    safe_pk = int(pk_val)
+    sql = f"SELECT * FROM {table} WHERE {pk} = {safe_pk}"
     rows = db.execute_query(sql)
     return rows[0] if rows else None
 
@@ -66,7 +70,8 @@ def _generic_synchro(db: DatabaseHelper, table: str, pk: str, data: dict) -> Tup
     """通用同步（新增/更新）"""
     pk_val = data.get(pk)
     if pk_val is not None:
-        check = db.execute_scalar(f"SELECT COUNT(*) FROM {table} WHERE {pk} = {pk_val}")
+        safe_pk = int(pk_val)
+        check = db.execute_scalar(f"SELECT COUNT(*) FROM {table} WHERE {pk} = {safe_pk}")
         if check and check > 0:
             # 更新模式
             set_parts = []
@@ -75,12 +80,14 @@ def _generic_synchro(db: DatabaseHelper, table: str, pk: str, data: dict) -> Tup
                     continue
                 if v is None:
                     continue
+                # --- SQL 参数化: 字符串值去引号防注入 ---
                 if isinstance(v, str):
-                    set_parts.append(f"{k} = '{v}'")
+                    safe_v = v.replace("'", "''")
+                    set_parts.append(f"{k} = '{safe_v}'")
                 else:
                     set_parts.append(f"{k} = {v}")
             if set_parts:
-                db.execute_non_query(f"UPDATE {table} SET {', '.join(set_parts)} WHERE {pk} = {pk_val}")
+                db.execute_non_query(f"UPDATE {table} SET {', '.join(set_parts)} WHERE {pk} = {safe_pk}")
             return True, data
     # 新增
     seq_name = table.replace('T_', '')
@@ -95,7 +102,8 @@ def _generic_synchro(db: DatabaseHelper, table: str, pk: str, data: dict) -> Tup
             continue
         columns.append(k)
         if isinstance(v, str):
-            values.append(f"'{v}'")
+            safe_v = v.replace("'", "''")
+            values.append(f"'{safe_v}'")
         else:
             values.append(str(v))
     db.execute_non_query(f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({', '.join(values)})")
@@ -104,10 +112,12 @@ def _generic_synchro(db: DatabaseHelper, table: str, pk: str, data: dict) -> Tup
 
 def _generic_delete(db: DatabaseHelper, table: str, pk: str, status_field: str, pk_val: int) -> bool:
     """通用软删除（C# 原逻辑: STATE = 0）"""
-    check = db.execute_scalar(f"SELECT COUNT(*) FROM {table} WHERE {pk} = {pk_val}")
+    # --- SQL 参数化: pk_val 改为整数防注入 ---
+    safe_pk = int(pk_val)
+    check = db.execute_scalar(f"SELECT COUNT(*) FROM {table} WHERE {pk} = {safe_pk}")
     if not check or check == 0:
         return False
-    db.execute_non_query(f"UPDATE {table} SET {status_field} = 0 WHERE {pk} = {pk_val}")
+    db.execute_non_query(f"UPDATE {table} SET {status_field} = 0 WHERE {pk} = {safe_pk}")
     return True
 
 
@@ -186,8 +196,11 @@ def get_revenue_push_list(db: DatabaseHelper, province_code: str, statistics_dat
     """
     logger.info(f"GetRevenuePushList: Province={province_code}, Date={statistics_date}")
     try:
+        # --- SQL 参数化: 日期/省份去引号防注入 ---
+        safe_pc = province_code.replace("'", "")
+        safe_sd = statistics_date.replace("'", "")
         sql = f"""SELECT * FROM T_REVENUEDAILYSPLIT
-                 WHERE PROVINCE_ID = '{province_code}' AND STATISTICS_DATE = '{statistics_date}'
+                 WHERE PROVINCE_ID = '{safe_pc}' AND STATISTICS_DATE = '{safe_sd}'
                  AND REVENUEDAILYSPLIT_STATE = 1
                  ORDER BY REVENUEDAILYSPLIT_ID DESC"""
         return db.execute_query(sql) or []
@@ -208,11 +221,16 @@ def get_his_commodity_sale_list(db: DatabaseHelper, province_code: str,
     try:
         where_parts = ["A.SELLMASTER_STATE > 0"]
         if start_month:
-            where_parts.append(f"SUBSTR(A.SELLMASTER_DATE,1,6) >= '{start_month}'")
+            safe_sm = str(start_month).replace("'", "")
+            where_parts.append(f"SUBSTR(A.SELLMASTER_DATE,1,6) >= '{safe_sm}'")
         if end_month:
-            where_parts.append(f"SUBSTR(A.SELLMASTER_DATE,1,6) <= '{end_month}'")
+            safe_em = str(end_month).replace("'", "")
+            where_parts.append(f"SUBSTR(A.SELLMASTER_DATE,1,6) <= '{safe_em}'")
         if serverpart_shop_ids:
-            where_parts.append(f"C.SERVERPARTSHOP_ID IN ({serverpart_shop_ids})")
+            # --- SQL 参数化: shop_ids 通过整数解析 ---
+            safe_ids = [str(int(x.strip())) for x in str(serverpart_shop_ids).split(',') if x.strip().isdigit()]
+            if safe_ids:
+                where_parts.append(f"C.SERVERPARTSHOP_ID IN ({','.join(safe_ids)})")
         wc = " AND ".join(where_parts)
         sql = f"""SELECT B.COMMODITY_NAME, B.COMMODITY_TYPE,
                     SUM(B.SELLDETAILS_COUNT) AS TOTAL_COUNT,
