@@ -393,8 +393,7 @@ async def get_transaction_analysis(
     """获取服务区客单交易分析 — 业务逻辑见 revenue_transaction_service.get_transaction_analysis()"""
     try:
         data = revenue_transaction_service.get_transaction_analysis(
-            db, Province_Code, Statistics_Date, Serverpart_ID,
-            ShowConsumptionLevel, ShowConvertRate
+            db, Province_Code, Statistics_Date, Serverpart_ID
         )
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
@@ -461,7 +460,7 @@ async def get_business_trade_revenue(
         if not ProvinceCode:
             ProvinceCode = request.headers.get("ProvinceCode", "")
         data = revenue_transaction_service.get_business_trade_revenue(
-            db, ProvinceCode, StatisticsDate, ServerpartId, SPRegionTypeID, DataType
+            db, ProvinceCode, StatisticsDate, ServerpartId, SPRegionTypeID, BusinessTradeIds, DataType
         )
         return Result.success(data=data, msg="查询成功")
     except Exception as ex:
